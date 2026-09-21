@@ -12,25 +12,42 @@ Repo-native governance harness for AI-assisted software development.
 ## Quick start
 
 ```bash
-# From a clone of this repository
 uv sync
 uv run retornatus --help
 uv run retornatus init
+uv run retornatus wake
 ```
 
-Or via `uvx` once published / from a local path:
+Or via `uvx` from a local path:
 
 ```bash
 uvx --from . retornatus init
+uvx --from . retornatus wake
 ```
 
-`init` creates a minimal `.retornatus/` tree in the current project.
+## CLI intentions
+
+| Command | Purpose |
+|---------|---------|
+| `init` | Create `.retornatus/` |
+| `wake` | Reconstruct continuity + rebuild index |
+| `status` | Derived Change status |
+| `change create` | Demand → Situation → Contract → Action |
+| `run` | Assemble ExecutionContext |
+| `verify` | Assurance over Contract DONE |
+| `inspect` | Show artifact by id |
+| `search` | FTS5 search |
+| `doctor` | Diagnostics |
 
 ## Product requirements
 
-See [`PRD.md - Retornatus V1.md`](./PRD.md%20-%20Retornatus%20V1.md) and the mirror under [`prd/`](./prd/).
+See [`prd/PRD.md`](./prd/PRD.md) (mirror of the canonical PRD in the repo root).
 
 ## Status
 
-- **M0 — Foundation**: delivered (`retornatus init`)
-- **M1 — Domain Core**: delivered (Pydantic models, IDs, relations, schema versioning)
+V1 milestones **M0–M12** implemented in this repository:
+
+- M0 Foundation · M1 Domain Core · M2 Persistence
+- M3 Change Workflow · M4 Wake/Environment · M5 Execution Context
+- M6 Assurance · M7 Finding/Question · M8 Memory/Index
+- M9 Adaptation · M10 Governance · M11 Adapters · M12 Dogfood E2E
