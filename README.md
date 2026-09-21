@@ -3,7 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uvx%20%2F%20uv%20tool-recommended-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.5.0-informational.svg)](pyproject.toml)
+[![version](https://img.shields.io/badge/version-0.6.0-informational.svg)](pyproject.toml)
 
 **Repo-native governance harness for AI-assisted software development.**
 
@@ -24,7 +24,7 @@ You keep control: the agent proposes and implements; **gates** stop “done” w
 | Same ceremony for a typo and a payment flow | Tasks only when needed; `loop next` projects the next unit |
 | Failures vanish when the tab closes | Finding → Question → Action leaves a trail |
 
-**Python** · **0.5.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
+**Python** · **0.6.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
 
 **Docs:** [Product PRD](prd/PRD.md) · this README
 
@@ -85,7 +85,7 @@ retornatus doctor
 
 ```bash
 uv tool install --force /path/to/retornatus
-retornatus --version   # 0.5.x
+retornatus --version   # 0.6.x
 ```
 
 **Windows (PowerShell) — ensure `uv` is on PATH:**
@@ -134,7 +134,7 @@ Day to day you work in **agent chat**; the agent calls the CLI when a phase need
 
 Re-run `doctor` / `wake` after upgrades or machine changes. You are ready when:
 
-- `retornatus --version` prints `0.5.x` (or newer)
+- `retornatus --version` prints `0.6.x` (or newer)
 - `.retornatus/` exists with `config.toml`
 - Hub skill is visible (for example `.cursor/skills/retornatus/SKILL.md` after `integrate`)
 - Your AI coding agent can open the project
@@ -225,20 +225,21 @@ If the agent jumps straight to code: *Stop. Activate a Contract and pass `gate c
 
 | Capability | Status | Notes |
 | --- | --- | --- |
-| Situation elicitation | Implemented | `change elicit` + assessment before Contract activation |
-| Task readiness / deps / cycles | Implemented | Derived READY/BLOCKED; no auto-chaining |
+| Situation elicitation | Implemented | `change elicit` + repo signals (stack/tests/CI) before Contract |
+| Task readiness / deps / cycles | Implemented | Derived READY/BLOCKED; CLI `--task` / `--depends` / `--resource` |
 | Claim↔Evidence binding | Implemented | `--claim` + SUPPORTS relation; subject/type checks |
-| Evidence staleness | Implemented | Derived when `subject_state` vs current state known |
+| Evidence staleness | Implemented | `commit:<sha>` via `--git-state`; stale after new HEAD |
 | Assurance (proportional) | Implemented | Types inferred from DONE; `human_decision` not universal |
-| Independent Assurance context | Implemented | `run --assurance` fresh context |
+| Independent Assurance | Implemented | `assurance plan` + `assurance review` + `run --assurance` |
 | Question Resolution proof | Implemented | Verifiable Questions need Evidence |
 | Human Decision → Rule | Implemented | `decision record` + `rule activate --decision` |
 | Governed bypass | Implemented | `--force --reason` records Bypass + Decision |
-| Brownfield `project-init` / wake | Implemented | Stack, tests, CI, env caps, Retornatus state |
+| Brownfield `project-init` / wake | Implemented | Stack, tests, CI, dirs, Retornatus state |
 | Context relevance | Implemented | Applicability-filtered Rules/Learnings |
+| Brownfield construction dogfood | Implemented | Fixture service + health Change + git freshness |
 | Host Execution runtime | Environment-provided | Retornatus assembles context; host implements |
 | Workspace isolation / worktrees | Environment-provided | Native first |
-| Spec Guardrails fully replaced | Not yet supported | Construction dogfood demonstrates governance path; do not claim full replacement |
+| Spec Guardrails fully replaced | Not yet supported | Dogfood proves governed path; not full replacement claim |
 
 ---
 
@@ -445,13 +446,15 @@ Run from the project you want to govern (or pass `--path`).
 | `status` | Derived Change status |
 | `change elicit` | Assess Situation readiness (exit 1 if insufficient) |
 | `change create` / `change learn` | Demand→Situation→Contract→Action · record Learning |
+| `change create --task/--depends/--resource` | Explicit Task deps and resource conflicts |
 | `skill create/list/activate/evolve/export` | On-demand specialization Skills |
 | `gate contract\|evidence\|skill-research\|assurance` | Mechanical STOP gates |
-| `evidence add --claim` | Record Evidence bound to a Claim |
+| `evidence add --claim` / `--git-state` | Claim-bound Evidence; optional `commit:<HEAD>` |
 | `finding add` · `question open\|resolve` | Problem loop (resolve needs Evidence when verifiable) |
 | `loop next` / `loop next --all-ready` | Ready work projection (never returns BLOCKED) |
 | `run <action-id>` / `run --assurance` | Assemble ExecutionContext (optional independent Assurance) |
-| `verify <change-id>` | Assurance over Contract DONE Claims |
+| `assurance plan` / `assurance review` | Independent review projection + review_result Evidence |
+| `verify <change-id>` | Assurance over Contract DONE Claims (git freshness) |
 | `decision record` · `rule propose\|activate` | HUMAN boundary for Rule activation |
 | `inspect <id>` · `search <query>` | Read artifacts · FTS5 search |
 
@@ -514,7 +517,7 @@ Prefer small milestones over speculative engines. Architecture changes should ci
 
 Related prior work in this ecosystem: [spec-guardrails](https://github.com/luizssantiago92/spec-guardrails) (governed spec-driven development for AI coding agents). Retornatus is a **separate harness** focused on Change/Contract/Skill/Evidence continuity — not a fork of Spec Guardrails.
 
-**Replacement readiness:** construction dogfood proves Retornatus can govern Demand→Situation→Contract→Action→Host execution→Claim-bound Evidence→Assurance→Learning→wake continuity for a health-endpoint Change. That is **not** a claim that Spec Guardrails is fully replaced for every workflow.
+**Replacement readiness:** brownfield dogfood proves Retornatus can govern Demand→Situation (with repo signals)→Contract→Action (explicit Task deps/resources)→Host execution→Claim-bound Evidence with `commit:<sha>` freshness→independent review Evidence→Assurance→wake continuity. That is **not** a claim that Spec Guardrails is fully replaced for every workflow.
 
 ---
 

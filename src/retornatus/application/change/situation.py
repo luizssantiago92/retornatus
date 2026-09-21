@@ -9,6 +9,11 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from retornatus.bootstrap.project_init import (
+    architecture_clues,
+    detect_ci,
+    detect_tests,
+)
 from retornatus.infrastructure.persistence.paths import RetornatusPaths
 
 
@@ -33,18 +38,28 @@ class SituationAssessment:
     focused_questions: list[FocusedQuestion] = field(default_factory=list)
     sufficient_for_contract: bool = False
     rationale: str = ""
+    repo_signals: list[str] = field(default_factory=list)
 
     def to_markdown(self, *, demand: str, project_notes: str | None = None) -> str:
         lines = [
             "# Situation",
             "",
-            f"## Demand",
+            "## Demand",
             "",
             demand.strip(),
             "",
         ]
         if project_notes:
             lines.extend(["## Project context", "", project_notes.strip(), ""])
+        if self.repo_signals:
+            lines.extend(
+                [
+                    "## Repo signals (inferred)",
+                    "",
+                    *[f"- {s}" for s in self.repo_signals],
+                    "",
+                ]
+            )
         sections = [
             ("Known facts", self.known_facts),
             ("Constraints", self.constraints),
@@ -64,7 +79,9 @@ class SituationAssessment:
             lines.append("## Focused questions")
             lines.append("")
             for q in self.focused_questions:
-                lines.append(f"- **{q.topic}**: {q.question} _(material: {q.why_material})_")
+                lines.append(
+                    f"- **{q.topic}**: {q.question} _(material: {q.why_material})_"
+                )
             lines.append("")
         lines.extend(
             [
@@ -87,6 +104,54 @@ def load_project_context_snippet(root: Path, *, max_chars: int = 2000) -> str:
     if len(text) > max_chars:
         return text[: max_chars - 20].rstrip() + "\n\n…(truncated)"
     return text
+
+
+def collect_repo_signals(root: Path) -> list[str]:
+    """
+    Lightweight brownfield signals for Situation — prefer inference over questions.
+
+    Does not build a semantic code index.
+    """
+    root = root.resolve()
+    signals: list[str] = []
+    manifests = [
+        name
+        for name in (
+            "pyproject.toml",
+            "package.json",
+            "Cargo.toml",
+            "go.mod",
+            "pom.xml",
+            "requirements.txt",
+        )
+        if (root / name).exists()
+    ]
+    if manifests:
+        signals.append("stack manifests: " + ", ".join(f"`{m}`" for m in manifests))
+    tests = detect_tests(root)
+    if tests:
+        signals.append("tests: " + ", ".join(tests))
+    ci = detect_ci(root)
+    if ci:
+        signals.append("ci: " + ", ".join(f"`{c}`" for c in ci))
+    arch = architecture_clues(root)
+    if arch:
+        signals.append("architecture: " + "; ".join(arch))
+    for path in ("app/main.py", "src", "lib"):
+        if (root / path).exists():
+            signals.append(f"code path present: `{path}`")
+            break
+    # Endpoint hints without full AST
+    main = root / "app" / "main.py"
+    if main.is_file():
+        text = main.read_text(encoding="utf-8", errors="replace")
+        if "def health" in text or "/health" in text:
+            signals.append("health endpoint symbols already present in app/main.py")
+        else:
+            signals.append("no health endpoint symbols detected in app/main.py")
+    if (root / ".retornatus" / "config.toml").is_file():
+        signals.append("Retornatus already initialized")
+    return signals
 
 
 def _has_substance(text: str | None) -> bool:
@@ -115,7 +180,7 @@ def _looks_like_placeholder_done(criteria: list[str]) -> bool:
 
 
 _AMBIGUOUS_MARKERS = re.compile(
-    r"\b( somehow| somehow |maybe|tbd|todo|unclear|decide later|or something)\b",
+    r"\b(somehow|maybe|tbd|todo|unclear|decide later|or something)\b",
     re.I,
 )
 
@@ -128,30 +193,45 @@ def assess_situation(
     done_criteria: list[str] | None = None,
     constraints: list[str] | None = None,
     project_context: str | None = None,
+    repo_signals: list[str] | None = None,
 ) -> SituationAssessment:
     """
     Assess whether information is sufficient to activate a Contract.
 
     Asks only when the answer could materially alter WHAT / constraints / DONE.
-    Simple Demands with clear WHAT+DONE skip ceremony.
+    Repo signals are treated as known facts — do not re-ask what the repo shows.
     """
     assessment = SituationAssessment()
     done_criteria = done_criteria or []
     constraints = constraints or []
+    signals = list(repo_signals or [])
+    assessment.repo_signals = signals
 
     if _has_substance(demand):
         assessment.known_facts.append(f"Demand stated: {demand.strip()}")
+
+    for signal in signals:
+        assessment.known_facts.append(f"Repo: {signal}")
+        # Infer soft constraints from stack — do not ask "what language?"
+        if "pyproject.toml" in signal or "pytest" in signal.lower():
+            if "Prefer pytest for automated verification" not in assessment.constraints:
+                assessment.constraints.append(
+                    "Prefer pytest for automated verification (inferred from repo)"
+                )
+
     if project_context and project_context.strip():
-        # Extract first non-heading lines as facts — do not re-ask what repo already shows.
         for line in project_context.splitlines():
             stripped = line.strip()
-            if stripped.startswith("- ") and len(assessment.known_facts) < 12:
-                assessment.known_facts.append(stripped[2:].strip())
-            if "Detected manifests" in line or "Stack" in line:
-                continue
+            if stripped.startswith("- ") and len(assessment.known_facts) < 16:
+                fact = stripped[2:].strip()
+                if fact and fact not in assessment.known_facts:
+                    assessment.known_facts.append(fact)
 
     if constraints:
-        assessment.constraints.extend(c.strip() for c in constraints if c.strip())
+        for c in constraints:
+            if c.strip() and c.strip() not in assessment.constraints:
+                assessment.constraints.append(c.strip())
+
     if _has_substance(situation):
         assessment.known_facts.append("Situation narrative provided by agent/human")
     elif situation and not _has_substance(situation):
@@ -175,18 +255,27 @@ def assess_situation(
 
     if _looks_like_placeholder_done(done_criteria):
         assessment.missing_decisions.append("DONE criteria are missing or too weak")
-        assessment.focused_questions.append(
-            FocusedQuestion(
-                topic="DONE",
-                question="How will satisfaction be evidenced (tests, docs, review)?",
-                why_material="Active Contract requires at least one meaningful DONE criterion",
+        # If repo has tests, suggest automated proof rather than open-ended ask
+        if any("tests:" in s or "pytest" in s.lower() for s in signals):
+            assessment.focused_questions.append(
+                FocusedQuestion(
+                    topic="DONE",
+                    question="Confirm DONE includes an automated pytest covering the change",
+                    why_material="Repo already has a test harness — Contract should use it",
+                )
             )
-        )
+        else:
+            assessment.focused_questions.append(
+                FocusedQuestion(
+                    topic="DONE",
+                    question="How will satisfaction be evidenced (tests, docs, review)?",
+                    why_material="Active Contract requires at least one meaningful DONE criterion",
+                )
+            )
     else:
         for crit in done_criteria:
             assessment.known_facts.append(f"DONE criterion: {crit.strip()}")
 
-    # Security-sensitive Demands need explicit constraints when none given.
     demand_l = demand.lower()
     security_hit = any(
         w in demand_l
@@ -204,7 +293,7 @@ def assess_situation(
             )
         )
 
-    # Simple path: clear demand + what + done → sufficient (skip ceremony).
+    # Do not ask about stack/language when manifests already answered it
     simple = (
         _has_substance(demand)
         and _has_substance(what)
@@ -215,7 +304,8 @@ def assess_situation(
     if simple:
         assessment.sufficient_for_contract = True
         assessment.rationale = (
-            "Demand, WHAT, and DONE are sufficiently clear; no material ambiguity detected"
+            "Demand, WHAT, and DONE are sufficiently clear; repo signals incorporated; "
+            "no material ambiguity detected"
         )
     else:
         assessment.sufficient_for_contract = False
@@ -246,6 +336,7 @@ def apply_decision_to_situation(
         focused_questions=[
             q for q in assessment.focused_questions if q.topic.lower() != topic.lower()
         ],
+        repo_signals=list(assessment.repo_signals),
     )
     if topic.lower() == "constraints" and answer.strip():
         updated.constraints.append(answer.strip())

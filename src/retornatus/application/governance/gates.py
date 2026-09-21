@@ -128,8 +128,13 @@ def gate_assurance(
     change_id: str,
     *,
     current_subject_states: dict[str, str] | None = None,
+    use_git_state: bool = True,
 ) -> GateResult:
     """Assurance must be SATISFIED for Contract DONE Claims with bound Evidence."""
+    from retornatus.application.assurance.independent import evaluate_change_assurance
+    from retornatus.application.assurance.subject_state import derive_current_subject_states
+    from retornatus.application.assurance.evidence import EvidenceService
+
     repo = FileRepository(root)
     try:
         contract, _ = repo.load_contract(change_id)
@@ -141,13 +146,18 @@ def gate_assurance(
     if not contract.done_criteria:
         return GateResult(GateName.ASSURANCE, False, ["Contract has no DONE criteria"])
 
-    claims = build_claims_from_contract(contract)
-    evidence = EvidenceService(root).list_for_change(change_id)
-    result = evaluate_assurance(
-        claims=claims,
-        evidence=evidence,
-        current_subject_states=current_subject_states,
-    )
+    if current_subject_states is not None:
+        claims = build_claims_from_contract(contract)
+        evidence = EvidenceService(root).list_for_change(change_id)
+        result = evaluate_assurance(
+            claims=claims,
+            evidence=evidence,
+            current_subject_states=current_subject_states,
+        )
+    else:
+        result = evaluate_change_assurance(
+            root, change_id, use_git_state=use_git_state
+        )
     ok = result.verdict is AssuranceVerdict.SATISFIED
     detail = [
         f"Verdict={result.verdict.value}: {result.rationale}",

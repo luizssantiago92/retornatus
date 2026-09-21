@@ -24,7 +24,7 @@ IMPORTANT_DIRS = (
 )
 
 
-def _detect_ci(root: Path) -> list[str]:
+def detect_ci(root: Path) -> list[str]:
     found: list[str] = []
     gh = root / ".github" / "workflows"
     if gh.is_dir():
@@ -36,7 +36,7 @@ def _detect_ci(root: Path) -> list[str]:
     return found
 
 
-def _detect_tests(root: Path) -> list[str]:
+def detect_tests(root: Path) -> list[str]:
     signals: list[str] = []
     for name in ("tests", "test", "spec", "__tests__"):
         if (root / name).is_dir():
@@ -55,7 +55,7 @@ def _detect_tests(root: Path) -> list[str]:
     return signals
 
 
-def _architecture_clues(root: Path) -> list[str]:
+def architecture_clues(root: Path) -> list[str]:
     clues: list[str] = []
     for name in ("ARCHITECTURE.md", "architecture.md", "docs/architecture.md", "AGENTS.md"):
         if (root / name).is_file():
@@ -66,6 +66,12 @@ def _architecture_clues(root: Path) -> list[str]:
         if pkgs:
             clues.append("src packages: " + ", ".join(sorted(pkgs)[:12]))
     return clues
+
+
+# Back-compat aliases used by older call sites
+_detect_ci = detect_ci
+_detect_tests = detect_tests
+_architecture_clues = architecture_clues
 
 
 def project_init(root: Path) -> Path:
@@ -104,9 +110,9 @@ def project_init(root: Path) -> Path:
             break
 
     dirs = [d for d in IMPORTANT_DIRS if (root / d).exists()]
-    tests = _detect_tests(root)
-    ci = _detect_ci(root)
-    arch = _architecture_clues(root)
+    tests = detect_tests(root)
+    ci = detect_ci(root)
+    arch = architecture_clues(root)
     adapter, caps = detect_environment(root)
 
     retornatus_state: list[str] = []

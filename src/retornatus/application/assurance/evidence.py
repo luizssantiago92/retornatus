@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from retornatus.application.assurance.subject_state import capture_subject_state
 from retornatus.domain.ids import format_owned_id
 from retornatus.domain.models import Evidence
 from retornatus.domain.relations import Relation, RelationType
@@ -12,7 +13,8 @@ from retornatus.infrastructure.persistence.repository import FileRepository
 
 class EvidenceService:
     def __init__(self, root: Path) -> None:
-        self.repo = FileRepository(root)
+        self.root = root.resolve()
+        self.repo = FileRepository(self.root)
 
     def next_evidence_number(self, change_id: str) -> int:
         evidence_dir = self.repo.paths.change_dir(change_id) / "evidence"
@@ -38,7 +40,14 @@ class EvidenceService:
         supports_action_id: str | None = None,
         supports_claim_id: str | None = None,
         challenges_claim_id: str | None = None,
+        capture_git: bool = False,
     ) -> Evidence:
+        """
+        Record Evidence.
+
+        ``subject_state`` wins when provided. With ``capture_git=True`` and no
+        explicit state, records ``commit:<HEAD>`` when git is available.
+        """
         eid = format_owned_id(change_id, "E", self.next_evidence_number(change_id))
         relations: list[Relation] = []
         if supports_action_id:
@@ -53,13 +62,21 @@ class EvidenceService:
             relations.append(
                 Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id)
             )
+
+        if subject_state is not None:
+            final_state = subject_state
+        elif capture_git:
+            final_state = capture_subject_state(self.root, use_git=True)
+        else:
+            final_state = None
+
         evidence = Evidence(
             id=eid,
             type=evidence_type,
             subject=subject,
             source=source,
             producer=producer,
-            subject_state=subject_state,
+            subject_state=final_state,
             relations=relations,
         )
         self.repo.save_evidence(evidence)
