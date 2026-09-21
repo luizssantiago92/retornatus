@@ -32,4 +32,5 @@ See [`PRD.md - Retornatus V1.md`](./PRD.md%20-%20Retornatus%20V1.md) and the mir
 
 ## Status
 
-Milestone **M0 — Foundation** delivered: Python package, CLI bootstrap, tests, and `retornatus init`.
+- **M0 — Foundation**: delivered (`retornatus init`)
+- **M1 — Domain Core**: delivered (Pydantic models, IDs, relations, schema versioning)
