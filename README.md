@@ -3,7 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uvx%20%2F%20uv%20tool-recommended-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.7.0-informational.svg)](pyproject.toml)
+[![version](https://img.shields.io/badge/version-0.8.0-informational.svg)](pyproject.toml)
 
 **Repo-native governance harness for AI-assisted software development.**
 
@@ -24,7 +24,7 @@ You keep control: the agent proposes and implements; **gates** stop “done” w
 | Same ceremony for a typo and a payment flow | Tasks only when needed; `loop next` projects the next unit |
 | Failures vanish when the tab closes | Finding → Question → Action leaves a trail |
 
-**Python** · **0.7.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
+**Python** · **0.8.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
 
 **Docs:** [Product PRD](prd/PRD.md) · this README
 
@@ -85,7 +85,7 @@ retornatus doctor
 
 ```bash
 uv tool install --force /path/to/retornatus
-retornatus --version   # 0.7.x
+retornatus --version   # 0.8.x
 ```
 
 **Windows (PowerShell) — ensure `uv` is on PATH:**
@@ -134,7 +134,7 @@ Day to day you work in **agent chat**; the agent calls the CLI when a phase need
 
 Re-run `doctor` / `wake` after upgrades or machine changes. You are ready when:
 
-- `retornatus --version` prints `0.7.x` (or newer)
+- `retornatus --version` prints `0.8.x` (or newer)
 - `.retornatus/` exists with `config.toml`
 - Hub skill is visible (for example `.cursor/skills/retornatus/SKILL.md` after `integrate`)
 - Your AI coding agent can open the project
@@ -226,7 +226,9 @@ If the agent jumps straight to code: *Stop. Activate a Contract and pass `gate c
 | Capability | Status | Notes |
 | --- | --- | --- |
 | Situation elicitation | Implemented | `change elicit` + repo signals (stack/tests/CI) before Contract |
-| Task readiness / deps / cycles | Implemented | Derived READY/BLOCKED; CLI `--task` / `--depends` / `--resource` |
+| Task readiness / deps / cycles | Implemented | Derived READY/BLOCKED; CLI `--task` / `--depends` / `--resource`; `task start/complete/fail` |
+| Contract material change | Implemented | `change reopen` archives prior version + Situation note |
+| Complexity-sensitive Skills | Implemented | `skill need` skips ceremony for trivial Actions |
 | Claim↔Evidence binding | Implemented | `--claim` + SUPPORTS relation; subject/type checks |
 | Evidence staleness | Implemented | Path-aware `commit:<sha>` (file subjects) + HEAD fallback |
 | Assurance (proportional) | Implemented | Types inferred from DONE; `human_decision` not universal |
@@ -446,9 +448,10 @@ Run from the project you want to govern (or pass `--path`).
 | `doctor` | Diagnostics |
 | `status` | Derived Change status |
 | `change elicit` | Assess Situation readiness (exit 1 if insufficient) |
-| `change create` / `change learn` | Demand→Situation→Contract→Action · record Learning |
+| `change create` / `change learn` / `change reopen` | Demand→Situation→Contract→Action · Learning · material Contract version |
 | `change create --task/--depends/--resource` | Explicit Task deps and resource conflicts |
-| `skill create/list/activate/evolve/export` | On-demand specialization Skills |
+| `task start\|complete\|fail\|reopen` | Durable Task lifecycle (READY stays derived) |
+| `skill create/list/activate/evolve/export/need` | On-demand Skills + complexity-sensitive need check |
 | `gate contract\|evidence\|skill-research\|assurance` | Mechanical STOP gates |
 | `evidence add --claim` / `--git-state` | Claim-bound Evidence; optional `commit:<HEAD>` |
 | `finding add` · `question open\|resolve` | Problem loop (resolve needs Evidence when verifiable) |

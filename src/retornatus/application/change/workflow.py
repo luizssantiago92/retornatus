@@ -240,3 +240,89 @@ class ChangeWorkflow:
         if not contract.active:
             return f"{change_id}: contract draft v{contract.version}"
         return f"{change_id}: contract v{contract.version} active — {change.title}"
+
+    def reopen_contract(
+        self,
+        change_id: str,
+        *,
+        what: str,
+        done_criteria: list[str],
+        constraints: list[str] | None = None,
+        situation_note: str | None = None,
+        activate: bool = True,
+    ) -> Contract:
+        """
+        Material Contract change: archive active version, reopen Situation, new version.
+
+        Active Contracts are immutable — a new version is required (PRD §12).
+        """
+        from retornatus.infrastructure.persistence.atomic import atomic_write_bytes
+        from retornatus.infrastructure.persistence.serializers import dump_json_model
+
+        change, change_rev = self.repo.load_change(change_id)
+        current, _ = self.repo.load_contract(change_id)
+        if not current.active:
+            raise ValueError("Only an active Contract can be reopened into a new version")
+
+        # Archive immutable snapshot
+        archive_path = self.repo.paths.contract_archive_json(change_id, current.version)
+        archive_path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_bytes(archive_path, dump_json_model(current))
+
+        # Append Situation reopen note
+        try:
+            meta, body, sit_rev = self.repo.load_situation(change_id)
+            note = situation_note or (
+                f"Material change: reopened from contract v{current.version} → "
+                f"v{current.version + 1}"
+            )
+            new_body = body.rstrip() + f"\n\n## Reopened Situation\n\n{note}\n"
+            self.repo.save_markdown(
+                self.repo.paths.situation_md(change_id),
+                new_body,
+                front_matter=meta or {"schema_version": 1, "change_id": change_id},
+                expected=sit_rev,
+            )
+        except FileNotFoundError:
+            assessment = self.elicit_situation(
+                demand_statement=change.demand.statement,
+                what=what,
+                done_criteria=done_criteria,
+                constraints=constraints,
+            )
+            self.repo.save_situation(
+                change_id,
+                assessment.to_markdown(demand=change.demand.statement),
+            )
+
+        new_version = current.version + 1
+        contract = Contract(
+            change_id=change_id,
+            version=new_version,
+            what=what,
+            constraints=constraints if constraints is not None else list(current.constraints),
+            done_criteria=done_criteria,
+            active=False,
+        )
+        if activate:
+            # Sufficiency check
+            assessment = self.elicit_situation(
+                demand_statement=change.demand.statement,
+                what=what,
+                done_criteria=done_criteria,
+                constraints=contract.constraints,
+            )
+            if not assessment.sufficient_for_contract:
+                activate = False
+            else:
+                contract = contract.activate()
+                change = change.model_copy(
+                    update={"active_contract_version": contract.version}
+                )
+                self.repo.save_change(change, expected=change_rev)
+
+        # Overwrite active contract.json with new version (prior archived)
+        # Must replace existing file — load revision first
+        _, contract_rev = self.repo.load_contract(change_id)
+        self.repo.save_contract(contract, expected=contract_rev)
+        return contract
