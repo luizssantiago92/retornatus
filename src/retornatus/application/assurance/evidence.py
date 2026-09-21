@@ -66,7 +66,9 @@ class EvidenceService:
         if subject_state is not None:
             final_state = subject_state
         elif capture_git:
-            final_state = capture_subject_state(self.root, use_git=True)
+            final_state = capture_subject_state(
+                self.root, use_git=True, subject=subject
+            )
         else:
             final_state = None
 

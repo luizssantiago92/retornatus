@@ -37,6 +37,7 @@ loop_app = typer.Typer(help="Next ready unit of work (projection).")
 decision_app = typer.Typer(help="Human Decisions (HUMAN authority boundary).")
 rule_app = typer.Typer(help="Rule candidates and activation.")
 assurance_app = typer.Typer(help="Assurance evaluation and independent review.")
+execution_app = typer.Typer(help="Host Execution observations (not an agent runtime).")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -47,6 +48,7 @@ app.add_typer(loop_app, name="loop")
 app.add_typer(decision_app, name="decision")
 app.add_typer(rule_app, name="rule")
 app.add_typer(assurance_app, name="assurance")
+app.add_typer(execution_app, name="execution")
 
 
 def _parse_task_specs(
@@ -854,6 +856,53 @@ def assurance_review(
         verdict=verdict,
     )
     typer.echo(f"Recorded {eid}")
+
+
+@execution_app.command("record")
+def execution_record(
+    action_id: str = typer.Option(..., "--action", "-a"),
+    summary: str = typer.Option(..., "--summary", "-s"),
+    ok: bool = typer.Option(True, "--ok/--failed"),
+    artifact: Optional[list[str]] = typer.Option(
+        None,
+        "--artifact",
+        help="Artifact path produced by Host execution (repeatable).",
+    ),
+    producer: str = typer.Option("host", "--producer"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Record that Environment-native Host work completed for an Action."""
+    from retornatus.application.execution.host_record import HostExecutionService
+
+    root = (path or Path.cwd()).resolve()
+    record = HostExecutionService(root).record(
+        action_id=action_id,
+        summary=summary,
+        ok=ok,
+        artifact_paths=list(artifact or []),
+        producer=producer,
+        capture_git=True,
+    )
+    typer.echo(f"Recorded {record.id} for {record.action_id} ok={record.ok}")
+    if record.subject_state:
+        typer.echo(f"subject_state={record.subject_state}")
+
+
+@execution_app.command("list")
+def execution_list(
+    action_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """List Host Execution records for an Action."""
+    from retornatus.application.execution.host_record import HostExecutionService
+
+    root = (path or Path.cwd()).resolve()
+    records = HostExecutionService(root).list_for_action(action_id)
+    if not records:
+        typer.echo("No host executions.")
+        return
+    for record in records:
+        typer.echo(f"{record.id}\tok={record.ok}\t{record.summary}")
 
 
 def run() -> None:
