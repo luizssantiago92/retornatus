@@ -84,3 +84,9 @@ class RetornatusPaths:
 
     def learning_md(self, learning_id: str) -> Path:
         return self.learnings / f"{learning_id}.md"
+
+    def skill_dir(self, skill_id: str) -> Path:
+        return self.skills / skill_id
+
+    def skill_md(self, skill_id: str) -> Path:
+        return self.skill_dir(skill_id) / "SKILL.md"

@@ -16,6 +16,8 @@ from retornatus.domain.enums import (
     QuestionDisposition,
     QuestionLifecycle,
     RuleApplicationMode,
+    SkillSource,
+    SkillStatus,
     TaskLifecycle,
 )
 from retornatus.domain.ids import (
@@ -26,6 +28,7 @@ from retornatus.domain.ids import (
     LearningId,
     QuestionId,
     RuleId,
+    SkillId,
     TaskId,
     change_id_of,
 )
@@ -244,6 +247,36 @@ class LearningMetadata(DomainModel):
     summary: str | None = None
     tags: list[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=_utc_now)
+    relations: list[Relation] = Field(default_factory=list)
+
+
+class Skill(DomainModel):
+    """
+    Reusable procedural knowledge for a class of engineering work (PRD §39).
+
+    Skills are created for specialization needs (often one per Change feature),
+    consumed as stable snapshots during Execution, and evolved via Adaptation.
+    Retornatus owns structure; agents research and fill procedure content.
+    """
+
+    id: SkillId
+    name: str = Field(min_length=1, description="Short machine-friendly name")
+    title: str = Field(min_length=1)
+    description: str = Field(
+        min_length=1,
+        description="When to activate this skill (progressive disclosure)",
+    )
+    specialization: str = Field(
+        min_length=1,
+        description="The concrete specialization need that justified creation",
+    )
+    status: SkillStatus = SkillStatus.DRAFT
+    source: SkillSource = SkillSource.RESEARCHED
+    version: int = Field(default=1, ge=1)
+    change_id: ChangeId | None = None
+    action_id: ActionId | None = None
+    created_at: datetime = Field(default_factory=_utc_now)
+    updated_at: datetime = Field(default_factory=_utc_now)
     relations: list[Relation] = Field(default_factory=list)
 
 

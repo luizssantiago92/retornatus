@@ -9,6 +9,8 @@ from retornatus.domain.enums import (
     QuestionDisposition,
     QuestionLifecycle,
     RuleApplicationMode,
+    SkillSource,
+    SkillStatus,
     TaskLifecycle,
 )
 from retornatus.domain.ids import (
@@ -20,6 +22,7 @@ from retornatus.domain.ids import (
     LearningId,
     QuestionId,
     RuleId,
+    SkillId,
     TaskId,
     change_id_of,
     format_change_id,
@@ -40,6 +43,7 @@ from retornatus.domain.models import (
     Question,
     Resolution,
     Rule,
+    Skill,
     Task,
 )
 from retornatus.domain.relations import Relation, RelationType
@@ -77,6 +81,10 @@ __all__ = [
     "Rule",
     "RuleApplicationMode",
     "RuleId",
+    "Skill",
+    "SkillId",
+    "SkillSource",
+    "SkillStatus",
     "Task",
     "TaskId",
     "TaskLifecycle",

@@ -286,6 +286,8 @@ Run from the project you want to govern (or pass `--path`).
 | `retornatus status` | Derived Change status projection |
 | `retornatus change create …` | Demand → Situation → Contract → Action |
 | `retornatus change learn …` | Record a Learning |
+| `retornatus skill create --need "…"` | Create one specialization Skill (agent researches & fills) |
+| `retornatus skill list` / `activate` / `evolve` / `export` | Skill lifecycle + native Cursor export |
 | `retornatus run <action-id>` | Assemble ExecutionContext (does not run the agent) |
 | `retornatus verify <change-id>` | Assurance over Contract DONE criteria |
 | `retornatus inspect <id>` | Print Change / Action / Finding / Question / Evidence / Rule / Learning |

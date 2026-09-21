@@ -17,6 +17,7 @@ from retornatus.domain.models import (
     LearningMetadata,
     Question,
     Rule,
+    Skill,
 )
 from retornatus.infrastructure.persistence.atomic import atomic_write_bytes, atomic_write_text
 from retornatus.infrastructure.persistence.concurrency import (
@@ -275,4 +276,35 @@ class FileRepository:
             meta, _, _ = self.load_markdown(path)
             if meta:
                 items.append(LearningMetadata.model_validate(meta))
+        return items
+
+    def save_skill(
+        self,
+        skill: Skill,
+        body: str,
+        *,
+        expected: ArtifactRevision | None = None,
+    ) -> ArtifactRevision:
+        path = self.paths.skill_md(skill.id)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        front = json.loads(skill.model_dump_json())
+        return self.save_markdown(path, body, front_matter=front, expected=expected)
+
+    def load_skill(self, skill_id: str) -> tuple[Skill, str, ArtifactRevision]:
+        meta, body, revision = self.load_markdown(self.paths.skill_md(skill_id))
+        if meta is None:
+            raise IncompatibleSchemaError(f"Skill {skill_id} missing metadata")
+        return Skill.model_validate(meta), body, revision
+
+    def list_skills(self) -> list[Skill]:
+        if not self.paths.skills.is_dir():
+            return []
+        items: list[Skill] = []
+        for path in sorted(self.paths.skills.glob("S-*")):
+            skill_md = path / "SKILL.md"
+            if not skill_md.is_file():
+                continue
+            meta, _, _ = self.load_markdown(skill_md)
+            if meta:
+                items.append(Skill.model_validate(meta))
         return items

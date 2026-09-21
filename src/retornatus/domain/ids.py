@@ -7,8 +7,8 @@ from typing import Annotated
 
 from pydantic import AfterValidator, StringConstraints
 
-# Project-level: L-0001, R-0001, D-0001
-_PROJECT_ID = re.compile(r"^(?P<prefix>[LRD])-(?P<num>\d{4,})$")
+# Project-level: L-0001, R-0001, D-0001, S-0001 (Skill)
+_PROJECT_ID = re.compile(r"^(?P<prefix>[LRDS])-(?P<num>\d{4,})$")
 # Change: C-0001
 _CHANGE_ID = re.compile(r"^C-(?P<num>\d{4,})$")
 # Change-owned: C-0001/A-001, C-0001/T-001, ...
@@ -51,6 +51,10 @@ def validate_decision_id(value: str) -> str:
     return _validate_project_id(value, allowed=frozenset({"D"}), label="Decision")
 
 
+def validate_skill_id(value: str) -> str:
+    return _validate_project_id(value, allowed=frozenset({"S"}), label="Skill")
+
+
 def validate_change_id(value: str) -> str:
     return _validate_change_id(value)
 
@@ -78,6 +82,7 @@ def validate_evidence_id(value: str) -> str:
 LearningId = Annotated[_StrictStr, AfterValidator(validate_learning_id)]
 RuleId = Annotated[_StrictStr, AfterValidator(validate_rule_id)]
 DecisionId = Annotated[_StrictStr, AfterValidator(validate_decision_id)]
+SkillId = Annotated[_StrictStr, AfterValidator(validate_skill_id)]
 ChangeId = Annotated[_StrictStr, AfterValidator(validate_change_id)]
 ActionId = Annotated[_StrictStr, AfterValidator(validate_action_id)]
 TaskId = Annotated[_StrictStr, AfterValidator(validate_task_id)]
@@ -95,7 +100,7 @@ def change_id_of(owned_id: str) -> str:
 
 
 def format_project_id(prefix: str, number: int) -> str:
-    if prefix not in {"L", "R", "D"}:
+    if prefix not in {"L", "R", "D", "S"}:
         raise ValueError(f"Unsupported project id prefix: {prefix!r}")
     if number < 1:
         raise ValueError("Identifier number must be >= 1")

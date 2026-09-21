@@ -8,6 +8,7 @@ from pathlib import Path
 from pydantic import Field
 
 from retornatus.domain.base import DomainModel
+from retornatus.application.adaptation.skills import SkillService
 from retornatus.domain.models import (
     Action,
     Authority,
@@ -15,6 +16,7 @@ from retornatus.domain.models import (
     Boundary,
     LearningMetadata,
     Rule,
+    Skill,
 )
 from retornatus.domain.enums import BoundaryRealization
 from retornatus.infrastructure.persistence.repository import FileRepository
@@ -31,6 +33,7 @@ class ExecutionContext(DomainModel):
     boundaries: Boundaries = Field(default_factory=Boundaries)
     applicable_rules: list[Rule] = Field(default_factory=list)
     relevant_learnings: list[LearningMetadata] = Field(default_factory=list)
+    skills: list[Skill] = Field(default_factory=list)
     skill_ids: list[str] = Field(default_factory=list)
     capability_requirements: list[str] = Field(default_factory=list)
 
@@ -59,6 +62,19 @@ def assemble_execution_context(
     else:
         learnings = learnings[:5]
 
+    skill_service = SkillService(root)
+    skills = skill_service.resolve_for_action(action_id)
+    if skill_ids:
+        for sid in skill_ids:
+            try:
+                skill, _, _ = repo.load_skill(sid)
+            except FileNotFoundError:
+                continue
+            if skill.id not in {s.id for s in skills}:
+                skills.append(skill)
+    if query and not skills:
+        skills = skill_service.resolve_relevant(query)
+
     boundaries = Boundaries(
         items=[
             Boundary(
@@ -78,6 +94,7 @@ def assemble_execution_context(
         boundaries=boundaries,
         applicable_rules=rules,
         relevant_learnings=learnings,
-        skill_ids=skill_ids or [],
+        skills=skills,
+        skill_ids=[s.id for s in skills],
         capability_requirements=capability_requirements or [],
     )

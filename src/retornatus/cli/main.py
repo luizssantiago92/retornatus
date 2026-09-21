@@ -9,6 +9,7 @@ import typer
 
 from retornatus import __version__
 from retornatus.application.adaptation.service import AdaptationService
+from retornatus.application.adaptation.skills import SkillService
 from retornatus.application.change.workflow import ChangeWorkflow
 from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.bootstrap.wake import wake_up
@@ -27,7 +28,9 @@ app = typer.Typer(
 )
 
 change_app = typer.Typer(help="Create and inspect Changes.")
+skill_app = typer.Typer(help="Specialization Skills — create, evolve, export.")
 app.add_typer(change_app, name="change")
+app.add_typer(skill_app, name="skill")
 
 
 def version_callback(value: bool) -> None:
@@ -153,6 +156,12 @@ def inspect(
         rule, _ = repo.load_rule(entity_id)
         typer.echo(rule.model_dump_json(indent=2))
         return
+    if entity_id.startswith("S-"):
+        meta, body, _ = repo.load_skill(entity_id)
+        typer.echo(meta.model_dump_json(indent=2))
+        typer.echo("---")
+        typer.echo(body)
+        return
     if entity_id.startswith("L-"):
         meta, body, _ = repo.load_learning(entity_id)
         typer.echo(meta.model_dump_json(indent=2))
@@ -257,6 +266,96 @@ def change_learn(
     root = (path or Path.cwd()).resolve()
     meta = AdaptationService(root).record_learning(title=title, body=body, summary=summary)
     typer.echo(f"Recorded {meta.id}")
+
+
+@skill_app.command("create")
+def skill_create(
+    specialization: str = typer.Option(
+        ...,
+        "--need",
+        "-n",
+        help="Specialization the agent must research and encode.",
+    ),
+    title: Optional[str] = typer.Option(None, "--title", "-t"),
+    action_id: Optional[str] = typer.Option(None, "--action", "-a"),
+    change_id: Optional[str] = typer.Option(None, "--change", "-c"),
+    research_seed: Optional[str] = typer.Option(
+        None,
+        "--research-seed",
+        help="Hints for where/how the agent should research.",
+    ),
+    activate: bool = typer.Option(False, "--activate", help="Mark ACTIVE immediately."),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Create one specialization Skill (agent fills RESEARCH via web tools)."""
+    root = (path or Path.cwd()).resolve()
+    if not is_initialized(root):
+        initialize_project(root)
+    if action_id and not change_id and "/" in action_id:
+        change_id = action_id.split("/", 1)[0]
+    skill, _ = SkillService(root).create_for_specialization(
+        specialization=specialization,
+        title=title,
+        change_id=change_id,
+        action_id=action_id,
+        research_seed=research_seed,
+        activate=activate,
+    )
+    typer.echo(f"Created {skill.id} ({skill.status.value}) at .retornatus/adaptation/skills/{skill.id}/SKILL.md")
+    typer.echo("Agent next step: research current sources and fill RESEARCH + PROCEDURE.")
+
+
+@skill_app.command("list")
+def skill_list(path: Optional[Path] = typer.Option(None, "--path", "-p")) -> None:
+    """List project Skills."""
+    root = (path or Path.cwd()).resolve()
+    skills = FileRepository(root).list_skills()
+    if not skills:
+        typer.echo("No skills.")
+        return
+    for skill in skills:
+        typer.echo(
+            f"{skill.id}\tv{skill.version}\t{skill.status.value}\t{skill.title}"
+        )
+
+
+@skill_app.command("activate")
+def skill_activate(
+    skill_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Mark a Skill ACTIVE for Execution consumption."""
+    skill = SkillService(path or Path.cwd()).activate(skill_id)
+    typer.echo(f"Activated {skill.id}")
+
+
+@skill_app.command("evolve")
+def skill_evolve(
+    skill_id: str = typer.Argument(...),
+    note: str = typer.Option(..., "--note", "-n"),
+    learning_id: Optional[str] = typer.Option(None, "--from-learning", "-l"),
+    append: Optional[str] = typer.Option(None, "--append", help="Extra procedure text."),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Evolve a Skill from validated experience (Adaptation)."""
+    skill = SkillService(path or Path.cwd()).evolve(
+        skill_id,
+        note=note,
+        from_learning_id=learning_id,
+        body_append=append,
+    )
+    typer.echo(f"Evolved {skill.id} to v{skill.version}")
+
+
+@skill_app.command("export")
+def skill_export(
+    skill_id: str = typer.Argument(...),
+    target: str = typer.Option("cursor", "--target"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Export Skill to a native environment skill surface (e.g. .cursor/skills/)."""
+    dest = SkillService(path or Path.cwd()).export_native(skill_id, target=target)
+    typer.echo(f"Exported to {dest}")
 
 
 def run() -> None:

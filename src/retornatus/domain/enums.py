@@ -72,3 +72,20 @@ class DemandKind(str, Enum):
     MAINTENANCE = "MAINTENANCE"
     SECURITY = "SECURITY"
     OTHER = "OTHER"
+
+
+class SkillStatus(str, Enum):
+    """Skill lifecycle (PRD §39 — evolution belongs to Adaptation)."""
+
+    DRAFT = "DRAFT"
+    ACTIVE = "ACTIVE"
+    SUPERSEDED = "SUPERSEDED"
+
+
+class SkillSource(str, Enum):
+    """Where a Skill came from."""
+
+    RESEARCHED = "RESEARCHED"
+    PROJECT = "PROJECT"
+    NATIVE = "NATIVE"
+    IMPORTED = "IMPORTED"
