@@ -17,22 +17,27 @@ Durable truth lives in `.retornatus/`, not in chat.
 
 1. `retornatus wake` (or `wake --bridges`) / `project-init` for brownfield context
 2. Elicit Situation when needed: `retornatus change elicit --demand "..." --what "..." --done "..."`
-3. If no Change: `retornatus change create ...` (Contract activates only when Situation is sufficient)
-4. Gate: `retornatus gate contract <C-id>` — must exit 0
-5. If specialization needed: `retornatus skill create --need "..." --action <A-id>`
-6. **Research current sources on the web**, fill RESEARCH + PROCEDURE in `SKILL.md`
-7. `retornatus gate skill-research <S-id>` then `retornatus skill activate <S-id>`
+3. If no Change: `retornatus change create ...` (use `--draft-contract` when Situation is incomplete)
+4. Activate draft Contracts when ready: `retornatus change activate <C-id>`
+5. Gate: `retornatus gate contract <C-id>` — must exit 0
+6. Check derived status: `retornatus status` (tasks, open questions, next work, assurance)
+7. If specialization needed: `retornatus skill need --action <A-id>` then `skill create --need "..." --action <A-id>`
+8. **Research current sources on the web**, fill RESEARCH + PROCEDURE in `SKILL.md`
+9. `retornatus gate skill-research <S-id>` then `retornatus skill activate <S-id>`
    - Bypass only as governed decision: `skill activate --force --reason "..."`
-8. Optional: `retornatus skill export <S-id>` for native Cursor loading
-9. `retornatus run <A-id>` — read ExecutionContext (rules, learnings, skills)
-10. Implement **ready** work: `retornatus loop next <C-id>` (use `--all-ready` for parallelizable tasks)
-11. Record proof bound to Claims: `retornatus evidence add ... --type test_result --claim <claim-id>`
-12. If blocked by discovery: `retornatus finding add` → `retornatus question open`
-13. Resolve Questions with Evidence: `question resolve ... --evidence <E-id>` (not summary alone)
-14. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0)
-15. Independent review when needed: `retornatus run <A-id> --assurance`
-16. Preserve: `retornatus change learn ...` and `retornatus skill evolve ...`
-17. Rule Candidates require HUMAN Decision: `decision record` → `rule activate --decision D-xxxx`
+10. Optional: `retornatus skill export <S-id>` for native Cursor loading
+11. `retornatus run <A-id>` — read ExecutionContext (rules, learnings, skills)
+12. Implement **ready** work: `retornatus loop next <C-id>` (use `--all-ready` for parallelizable tasks)
+13. Advance Tasks: `task start|complete|fail|reopen`
+14. Record proof bound to Claims: `retornatus evidence add ... --type test_result --claim <claim-id>`
+15. If blocked by discovery: `finding add` → `question open` (IDs auto-number) → resolve with Evidence
+16. Reopen Questions when the condition reappears: `question reopen <Q-id>`
+17. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0)
+18. Independent review when needed: `retornatus run <A-id> --assurance`
+19. Material Contract change: `change reopen` (archives prior version)
+20. Preserve: `retornatus change learn ...` and `retornatus skill evolve ...`
+21. Rule Candidates require HUMAN Decision: `decision record` → `rule activate --decision D-xxxx`
+22. Hygiene: `retornatus doctor` (draft contracts, skill research gaps, inactive rules)
 
 ## Hard rules
 
@@ -43,15 +48,17 @@ Durable truth lives in `.retornatus/`, not in chat.
 - Learning informs; Rules constrain — no automatic authoritative Rules
 - Do not invent fake Task dependencies from declaration order
 - Bypass is a governed decision, not absence of governance
+- Status is a derived projection — durable truth lives in artifacts under `.retornatus/`
 
 ## CLI map
 
 | Intent | Command |
 | --- | --- |
-| Continuity | `wake`, `doctor`, `project-init` |
-| Situation | `change elicit`, `change create` |
-| Skill | `skill create/list/activate/evolve/export` |
+| Continuity | `wake`, `doctor`, `status`, `project-init` |
+| Situation | `change elicit`, `change create`, `change activate`, `change reopen` |
+| Skill | `skill create/list/need/activate/evolve/export` |
 | Proof | `evidence add --claim`, `verify`, `gate *` |
-| Problems | `finding add`, `question open/resolve` |
+| Problems | `finding add`, `question open/resolve/reopen` |
+| Tasks | `task start/complete/fail/reopen` |
 | Next work | `loop next`, `loop next --all-ready` |
 | Human boundary | `decision record`, `rule propose/activate` |

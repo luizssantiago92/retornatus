@@ -1,4 +1,4 @@
-# Spec Guardrails behavioral parity matrix (v0.7)
+# Spec Guardrails behavioral parity matrix (v0.9)
 
 Retornatus answers useful Spec Guardrails capabilities without cloning its architecture.
 
@@ -24,7 +24,10 @@ Retornatus answers useful Spec Guardrails capabilities without cloning its archi
 | restart/handoff | wake rebuild | RETORNATUS | wake tests |
 | human approval | Decision → Rule activate | RETORNATUS | adaptation service |
 | git/environment constraints | commit/path freshness + env caps | COMPOSITION | subject_state + adapters |
-| diagnostics | doctor / wake diagnostics | RETORNATUS | wake |
+| diagnostics | doctor hygiene + wake diagnostics | RETORNATUS | doctor.py + wake |
+| status projection | rich derived Change status | RETORNATUS | status.py |
+| draft contract activation | `change activate` after elicitation | RETORNATUS | workflow.activate_contract |
+| question reopen | clear Resolution when condition returns | RETORNATUS | QuestionLoop.reopen_question |
 | host execution observation | HostExecutionRecord (not runtime) | RETORNATUS | host_record.py |
 | LLM agent runtime | Environment-native | NATIVE ENVIRONMENT | — |
 | remote orchestration | not in V1 | NOT REQUIRED | — |
