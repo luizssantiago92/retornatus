@@ -15,6 +15,7 @@ DIRECTORY_TREE: tuple[str, ...] = (
     "project/decisions",
     "changes",
     "governance/rules",
+    "governance/bypasses",
     "adaptation/learnings",
     "adaptation/skills",
     "index",
@@ -26,7 +27,7 @@ DIRECTORY_TREE: tuple[str, ...] = (
 DEFAULT_CONFIG: dict[str, object] = {
     "schema_version": SCHEMA_VERSION,
     "retornatus": {
-        "version": "0.1.0",
+        "version": "0.5.0",
     },
     "project": {
         "initialized": True,

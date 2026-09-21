@@ -34,6 +34,8 @@ evidence_app = typer.Typer(help="Attributable Evidence.")
 finding_app = typer.Typer(help="Findings.")
 question_app = typer.Typer(help="Questions grounded in Findings.")
 loop_app = typer.Typer(help="Next ready unit of work (projection).")
+decision_app = typer.Typer(help="Human Decisions (HUMAN authority boundary).")
+rule_app = typer.Typer(help="Rule candidates and activation.")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -41,6 +43,8 @@ app.add_typer(evidence_app, name="evidence")
 app.add_typer(finding_app, name="finding")
 app.add_typer(question_app, name="question")
 app.add_typer(loop_app, name="loop")
+app.add_typer(decision_app, name="decision")
+app.add_typer(rule_app, name="rule")
 
 
 def version_callback(value: bool) -> None:
@@ -202,23 +206,19 @@ def verify(
     change_id: str = typer.Argument(..., help="Change id to verify against contract DONE."),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
-    """Run Assurance against a Change's contract done criteria (evidence types)."""
-    from retornatus.application.assurance.evaluate import Claim, evaluate_assurance
+    """Run Assurance against a Change's contract DONE Claims (bound Evidence)."""
+    from retornatus.application.assurance.evaluate import (
+        build_claims_from_contract,
+        evaluate_assurance,
+    )
+    from retornatus.application.assurance.evidence import EvidenceService
 
     root = (path or Path.cwd()).resolve()
     repo = FileRepository(root)
     contract, _ = repo.load_contract(change_id)
-    evidence_dir = repo.paths.change_dir(change_id) / "evidence"
-    evidence_pairs: list[tuple[str, str]] = []
-    if evidence_dir.is_dir():
-        for p in evidence_dir.glob("E-*.json"):
-            ev, _ = repo.load_evidence(f"{change_id}/{p.stem}")
-            evidence_pairs.append((ev.id, ev.type))
-    claims = [
-        Claim(id=f"done-{i}", statement=crit, required_evidence_types=["test_result", "human_decision"])
-        for i, crit in enumerate(contract.done_criteria, start=1)
-    ]
-    result = evaluate_assurance(claims=claims, evidence=evidence_pairs)
+    claims = build_claims_from_contract(contract)
+    evidence = EvidenceService(root).list_for_change(change_id)
+    result = evaluate_assurance(claims=claims, evidence=evidence)
     typer.echo(result.model_dump_json(indent=2))
     raise typer.Exit(code=0 if result.verdict.value == "SATISFIED" else 1)
 
@@ -227,13 +227,48 @@ def verify(
 def run(
     action_id: str = typer.Argument(..., help="Action id to assemble execution context for."),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
+    assurance: bool = typer.Option(
+        False,
+        "--assurance",
+        help="Assemble a fresh independent Assurance ExecutionContext.",
+    ),
 ) -> None:
     """Assemble a stable ExecutionContext for an Action (does not execute agents)."""
-    from retornatus.application.execution.context import assemble_execution_context
+    from retornatus.application.execution.context import (
+        assemble_assurance_context,
+        assemble_execution_context,
+    )
 
     root = (path or Path.cwd()).resolve()
-    ctx = assemble_execution_context(root, action_id)
+    if assurance:
+        ctx = assemble_assurance_context(root, action_id)
+    else:
+        ctx = assemble_execution_context(root, action_id)
     typer.echo(ctx.model_dump_json(indent=2))
+
+
+@change_app.command("elicit")
+def change_elicit(
+    demand: str = typer.Option(..., "--demand", "-d"),
+    what: Optional[str] = typer.Option(None, "--what", "-w"),
+    done: Optional[list[str]] = typer.Option(None, "--done"),
+    situation: Optional[str] = typer.Option(None, "--situation", "-s"),
+    constraint: Optional[list[str]] = typer.Option(None, "--constraint"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Assess Situation readiness before formalizing a Contract."""
+    root = (path or Path.cwd()).resolve()
+    if not is_initialized(root):
+        initialize_project(root)
+    assessment = ChangeWorkflow(root).elicit_situation(
+        demand_statement=demand,
+        situation=situation,
+        what=what,
+        done_criteria=list(done or []),
+        constraints=list(constraint or []),
+    )
+    typer.echo(assessment.to_markdown(demand=demand))
+    raise typer.Exit(code=0 if assessment.sufficient_for_contract else 1)
 
 
 @change_app.command("create")
@@ -245,6 +280,11 @@ def change_create(
     situation: str = typer.Option("Situation pending detailed analysis.", "--situation", "-s"),
     objective: Optional[str] = typer.Option(None, "--objective", "-o"),
     kind: DemandKind = typer.Option(DemandKind.OTHER, "--kind", "-k"),
+    draft_contract: bool = typer.Option(
+        False,
+        "--draft-contract",
+        help="Create Contract without activating (elicitation incomplete).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Create a Change with Situation, Contract, and optional Action."""
@@ -259,8 +299,18 @@ def change_create(
         what=what,
         done_criteria=list(done),
         action_objective=objective or what,
+        activate_contract=not draft_contract,
     )
     typer.echo(f"Created {result.change.id}")
+    if result.situation_assessment:
+        ready = result.situation_assessment.sufficient_for_contract
+        typer.echo(f"Situation sufficient: {ready}")
+        if not ready:
+            for q in result.situation_assessment.focused_questions:
+                typer.echo(f"  Q[{q.topic}]: {q.question}")
+    typer.echo(
+        f"Contract v{result.contract.version} active={result.contract.active}"
+    )
     if result.action:
         typer.echo(f"Action {result.action.id}")
 
@@ -333,21 +383,27 @@ def skill_list(path: Optional[Path] = typer.Option(None, "--path", "-p")) -> Non
 def skill_activate(
     skill_id: str = typer.Argument(...),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
-    force: bool = typer.Option(False, "--force", help="Skip research gate."),
+    force: bool = typer.Option(False, "--force", help="Governed bypass of research gate."),
+    reason: Optional[str] = typer.Option(
+        None,
+        "--reason",
+        help="Required with --force: why the gate is bypassed.",
+    ),
 ) -> None:
     """Mark a Skill ACTIVE for Execution consumption."""
     root = path or Path.cwd()
-    if not force:
-        from retornatus.application.governance.gates import gate_skill_research
-
-        result = gate_skill_research(root, skill_id)
-        if not result.passed:
-            for msg in result.messages:
-                typer.echo(msg)
-            typer.echo("Fill RESEARCH (with URLs) before activate, or pass --force.")
-            raise typer.Exit(1)
-    skill = SkillService(root).activate(skill_id)
+    try:
+        skill = SkillService(root).activate(
+            skill_id,
+            force=force,
+            bypass_reason=reason,
+        )
+    except Exception as exc:  # noqa: BLE001 — surface governance errors
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
     typer.echo(f"Activated {skill.id}")
+    if force:
+        typer.echo("Governed bypass recorded for skill-research gate.")
 
 
 @skill_app.command("evolve")
@@ -473,6 +529,11 @@ def evidence_add(
     producer: str = typer.Option("agent", "--producer"),
     subject_state: Optional[str] = typer.Option(None, "--state"),
     action_id: Optional[str] = typer.Option(None, "--action", "-a"),
+    claim_id: Optional[str] = typer.Option(
+        None,
+        "--claim",
+        help="Claim id this Evidence SUPPORTS (required for Assurance binding).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Record attributable Evidence for a Change."""
@@ -486,6 +547,7 @@ def evidence_add(
         producer=producer,
         subject_state=subject_state,
         supports_action_id=action_id,
+        supports_claim_id=claim_id,
     )
     typer.echo(f"Recorded {ev.id}")
 
@@ -537,14 +599,21 @@ def question_resolve(
     evidence: Optional[list[str]] = typer.Option(None, "--evidence", "-e"),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
-    """Resolve a Question with an established summary (+ optional evidence ids)."""
-    from retornatus.application.question.loop import QuestionLoop
-
-    q = QuestionLoop(path or Path.cwd()).resolve_question(
-        question_id,
-        summary=summary,
-        evidence_ids=list(evidence or []),
+    """Resolve a Question with established summary + Evidence when required."""
+    from retornatus.application.question.loop import (
+        QuestionLoop,
+        ResolutionIncompleteError,
     )
+
+    try:
+        q = QuestionLoop(path or Path.cwd()).resolve_question(
+            question_id,
+            summary=summary,
+            evidence_ids=list(evidence or []),
+        )
+    except ResolutionIncompleteError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
     typer.echo(f"Resolved {q.id}")
 
 
@@ -552,15 +621,109 @@ def question_resolve(
 def loop_next(
     change_id: str = typer.Argument(...),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
+    all_ready: bool = typer.Option(
+        False,
+        "--all-ready",
+        help="List all READY tasks (parallelizable projection).",
+    ),
 ) -> None:
     """Project the next ready Question, Task, or Action (not a Loop Engine)."""
-    from retornatus.application.change.loop import next_work
+    from retornatus.application.change.loop import project_next_work
 
-    item = next_work(path or Path.cwd(), change_id)
-    if item is None:
+    projection = project_next_work(path or Path.cwd(), change_id)
+    if projection.primary is None:
         typer.echo("Nothing found.")
         raise typer.Exit(1)
+    if all_ready and len(projection.ready) > 1:
+        for item in projection.ready:
+            typer.echo(f"{item.kind}\t{item.id}\t{item.summary}")
+        if projection.parallelizable_task_ids:
+            typer.echo(
+                "parallelizable\t"
+                + ",".join(projection.parallelizable_task_ids)
+            )
+        return
+    item = projection.primary
     typer.echo(f"{item.kind}\t{item.id}\t{item.summary}")
+    if len(projection.ready) > 1:
+        typer.echo(f"# also ready: {len(projection.ready) - 1} more (use --all-ready)")
+
+
+@decision_app.command("record")
+def decision_record(
+    kind: str = typer.Option(
+        ...,
+        "--kind",
+        "-k",
+        help="APPROVE_RULE_ACTIVATION | GOVERNANCE_BYPASS | CONTRACT_APPROVAL | OTHER",
+    ),
+    subject_id: str = typer.Option(..., "--subject", "-s"),
+    summary: str = typer.Option(..., "--summary"),
+    confirm: str = typer.Option(
+        ...,
+        "--confirm",
+        help="Must equal --subject for activation/bypass decisions.",
+    ),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Record a HUMAN Decision (local harness authority boundary)."""
+    from retornatus.domain.enums import DecisionKind
+
+    root = (path or Path.cwd()).resolve()
+    try:
+        decision_kind = DecisionKind(kind)
+    except ValueError as exc:
+        typer.echo(f"Unknown decision kind: {kind}")
+        raise typer.Exit(1) from exc
+    decision = AdaptationService(root).record_human_decision(
+        kind=decision_kind,
+        subject_id=subject_id,
+        summary=summary,
+        confirmation_token=confirm,
+    )
+    typer.echo(f"Recorded {decision.id}")
+
+
+@rule_app.command("propose")
+def rule_propose(
+    statement: str = typer.Option(..., "--statement", "-s"),
+    applicability: str = typer.Option(..., "--applicability", "-a"),
+    learning_id: Optional[str] = typer.Option(None, "--from-learning", "-l"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Propose a Rule Candidate (never auto-activates)."""
+    root = (path or Path.cwd()).resolve()
+    candidate = AdaptationService(root).propose_rule_candidate(
+        statement=statement,
+        applicability=applicability,
+        from_learning_id=learning_id,
+    )
+    typer.echo(f"Proposed candidate {candidate.id} (active={candidate.active})")
+
+
+@rule_app.command("activate")
+def rule_activate(
+    rule_id: str = typer.Argument(...),
+    decision_id: str = typer.Option(
+        ...,
+        "--decision",
+        "-d",
+        help="Human Decision id approving activation.",
+    ),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Activate a Rule Candidate via HUMAN Decision boundary."""
+    from retornatus.application.adaptation.service import HumanAuthorityError
+
+    root = (path or Path.cwd()).resolve()
+    try:
+        rule = AdaptationService(root).activate_rule(
+            rule_id, human_decision_id=decision_id
+        )
+    except HumanAuthorityError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Activated {rule.id}")
 
 
 def run() -> None:

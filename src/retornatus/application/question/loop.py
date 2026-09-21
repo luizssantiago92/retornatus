@@ -1,4 +1,4 @@
-"""Finding → Question → Action loop (PRD M7)."""
+"""Finding → Question → Action loop (PRD M7). Resolution is established, not claimed."""
 
 from __future__ import annotations
 
@@ -19,6 +19,31 @@ from retornatus.domain.models import (
 )
 from retornatus.domain.relations import Relation, RelationType
 from retornatus.infrastructure.persistence.repository import FileRepository
+
+
+class ResolutionIncompleteError(ValueError):
+    """Raised when Resolution lacks Evidence required to establish the outcome."""
+
+
+def _requires_evidence(statement: str) -> bool:
+    """Verifiable outcome Questions need Evidence — not bare self-report."""
+    s = statement.lower()
+    markers = (
+        "fix",
+        "broken",
+        "fail",
+        "pass",
+        "evidence",
+        "verify",
+        "how do we establish",
+        "assurance",
+        "bug",
+        "error",
+        "regress",
+        "implement",
+        "work",
+    )
+    return any(m in s for m in markers)
 
 
 class QuestionLoop:
@@ -95,16 +120,39 @@ class QuestionLoop:
         *,
         summary: str,
         evidence_ids: list[str] | None = None,
+        require_evidence: bool | None = None,
     ) -> Question:
         question, rev = self.repo.load_question(question_id)
         if question.lifecycle == QuestionLifecycle.RESOLVED:
             return question
+
+        ids = list(evidence_ids or [])
+        needs_proof = (
+            require_evidence
+            if require_evidence is not None
+            else _requires_evidence(question.statement)
+        )
+        if needs_proof and not ids:
+            raise ResolutionIncompleteError(
+                "Resolution requires attributable Evidence for this verifiable Question "
+                f"({question_id}); summary alone is not establishment"
+            )
+
+        # Validate Evidence artifacts exist when cited
+        for eid in ids:
+            try:
+                self.repo.load_evidence(eid)
+            except FileNotFoundError as exc:
+                raise ResolutionIncompleteError(
+                    f"Resolution cites missing Evidence: {eid}"
+                ) from exc
+
         updated = question.model_copy(
             update={
                 "lifecycle": QuestionLifecycle.RESOLVED,
                 "resolution": Resolution(
                     summary=summary,
-                    evidence_ids=evidence_ids or [],
+                    evidence_ids=ids,
                 ),
             }
         )

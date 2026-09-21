@@ -89,3 +89,22 @@ class SkillSource(str, Enum):
     PROJECT = "PROJECT"
     NATIVE = "NATIVE"
     IMPORTED = "IMPORTED"
+
+
+class DecisionKind(str, Enum):
+    """Kinds of durable human decisions (local harness boundary)."""
+
+    APPROVE_RULE_ACTIVATION = "APPROVE_RULE_ACTIVATION"
+    GOVERNANCE_BYPASS = "GOVERNANCE_BYPASS"
+    CONTRACT_APPROVAL = "CONTRACT_APPROVAL"
+    OTHER = "OTHER"
+
+
+class DerivedTaskState(str, Enum):
+    """Derived readiness projection — not durable truth (PRD §16)."""
+
+    READY = "READY"
+    BLOCKED = "BLOCKED"
+    ACTIVE = "ACTIVE"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"

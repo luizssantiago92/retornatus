@@ -4,11 +4,34 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from retornatus.application.adaptation.skills import SkillService
 from retornatus.application.change.workflow import ChangeWorkflow
 from retornatus.application.execution.context import assemble_execution_context
+from retornatus.application.governance.bypass import BypassError
 from retornatus.bootstrap.init import initialize_project
 from retornatus.domain.enums import DemandKind, SkillStatus
+from retornatus.infrastructure.persistence.repository import FileRepository
+
+
+def _fill_research(root: Path, skill_id: str) -> None:
+    repo = FileRepository(root)
+    skill, body, rev = repo.load_skill(skill_id)
+    filled = body.replace(
+        "| | | | |",
+        "| Stripe docs | https://docs.stripe.com/webhooks | 2026-09-21 | official |",
+        1,
+    ).replace(
+        "## PROCEDURE (stable snapshot for Execution)\n\n"
+        "Step-by-step instructions the agent (and subagents) must follow:\n\n"
+        "1.\n2.\n3.\n",
+        "## PROCEDURE (stable snapshot for Execution)\n\n"
+        "Step-by-step instructions the agent (and subagents) must follow:\n\n"
+        "1. Verify signature\n2. Reject invalid\n3. Test\n",
+        1,
+    )
+    repo.save_skill(skill, filled, expected=rev)
 
 
 def test_create_evolve_resolve_and_export_skill(tmp_path: Path) -> None:
@@ -37,6 +60,13 @@ def test_create_evolve_resolve_and_export_skill(tmp_path: Path) -> None:
     assert "RESEARCH" in body
     assert (tmp_path / ".retornatus" / "adaptation" / "skills" / skill.id / "SKILL.md").is_file()
 
+    with pytest.raises(ValueError, match="research gate"):
+        svc.activate(skill.id)
+
+    with pytest.raises(BypassError):
+        svc.activate(skill.id, force=True)
+
+    _fill_research(tmp_path, skill.id)
     active = svc.activate(skill.id)
     assert active.status is SkillStatus.ACTIVE
 

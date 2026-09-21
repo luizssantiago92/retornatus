@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from retornatus.application.assurance.evaluate import build_claims_from_contract
 from retornatus.application.assurance.evidence import EvidenceService
 from retornatus.application.change.loop import next_work
 from retornatus.application.change.workflow import ChangeWorkflow
@@ -29,13 +30,18 @@ def test_gates_and_construction_path(tmp_path: Path) -> None:
         demand_kind=DemandKind.CAPABILITY,
         situation="Ops needs liveness",
         what="GET /health",
-        done_criteria=["test covers /health"],
+        done_criteria=["Automated test covers /health"],
         action_objective="Implement health",
     )
     cid = created.change.id
+    assert created.contract.active
     assert gate_contract(tmp_path, cid).passed
     assert not gate_evidence(tmp_path, cid).passed
     assert not gate_assurance(tmp_path, cid).passed
+
+    claims = build_claims_from_contract(created.contract)
+    assert len(claims) == 1
+    claim = claims[0]
 
     EvidenceService(tmp_path).add(
         change_id=cid,
@@ -45,6 +51,7 @@ def test_gates_and_construction_path(tmp_path: Path) -> None:
         producer="test",
         subject_state="passing",
         supports_action_id=created.action.id if created.action else None,
+        supports_claim_id=claim.id,
     )
     assert gate_evidence(tmp_path, cid).passed
     assert gate_assurance(tmp_path, cid).passed
@@ -80,6 +87,8 @@ def test_gates_and_construction_path(tmp_path: Path) -> None:
 
     project_md = project_init(tmp_path)
     assert project_md.is_file()
+    text = project_md.read_text(encoding="utf-8")
+    assert "Environment capabilities" in text
     hub = install_hub_skill(tmp_path)
     assert hub.is_file()
     assert "Default construction loop" in hub.read_text(encoding="utf-8")
