@@ -1,22 +1,16 @@
-# Gap Analysis — Functional Parity & Hardening (v0.7.0)
+# Gap Analysis — Functional Parity & Hardening (v0.8.0)
 
-## Closed through v0.6.0
-
-Situation, task readiness, Claim↔Evidence, Resolution, Human Decision, bypass,
-brownfield dogfood, commit HEAD freshness, independent assurance, task CLI,
-repo-signal Situation.
-
-## Closed in v0.7.0
+## Closed in v0.8.0
 
 | Item | Mechanism | Test |
 | --- | --- | --- |
-| Path-level Evidence freshness | `git log -1 -- path` for file subjects | `test_path_isolation_host` |
-| Workspace isolation projection | advisory Boundaries + wake caps | same |
-| Host Execution observation | `HostExecutionRecord` + `execution record` CLI | same |
-| Parity matrix doc | `.specs/parity-matrix.md` | documentation |
+| Task lifecycle CLI | `task start/complete/fail/reopen` | `test_task_contract_security` |
+| Contract reopen | archive `contracts/vN.json` + Situation note + new version | same |
+| Skill need (complexity) | `skill need` / `assess_skill_need` | same |
+| Security review dogfood | security_test + independent review_result | same |
 
 ## Still remaining (honest)
 
 - Live multi-provider LLM integration tests (Environment owns agents)
-- Enforced sandbox/worktree orchestration (intentionally native-only; advisory here)
+- Enforced sandbox/worktree orchestration (advisory only by design)
 - Claiming Spec Guardrails is fully replaced across all workflows

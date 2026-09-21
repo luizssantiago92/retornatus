@@ -38,6 +38,7 @@ decision_app = typer.Typer(help="Human Decisions (HUMAN authority boundary).")
 rule_app = typer.Typer(help="Rule candidates and activation.")
 assurance_app = typer.Typer(help="Assurance evaluation and independent review.")
 execution_app = typer.Typer(help="Host Execution observations (not an agent runtime).")
+task_app = typer.Typer(help="Task lifecycle within an Action.")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -49,6 +50,7 @@ app.add_typer(decision_app, name="decision")
 app.add_typer(rule_app, name="rule")
 app.add_typer(assurance_app, name="assurance")
 app.add_typer(execution_app, name="execution")
+app.add_typer(task_app, name="task")
 
 
 def _parse_task_specs(
@@ -402,6 +404,41 @@ def change_learn(
     typer.echo(f"Recorded {meta.id}")
 
 
+@change_app.command("reopen")
+def change_reopen(
+    change_id: str = typer.Argument(...),
+    what: str = typer.Option(..., "--what", "-w"),
+    done: list[str] = typer.Option(..., "--done"),
+    constraint: Optional[list[str]] = typer.Option(None, "--constraint"),
+    note: Optional[str] = typer.Option(None, "--note", help="Situation reopen note."),
+    draft: bool = typer.Option(False, "--draft", help="Leave new Contract inactive."),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Material Contract change: archive active version and create a new one."""
+    root = (path or Path.cwd()).resolve()
+    contract = ChangeWorkflow(root).reopen_contract(
+        change_id,
+        what=what,
+        done_criteria=list(done),
+        constraints=list(constraint) if constraint is not None else None,
+        situation_note=note,
+        activate=not draft,
+    )
+    typer.echo(
+        f"Reopened {change_id} → contract v{contract.version} active={contract.active}"
+    )
+    archive = (
+        Path(root)
+        / ".retornatus"
+        / "changes"
+        / change_id
+        / "contracts"
+        / f"v{contract.version - 1}.json"
+    )
+    if archive.is_file():
+        typer.echo(f"Archived prior version at {archive}")
+
+
 @skill_app.command("create")
 def skill_create(
     specialization: str = typer.Option(
@@ -451,6 +488,23 @@ def skill_list(path: Optional[Path] = typer.Option(None, "--path", "-p")) -> Non
         typer.echo(
             f"{skill.id}\tv{skill.version}\t{skill.status.value}\t{skill.title}"
         )
+
+
+@skill_app.command("need")
+def skill_need(
+    action_id: str = typer.Option(..., "--action", "-a"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Assess whether an on-demand Skill is required (complexity-sensitive)."""
+    from retornatus.application.adaptation.skill_need import assess_skill_need
+
+    root = (path or Path.cwd()).resolve()
+    assessment = assess_skill_need(root, action_id)
+    typer.echo(f"required={assessment.required}")
+    typer.echo(assessment.rationale)
+    if assessment.suggested_need:
+        typer.echo(f"suggested_need={assessment.suggested_need}")
+    raise typer.Exit(code=0 if not assessment.required else 2)
 
 
 @skill_app.command("activate")
@@ -903,6 +957,70 @@ def execution_list(
         return
     for record in records:
         typer.echo(f"{record.id}\tok={record.ok}\t{record.summary}")
+
+
+@task_app.command("start")
+def task_start(
+    task_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Mark a Task ACTIVE."""
+    from retornatus.application.change.tasks import TaskLifecycleError, TaskService
+
+    try:
+        action = TaskService(path or Path.cwd()).start(task_id)
+    except TaskLifecycleError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Started {task_id} on {action.id}")
+
+
+@task_app.command("complete")
+def task_complete(
+    task_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Mark a Task COMPLETED."""
+    from retornatus.application.change.tasks import TaskLifecycleError, TaskService
+
+    try:
+        action = TaskService(path or Path.cwd()).complete(task_id)
+    except TaskLifecycleError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Completed {task_id} on {action.id}")
+
+
+@task_app.command("fail")
+def task_fail(
+    task_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Mark a Task FAILED."""
+    from retornatus.application.change.tasks import TaskLifecycleError, TaskService
+
+    try:
+        action = TaskService(path or Path.cwd()).fail(task_id)
+    except TaskLifecycleError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Failed {task_id} on {action.id}")
+
+
+@task_app.command("reopen")
+def task_reopen(
+    task_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Reopen a COMPLETED/FAILED Task to PENDING."""
+    from retornatus.application.change.tasks import TaskLifecycleError, TaskService
+
+    try:
+        action = TaskService(path or Path.cwd()).reopen(task_id)
+    except TaskLifecycleError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Reopened {task_id} on {action.id}")
 
 
 def run() -> None:

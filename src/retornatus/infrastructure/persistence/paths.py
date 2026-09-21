@@ -67,6 +67,10 @@ class RetornatusPaths:
     def contract_json(self, change_id: str) -> Path:
         return self.change_dir(change_id) / "contract.json"
 
+    def contract_archive_json(self, change_id: str, version: int) -> Path:
+        archive = self.change_dir(change_id) / "contracts"
+        return archive / f"v{version}.json"
+
     def action_json(self, action_id: str) -> Path:
         change = change_id_of(action_id)
         local = action_id.split("/", 1)[1]
