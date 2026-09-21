@@ -229,13 +229,18 @@ If the agent jumps straight to code: *Stop. Activate a Contract and pass `gate c
 | Task readiness / deps / cycles | Implemented | Derived READY/BLOCKED; CLI `--task` / `--depends` / `--resource` |
 | Claim↔Evidence binding | Implemented | `--claim` + SUPPORTS relation; subject/type checks |
 | Evidence staleness | Implemented | Path-aware `commit:<sha>` (file subjects) + HEAD fallback |
+| Assurance (proportional) | Implemented | Types inferred from DONE; `human_decision` not universal |
 | Independent Assurance | Implemented | `assurance plan` + `assurance review` + `run --assurance` |
+| Question Resolution proof | Implemented | Verifiable Questions need Evidence |
+| Human Decision → Rule | Implemented | `decision record` + `rule activate --decision` |
+| Governed bypass | Implemented | `--force --reason` records Bypass + Decision |
 | Workspace isolation | Projected/integrated | Advisory Boundaries → native worktree/sandbox/subagents |
 | Host execution observation | Implemented | `execution record` under `runtime/executions/` (not a runtime) |
+| Brownfield `project-init` / wake | Implemented | Stack, tests, CI, dirs, Retornatus state |
+| Context relevance | Implemented | Applicability-filtered Rules/Learnings |
 | Brownfield construction dogfood | Implemented | Fixture service + health Change + git freshness |
 | Host Execution runtime | Environment-provided | Retornatus assembles context; host implements |
-| Workspace isolation / worktrees | Environment-provided | Native first |
-| Spec Guardrails fully replaced | Not yet supported | Dogfood proves governed path; not full replacement claim |
+| Spec Guardrails fully replaced | Not yet supported | See `.specs/parity-matrix.md`; no full-replacement claim |
 
 ---
 
