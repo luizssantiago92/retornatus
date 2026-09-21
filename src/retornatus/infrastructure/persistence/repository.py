@@ -10,8 +10,10 @@ from pydantic import BaseModel
 
 from retornatus.domain.models import (
     Action,
+    BypassRecord,
     Change,
     Contract,
+    Decision,
     Evidence,
     Finding,
     LearningMetadata,
@@ -248,6 +250,46 @@ class FileRepository:
             rule, _ = self._load_json(path, Rule)
             rules.append(rule)
         return rules
+
+    def save_decision(
+        self, decision: Decision, *, expected: ArtifactRevision | None = None
+    ) -> ArtifactRevision:
+        self.paths.decisions.mkdir(parents=True, exist_ok=True)
+        return self._save_json(
+            self.paths.decision_json(decision.id), decision, expected=expected
+        )
+
+    def load_decision(self, decision_id: str) -> tuple[Decision, ArtifactRevision]:
+        return self._load_json(self.paths.decision_json(decision_id), Decision)
+
+    def list_decisions(self) -> list[Decision]:
+        if not self.paths.decisions.is_dir():
+            return []
+        items: list[Decision] = []
+        for path in sorted(self.paths.decisions.glob("D-*.json")):
+            decision, _ = self._load_json(path, Decision)
+            items.append(decision)
+        return items
+
+    def save_bypass(
+        self, bypass: BypassRecord, *, expected: ArtifactRevision | None = None
+    ) -> ArtifactRevision:
+        self.paths.bypasses.mkdir(parents=True, exist_ok=True)
+        return self._save_json(
+            self.paths.bypass_json(bypass.id), bypass, expected=expected
+        )
+
+    def load_bypass(self, bypass_id: str) -> tuple[BypassRecord, ArtifactRevision]:
+        return self._load_json(self.paths.bypass_json(bypass_id), BypassRecord)
+
+    def list_bypasses(self) -> list[BypassRecord]:
+        if not self.paths.bypasses.is_dir():
+            return []
+        items: list[BypassRecord] = []
+        for path in sorted(self.paths.bypasses.glob("B-*.json")):
+            bypass, _ = self._load_json(path, BypassRecord)
+            items.append(bypass)
+        return items
 
     def save_learning(
         self,

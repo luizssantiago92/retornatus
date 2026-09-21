@@ -1,4 +1,4 @@
-"""Evidence recording helpers."""
+"""Evidence recording helpers — bind Evidence to Claims."""
 
 from __future__ import annotations
 
@@ -36,12 +36,22 @@ class EvidenceService:
         producer: str,
         subject_state: str | None = None,
         supports_action_id: str | None = None,
+        supports_claim_id: str | None = None,
+        challenges_claim_id: str | None = None,
     ) -> Evidence:
         eid = format_owned_id(change_id, "E", self.next_evidence_number(change_id))
-        relations = []
+        relations: list[Relation] = []
         if supports_action_id:
             relations.append(
                 Relation(type=RelationType.SUPPORTS, target_id=supports_action_id)
+            )
+        if supports_claim_id:
+            relations.append(
+                Relation(type=RelationType.SUPPORTS, target_id=supports_claim_id)
+            )
+        if challenges_claim_id:
+            relations.append(
+                Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id)
             )
         evidence = Evidence(
             id=eid,
@@ -54,3 +64,13 @@ class EvidenceService:
         )
         self.repo.save_evidence(evidence)
         return evidence
+
+    def list_for_change(self, change_id: str) -> list[Evidence]:
+        evidence_dir = self.repo.paths.change_dir(change_id) / "evidence"
+        if not evidence_dir.is_dir():
+            return []
+        items: list[Evidence] = []
+        for path in sorted(evidence_dir.glob("E-*.json")):
+            ev, _ = self.repo.load_evidence(f"{change_id}/{path.stem}")
+            items.append(ev)
+        return items

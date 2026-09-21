@@ -32,6 +32,14 @@ class RetornatusPaths:
         return self.retornatus / "governance" / "rules"
 
     @property
+    def bypasses(self) -> Path:
+        return self.retornatus / "governance" / "bypasses"
+
+    @property
+    def decisions(self) -> Path:
+        return self.retornatus / "project" / "decisions"
+
+    @property
     def learnings(self) -> Path:
         return self.retornatus / "adaptation" / "learnings"
 
@@ -81,6 +89,12 @@ class RetornatusPaths:
 
     def rule_json(self, rule_id: str) -> Path:
         return self.rules / f"{rule_id}.json"
+
+    def decision_json(self, decision_id: str) -> Path:
+        return self.decisions / f"{decision_id}.json"
+
+    def bypass_json(self, bypass_id: str) -> Path:
+        return self.bypasses / f"{bypass_id}.json"
 
     def learning_md(self, learning_id: str) -> Path:
         return self.learnings / f"{learning_id}.md"

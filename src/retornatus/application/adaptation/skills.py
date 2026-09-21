@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from retornatus.domain.enums import SkillSource, SkillStatus
+from retornatus.domain.enums import AuthorityCategory, SkillSource, SkillStatus
 from retornatus.domain.ids import format_project_id
 from retornatus.domain.models import Skill
 from retornatus.domain.relations import Relation, RelationType
@@ -133,7 +133,13 @@ class SkillService:
 
         Physical contract: one Skill tailored to the specialization (not a
         library of preloaded generic skills). Agent researches and fills body.
+
+        Skills always start as DRAFT. Activation requires research gate
+        (or governed bypass) via ``activate()``.
         """
+        if activate:
+            # Soft: still create DRAFT — callers must activate explicitly
+            activate = False
         skill_id = self.next_skill_id()
         name = _slugify(title or specialization)
         resolved_title = title or specialization
@@ -156,7 +162,7 @@ class SkillService:
             title=resolved_title,
             description=resolved_description,
             specialization=specialization,
-            status=SkillStatus.ACTIVE if activate else SkillStatus.DRAFT,
+            status=SkillStatus.DRAFT,
             source=SkillSource.RESEARCHED,
             change_id=change_id,
             action_id=action_id,
@@ -172,10 +178,50 @@ class SkillService:
         self.repo.save_skill(skill, body)
         return skill, body
 
-    def activate(self, skill_id: str) -> Skill:
+    def activate(
+        self,
+        skill_id: str,
+        *,
+        force: bool = False,
+        bypass_reason: str | None = None,
+        bypass_authority: AuthorityCategory | None = None,
+    ) -> Skill:
+        """
+        Mark Skill ACTIVE.
+
+        Research gate must pass unless a governed bypass is recorded
+        (force + reason + authority).
+        """
+        from retornatus.application.governance.bypass import BypassError, BypassService
+        from retornatus.application.governance.gates import gate_skill_research
+        from retornatus.domain.models import Authority
+
         skill, body, rev = self.repo.load_skill(skill_id)
         if skill.status is SkillStatus.ACTIVE:
             return skill
+
+        gate = gate_skill_research(self.root, skill_id)
+        if not gate.passed:
+            if not force:
+                raise ValueError(
+                    "Skill research gate failed: "
+                    + "; ".join(gate.messages)
+                    + " — fill RESEARCH or use force with reason"
+                )
+            if not bypass_reason or not bypass_reason.strip():
+                raise BypassError(
+                    "Governed bypass of skill-research requires --reason"
+                )
+            BypassService(self.root).record_bypass(
+                gate="skill-research",
+                entity_id=skill_id,
+                reason=bypass_reason,
+                authority=Authority(
+                    category=bypass_authority or AuthorityCategory.HUMAN,
+                    rationale=bypass_reason,
+                ),
+            )
+
         updated = skill.model_copy(
             update={"status": SkillStatus.ACTIVE, "updated_at": _utc_now()}
         )
@@ -213,7 +259,6 @@ class SkillService:
                 "version": new_version,
                 "updated_at": _utc_now(),
                 "relations": relations,
-                "status": SkillStatus.ACTIVE,
             }
         )
         self.repo.save_skill(updated, new_body, expected=rev)

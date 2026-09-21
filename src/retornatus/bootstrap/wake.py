@@ -26,6 +26,7 @@ class WakeReport:
     index_entities: int = 0
     bridge_files: list[str] = field(default_factory=list)
     diagnostics: list[str] = field(default_factory=list)
+    project_context_summary: str | None = None
 
     def render(self) -> str:
         lines = [
@@ -40,6 +41,10 @@ class WakeReport:
             f"learnings: {self.learning_count}",
             f"index_entities: {self.index_entities}",
         ]
+        if self.project_context_summary:
+            lines.append("project_context:")
+            for line in self.project_context_summary.splitlines()[:16]:
+                lines.append(f"  {line}")
         if self.bridge_files:
             lines.append("bridge_files: " + ", ".join(self.bridge_files))
         if self.diagnostics:
@@ -87,6 +92,16 @@ def wake_up(
     except FileNotFoundError:
         diagnostics.append("Missing config.toml")
 
+    project_summary = None
+    project_md = repo.paths.project_md
+    if project_md.is_file():
+        text = project_md.read_text(encoding="utf-8", errors="replace")
+        # Prefer Identity + Stack sections for Situation orientation
+        lines = [ln for ln in text.splitlines() if ln.strip()][:20]
+        project_summary = "\n".join(lines)
+    else:
+        diagnostics.append("No project.md — run project-init for brownfield context")
+
     return WakeReport(
         root=project_root,
         initialized=is_initialized(project_root),
@@ -98,4 +113,5 @@ def wake_up(
         index_entities=entities,
         bridge_files=bridge_files,
         diagnostics=diagnostics,
+        project_context_summary=project_summary,
     )

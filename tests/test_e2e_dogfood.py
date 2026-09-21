@@ -5,16 +5,20 @@ from __future__ import annotations
 from pathlib import Path
 
 from retornatus.application.adaptation.service import AdaptationService
-from retornatus.application.assurance.evaluate import Claim, evaluate_assurance
+from retornatus.application.assurance.evaluate import (
+    Claim,
+    evaluate_assurance,
+)
 from retornatus.application.change.workflow import ChangeWorkflow
 from retornatus.application.execution.context import assemble_execution_context
 from retornatus.application.governance.policy import PolicyVerdict, evaluate_policy
 from retornatus.application.question.loop import QuestionLoop
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.wake import wake_up
-from retornatus.domain.enums import AuthorityCategory, DemandKind
+from retornatus.domain.enums import AuthorityCategory, DecisionKind, DemandKind
 from retornatus.domain.ids import format_owned_id
 from retornatus.domain.models import Authority, Evidence
+from retornatus.domain.relations import Relation, RelationType
 from retornatus.infrastructure.environment.adapters import CursorAdapter
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
@@ -43,6 +47,8 @@ def test_full_dogfood_flow(tmp_path: Path) -> None:
     change_id = created.change.id
     assert created.contract.active
     assert created.action is not None
+    # Tasks must NOT be auto-chained from declaration order
+    assert created.action.tasks[1].depends_on == []
 
     # Execution context
     ctx = assemble_execution_context(tmp_path, created.action.id)
@@ -69,6 +75,7 @@ def test_full_dogfood_flow(tmp_path: Path) -> None:
     assert q_action.origin_ref == question.id
 
     repo = FileRepository(tmp_path)
+    claim_id = f"{change_id}/claim-done-1"
     evidence = Evidence(
         id=format_owned_id(change_id, "E", 1),
         type="test_result",
@@ -76,18 +83,20 @@ def test_full_dogfood_flow(tmp_path: Path) -> None:
         source="pytest",
         producer="test_full_dogfood_flow",
         subject_state="passing",
+        relations=[Relation(type=RelationType.SUPPORTS, target_id=claim_id)],
     )
     repo.save_evidence(evidence)
 
     assurance = evaluate_assurance(
         claims=[
             Claim(
-                id="c1",
+                id=claim_id,
                 statement="Evidence of tests recorded",
                 required_evidence_types=["test_result"],
+                subject="dogfood",
             )
         ],
-        evidence=[(evidence.id, evidence.type)],
+        evidence=[evidence],
     )
     assert assurance.verdict.value == "SATISFIED"
     loop.resolve_question(question.id, summary="Evidence recorded", evidence_ids=[evidence.id])
@@ -107,16 +116,26 @@ def test_full_dogfood_flow(tmp_path: Path) -> None:
         from_learning_id=learning.id,
     )
     assert candidate.active is False
-    activated = adapt.activate_rule(candidate.id)
+    decision = adapt.record_human_decision(
+        kind=DecisionKind.APPROVE_RULE_ACTIVATION,
+        subject_id=candidate.id,
+        summary="Approve rule after dogfood",
+        confirmation_token=candidate.id,
+    )
+    activated = adapt.activate_rule(candidate.id, human_decision_id=decision.id)
     assert activated.active is True
 
     # Governance policy
-    decision = evaluate_policy(
+    decision_pol = evaluate_policy(
         effect="resolve question without evidence",
         rules=repo.list_rules(),
         authority=Authority(category=AuthorityCategory.DELEGATED),
     )
-    assert decision.verdict in {PolicyVerdict.DENY, PolicyVerdict.ALLOW, PolicyVerdict.REQUIRE_HUMAN}
+    assert decision_pol.verdict in {
+        PolicyVerdict.DENY,
+        PolicyVerdict.ALLOW,
+        PolicyVerdict.REQUIRE_HUMAN,
+    }
 
     # Memory / index rebuild after deleting db
     index = RetornatusIndex(tmp_path)

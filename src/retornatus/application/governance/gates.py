@@ -7,7 +7,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
-from retornatus.application.assurance.evaluate import Claim, AssuranceVerdict, evaluate_assurance
+from retornatus.application.assurance.evaluate import (
+    AssuranceVerdict,
+    build_claims_from_contract,
+    evaluate_assurance,
+)
+from retornatus.application.assurance.evidence import EvidenceService
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 
@@ -47,11 +52,22 @@ def gate_contract(root: Path, change_id: str) -> GateResult:
         messages.append("Contract WHAT is empty")
     if not contract.done_criteria:
         messages.append("Contract has no DONE criteria")
+    else:
+        weak = [
+            c
+            for c in contract.done_criteria
+            if len(c.strip()) < 8 or c.strip().lower() in {"done", "ok", "works"}
+        ]
+        if weak:
+            messages.append("DONE criteria are too weak to establish satisfaction")
     return GateResult(GateName.CONTRACT, not messages, messages or ["Contract OK"])
 
 
 def gate_evidence(root: Path, change_id: str) -> GateResult:
-    """At least one Evidence artifact must exist for the Change."""
+    """
+    Evidence artifacts must exist AND be structurally attributable
+    (type + subject + producer/source present — not empty placeholders).
+    """
     repo = FileRepository(root)
     evidence_dir = repo.paths.change_dir(change_id) / "evidence"
     if not evidence_dir.is_dir() or not list(evidence_dir.glob("E-*.json")):
@@ -60,7 +76,25 @@ def gate_evidence(root: Path, change_id: str) -> GateResult:
             False,
             [f"No evidence under {evidence_dir}"],
         )
-    return GateResult(GateName.EVIDENCE, True, ["Evidence present"])
+    messages: list[str] = []
+    valid = 0
+    for path in evidence_dir.glob("E-*.json"):
+        ev, _ = repo.load_evidence(f"{change_id}/{path.stem}")
+        if not ev.type.strip() or not ev.subject.strip():
+            messages.append(f"{ev.id}: missing type/subject")
+            continue
+        if not ev.source.strip() or not ev.producer.strip():
+            messages.append(f"{ev.id}: missing source/producer")
+            continue
+        valid += 1
+    if valid == 0:
+        messages.append("No valid attributable Evidence artifacts")
+        return GateResult(GateName.EVIDENCE, False, messages)
+    return GateResult(
+        GateName.EVIDENCE,
+        True,
+        messages or [f"Evidence present ({valid} valid artifact(s))"],
+    )
 
 
 def gate_skill_research(root: Path, skill_id: str) -> GateResult:
@@ -89,33 +123,35 @@ def gate_skill_research(root: Path, skill_id: str) -> GateResult:
     return GateResult(GateName.SKILL_RESEARCH, True, ["Skill research/procedure looks filled"])
 
 
-def gate_assurance(root: Path, change_id: str) -> GateResult:
-    """Assurance must be SATISFIED for Contract DONE criteria."""
+def gate_assurance(
+    root: Path,
+    change_id: str,
+    *,
+    current_subject_states: dict[str, str] | None = None,
+) -> GateResult:
+    """Assurance must be SATISFIED for Contract DONE Claims with bound Evidence."""
     repo = FileRepository(root)
     try:
         contract, _ = repo.load_contract(change_id)
     except FileNotFoundError:
         return GateResult(GateName.ASSURANCE, False, ["No contract"])
 
-    evidence_pairs: list[tuple[str, str]] = []
-    evidence_dir = repo.paths.change_dir(change_id) / "evidence"
-    if evidence_dir.is_dir():
-        for p in evidence_dir.glob("E-*.json"):
-            ev, _ = repo.load_evidence(f"{change_id}/{p.stem}")
-            evidence_pairs.append((ev.id, ev.type))
+    if not contract.active:
+        return GateResult(GateName.ASSURANCE, False, ["Contract is not active"])
+    if not contract.done_criteria:
+        return GateResult(GateName.ASSURANCE, False, ["Contract has no DONE criteria"])
 
-    claims = [
-        Claim(
-            id=f"done-{i}",
-            statement=crit,
-            required_evidence_types=["test_result", "human_decision", "build_result"],
-        )
-        for i, crit in enumerate(contract.done_criteria, start=1)
-    ]
-    result = evaluate_assurance(claims=claims, evidence=evidence_pairs)
-    ok = result.verdict is AssuranceVerdict.SATISFIED
-    return GateResult(
-        GateName.ASSURANCE,
-        ok,
-        [f"Verdict={result.verdict.value}: {result.rationale}"],
+    claims = build_claims_from_contract(contract)
+    evidence = EvidenceService(root).list_for_change(change_id)
+    result = evaluate_assurance(
+        claims=claims,
+        evidence=evidence,
+        current_subject_states=current_subject_states,
     )
+    ok = result.verdict is AssuranceVerdict.SATISFIED
+    detail = [
+        f"Verdict={result.verdict.value}: {result.rationale}",
+    ]
+    for claim_id, status in result.claim_results.items():
+        detail.append(f"  {claim_id}: {status}")
+    return GateResult(GateName.ASSURANCE, ok, detail)

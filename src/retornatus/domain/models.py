@@ -12,6 +12,7 @@ from retornatus.domain.enums import (
     ActionOriginKind,
     AuthorityCategory,
     BoundaryRealization,
+    DecisionKind,
     DemandKind,
     QuestionDisposition,
     QuestionLifecycle,
@@ -23,6 +24,7 @@ from retornatus.domain.enums import (
 from retornatus.domain.ids import (
     ActionId,
     ChangeId,
+    DecisionId,
     EvidenceId,
     FindingId,
     LearningId,
@@ -78,6 +80,10 @@ class Task(DomainModel):
     description: str = Field(min_length=1)
     lifecycle: TaskLifecycle = TaskLifecycle.PENDING
     depends_on: list[TaskId] = Field(default_factory=list)
+    resources: list[str] = Field(
+        default_factory=list,
+        description="Optional resource keys (e.g. file paths) for conflict detection",
+    )
 
     @model_validator(mode="after")
     def _deps_same_change(self) -> Self:
@@ -277,6 +283,53 @@ class Skill(DomainModel):
     action_id: ActionId | None = None
     created_at: datetime = Field(default_factory=_utc_now)
     updated_at: datetime = Field(default_factory=_utc_now)
+    relations: list[Relation] = Field(default_factory=list)
+
+
+class Decision(DomainModel):
+    """
+    Durable human decision artifact (local harness HUMAN boundary).
+
+    Agents may propose Rule Candidates; activating them requires a Decision
+    that the agent cannot satisfy merely by setting authority=HUMAN on the Rule.
+    """
+
+    id: DecisionId
+    kind: DecisionKind
+    subject_id: str = Field(min_length=1, description="Entity the decision applies to")
+    summary: str = Field(min_length=1)
+    authority: Authority
+    confirmation_token: str = Field(
+        min_length=1,
+        description="Must match subject_id for activation/bypass decisions",
+    )
+    recorded_at: datetime = Field(default_factory=_utc_now)
+    relations: list[Relation] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _human_authority_required(self) -> Self:
+        if self.authority.category != AuthorityCategory.HUMAN:
+            raise ValueError("Decision requires HUMAN authority")
+        if self.kind in {
+            DecisionKind.APPROVE_RULE_ACTIVATION,
+            DecisionKind.GOVERNANCE_BYPASS,
+        } and self.confirmation_token != self.subject_id:
+            raise ValueError(
+                "confirmation_token must equal subject_id for activation/bypass decisions"
+            )
+        return self
+
+
+class BypassRecord(DomainModel):
+    """Governed bypass of a Gate — decision, not absence of governance."""
+
+    id: str = Field(min_length=1)
+    gate: str = Field(min_length=1)
+    entity_id: str = Field(min_length=1)
+    reason: str = Field(min_length=1)
+    authority: Authority
+    recorded_at: datetime = Field(default_factory=_utc_now)
+    decision_id: DecisionId | None = None
     relations: list[Relation] = Field(default_factory=list)
 
 
