@@ -286,6 +286,11 @@ Run from the project you want to govern (or pass `--path`).
 | `retornatus status` | Derived Change status projection |
 | `retornatus change create …` | Demand → Situation → Contract → Action |
 | `retornatus change learn …` | Record a Learning |
+| `retornatus integrate` / `project-init` | Install hub skill + map brownfield continuity |
+| `retornatus gate contract\|evidence\|skill-research\|assurance` | Mechanical STOP gates (exit code) |
+| `retornatus evidence add` | Record attributable Evidence |
+| `retornatus finding add` / `question open\|resolve` | Finding → Question loop |
+| `retornatus loop next` | Next ready Question/Task/Action |
 | `retornatus skill create --need "…"` | Create one specialization Skill (agent researches & fills) |
 | `retornatus skill list` / `activate` / `evolve` / `export` | Skill lifecycle + native Cursor export |
 | `retornatus run <action-id>` | Assemble ExecutionContext (does not run the agent) |
@@ -355,6 +360,6 @@ Related prior work in this ecosystem: [spec-guardrails](https://github.com/luizs
 
 ## License
 
-MIT — see [LICENSE](LICENSE) (to be added alongside this repository’s packaging metadata).
+MIT — see [LICENSE](LICENSE).
 
 [↑ Back to top](#retornatus)

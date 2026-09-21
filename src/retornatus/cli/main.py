@@ -29,8 +29,18 @@ app = typer.Typer(
 
 change_app = typer.Typer(help="Create and inspect Changes.")
 skill_app = typer.Typer(help="Specialization Skills — create, evolve, export.")
+gate_app = typer.Typer(help="Mechanical gates (non-zero exit = STOP).")
+evidence_app = typer.Typer(help="Attributable Evidence.")
+finding_app = typer.Typer(help="Findings.")
+question_app = typer.Typer(help="Questions grounded in Findings.")
+loop_app = typer.Typer(help="Next ready unit of work (projection).")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
+app.add_typer(gate_app, name="gate")
+app.add_typer(evidence_app, name="evidence")
+app.add_typer(finding_app, name="finding")
+app.add_typer(question_app, name="question")
+app.add_typer(loop_app, name="loop")
 
 
 def version_callback(value: bool) -> None:
@@ -323,9 +333,20 @@ def skill_list(path: Optional[Path] = typer.Option(None, "--path", "-p")) -> Non
 def skill_activate(
     skill_id: str = typer.Argument(...),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
+    force: bool = typer.Option(False, "--force", help="Skip research gate."),
 ) -> None:
     """Mark a Skill ACTIVE for Execution consumption."""
-    skill = SkillService(path or Path.cwd()).activate(skill_id)
+    root = path or Path.cwd()
+    if not force:
+        from retornatus.application.governance.gates import gate_skill_research
+
+        result = gate_skill_research(root, skill_id)
+        if not result.passed:
+            for msg in result.messages:
+                typer.echo(msg)
+            typer.echo("Fill RESEARCH (with URLs) before activate, or pass --force.")
+            raise typer.Exit(1)
+    skill = SkillService(root).activate(skill_id)
     typer.echo(f"Activated {skill.id}")
 
 
@@ -356,6 +377,190 @@ def skill_export(
     """Export Skill to a native environment skill surface (e.g. .cursor/skills/)."""
     dest = SkillService(path or Path.cwd()).export_native(skill_id, target=target)
     typer.echo(f"Exported to {dest}")
+
+
+@app.command("project-init")
+def project_init_cmd(
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Map repository into `.retornatus/project/project.md` continuity notes."""
+    from retornatus.bootstrap.project_init import project_init
+
+    dest = project_init(path or Path.cwd())
+    typer.echo(f"Wrote {dest}")
+
+
+@app.command("integrate")
+def integrate_cmd(
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Install Retornatus hub skill + Cursor bridge into the project."""
+    from retornatus.infrastructure.environment.hub_skill import install_hub_skill
+    from retornatus.infrastructure.environment.adapters import CursorAdapter
+
+    root = (path or Path.cwd()).resolve()
+    if not is_initialized(root):
+        initialize_project(root)
+    hub = install_hub_skill(root)
+    bridges = CursorAdapter().ensure_bridge_files(root)
+    typer.echo(f"Hub skill: {hub}")
+    for b in bridges:
+        typer.echo(f"Bridge: {b}")
+
+
+@gate_app.command("contract")
+def gate_contract_cmd(
+    change_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Gate: active Contract with WHAT + DONE (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_contract
+
+    result = gate_contract(path or Path.cwd(), change_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@gate_app.command("evidence")
+def gate_evidence_cmd(
+    change_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Gate: Evidence artifacts exist (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_evidence
+
+    result = gate_evidence(path or Path.cwd(), change_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@gate_app.command("skill-research")
+def gate_skill_research_cmd(
+    skill_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Gate: Skill RESEARCH filled with sources (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_skill_research
+
+    result = gate_skill_research(path or Path.cwd(), skill_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@gate_app.command("assurance")
+def gate_assurance_cmd(
+    change_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Gate: Assurance SATISFIED (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_assurance
+
+    result = gate_assurance(path or Path.cwd(), change_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@evidence_app.command("add")
+def evidence_add(
+    change_id: str = typer.Option(..., "--change", "-c"),
+    evidence_type: str = typer.Option(..., "--type", "-t"),
+    subject: str = typer.Option(..., "--subject", "-s"),
+    source: str = typer.Option(..., "--source"),
+    producer: str = typer.Option("agent", "--producer"),
+    subject_state: Optional[str] = typer.Option(None, "--state"),
+    action_id: Optional[str] = typer.Option(None, "--action", "-a"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Record attributable Evidence for a Change."""
+    from retornatus.application.assurance.evidence import EvidenceService
+
+    ev = EvidenceService(path or Path.cwd()).add(
+        change_id=change_id,
+        evidence_type=evidence_type,
+        subject=subject,
+        source=source,
+        producer=producer,
+        subject_state=subject_state,
+        supports_action_id=action_id,
+    )
+    typer.echo(f"Recorded {ev.id}")
+
+
+@finding_app.command("add")
+def finding_add(
+    change_id: str = typer.Option(..., "--change", "-c"),
+    observation: str = typer.Option(..., "--observation", "-o"),
+    source: Optional[str] = typer.Option(None, "--source"),
+    number: int = typer.Option(1, "--number"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Record a Finding (relevant observation)."""
+    from retornatus.application.question.loop import QuestionLoop
+
+    finding = QuestionLoop(path or Path.cwd()).record_finding(
+        change_id=change_id,
+        observation=observation,
+        number=number,
+        source=source,
+    )
+    typer.echo(f"Recorded {finding.id}")
+
+
+@question_app.command("open")
+def question_open(
+    change_id: str = typer.Option(..., "--change", "-c"),
+    statement: str = typer.Option(..., "--statement", "-s"),
+    finding: list[str] = typer.Option(..., "--finding", "-f"),
+    number: int = typer.Option(1, "--number"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Open a Question grounded in one or more Findings."""
+    from retornatus.application.question.loop import QuestionLoop
+
+    q = QuestionLoop(path or Path.cwd()).open_question(
+        change_id=change_id,
+        statement=statement,
+        finding_ids=list(finding),
+        number=number,
+    )
+    typer.echo(f"Opened {q.id}")
+
+
+@question_app.command("resolve")
+def question_resolve(
+    question_id: str = typer.Argument(...),
+    summary: str = typer.Option(..., "--summary", "-s"),
+    evidence: Optional[list[str]] = typer.Option(None, "--evidence", "-e"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Resolve a Question with an established summary (+ optional evidence ids)."""
+    from retornatus.application.question.loop import QuestionLoop
+
+    q = QuestionLoop(path or Path.cwd()).resolve_question(
+        question_id,
+        summary=summary,
+        evidence_ids=list(evidence or []),
+    )
+    typer.echo(f"Resolved {q.id}")
+
+
+@loop_app.command("next")
+def loop_next(
+    change_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Project the next ready Question, Task, or Action (not a Loop Engine)."""
+    from retornatus.application.change.loop import next_work
+
+    item = next_work(path or Path.cwd(), change_id)
+    if item is None:
+        typer.echo("Nothing found.")
+        raise typer.Exit(1)
+    typer.echo(f"{item.kind}\t{item.id}\t{item.summary}")
 
 
 def run() -> None:

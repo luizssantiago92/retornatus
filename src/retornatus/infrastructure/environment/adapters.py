@@ -69,10 +69,14 @@ class CursorAdapter(EnvironmentAdapter):
             path.write_text(
                 "---\ndescription: Retornatus governance bridge\nglobs:\nalwaysApply: true\n---\n\n"
                 "Follow Retornatus Contracts, Rules, and Evidence requirements in `.retornatus/`.\n"
-                "Govern the work. Bound the agent. Verify the outcome.\n",
+                "Govern the work. Bound the agent. Verify the outcome.\n"
+                "Use the Retornatus hub skill under `.cursor/skills/retornatus/`.\n",
                 encoding="utf-8",
             )
-        return [path]
+        from retornatus.infrastructure.environment.hub_skill import install_hub_skill
+
+        hub = install_hub_skill(root)
+        return [path, hub]
 
 
 class ClaudeCodeAdapter(EnvironmentAdapter):

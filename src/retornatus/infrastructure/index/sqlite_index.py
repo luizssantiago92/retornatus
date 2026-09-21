@@ -117,6 +117,18 @@ class RetornatusIndex:
                     f"{rule.statement}\n{rule.applicability}",
                 )
 
+            for skill in self.repo.list_skills():
+                _, body, _ = self.repo.load_skill(skill.id)
+                count += self._upsert(
+                    conn,
+                    skill.id,
+                    "skill",
+                    skill.title,
+                    skill.change_id,
+                    str(self.paths.skill_md(skill.id)),
+                    f"{skill.title}\n{skill.specialization}\n{body}",
+                )
+
             conn.commit()
         finally:
             conn.close()
