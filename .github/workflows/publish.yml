@@ -5,6 +5,15 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      target:
+        description: "Publish target"
+        required: true
+        default: "test"
+        type: choice
+        options:
+          - test
+          - pypi
 
 jobs:
   publish:
@@ -23,7 +32,18 @@ jobs:
       - name: Build
         run: uv build
 
-      - name: Publish
+      - name: Publish to TestPyPI
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.target == 'test'
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: uv publish --publish-url https://test.pypi.org/legacy/
+
+      - name: Publish to PyPI
+        if: >-
+          github.event_name == 'push' ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'pypi')
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN }}
         run: uv publish
