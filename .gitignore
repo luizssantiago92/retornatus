@@ -16,8 +16,10 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
-# UV
+# UV / packaging
 .venv/
+dist/
+*.egg-info/
 
 # IDE / OS
 .idea/

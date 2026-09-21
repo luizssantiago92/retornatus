@@ -259,5 +259,10 @@ def change_learn(
     typer.echo(f"Recorded {meta.id}")
 
 
-if __name__ == "__main__":
+def run() -> None:
+    """Console-script entrypoint for packaging / ``uv tool install``."""
     app()
+
+
+if __name__ == "__main__":
+    run()

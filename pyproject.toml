@@ -19,7 +19,7 @@ dev = [
 ]
 
 [project.scripts]
-retornatus = "retornatus.cli.main:app"
+retornatus = "retornatus.cli.main:run"
 
 [build-system]
 requires = ["hatchling"]
