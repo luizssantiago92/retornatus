@@ -9,6 +9,11 @@ from pydantic import Field
 
 from retornatus.application.adaptation.skills import SkillService
 from retornatus.application.change.situation import load_project_context_snippet
+from retornatus.application.execution.isolation import (
+    capability_flag_list,
+    enrich_capabilities,
+    isolation_boundaries,
+)
 from retornatus.domain.base import DomainModel
 from retornatus.domain.enums import BoundaryRealization
 from retornatus.domain.ids import change_id_of
@@ -167,15 +172,8 @@ def assemble_execution_context(
         skills = skill_service.resolve_relevant(query)
 
     _, capabilities = detect_environment(root)
-    env_caps = [
-        name
-        for name, enabled in {
-            "native_rules": capabilities.native_rules,
-            "native_skills": capabilities.native_skills,
-            "native_sandbox": capabilities.native_sandbox,
-        }.items()
-        if enabled
-    ]
+    capabilities = enrich_capabilities(root, capabilities)
+    env_caps = capability_flag_list(capabilities)
 
     boundaries = Boundaries(
         items=[
@@ -184,7 +182,8 @@ def assemble_execution_context(
                 kind="filesystem",
                 realization=BoundaryRealization.ADVISORY,
                 description=str(root.resolve()),
-            )
+            ),
+            *isolation_boundaries(root, capabilities),
         ]
     )
     if independent_assurance:

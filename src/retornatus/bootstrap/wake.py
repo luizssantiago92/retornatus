@@ -10,6 +10,7 @@ from retornatus.infrastructure.environment.adapters import (
     CapabilityModel,
     detect_environment,
 )
+from retornatus.application.execution.isolation import enrich_capabilities
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
 
@@ -35,7 +36,9 @@ class WakeReport:
             f"environment: {self.environment}",
             f"capabilities: native_rules={self.capabilities.native_rules} "
             f"native_skills={self.capabilities.native_skills} "
-            f"native_sandbox={self.capabilities.native_sandbox}",
+            f"native_sandbox={self.capabilities.native_sandbox} "
+            f"native_worktrees={self.capabilities.details.get('native_worktrees', 'false')} "
+            f"native_subagents={self.capabilities.details.get('native_subagents', 'false')}",
             f"changes: {len(self.change_ids)} {self.change_ids}",
             f"rules: {self.rule_count}",
             f"learnings: {self.learning_count}",
@@ -71,6 +74,7 @@ def wake_up(
 
     repo = FileRepository(project_root)
     adapter, capabilities = detect_environment(project_root)
+    capabilities = enrich_capabilities(project_root, capabilities)
     bridge_files: list[str] = []
     if ensure_bridges and adapter.kind.value != "generic":
         bridge_files = [str(p) for p in adapter.ensure_bridge_files(project_root)]

@@ -3,7 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uvx%20%2F%20uv%20tool-recommended-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.6.0-informational.svg)](pyproject.toml)
+[![version](https://img.shields.io/badge/version-0.7.0-informational.svg)](pyproject.toml)
 
 **Repo-native governance harness for AI-assisted software development.**
 
@@ -24,7 +24,7 @@ You keep control: the agent proposes and implements; **gates** stop “done” w
 | Same ceremony for a typo and a payment flow | Tasks only when needed; `loop next` projects the next unit |
 | Failures vanish when the tab closes | Finding → Question → Action leaves a trail |
 
-**Python** · **0.6.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
+**Python** · **0.7.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
 
 **Docs:** [Product PRD](prd/PRD.md) · this README
 
@@ -85,7 +85,7 @@ retornatus doctor
 
 ```bash
 uv tool install --force /path/to/retornatus
-retornatus --version   # 0.6.x
+retornatus --version   # 0.7.x
 ```
 
 **Windows (PowerShell) — ensure `uv` is on PATH:**
@@ -134,7 +134,7 @@ Day to day you work in **agent chat**; the agent calls the CLI when a phase need
 
 Re-run `doctor` / `wake` after upgrades or machine changes. You are ready when:
 
-- `retornatus --version` prints `0.6.x` (or newer)
+- `retornatus --version` prints `0.7.x` (or newer)
 - `.retornatus/` exists with `config.toml`
 - Hub skill is visible (for example `.cursor/skills/retornatus/SKILL.md` after `integrate`)
 - Your AI coding agent can open the project
@@ -228,14 +228,10 @@ If the agent jumps straight to code: *Stop. Activate a Contract and pass `gate c
 | Situation elicitation | Implemented | `change elicit` + repo signals (stack/tests/CI) before Contract |
 | Task readiness / deps / cycles | Implemented | Derived READY/BLOCKED; CLI `--task` / `--depends` / `--resource` |
 | Claim↔Evidence binding | Implemented | `--claim` + SUPPORTS relation; subject/type checks |
-| Evidence staleness | Implemented | `commit:<sha>` via `--git-state`; stale after new HEAD |
-| Assurance (proportional) | Implemented | Types inferred from DONE; `human_decision` not universal |
+| Evidence staleness | Implemented | Path-aware `commit:<sha>` (file subjects) + HEAD fallback |
 | Independent Assurance | Implemented | `assurance plan` + `assurance review` + `run --assurance` |
-| Question Resolution proof | Implemented | Verifiable Questions need Evidence |
-| Human Decision → Rule | Implemented | `decision record` + `rule activate --decision` |
-| Governed bypass | Implemented | `--force --reason` records Bypass + Decision |
-| Brownfield `project-init` / wake | Implemented | Stack, tests, CI, dirs, Retornatus state |
-| Context relevance | Implemented | Applicability-filtered Rules/Learnings |
+| Workspace isolation | Projected/integrated | Advisory Boundaries → native worktree/sandbox/subagents |
+| Host execution observation | Implemented | `execution record` under `runtime/executions/` (not a runtime) |
 | Brownfield construction dogfood | Implemented | Fixture service + health Change + git freshness |
 | Host Execution runtime | Environment-provided | Retornatus assembles context; host implements |
 | Workspace isolation / worktrees | Environment-provided | Native first |
@@ -454,6 +450,7 @@ Run from the project you want to govern (or pass `--path`).
 | `loop next` / `loop next --all-ready` | Ready work projection (never returns BLOCKED) |
 | `run <action-id>` / `run --assurance` | Assemble ExecutionContext (optional independent Assurance) |
 | `assurance plan` / `assurance review` | Independent review projection + review_result Evidence |
+| `execution record` / `execution list` | Observe Host work (does not run agents) |
 | `verify <change-id>` | Assurance over Contract DONE Claims (git freshness) |
 | `decision record` · `rule propose\|activate` | HUMAN boundary for Rule activation |
 | `inspect <id>` · `search <query>` | Read artifacts · FTS5 search |
