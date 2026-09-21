@@ -1,38 +1,23 @@
-# Gap Analysis — Functional Parity & Hardening (v0.5.0)
+# Gap Analysis — Functional Parity & Hardening (v0.6.0)
 
-Post-implementation status. Source of truth remains `prd/PRD.md`.
+## Closed in v0.5.0
 
-## Before (gaps closed in this pass)
+Situation elicit, task readiness, Claim↔Evidence, Resolution proof, Human Decision,
+governed bypass, context relevance, adversarial tests, health dogfood.
 
-1. Situation elicitation — no Demand→inspect→ambiguities loop
-2. Task auto-chaining from declaration order; no cycle/readiness projection
-3. Assurance matched any evidence type for any DONE (no Claim binding)
-4. Staleness unused; Resolution accepted bare summary
-5. Rule activation only checked `authority=HUMAN` on the Rule object
-6. `--force` skipped gates without reason/record
-7. Context loaded all active Rules; thin brownfield map
-8. Happy-path tests only
+## Closed in v0.6.0 (this pass)
 
-## After (implemented)
+| # | Item | Mechanism | Test |
+| --- | --- | --- | --- |
+| 1 | Brownfield dogfood | `seed_brownfield_service` + full governed path | `test_brownfield_gap_closure` |
+| 2 | Commit staleness | `commit:<sha>` + `derive_current_subject_states` | same (stale after new commit) |
+| 3 | Independent Assurance | `assurance plan/review` + `review_result` Claims | same |
+| 4 | Task CLI resources/deps | `--task` / `--depends` / `--resource` | same + readiness |
+| 5 | Situation repo signals | `collect_repo_signals` (stack/tests/CI/health) | same |
 
-| Area | Mechanism | Tests |
-| --- | --- | --- |
-| Situation | `change/situation.py` + `change elicit` | dogfood + create soft-guard |
-| Task sync | `readiness.py` + non-chaining workflow | adversarial |
-| Claim↔Evidence | SUPPORTS claim id + subject/type | adversarial + construction |
-| Staleness | `evidence_is_fresh` | adversarial |
-| Assurance | `build_claims_from_contract` proportional types | gates + dogfood |
-| Resolution | Evidence required for verifiable Q | adversarial |
-| Human authority | `Decision` + `activate_rule(decision_id)` | e2e + adversarial |
-| Bypass | `BypassRecord` + force+reason | adversarial + skills |
-| Context | applicability filter + contract subset | adversarial |
-| Brownfield | richer `project-init` + wake summary | construction_path |
-| Dogfood | Host boundary health endpoint | `test_construction_dogfood.py` |
+## Still remaining (honest)
 
-## Remaining gaps
-
-- No real multi-agent Host integration tests (by design — Environment-provided)
-- Workspace isolation remains Environment-native only
-- Evidence subject_state is explicit string matching, not git commit hashing
-- Situation elicitation is heuristic/process, not an LLM RequirementsEngine
-- Spec Guardrails behavioral parity is partial — see README capability matrix
+- Live LLM/Host integration (Environment-provided; not harness unit scope)
+- Workspace isolation orchestration (native Environment)
+- Spec Guardrails full behavioral replacement across all workflows
+- Automatic file-level git path freshness (only HEAD commit comparison today)

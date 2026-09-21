@@ -10,7 +10,7 @@ import typer
 from retornatus import __version__
 from retornatus.application.adaptation.service import AdaptationService
 from retornatus.application.adaptation.skills import SkillService
-from retornatus.application.change.workflow import ChangeWorkflow
+from retornatus.application.change.workflow import ChangeWorkflow, TaskSpec
 from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import DemandKind
@@ -36,6 +36,7 @@ question_app = typer.Typer(help="Questions grounded in Findings.")
 loop_app = typer.Typer(help="Next ready unit of work (projection).")
 decision_app = typer.Typer(help="Human Decisions (HUMAN authority boundary).")
 rule_app = typer.Typer(help="Rule candidates and activation.")
+assurance_app = typer.Typer(help="Assurance evaluation and independent review.")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -45,6 +46,52 @@ app.add_typer(question_app, name="question")
 app.add_typer(loop_app, name="loop")
 app.add_typer(decision_app, name="decision")
 app.add_typer(rule_app, name="rule")
+app.add_typer(assurance_app, name="assurance")
+
+
+def _parse_task_specs(
+    tasks: list[str] | None,
+    depends: list[str] | None,
+    resources: list[str] | None,
+) -> list[TaskSpec] | None:
+    """
+    Build TaskSpecs from CLI flags.
+
+    --task descriptions are independent by default.
+    --depends ``1:0`` means task index 1 depends on task index 0.
+    --resource ``0:app/main.py`` assigns a resource key to task index 0.
+    """
+    if not tasks:
+        return None
+    specs = [TaskSpec(description=t) for t in tasks]
+    for item in depends or []:
+        if ":" not in item:
+            raise typer.BadParameter(f"Invalid --depends {item!r}; expected INDEX:DEP[,DEP]")
+        left, right = item.split(":", 1)
+        try:
+            idx = int(left)
+            dep_indices = [int(x) for x in right.split(",") if x.strip() != ""]
+        except ValueError as exc:
+            raise typer.BadParameter(f"Invalid --depends {item!r}") from exc
+        if idx < 0 or idx >= len(specs):
+            raise typer.BadParameter(f"--depends index out of range: {idx}")
+        specs[idx].depends_on_indices = dep_indices
+    for item in resources or []:
+        if ":" not in item:
+            raise typer.BadParameter(
+                f"Invalid --resource {item!r}; expected INDEX:resource/path"
+            )
+        left, right = item.split(":", 1)
+        try:
+            idx = int(left)
+        except ValueError as exc:
+            raise typer.BadParameter(f"Invalid --resource {item!r}") from exc
+        if idx < 0 or idx >= len(specs):
+            raise typer.BadParameter(f"--resource index out of range: {idx}")
+        existing = list(specs[idx].resources or [])
+        existing.append(right)
+        specs[idx].resources = existing
+    return specs
 
 
 def version_callback(value: bool) -> None:
@@ -205,20 +252,19 @@ def search(
 def verify(
     change_id: str = typer.Argument(..., help="Change id to verify against contract DONE."),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
+    no_git: bool = typer.Option(
+        False,
+        "--no-git",
+        help="Do not derive subject freshness from git HEAD.",
+    ),
 ) -> None:
     """Run Assurance against a Change's contract DONE Claims (bound Evidence)."""
-    from retornatus.application.assurance.evaluate import (
-        build_claims_from_contract,
-        evaluate_assurance,
-    )
-    from retornatus.application.assurance.evidence import EvidenceService
+    from retornatus.application.assurance.independent import evaluate_change_assurance
 
     root = (path or Path.cwd()).resolve()
-    repo = FileRepository(root)
-    contract, _ = repo.load_contract(change_id)
-    claims = build_claims_from_contract(contract)
-    evidence = EvidenceService(root).list_for_change(change_id)
-    result = evaluate_assurance(claims=claims, evidence=evidence)
+    result = evaluate_change_assurance(
+        root, change_id, use_git_state=not no_git
+    )
     typer.echo(result.model_dump_json(indent=2))
     raise typer.Exit(code=0 if result.verdict.value == "SATISFIED" else 1)
 
@@ -285,12 +331,28 @@ def change_create(
         "--draft-contract",
         help="Create Contract without activating (elicitation incomplete).",
     ),
+    task: Optional[list[str]] = typer.Option(
+        None,
+        "--task",
+        help="Task description (repeatable). Independent unless --depends is set.",
+    ),
+    depends: Optional[list[str]] = typer.Option(
+        None,
+        "--depends",
+        help="Task dependency INDEX:DEP[,DEP] (0-based). Example: 1:0",
+    ),
+    resource: Optional[list[str]] = typer.Option(
+        None,
+        "--resource",
+        help="Task resource INDEX:key (e.g. 0:app/main.py) for conflict detection.",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Create a Change with Situation, Contract, and optional Action."""
     root = (path or Path.cwd()).resolve()
     if not is_initialized(root):
         initialize_project(root)
+    task_specs = _parse_task_specs(task, depends, resource)
     result = ChangeWorkflow(root).create_change(
         title=title,
         demand_statement=demand,
@@ -300,11 +362,17 @@ def change_create(
         done_criteria=list(done),
         action_objective=objective or what,
         activate_contract=not draft_contract,
+        task_specs=task_specs,
+        tasks=None if task_specs else None,
     )
     typer.echo(f"Created {result.change.id}")
     if result.situation_assessment:
         ready = result.situation_assessment.sufficient_for_contract
         typer.echo(f"Situation sufficient: {ready}")
+        if result.situation_assessment.repo_signals:
+            typer.echo(
+                f"Repo signals: {len(result.situation_assessment.repo_signals)}"
+            )
         if not ready:
             for q in result.situation_assessment.focused_questions:
                 typer.echo(f"  Q[{q.topic}]: {q.question}")
@@ -313,6 +381,10 @@ def change_create(
     )
     if result.action:
         typer.echo(f"Action {result.action.id}")
+        for t in result.action.tasks:
+            deps = ",".join(t.depends_on) if t.depends_on else "-"
+            res = ",".join(t.resources) if t.resources else "-"
+            typer.echo(f"  Task {t.id} deps={deps} resources={res}")
 
 
 @change_app.command("learn")
@@ -534,6 +606,11 @@ def evidence_add(
         "--claim",
         help="Claim id this Evidence SUPPORTS (required for Assurance binding).",
     ),
+    git_state: bool = typer.Option(
+        False,
+        "--git-state",
+        help="Record subject_state as commit:<HEAD> when --state is omitted.",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Record attributable Evidence for a Change."""
@@ -548,8 +625,11 @@ def evidence_add(
         subject_state=subject_state,
         supports_action_id=action_id,
         supports_claim_id=claim_id,
+        capture_git=git_state,
     )
     typer.echo(f"Recorded {ev.id}")
+    if ev.subject_state:
+        typer.echo(f"subject_state={ev.subject_state}")
 
 
 @finding_app.command("add")
@@ -724,6 +804,56 @@ def rule_activate(
         typer.echo(str(exc))
         raise typer.Exit(1) from exc
     typer.echo(f"Activated {rule.id}")
+
+
+@assurance_app.command("plan")
+def assurance_plan(
+    change_id: str = typer.Argument(...),
+    action_id: Optional[str] = typer.Option(None, "--action", "-a"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Project whether independent Assurance Execution is required."""
+    from retornatus.application.assurance.independent import plan_independent_assurance
+
+    root = (path or Path.cwd()).resolve()
+    plan = plan_independent_assurance(root, change_id, action_id=action_id)
+    typer.echo(f"required={plan.required}")
+    typer.echo(plan.rationale)
+    if plan.claims_needing_review:
+        typer.echo("claims: " + ", ".join(plan.claims_needing_review))
+    if plan.action_id:
+        typer.echo(f"action={plan.action_id}")
+    if plan.execution_context is not None:
+        typer.echo(
+            f"fresh_context independent={plan.execution_context.independent_assurance}"
+        )
+    raise typer.Exit(code=0 if not plan.required else 2)
+
+
+@assurance_app.command("review")
+def assurance_review(
+    change_id: str = typer.Argument(...),
+    claim_id: str = typer.Option(..., "--claim"),
+    subject: str = typer.Option(..., "--subject", "-s"),
+    summary: str = typer.Option(..., "--summary"),
+    verdict: str = typer.Option("approved", "--verdict"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Record review_result Evidence from an independent Assurance Execution."""
+    from retornatus.application.assurance.independent import (
+        record_independent_review_evidence,
+    )
+
+    root = (path or Path.cwd()).resolve()
+    eid = record_independent_review_evidence(
+        root,
+        change_id=change_id,
+        claim_id=claim_id,
+        subject=subject,
+        summary=summary,
+        verdict=verdict,
+    )
+    typer.echo(f"Recorded {eid}")
 
 
 def run() -> None:

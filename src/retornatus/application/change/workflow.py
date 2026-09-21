@@ -73,7 +73,10 @@ class ChangeWorkflow:
         constraints: list[str] | None = None,
     ) -> SituationAssessment:
         """Governed elicitation — inspect project context; ask only material questions."""
-        project_context = load_project_context_snippet(self.repo.paths.root)
+        from retornatus.application.change.situation import collect_repo_signals
+
+        root = self.repo.paths.root
+        project_context = load_project_context_snippet(root)
         return assess_situation(
             demand=demand_statement,
             situation=situation,
@@ -81,6 +84,7 @@ class ChangeWorkflow:
             done_criteria=done_criteria,
             constraints=constraints,
             project_context=project_context,
+            repo_signals=collect_repo_signals(root),
         )
 
     def create_change(

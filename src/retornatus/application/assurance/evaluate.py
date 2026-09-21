@@ -119,13 +119,18 @@ def evidence_is_fresh(
 
     If Evidence recorded subject_state S and current state for that subject differs,
     Evidence does not establish the current state.
+
+    Commit-based states (``commit:<sha>``) compare on the SHA only; optional
+    suffixes like ``|review:approved`` are ignored for freshness.
     """
     if not current_subject_states or not evidence.subject_state:
         return True
     current = current_subject_states.get(evidence.subject)
     if current is None:
         return True
-    return current == evidence.subject_state
+    recorded = evidence.subject_state.split("|", 1)[0].strip()
+    current_core = current.split("|", 1)[0].strip()
+    return recorded == current_core
 
 
 def _evidence_supports_claim(evidence: Evidence, claim: Claim) -> bool:
