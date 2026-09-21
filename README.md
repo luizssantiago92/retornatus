@@ -1,32 +1,34 @@
 # Retornatus
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![uv](https://img.shields.io/badge/uv-recommended-de5fe9.svg)](https://docs.astral.sh/uv/)
+[![uv](https://img.shields.io/badge/uvx%20%2F%20uv%20tool-recommended-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![version](https://img.shields.io/badge/version-0.4.0-informational.svg)](pyproject.toml)
 
 **Repo-native governance harness for AI-assisted software development.**
 
-Retornatus turns engineering intent into structured, governed, evidence-backed work — without replacing your coding agent, IDE, sandbox, or worktree. The host environment supplies **capability**; Retornatus supplies **governance, continuity, and assurance**.
+More than a checklist — a **governance harness** (contracts, gates, on-demand skills, evidence, and memory) that lives inside your repository.
 
-Agents are fast — and optimistic. They ship code, summarize what they *think* they did, and move on. Retornatus installs a **repeatable contract** into your repository: express a Demand, understand the Situation, activate a Contract, bound Actions with Authority and Rules, and close outcomes with attributable Evidence — all durable under `.retornatus/`, not trapped in chat scrollback.
+Agents are fast — and optimistic. They ship code, summarize what they *think* they did, and move on. Retornatus installs a **repeatable contract** into your repo: express a Demand, understand the Situation, activate a Contract, specialize with a researched Skill, execute under Authority and Boundaries, and close with attributable Evidence — all durable under `.retornatus/`, not trapped in chat scrollback.
 
-The name means **return with memory**: each iteration should start from evidence and learning, not from amnesia.
+You keep control: the agent proposes and implements; **gates** stop “done” without proof; Learning and Skill evolution improve the next return.
 
 > **Govern the work. Bound the agent. Verify the outcome.**
 
 | Without Retornatus | With Retornatus |
 | --- | --- |
-| “Done” is a chat claim | “Done” is Contract DONE + Assurance verdict |
-| Every session rediscovers context | `.retornatus/` preserves Changes, Evidence, Learning |
-| Rules live in sticky notes (or nowhere) | Rules, Authority, and Boundaries are first-class |
-| Failures vanish when the tab closes | Findings → Questions → Actions leave a trail |
-| Environment quirks get reinvented | Native-first adapters (Cursor, Claude Code, Codex) |
+| Jumps to code and says “done” | Active Contract + DONE criteria first |
+| “Done” is a chat claim | Assurance verdict from attributable Evidence |
+| Each chat starts from zero | `.retornatus/` survives sessions and handoffs |
+| Stale skill packs for every stack | **One specialization Skill**, researched *now* for this Change |
+| Same ceremony for a typo and a payment flow | Tasks only when needed; `loop next` projects the next unit |
+| Failures vanish when the tab closes | Finding → Question → Action leaves a trail |
 
-Distribution: **Python** · primary run via [`uvx`](https://docs.astral.sh/uv/) · persistent install via `uv tool install`
+**Python** · **0.4.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uvx` / `uv tool install`)
 
-**Product spec:** [prd/PRD.md](prd/PRD.md)
+**Docs:** [Product PRD](prd/PRD.md) · this README
 
-[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
+[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First Change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [Pillars](#four-pillars) · [How it works](#how-it-works) · [Gates](#gates-and-guarantees) · [Skills](#on-demand-specialization-skills) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
 ---
 
@@ -34,94 +36,146 @@ Distribution: **Python** · primary run via [`uvx`](https://docs.astral.sh/uv/) 
 
 A **governance layer** for AI coding agents — not an IDE, not an autonomous agent platform, and not a remote control plane.
 
+After install in a project, work moves through governed intentions:
+
+**Demand** → **Situation** → **Contract** → **Action** (+ Tasks when needed) → **Skill** (specialize) → **Execution** (native agent) → **Evidence** → **Assurance** → **Learning** / **Skill evolution** → return informed
+
 Retornatus is **repository-native**:
 
 - no mandatory SaaS runtime
 - no remote database required for V1
-- durable truth lives as files in `.retornatus/`
-- SQLite is a **derived** search index (safe to delete and rebuild)
+- durable truth = files under `.retornatus/`
+- SQLite/FTS5 is a **derived** index (safe to delete; `wake` rebuilds)
 
-Core cycle:
+Philosophy: **native first** — prefer Cursor / Claude Code / Codex capabilities; implement only what the host does not already guarantee.
 
-**Demand** → **Situation** → **Contract** → **Action** (+ Tasks when needed) → **Execution** (in your native environment) → **Evidence** → **Assurance** → **Resolution** → **Learning** → return better informed
-
-Philosophy in one line: **native first** — prefer Cursor / Claude Code / Codex capabilities; implement only what the host does not already guarantee.
+You do not need to already know “harness engineering.” The hub skill teaches the loop; **gates** enforce the stops. Failure modes and mechanisms: [four pillars](#four-pillars).
 
 ---
 
 ## 1. Install
 
-### Requirements
+Two commands — run both once in your **project** root (the app you are building):
 
-| Requirement | Role |
+```bash
+# From a clone of this repository (until PyPI is live):
+uv tool install --force /path/to/retornatus
+
+cd /path/to/your-app
+retornatus init
+retornatus integrate   # hub skill + Cursor bridges
+retornatus doctor
+```
+
+| Command | What it does |
 | --- | --- |
-| **Python 3.11+** | Required — harness runtime |
-| **[uv](https://docs.astral.sh/uv/)** | Recommended — install, `uvx`, tool management |
+| **`init`** | Creates `.retornatus/` (config, changes, governance, adaptation, index, runtime) |
+| **`integrate`** | Installs the Retornatus **hub skill** under `.cursor/skills/retornatus/` + bridge rules |
+| **`doctor` / `wake`** | Audits continuity, environment capabilities, and index health |
 
-### Persistent install (recommended)
+| Requirement | What you get |
+| --- | --- |
+| **Python 3.11+** | **Required** — harness runtime |
+| **[uv](https://docs.astral.sh/uv/)** | **Recommended** — `uv tool`, `uvx`, reproducible installs |
+| **AI coding agent** (Cursor, Claude Code, Codex, …) | Executes work; Retornatus governs and records |
 
-From a clone of this repository:
+### Install options
+
+**Persistent tool (recommended):**
 
 ```bash
 uv tool install --force /path/to/retornatus
-retornatus --version
+retornatus --version   # 0.4.x
 ```
 
-On Windows (PowerShell), ensure uv’s bin dir is on `PATH`:
+**Windows (PowerShell) — ensure `uv` is on PATH:**
 
 ```powershell
 $env:Path = "$env:USERPROFILE\.local\bin;$env:Path"
 uv tool install --force "C:\path\to\retornatus"
-retornatus --version
 ```
 
-After pulling updates, re-run `uv tool install --force …` so the tool binary matches the tree.
-
-### One-shot / no install
+**One-shot without a global tool:**
 
 ```bash
 uvx --from /path/to/retornatus retornatus --help
 ```
 
-### Working inside this source repository
+**From Git (once you prefer remote install):**
+
+```bash
+uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
+```
+
+**PyPI (when published):**
+
+```bash
+uvx retornatus --help
+uv tool install retornatus
+```
+
+Re-run `uv tool install --force …` after pulling harness upgrades. Project state under `.retornatus/` is preserved.
+
+### Working in this source repository (contributors / dogfood)
 
 ```bash
 uv sync
 uv run retornatus --help
 uv run pytest -q
+uv run retornatus integrate
+uv run retornatus wake --bridges
 ```
 
-> PyPI publication is planned; today install from a local path or git checkout.
+Day to day you work in **agent chat**; the agent calls the CLI when a phase needs structure or a gate.
 
 ---
 
 ## 2. Verify readiness
 
-You are ready when:
+Re-run `doctor` / `wake` after upgrades or machine changes. You are ready when:
 
-- `retornatus --version` prints `0.2.x` (or newer)
-- `retornatus doctor` (or `wake`) can see or create `.retornatus/`
-- Your AI coding environment can open the project that owns `.retornatus/`
+- `retornatus --version` prints `0.4.x` (or newer)
+- `.retornatus/` exists with `config.toml`
+- Hub skill is visible (for example `.cursor/skills/retornatus/SKILL.md` after `integrate`)
+- Your AI coding agent can open the project
 
 ```bash
 retornatus doctor
-# or
 retornatus wake
+# optional native bridges + hub:
+retornatus wake --bridges
+retornatus integrate
 ```
 
-`wake` reconstructs continuity from durable files, detects the environment, and rebuilds the SQLite/FTS5 index when needed.
-
 Deleting `.retornatus/index/retornatus.db` must **not** destroy semantic history — run `wake` again to rebuild.
+
+For multi-environment notes, see [Environment adapters](#environment-adapters-native-first).
 
 ---
 
 ## 3. Run your first Change
 
-In any software project root:
+Open your AI coding agent in the project and ask for a concrete governed goal, for example:
+
+> Create a Retornatus Change for a health endpoint: GET /health returns 200. Follow the Retornatus hub skill — Contract and gates before code.
+
+Ask it to follow the installed **Retornatus hub skill**. Chat phrases are guidance; shell commands are the source of truth.
+
+| Step | You do | Agent / CLI does |
+| --- | --- | --- |
+| 1 | Approve Demand / Contract intent | `change create` → Situation, active Contract, Action |
+| 2 | Gate the Contract | `gate contract C-xxxx` (exit 0 required) |
+| 3 | Specialize if needed | `skill create --need "…"` → research web → fill RESEARCH → `gate skill-research` → `activate` |
+| 4 | Build one unit at a time | `loop next` · `run A-xxxx` · implement in the host |
+| 5 | Demand proof | `evidence add` · `gate evidence` · `verify` / `gate assurance` |
+| 6 | Preserve the return | `change learn` · `skill evolve` |
+
+Example shell path:
 
 ```bash
 retornatus init
-retornatus wake
+retornatus integrate
+retornatus project-init
 
 retornatus change create \
   --title "Add health endpoint" \
@@ -130,28 +184,23 @@ retornatus change create \
   --done "Automated test covers /health" \
   --done "Endpoint documented" \
   --objective "Implement and verify health endpoint"
+
+retornatus gate contract C-0001
+retornatus skill create --need "Framework health-check patterns (current docs)" --action C-0001/A-001
+# agent researches, fills SKILL.md, then:
+retornatus gate skill-research S-0001
+retornatus skill activate S-0001
+retornatus skill export S-0001
+
+retornatus loop next C-0001
+retornatus run C-0001/A-001
+
+retornatus evidence add -c C-0001 -t test_result -s "/health" --source pytest --state passing
+retornatus gate evidence C-0001
+retornatus verify C-0001
 ```
 
-Then:
-
-| Step | You / agent | Retornatus |
-| --- | --- | --- |
-| 1 | Approve the written Demand & Contract intent | Persists Change, Situation, active Contract, Action |
-| 2 | Implement in Cursor / Claude / Codex | `run <action-id>` assembles ExecutionContext (rules, learnings, authority) |
-| 3 | Attach attributable Evidence | JSON under `.retornatus/changes/C-xxxx/evidence/` |
-| 4 | Demand proof | `verify C-xxxx` → Assurance `SATISFIED` / `NOT_SATISFIED` / `INCONCLUSIVE` |
-| 5 | Preserve experience | `change learn` records Learning for future wake/search |
-
-Inspect artifacts:
-
-```bash
-retornatus status
-retornatus inspect C-0001
-retornatus inspect C-0001/A-001
-retornatus search health
-```
-
-If the agent jumps straight to code: *Stop. Activate a Contract and success conditions before treating the work as governed.*
+If the agent jumps straight to code: *Stop. Activate a Contract and pass `gate contract` first.*
 
 ---
 
@@ -159,21 +208,23 @@ If the agent jumps straight to code: *Stop. Activate a Contract and success cond
 
 - [ ] Python 3.11+ available (`python --version`)
 - [ ] `uv` installed and on `PATH`
-- [ ] Installed Retornatus (`uv tool install` or `uv sync` in this repo)
-- [ ] Ran `retornatus init` in a target project
-- [ ] Ran `retornatus wake` successfully
-- [ ] Created a first Change with `change create`
+- [ ] Installed Retornatus (`uv tool install --force …`)
+- [ ] Ran `retornatus init` in the target project
+- [ ] Ran `retornatus integrate` and confirmed the hub skill is visible
+- [ ] `doctor` / `wake` succeeds
+- [ ] Created a first Change and passed `gate contract`
 - [ ] Know where the product contract lives: [prd/PRD.md](prd/PRD.md)
 
 ---
 
-## Three pillars
+## Four pillars
 
 | Problem | Pillar | One-line win |
 | --- | --- | --- |
 | Built the wrong thing | **Contract** | WHAT + constraints + DONE before execution |
-| Called it done without proof | **Assurance** | Verdict from attributable Evidence, not agent self-report |
-| Every chat starts from zero | **Memory / Learning** | `.retornatus/` + searchable index outlive the session |
+| Called it done without proof | **Gates + Assurance** | Exit codes + verdict from Evidence, not self-report |
+| Every chat starts from zero | **Memory / Learning** | `.retornatus/` + FTS index outlive the session |
+| Stale playbooks for every stack | **On-demand Skills** | One researched specialization Skill per need |
 
 ### 1. Contract — stop “done” from meaning “I typed a lot”
 
@@ -181,9 +232,18 @@ If the agent jumps straight to code: *Stop. Activate a Contract and success cond
 
 **With it:** an active Contract is the authoritative obligation. Material change requires a new version — not silent mutation.
 
-### 2. Assurance — “done” has to be observable
+### 2. Gates + Assurance — “done” has to be provable
 
-Evidence is attributable (tests, scans, human decisions, runtime observation). Assurance evaluates claims and returns:
+Mechanical gates return **non-zero = STOP**:
+
+| Gate | Stops when |
+| --- | --- |
+| `gate contract` | No active Contract / empty WHAT or DONE |
+| `gate skill-research` | Skill has no research URLs / blank PROCEDURE |
+| `gate evidence` | No Evidence artifacts for the Change |
+| `gate assurance` / `verify` | Assurance is not `SATISFIED` |
+
+Assurance verdicts:
 
 | Verdict | Meaning |
 | --- | --- |
@@ -199,6 +259,20 @@ Learnings are Markdown with structured metadata. Rules may be **proposed** from 
 
 > Learning informs; Rules constrain. Recurrence never creates authority automatically.
 
+### 4. On-demand Skills — specialize without stale packs
+
+Retornatus does **not** ship a giant library of preloaded skills that rot.
+
+When a Change needs specialization:
+
+1. `skill create --need "…"` creates **one** Skill tied to the Action
+2. The agent **researches current sources** (web / official docs) and fills RESEARCH + PROCEDURE
+3. `gate skill-research` blocks activation until sources exist
+4. Subagents consume the same Skill snapshot (`skill export` → native Cursor skill)
+5. `skill evolve` updates the Skill from validated Learning
+
+> Specialization comes from Assignment + Context + Skills — not permanent Agent personas.
+
 ---
 
 ## How it works
@@ -210,52 +284,94 @@ Learnings are Markdown with structured metadata. Rules may be **proposed** from 
      ▼                   ▼                   ▼
  Continuity          Governance          Environment
   (Memory)         Rule · Policy         Wake · Caps
-                   Authority · Bounds    Adapters
+                   Authority · Bounds    Adapters · Hub
                          │
                          ▼
                       CHANGE
          Demand · Situation · Contract
               Action · Task?
                          │
-              ┌──────────┴──────────┐
-              ▼                     ▼
-          Execution              Assurance
-       (native agent)         Evidence → Verdict
+              ┌──────────┼──────────┐
+              ▼          ▼          ▼
+           Skill     Execution   Assurance
+        (research)  (native)   Evidence → Verdict
               │
          Finding → Question → Action → Resolution
               │
               ▼
           Adaptation
-     Learning · Skill · Rule Candidate → Human → Rule
+     Learning · Skill evolution · Rule Candidate → Human → Rule
 ```
 
 | Layer | Responsibility |
 | --- | --- |
-| **CLI** | Intention-oriented commands (`init`, `wake`, `change`, `verify`, …) |
-| **Application** | Change workflow, Assurance, Policy, Question loop, Adaptation |
+| **CLI** | Intention-oriented commands (`init`, `wake`, `change`, `gate`, `skill`, …) |
+| **Hub skill** | Teaches the construction loop inside the agent tree |
+| **Application** | Change workflow, gates, Assurance, Question loop, Adaptation, `loop next` |
 | **Domain** | Pydantic models, IDs, relations, schema versioning |
-| **Infrastructure** | Atomic file persistence, optimistic concurrency, SQLite FTS5, env adapters |
+| **Infrastructure** | Atomic persistence, optimistic concurrency, SQLite FTS5, env adapters |
 
 Invariant: **files persist truth; models validate truth; SQLite indexes and finds truth.**
+
+Status is a **projection** (`status`, `loop next`) — not a second source of truth.
+
+---
+
+## Gates and guarantees
+
+| Guarantee | How Retornatus enforces it |
+| --- | --- |
+| Contract before “build” | `gate contract` |
+| Research before specialized execution | `gate skill-research` + blocked `skill activate` |
+| Evidence before “done” | `evidence add` + `gate evidence` + `verify` |
+| Continuity after crash | Canonical files + `wake` index rebuild |
+| No silent Rule authority | Rule Candidates require HUMAN activation |
+
+### Process vs brakes (honest)
+
+| | **Process** (hub skill + CLI) | **Brakes** (gates) |
+| --- | --- | --- |
+| **Workflow** | Same Change → Skill → Evidence loop | Same loop |
+| **Who checks** | Agent follows the hub skill | CLI exit codes |
+| **When incomplete** | Agent *should* stop | Agent **cannot** pretend success — non-zero = STOP |
+| **Best for** | Learning the method | Teams that want proof between approvals |
+
+> Gates turn “trust the agent” into “the agent has to prove it.”
+
+---
+
+## On-demand specialization Skills
+
+```bash
+retornatus skill create --need "Stripe webhook signatures (current API)" --action C-0001/A-001
+retornatus inspect S-0001
+# agent fills RESEARCH with URLs + PROCEDURE
+retornatus gate skill-research S-0001
+retornatus skill activate S-0001
+retornatus skill export S-0001          # → .cursor/skills/<name>/SKILL.md
+retornatus skill evolve S-0001 --note "Added timestamp tolerance"
+```
+
+Canonical storage: `.retornatus/adaptation/skills/S-xxxx/SKILL.md`  
+Native projection: `.cursor/skills/…` (and similar bridges for other hosts)
 
 ---
 
 ## Environment adapters (native first)
 
-Retornatus detects Cursor, Claude Code, Codex, or falls back to generic.
-
 ```bash
 retornatus wake --bridges
+retornatus integrate
 ```
-
-When useful, adapters write **bridge projections** only (for example Cursor rules, `CLAUDE.md`, `AGENTS.md`). Canonical truth stays in `.retornatus/`.
 
 | Environment | Native preference |
 | --- | --- |
-| Cursor | Rules / skills surfaces |
-| Claude Code | `CLAUDE.md` / `.claude` |
-| Codex | `AGENTS.md` / `.codex` |
-| Generic | No bridge files required |
+| Cursor | Hub + rules under `.cursor/` |
+| Claude Code | `CLAUDE.md` / `.claude` bridge markers |
+| Codex | `AGENTS.md` / `.codex` bridge markers |
+| Generic | `.retornatus/` alone is enough |
+
+Adapters write **projections** only. Canonical truth stays in `.retornatus/`.
 
 ---
 
@@ -263,13 +379,13 @@ When useful, adapters write **bridge projections** only (for example Cursor rule
 
 | Enforced / owned by Retornatus | Not Retornatus’s job (host / human) |
 | --- | --- |
-| Structure of Changes, Contracts, Evidence | Writing application code |
-| Schema validation & atomic persistence | Replacing the IDE agent |
-| Assurance verdicts from evidence types | Rebuilding sandboxes the host already has |
-| Policy ALLOW / DENY / REQUIRE_HUMAN (basic) | Distributed locking / multi-tenant SaaS |
-| Index rebuild after crash | Publishing to PyPI (pending) |
+| Structure of Changes, Contracts, Skills, Evidence | Writing application code |
+| Schema validation & atomic persistence | Replacing the IDE agent runtime |
+| Gate exit codes & Assurance verdicts | Rebuilding sandboxes the host already has |
+| Skill research scaffold + activation gate | Surfing the web for the agent (host tools do that) |
+| Index rebuild after crash | Multi-tenant SaaS control plane |
 
-Honest scope: V1 is a **local harness**. It governs work and preserves continuity; it does not claim to be a full remote orchestration platform.
+Honest scope: V1 is a **local harness** for governed software construction. It does not claim to be a remote orchestration platform.
 
 ---
 
@@ -279,28 +395,26 @@ Run from the project you want to govern (or pass `--path`).
 
 | Command | What it does |
 | --- | --- |
-| `retornatus init` | Create `.retornatus/` tree + `config.toml` |
-| `retornatus wake` | Reconstruct state, detect environment, rebuild index |
-| `retornatus wake --bridges` | Also write native bridge files when detected |
-| `retornatus doctor` | Diagnostics / readiness |
-| `retornatus status` | Derived Change status projection |
-| `retornatus change create …` | Demand → Situation → Contract → Action |
-| `retornatus change learn …` | Record a Learning |
-| `retornatus integrate` / `project-init` | Install hub skill + map brownfield continuity |
-| `retornatus gate contract\|evidence\|skill-research\|assurance` | Mechanical STOP gates (exit code) |
-| `retornatus evidence add` | Record attributable Evidence |
-| `retornatus finding add` / `question open\|resolve` | Finding → Question loop |
-| `retornatus loop next` | Next ready Question/Task/Action |
-| `retornatus skill create --need "…"` | Create one specialization Skill (agent researches & fills) |
-| `retornatus skill list` / `activate` / `evolve` / `export` | Skill lifecycle + native Cursor export |
-| `retornatus run <action-id>` | Assemble ExecutionContext (does not run the agent) |
-| `retornatus verify <change-id>` | Assurance over Contract DONE criteria |
-| `retornatus inspect <id>` | Print Change / Action / Finding / Question / Evidence / Rule / Learning |
-| `retornatus search <query>` | FTS5 search over the derived index |
+| `init` | Create `.retornatus/` |
+| `integrate` | Install hub skill + Cursor bridges |
+| `project-init` | Brownfield continuity map → `project/project.md` |
+| `wake` / `wake --bridges` | Reconstruct state, rebuild index, optional bridges |
+| `doctor` | Diagnostics |
+| `status` | Derived Change status |
+| `change create` / `change learn` | Demand→Contract→Action · record Learning |
+| `skill create/list/activate/evolve/export` | On-demand specialization Skills |
+| `gate contract\|evidence\|skill-research\|assurance` | Mechanical STOP gates |
+| `evidence add` | Record attributable Evidence |
+| `finding add` · `question open\|resolve` | Problem loop |
+| `loop next` | Next ready Question / Task / Action |
+| `run <action-id>` | Assemble ExecutionContext (does not run the agent) |
+| `verify <change-id>` | Assurance over Contract DONE |
+| `inspect <id>` · `search <query>` | Read artifacts · FTS5 search |
 
 ```bash
 retornatus --help
-retornatus change create --help
+retornatus gate --help
+retornatus skill --help
 ```
 
 ---
@@ -310,14 +424,15 @@ retornatus change create --help
 | Path | What you find |
 | --- | --- |
 | [`src/retornatus/cli/`](src/retornatus/cli/) | Intention-oriented CLI |
-| [`src/retornatus/domain/`](src/retornatus/domain/) | Pydantic domain models, IDs, relations |
-| [`src/retornatus/application/`](src/retornatus/application/) | Change, Assurance, Policy, Question, Adaptation, Execution context |
-| [`src/retornatus/infrastructure/`](src/retornatus/infrastructure/) | Persistence, SQLite index, environment adapters |
-| [`src/retornatus/bootstrap/`](src/retornatus/bootstrap/) | `init` and `wake` |
+| [`src/retornatus/domain/`](src/retornatus/domain/) | Pydantic models, IDs, relations |
+| [`src/retornatus/application/`](src/retornatus/application/) | Change, gates, Assurance, Skills, Question loop, `loop next` |
+| [`src/retornatus/infrastructure/`](src/retornatus/infrastructure/) | Persistence, SQLite index, adapters, hub skill |
+| [`src/retornatus/bootstrap/`](src/retornatus/bootstrap/) | `init`, `wake`, `project-init` |
 | [`prd/PRD.md`](prd/PRD.md) | Product requirements (canonical V1) |
-| [`tests/`](tests/) | Unit + dogfood E2E (M0–M12) |
+| [`tests/`](tests/) | Unit + construction-path + dogfood E2E |
+| [`.github/workflows/publish.yml`](.github/workflows/publish.yml) | PyPI / TestPyPI publish |
 
-Day-to-day governed state in a consumer project lives under **`.retornatus/`** (`changes/`, `governance/`, `adaptation/`, `index/`, `runtime/`).
+After install in a consumer project, day-to-day artifacts live under **`.retornatus/`** (`changes/`, `governance/`, `adaptation/`, `index/`, `runtime/`).
 
 ---
 
@@ -325,13 +440,14 @@ Day-to-day governed state in a consumer project lives under **`.retornatus/`** (
 
 | Area | Where |
 | --- | --- |
-| **Product definition** | [prd/PRD.md](prd/PRD.md) |
+| **Start** | This README · [prd/PRD.md](prd/PRD.md) |
 | **Philosophy & invariants** | PRD §§2, 72 |
 | **Filesystem layout** | PRD §52 |
-| **CLI intentions** | PRD §62 · this README |
+| **CLI intentions** | PRD §62 · [Commands](#commands-cheat-sheet) |
+| **Skills / Adaptation** | PRD §§39–41 · [On-demand Skills](#on-demand-specialization-skills) |
 | **Milestones M0–M12** | PRD §68 |
 
-Deeper narrative guides (tutorials, FAQ) can grow under `docs/` as the product hardens — the PRD is the source of truth today.
+Deeper narrative guides can grow under `docs/` as the product hardens — the PRD remains the source of truth.
 
 ---
 
@@ -344,7 +460,7 @@ uv sync
 uv run pytest -q
 ```
 
-Prefer small milestones over speculative engines. Architecture changes should cite a concrete failure mode (see PRD §71).
+Prefer small milestones over speculative engines. Architecture changes should cite a concrete failure mode (PRD §71).
 
 ---
 
@@ -352,9 +468,7 @@ Prefer small milestones over speculative engines. Architecture changes should ci
 
 *Credits and upstream attributions will be added here.*
 
-If you contributed ideas, patterns, or references used to shape Retornatus, send them for inclusion in this section.
-
-Related prior work in this ecosystem: [spec-guardrails](https://github.com/luizssantiago92/spec-guardrails) (governed spec-driven development for AI coding agents).
+Related prior work in this ecosystem: [spec-guardrails](https://github.com/luizssantiago92/spec-guardrails) (governed spec-driven development for AI coding agents). Retornatus is a **separate harness** focused on Change/Contract/Skill/Evidence continuity — not a fork of Spec Guardrails.
 
 ---
 
