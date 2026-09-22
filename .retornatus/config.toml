@@ -1,0 +1,7 @@
+schema_version = 1
+
+[retornatus]
+version = "0.8.0"
+
+[project]
+initialized = true

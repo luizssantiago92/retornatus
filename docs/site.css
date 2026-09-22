@@ -5,6 +5,8 @@
   --teal: #14b8a6;
   --teal-dim: #0f766e;
   --amber: #f59e0b;
+  --amber-glow: rgba(245, 158, 11, 0.55);
+  --teal-glow: rgba(45, 212, 191, 0.45);
   --muted: #8b9bb0;
   --line: rgba(232, 238, 245, 0.12);
   --font-display: "Fraunces", Georgia, serif;
@@ -37,7 +39,9 @@ body {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 80% 50% at 70% 10%, rgba(45, 212, 191, 0.14), transparent 55%),
+    radial-gradient(ellipse 55% 50% at 78% 32%, rgba(245, 158, 11, 0.12), transparent 55%),
+    radial-gradient(ellipse 70% 55% at 78% 18%, rgba(45, 212, 191, 0.16), transparent 58%),
+    radial-gradient(ellipse 45% 40% at 72% 28%, rgba(245, 158, 11, 0.08), transparent 50%),
     radial-gradient(ellipse 60% 40% at 15% 80%, rgba(232, 184, 109, 0.06), transparent 50%),
     linear-gradient(165deg, #0d1219 0%, #121821 45%, #15202e 100%);
 }
@@ -145,12 +149,18 @@ main {
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
-  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:focus-visible,
+nav a:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
 }
 
 .btn:hover {
   text-decoration: none;
-  transform: translateY(-1px);
 }
 
 .btn.primary {
@@ -174,17 +184,39 @@ main {
 }
 
 .hero-mascot {
+  position: relative;
   margin: 0;
   justify-self: center;
-  max-width: min(100%, 420px);
-  animation: float-in 0.9s ease-out both, drift 7s ease-in-out 1s infinite;
+  max-width: min(100%, 440px);
+}
+
+/* Soft energy under the transparent PNG — page atmosphere shows through */
+.mascot-glow {
+  position: absolute;
+  inset: 8% 6% 4%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 46% 38%, rgba(245, 158, 11, 0.55), transparent 40%),
+    radial-gradient(circle at 58% 62%, rgba(45, 212, 191, 0.4), transparent 52%),
+    radial-gradient(circle at 50% 80%, rgba(20, 184, 166, 0.2), transparent 60%);
+  filter: blur(22px);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .hero-mascot img {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 24px 48px rgba(45, 212, 191, 0.18));
+  /* Alpha asset floats on .atmosphere; glow reads as crystal + trail energy */
+  filter:
+    drop-shadow(0 0 12px rgba(245, 158, 11, 0.55))
+    drop-shadow(0 0 22px rgba(245, 158, 11, 0.25))
+    drop-shadow(0 0 28px rgba(45, 212, 191, 0.35))
+    drop-shadow(0 22px 48px rgba(13, 18, 25, 0.45));
 }
 
 @keyframes float-in {
@@ -204,7 +236,30 @@ main {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Motion is opt-in (modern a11y pattern) */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-mascot {
+    animation: float-in 0.9s ease-out both, drift 7s ease-in-out 1s infinite;
+  }
+
+  .mascot-glow {
+    animation: pulse-glow 4.5s ease-in-out infinite;
   }
 }
 
@@ -218,6 +273,38 @@ main {
   font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 600;
+}
+
+.benefits,
+.steps,
+.news {
+  margin: 0;
+  padding-left: 1.25rem;
+  max-width: 42rem;
+  color: var(--mist);
+}
+
+.benefits li,
+.steps li,
+.news li {
+  margin-bottom: 0.85rem;
+}
+
+.benefits strong,
+.steps strong,
+.news strong {
+  color: var(--mist);
+}
+
+.concept {
+  margin: 0 0 1.75rem;
+  max-width: 40rem;
+  font-size: 1.12rem;
+  color: var(--muted);
+}
+
+.concept strong {
+  color: var(--teal);
 }
 
 .compare {
@@ -240,38 +327,6 @@ main {
   color: var(--mist);
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-
-.cards article {
-  padding: 1.15rem 1.2rem;
-  border: 1px solid var(--line);
-  border-radius: 0.4rem;
-  background: rgba(26, 35, 50, 0.55);
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.cards article:hover {
-  border-color: rgba(45, 212, 191, 0.35);
-  transform: translateY(-2px);
-}
-
-.cards h3 {
-  margin: 0 0 0.4rem;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-}
-
-.cards p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.loop,
 .code {
   margin: 0;
   padding: 1.25rem 1.35rem;
@@ -318,8 +373,7 @@ footer .tiny {
     max-width: 280px;
   }
 
-  .compare,
-  .cards {
+  .compare {
     grid-template-columns: 1fr;
   }
 

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "id": "C-0001",
+  "title": "SG DX parity: overview, classify, doctor scores, CI, lessons, ops loops",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Bring high-ROI Spec Guardrails DX patterns into Retornatus without cloning SG surface.",
+    "kind": "CAPABILITY"
+  },
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-22T03:21:37.060837Z"
+}

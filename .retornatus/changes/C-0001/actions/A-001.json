@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Implement SG DX parity features end-to-end",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "change overview renders Claims Evidence Tasks Questions next",
+    "change classify and create --lane work",
+    "doctor reports Process and Brakes scores",
+    "CI template under templates/ci/",
+    "lesson record from gate failure path works",
+    "ops loop list show run work",
+    "README documents new capabilities"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [],
+  "relations": []
+}
