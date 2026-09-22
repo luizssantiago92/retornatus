@@ -21,6 +21,7 @@ class GateName(str, Enum):
     EVIDENCE = "evidence"
     SKILL_RESEARCH = "skill-research"
     ASSURANCE = "assurance"
+    POLICY = "policy"
 
 
 @dataclass
@@ -165,3 +166,27 @@ def gate_assurance(
     for claim_id, status in result.claim_results.items():
         detail.append(f"  {claim_id}: {status}")
     return GateResult(GateName.ASSURANCE, ok, detail)
+
+
+def gate_policy(root: Path, action_id: str) -> GateResult:
+    """Policy must ALLOW the Action objective (DENY / REQUIRE_HUMAN = STOP)."""
+    from retornatus.application.governance.policy import (
+        PolicyVerdict,
+        evaluate_action_policy,
+    )
+
+    try:
+        decision = evaluate_action_policy(root, action_id)
+    except FileNotFoundError:
+        return GateResult(
+            GateName.POLICY,
+            False,
+            [f"Action not found: {action_id}"],
+        )
+    ok = decision.verdict is PolicyVerdict.ALLOW
+    messages = [
+        f"Verdict={decision.verdict.value}: {decision.rationale}",
+    ]
+    if decision.matched_rule_ids:
+        messages.append("matched_rules: " + ", ".join(decision.matched_rule_ids))
+    return GateResult(GateName.POLICY, ok, messages)

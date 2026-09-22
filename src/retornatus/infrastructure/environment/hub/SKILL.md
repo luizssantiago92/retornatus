@@ -26,7 +26,8 @@ Durable truth lives in `.retornatus/`, not in chat.
 9. `retornatus gate skill-research <S-id>` then `retornatus skill activate <S-id>`
    - Bypass only as governed decision: `skill activate --force --reason "..."`
 10. Optional: `retornatus skill export <S-id>` for native Cursor loading
-11. `retornatus run <A-id>` — read ExecutionContext (rules, learnings, skills)
+11. `retornatus run <A-id>` — read ExecutionContext (rules, learnings, skills, policy)
+    - Optional STOP: `run --strict-policy` or `gate policy <A-id>`
 12. Implement **ready** work: `retornatus loop next <C-id>` (use `--all-ready` for parallelizable tasks)
 13. Advance Tasks: `task start|complete|fail|reopen`
 14. Record proof bound to Claims: `retornatus evidence add ... --type test_result --claim <claim-id>`
@@ -37,7 +38,9 @@ Durable truth lives in `.retornatus/`, not in chat.
 19. Material Contract change: `change reopen` (archives prior version)
 20. Preserve: `retornatus change learn ...` and `retornatus skill evolve ...`
 21. Rule Candidates require HUMAN Decision: `decision record` → `rule activate --decision D-xxxx`
-22. Hygiene: `retornatus doctor` (draft contracts, skill research gaps, inactive rules)
+    - Active Rules project into native bridges (Cursor / CLAUDE.md / AGENTS.md)
+22. Check Policy when needed: `policy check --action <A-id>` / `--effect "..."`
+23. Hygiene: `retornatus doctor` (draft contracts, skill research gaps, inactive rules)
 
 ## Hard rules
 
@@ -49,15 +52,17 @@ Durable truth lives in `.retornatus/`, not in chat.
 - Do not invent fake Task dependencies from declaration order
 - Bypass is a governed decision, not absence of governance
 - Status is a derived projection — durable truth lives in artifacts under `.retornatus/`
+- Respect Policy DENY / REQUIRE_HUMAN — do not proceed past a failed `gate policy`
 
 ## CLI map
 
 | Intent | Command |
 | --- | --- |
-| Continuity | `wake`, `doctor`, `status`, `project-init` |
+| Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate` |
 | Situation | `change elicit`, `change create`, `change activate`, `change reopen` |
 | Skill | `skill create/list/need/activate/evolve/export` |
 | Proof | `evidence add --claim`, `verify`, `gate *` |
+| Policy | `policy check`, `gate policy`, `run --strict-policy` |
 | Problems | `finding add`, `question open/resolve/reopen` |
 | Tasks | `task start/complete/fail/reopen` |
 | Next work | `loop next`, `loop next --all-ready` |

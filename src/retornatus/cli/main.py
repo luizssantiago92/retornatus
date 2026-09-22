@@ -36,6 +36,7 @@ question_app = typer.Typer(help="Questions grounded in Findings.")
 loop_app = typer.Typer(help="Next ready unit of work (projection).")
 decision_app = typer.Typer(help="Human Decisions (HUMAN authority boundary).")
 rule_app = typer.Typer(help="Rule candidates and activation.")
+policy_app = typer.Typer(help="Policy evaluation (ALLOW / DENY / REQUIRE_HUMAN).")
 assurance_app = typer.Typer(help="Assurance evaluation and independent review.")
 execution_app = typer.Typer(help="Host Execution observations (not an agent runtime).")
 task_app = typer.Typer(help="Task lifecycle within an Action.")
@@ -48,6 +49,7 @@ app.add_typer(question_app, name="question")
 app.add_typer(loop_app, name="loop")
 app.add_typer(decision_app, name="decision")
 app.add_typer(rule_app, name="rule")
+app.add_typer(policy_app, name="policy")
 app.add_typer(assurance_app, name="assurance")
 app.add_typer(execution_app, name="execution")
 app.add_typer(task_app, name="task")
@@ -284,12 +286,18 @@ def run(
         "--assurance",
         help="Assemble a fresh independent Assurance ExecutionContext.",
     ),
+    strict_policy: bool = typer.Option(
+        False,
+        "--strict-policy",
+        help="Exit non-zero when Policy is DENY or REQUIRE_HUMAN.",
+    ),
 ) -> None:
     """Assemble a stable ExecutionContext for an Action (does not execute agents)."""
     from retornatus.application.execution.context import (
         assemble_assurance_context,
         assemble_execution_context,
     )
+    from retornatus.application.governance.policy import PolicyVerdict
 
     root = (path or Path.cwd()).resolve()
     if assurance:
@@ -297,6 +305,11 @@ def run(
     else:
         ctx = assemble_execution_context(root, action_id)
     typer.echo(ctx.model_dump_json(indent=2))
+    if strict_policy and ctx.policy_verdict in {
+        PolicyVerdict.DENY.value,
+        PolicyVerdict.REQUIRE_HUMAN.value,
+    }:
+        raise typer.Exit(1)
 
 
 @change_app.command("elicit")
@@ -597,18 +610,43 @@ def project_init_cmd(
 def integrate_cmd(
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
-    """Install Retornatus hub skill + Cursor bridge into the project."""
+    """Install Retornatus hub skill + Environment bridge for the detected host."""
+    from retornatus.infrastructure.environment.adapters import detect_environment
     from retornatus.infrastructure.environment.hub_skill import install_hub_skill
-    from retornatus.infrastructure.environment.adapters import CursorAdapter
 
     root = (path or Path.cwd()).resolve()
     if not is_initialized(root):
         initialize_project(root)
+    adapter, caps = detect_environment(root)
+    bridges = adapter.ensure_bridge_files(root)
     hub = install_hub_skill(root)
-    bridges = CursorAdapter().ensure_bridge_files(root)
-    typer.echo(f"Hub skill: {hub}")
-    for b in bridges:
-        typer.echo(f"Bridge: {b}")
+    typer.echo(f"environment: {adapter.kind.value}")
+    typer.echo(
+        f"capabilities: native_rules={caps.native_rules} "
+        f"native_skills={caps.native_skills} native_sandbox={caps.native_sandbox}"
+    )
+    seen: set[str] = set()
+    for b in [*bridges, hub]:
+        key = str(b)
+        if key in seen:
+            continue
+        seen.add(key)
+        label = "Hub skill" if b == hub or "skills/retornatus" in key else "Bridge"
+        typer.echo(f"{label}: {b}")
+
+
+@gate_app.command("policy")
+def gate_policy_cmd(
+    action_id: str = typer.Argument(..., help="Action id to evaluate Policy against."),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Gate: Policy ALLOW for Action objective (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_policy
+
+    result = gate_policy(path or Path.cwd(), action_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
 
 
 @gate_app.command("contract")
@@ -899,6 +937,51 @@ def rule_activate(
         typer.echo(str(exc))
         raise typer.Exit(1) from exc
     typer.echo(f"Activated {rule.id}")
+
+
+@policy_app.command("check")
+def policy_check(
+    effect: Optional[str] = typer.Option(
+        None,
+        "--effect",
+        "-e",
+        help="Freeform governed effect to evaluate.",
+    ),
+    action_id: Optional[str] = typer.Option(
+        None,
+        "--action",
+        "-a",
+        help="Evaluate Policy against an Action objective.",
+    ),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Evaluate Policy (ALLOW / DENY / REQUIRE_HUMAN). Exit 0 only on ALLOW."""
+    from retornatus.application.governance.policy import (
+        PolicyVerdict,
+        evaluate_action_policy,
+        evaluate_policy,
+    )
+    from retornatus.domain.enums import AuthorityCategory
+    from retornatus.domain.models import Authority
+
+    root = (path or Path.cwd()).resolve()
+    if bool(effect) == bool(action_id):
+        typer.echo("Provide exactly one of --effect or --action")
+        raise typer.Exit(2)
+    if action_id:
+        decision = evaluate_action_policy(root, action_id)
+    else:
+        assert effect is not None
+        decision = evaluate_policy(
+            effect=effect,
+            rules=FileRepository(root).list_rules(),
+            authority=Authority(category=AuthorityCategory.DELEGATED, rationale="cli"),
+        )
+    typer.echo(f"verdict={decision.verdict.value}")
+    typer.echo(decision.rationale)
+    if decision.matched_rule_ids:
+        typer.echo("matched_rules: " + ", ".join(decision.matched_rule_ids))
+    raise typer.Exit(code=0 if decision.verdict is PolicyVerdict.ALLOW else 1)
 
 
 @assurance_app.command("plan")

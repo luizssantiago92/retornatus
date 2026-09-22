@@ -3,7 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uvx%20%2F%20uv%20tool-recommended-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.9.0-informational.svg)](pyproject.toml)
+[![version](https://img.shields.io/badge/version-1.0.0-informational.svg)](pyproject.toml)
 
 **Repo-native governance harness for AI-assisted software development.**
 
@@ -231,6 +231,9 @@ If the agent jumps straight to code: *Stop. Activate a Contract and pass `gate c
 | Draft Contract activation | Implemented | `change activate` after Situation sufficiency |
 | Rich status projection | Implemented | `status` — tasks, questions, next work, skill need, assurance |
 | Doctor hygiene | Implemented | `doctor` — draft contracts, skill research gaps, inactive rules |
+| Policy ALLOW/DENY/REQUIRE_HUMAN | Implemented | `policy check` · `gate policy` · `run --strict-policy` |
+| Native Rule projection | Implemented | Active Rules upserted into Cursor/Claude/Codex bridges |
+| Adapter-aware integrate | Implemented | Detected Environment owns bridge files |
 | Complexity-sensitive Skills | Implemented | `skill need` skips ceremony for trivial Actions |
 | Claim↔Evidence binding | Implemented | `--claim` + SUPPORTS relation; subject/type checks |
 | Evidence staleness | Implemented | Path-aware `commit:<sha>` (file subjects) + HEAD fallback |
@@ -417,12 +420,12 @@ retornatus integrate
 
 | Environment | Native preference |
 | --- | --- |
-| Cursor | Hub + rules under `.cursor/` |
-| Claude Code | `CLAUDE.md` / `.claude` bridge markers |
-| Codex | `AGENTS.md` / `.codex` bridge markers |
+| Cursor | Hub + rules under `.cursor/` (active Rules projected into `retornatus.mdc`) |
+| Claude Code | `CLAUDE.md` / `.claude` bridge markers + active Rules section |
+| Codex | `AGENTS.md` / `.codex` bridge markers + active Rules section |
 | Generic | `.retornatus/` alone is enough |
 
-Adapters write **projections** only. Canonical truth stays in `.retornatus/`.
+`integrate` / `wake --bridges` detect the host and write **only** that Environment's bridges. Adapters write **projections** only. Canonical truth stays in `.retornatus/`.
 
 ---
 
@@ -457,11 +460,12 @@ Run from the project you want to govern (or pass `--path`).
 | `change create --task/--depends/--resource` | Explicit Task deps and resource conflicts |
 | `task start\|complete\|fail\|reopen` | Durable Task lifecycle (READY stays derived) |
 | `skill create/list/activate/evolve/export/need` | On-demand Skills + complexity-sensitive need check |
-| `gate contract\|evidence\|skill-research\|assurance` | Mechanical STOP gates |
+| `gate contract\|evidence\|skill-research\|assurance\|policy` | Mechanical STOP gates |
+| `policy check --effect\|--action` | Policy ALLOW / DENY / REQUIRE_HUMAN |
 | `evidence add --claim` / `--git-state` | Claim-bound Evidence; optional `commit:<HEAD>` |
 | `finding add` · `question open\|resolve\|reopen` | Problem loop (auto-number; resolve needs Evidence when verifiable) |
 | `loop next` / `loop next --all-ready` | Ready work projection (never returns BLOCKED) |
-| `run <action-id>` / `run --assurance` | Assemble ExecutionContext (optional independent Assurance) |
+| `run <action-id>` / `run --assurance` / `run --strict-policy` | Assemble ExecutionContext (+ optional Policy STOP) |
 | `assurance plan` / `assurance review` | Independent review projection + review_result Evidence |
 | `execution record` / `execution list` | Observe Host work (does not run agents) |
 | `verify <change-id>` | Assurance over Contract DONE Claims (git freshness) |

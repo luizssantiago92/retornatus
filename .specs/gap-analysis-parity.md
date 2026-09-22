@@ -1,4 +1,13 @@
-# Gap Analysis — Functional Parity & Hardening (v0.9.0)
+# Gap Analysis — Functional Parity & Hardening (v1.0.0)
+
+## Closed in v1.0.0 (V1 acceptance)
+
+| Item | Mechanism | Test |
+| --- | --- | --- |
+| Policy CLI + gate | `policy check` / `gate policy` / `run --strict-policy` | `test_governance_native_v1` |
+| Native Rule projection | Active Rules upserted into Cursor/Claude/Codex bridges | same |
+| Adapter-aware integrate | Detected Environment owns bridges | same |
+| V1 continuity acceptance | wake → change → policy → bridges → index rebuild | same |
 
 ## Closed in v0.9.0
 
@@ -19,7 +28,7 @@
 | Skill need (complexity) | `skill need` / `assess_skill_need` | same |
 | Security review dogfood | security_test + independent review_result | same |
 
-## Still remaining (honest)
+## Still remaining (honest — out of V1 harness scope)
 
 - Live multi-provider LLM integration tests (Environment owns agents)
 - Enforced sandbox/worktree orchestration (advisory only by design)
