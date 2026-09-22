@@ -9,12 +9,14 @@ from typing import Optional
 import typer
 
 # Windows consoles often default to a legacy code page; keep UTF-8 help/status readable.
-if hasattr(sys.stdout, "reconfigure"):
-    try:
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:  # noqa: BLE001
-        pass
+# Use getattr so mypy accepts TextIO (reconfigure exists on TextIOWrapper only).
+for _stream in (sys.stdout, sys.stderr):
+    _reconfigure = getattr(_stream, "reconfigure", None)
+    if callable(_reconfigure):
+        try:
+            _reconfigure(encoding="utf-8", errors="replace")
+        except Exception:  # noqa: BLE001
+            pass
 
 from retornatus import __version__
 from retornatus.application.adaptation.service import AdaptationService
