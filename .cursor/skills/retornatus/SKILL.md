@@ -19,13 +19,30 @@ Durable truth lives in `.retornatus/`, not in chat.
 - Load **at most one** specialization Skill (`S-xxxx`) while executing an Action.
 - Prefer `change overview <C-id>` and `status` over dumping many artifact JSON files.
 - Do not paste RESEARCH/PROCEDURE from unrelated Skills into the same turn.
-- Phase focus: Contract → one ready unit (`loop next`) → Evidence → verify.
+- Phase focus: Understand (Situation) → Agree (Contract) → Build (`loop next`) → Prove (Evidence / verify).
+
+## Software construction cycle (keep this focused)
+
+Retornatus compresses the software lifecycle into five durable steps — do not skip ahead to code:
+
+| Step | Meaning | Harness |
+| --- | --- | --- |
+| **Understand** | Requirements analysis | `change elicit` → Situation |
+| **Agree** | Written finish line | Contract + `gate contract` |
+| **Build** | Implement under the agreement | Action / Tasks + `loop next` / `run` |
+| **Prove** | Done needs evidence | Evidence → `verify` / Assurance |
+| **Learn** | Keep what mattered | Learning / optional Rules |
 
 ## Default construction loop
 
 1. `retornatus wake` (or `wake --bridges`) / `project-init` for brownfield context
 2. Optional lane check: `retornatus change classify --demand "..." --what "..."`
-3. Elicit Situation when needed: `retornatus change elicit --demand "..." --what "..." --done "..."`
+3. **Requirements analysis:** `retornatus change elicit --demand "..." --what "..." --done "..."`
+   - Exit `0` → Situation sufficient; proceed to create/activate
+   - Exit `1` → **stop coding**. In chat, ask the **Focused questions** shown (include the numbered options). Prefer one topic at a time.
+   - Record each human answer: `retornatus change elicit --demand "..." --answer "TOPIC=…" …` (repeat `--answer`; optional `--write situation-draft.md`)
+   - Do **not** invent Contract WHAT/DONE while material questions remain
+   - Do **not** re-ask stack/language when repo signals or kickoff files already answered
 4. If no Change: `retornatus change create ...` (use `--draft-contract` when Situation is incomplete; `--lane` optional)
 5. Activate draft Contracts when ready: `retornatus change activate <C-id>`
 6. Gate: `retornatus gate contract <C-id>` — must exit 0
@@ -53,6 +70,7 @@ Durable truth lives in `.retornatus/`, not in chat.
 
 ## Hard rules
 
+- Never jump from a vague Demand to code — finish Situation (`change elicit` exit 0) first
 - Never claim DONE without Assurance `SATISFIED` from Claim-bound Evidence
 - Never activate a Skill with empty RESEARCH (no source URLs) without governed bypass
 - Prefer native environment tools; do not reinvent sandboxes
@@ -82,7 +100,7 @@ When a release is ready: summarize, confirm CI, stop — owner merges / tags / p
 | Intent | Command |
 | --- | --- |
 | Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate` |
-| Situation / lane | `change classify`, `change elicit`, `change create`, `change activate`, `change reopen` |
+| Situation / lane | `change classify`, `change elicit` (`--answer`, `--write`), `change create`, `change activate`, `change reopen` |
 | Dashboard | `change overview` |
 | Skill | `skill create/list/need/activate/evolve/export` |
 | Proof | `evidence add --claim`, `verify`, `gate *` |

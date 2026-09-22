@@ -28,10 +28,12 @@
 <pre class="code"><code class="language-bash">retornatus wake
 # or: retornatus wake --bridges</code></pre>
 <p>Wake reconstructs Environment capabilities, Change ids, Rules, Learnings, and rebuilds the disposable SQLite index from files.</p>
-<h2>2. Demand and Situation</h2>
-<p>A <strong>Demand</strong> is the human intent. <strong>Situation</strong> is enough project understanding to formalize a Contract — not a full design doc.</p>
-<pre class="code"><code class="language-bash">retornatus change elicit --demand &quot;…&quot; --what &quot;…&quot; --done &quot;…&quot;</code></pre>
-<p>Exit <code>0</code> means Situation looks sufficient; exit <code>1</code> means focused questions remain. Repo signals (stack, tests, CI) feed elicitation on brownfield projects (<code>project-init</code>).</p>
+<h2>2. Demand and Situation (requirements analysis)</h2>
+<p>A <strong>Demand</strong> is the human intent. <strong>Situation</strong> is the requirements-analysis step: enough understanding to formalize a Contract — not a full design doc.</p>
+<pre class="code"><code class="language-bash">retornatus change elicit --demand &quot;…&quot; --what &quot;…&quot; --done &quot;…&quot;
+# When questions remain (exit 1), ask them in chat, then record:
+retornatus change elicit --demand &quot;…&quot; --answer &quot;scope=…&quot; --answer &quot;actors=…&quot; --write situation-draft.md</code></pre>
+<p>Exit <code>0</code> means Situation looks sufficient; exit <code>1</code> means <strong>focused questions</strong> remain (at most five, with suggested options). The agent should ask those in chat before inventing a Contract. Repo signals (stack, tests, CI) and kickoff files (<code>prd.md</code>, <code>docs/brief.md</code>, …) feed elicitation — do not re-ask what they already answer.</p>
 <h2>3. Contract</h2>
 <p>An active <strong>Contract</strong> is the authoritative obligation: WHAT, constraints, DONE.</p>
 <pre class="code"><code class="language-bash">retornatus change create …          # activates when Situation is sufficient

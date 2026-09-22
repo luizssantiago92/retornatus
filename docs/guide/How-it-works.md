@@ -11,15 +11,17 @@ retornatus wake
 
 Wake reconstructs Environment capabilities, Change ids, Rules, Learnings, and rebuilds the disposable SQLite index from files.
 
-## 2. Demand and Situation
+## 2. Demand and Situation (requirements analysis)
 
-A **Demand** is the human intent. **Situation** is enough project understanding to formalize a Contract — not a full design doc.
+A **Demand** is the human intent. **Situation** is the requirements-analysis step: enough understanding to formalize a Contract — not a full design doc.
 
 ```bash
 retornatus change elicit --demand "…" --what "…" --done "…"
+# When questions remain (exit 1), ask them in chat, then record:
+retornatus change elicit --demand "…" --answer "scope=…" --answer "actors=…" --write situation-draft.md
 ```
 
-Exit `0` means Situation looks sufficient; exit `1` means focused questions remain. Repo signals (stack, tests, CI) feed elicitation on brownfield projects (`project-init`).
+Exit `0` means Situation looks sufficient; exit `1` means **focused questions** remain (at most five, with suggested options). The agent should ask those in chat before inventing a Contract. Repo signals (stack, tests, CI) and kickoff files (`prd.md`, `docs/brief.md`, …) feed elicitation — do not re-ask what they already answer.
 
 ## 3. Contract
 

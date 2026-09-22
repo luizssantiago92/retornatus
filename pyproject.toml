@@ -1,6 +1,6 @@
 [project]
 name = "retornatus"
-version = "1.1.1"
+version = "1.2.0"
 description = "Repo-native governance harness for AI-assisted software development."
 readme = "README.md"
 requires-python = ">=3.11"

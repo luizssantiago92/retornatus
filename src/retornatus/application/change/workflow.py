@@ -9,6 +9,7 @@ from retornatus.application.change.readiness import DependencyCycleError, assert
 from retornatus.application.change.situation import (
     SituationAssessment,
     assess_situation,
+    discover_kickoff,
     load_project_context_snippet,
 )
 from retornatus.domain.enums import (
@@ -71,12 +72,14 @@ class ChangeWorkflow:
         what: str | None = None,
         done_criteria: list[str] | None = None,
         constraints: list[str] | None = None,
+        answered_topics: set[str] | None = None,
     ) -> SituationAssessment:
-        """Governed elicitation — inspect project context; ask only material questions."""
+        """Governed requirements elicitation — kickoff + repo; ask only material questions."""
         from retornatus.application.change.situation import collect_repo_signals
 
         root = self.repo.paths.root
         project_context = load_project_context_snippet(root)
+        kickoff_sources, kickoff_facts = discover_kickoff(root)
         return assess_situation(
             demand=demand_statement,
             situation=situation,
@@ -85,6 +88,9 @@ class ChangeWorkflow:
             constraints=constraints,
             project_context=project_context,
             repo_signals=collect_repo_signals(root),
+            kickoff_sources=kickoff_sources,
+            kickoff_facts=kickoff_facts,
+            answered_topics=answered_topics,
         )
 
     def create_change(

@@ -25,7 +25,7 @@ retornatus skill --help
 | Command | Purpose |
 | --- | --- |
 | `change classify` | Ceremony lane QUICK / STANDARD / COMPLEX |
-| `change elicit` | Situation readiness (exit 1 if insufficient) |
+| `change elicit` | Requirements analysis / Situation readiness (`--answer`, `--write`; exit 1 if insufficient) |
 | `change create` | Demand → Situation → Contract → optional Action/Tasks |
 | `change overview` | Claims ↔ Evidence dashboard |
 | `change activate` | Activate draft Contract |

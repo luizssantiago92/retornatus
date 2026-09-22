@@ -339,20 +339,68 @@ def change_elicit(
     done: Optional[list[str]] = typer.Option(None, "--done"),
     situation: Optional[str] = typer.Option(None, "--situation", "-s"),
     constraint: Optional[list[str]] = typer.Option(None, "--constraint"),
+    answer: Optional[list[str]] = typer.Option(
+        None,
+        "--answer",
+        "-a",
+        help="Record a requirements answer TOPIC=text (repeatable). "
+        "WHAT/DONE/constraints fold into the assessment; other topics close focused questions.",
+    ),
+    write: Optional[Path] = typer.Option(
+        None,
+        "--write",
+        help="Write Situation markdown to this path (before a Change exists).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
-    """Assess Situation readiness before formalizing a Contract."""
+    """Requirements analysis — assess Situation readiness before a Contract."""
+    from retornatus.application.change.situation import (
+        apply_answers,
+        merge_answers_into_inputs,
+        parse_answer_option,
+    )
+
     root = (path or Path.cwd()).resolve()
     if not is_initialized(root):
         initialize_project(root)
-    assessment = ChangeWorkflow(root).elicit_situation(
-        demand_statement=demand,
-        situation=situation,
+
+    parsed: dict[str, str] = {}
+    for raw in answer or []:
+        try:
+            topic, text = parse_answer_option(raw)
+        except ValueError as exc:
+            typer.echo(str(exc), err=True)
+            raise typer.Exit(2) from exc
+        parsed[topic] = text
+
+    what_m, done_m, constraints_m, remaining = merge_answers_into_inputs(
         what=what,
         done_criteria=list(done or []),
         constraints=list(constraint or []),
+        answers=parsed,
     )
-    typer.echo(assessment.to_markdown(demand=demand))
+    answered_topics = {t.lower() for t in remaining} | {
+        t.lower() for t in parsed if t.lower() in {"what", "done", "constraint", "constraints"}
+    }
+
+    assessment = ChangeWorkflow(root).elicit_situation(
+        demand_statement=demand,
+        situation=situation,
+        what=what_m,
+        done_criteria=done_m,
+        constraints=constraints_m,
+        answered_topics=answered_topics,
+    )
+    if remaining:
+        assessment = apply_answers(assessment, remaining)
+
+    md = assessment.to_markdown(demand=demand)
+    typer.echo(md)
+    if write is not None:
+        write_path = write if write.is_absolute() else (root / write)
+        write_path.parent.mkdir(parents=True, exist_ok=True)
+        write_path.write_text(md, encoding="utf-8")
+        typer.echo(f"Wrote Situation to {write_path}")
     raise typer.Exit(code=0 if assessment.sufficient_for_contract else 1)
 
 

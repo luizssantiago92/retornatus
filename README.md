@@ -39,9 +39,9 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Whole playbook pasted every turn | Hub + at most one specialization skill per turn |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.1.x**
+PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.2.x**
 
-[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [Mechanisms](#core-mechanisms--why-each-exists) · [Commands](#commands-cheat-sheet) · [Docs](#documentation)
+[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
 ---
 
@@ -125,12 +125,12 @@ Ask it to follow the installed **Retornatus hub skill**. Prefer chat for product
 
 | Step | You do | Agent / CLI does |
 | --- | --- | --- |
-| 1 | Describe the demand | Optional `change classify` / `change elicit` for Situation |
-| 2 | Agree the finish line | `change create` (+ activate Contract) → `gate contract` |
-| 3 | Let it build under the Contract | `loop next` / `run` + Tasks when useful |
-| 4 | Demand proof | `evidence add --claim …` → `gate evidence` → `verify` |
+| 1 | Describe what you want | **Requirements analysis** (`change elicit`) — if questions remain, answer them in chat; size the work (`change classify`) |
+| 2 | Agree how you’ll know it’s done | Create/activate the finish line → check it (`gate contract`) |
+| 3 | Let it build | Work the next ready step (`loop next` / `run`); split into jobs only when useful |
+| 4 | Demand proof | Attach proof to the goals → done check (`verify`) |
 
-If the agent jumps straight to code: *Stop. Finish Situation + Contract (and pass `gate contract`) before the build sprint.*
+If the agent jumps straight to code: *Stop. Finish Situation (requirements) + Contract (and pass `gate contract`) before the build sprint.*
 
 **Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Tutorials](https://luizssantiago92.github.io/retornatus/guide/tutorials/) · [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html)
 
@@ -151,134 +151,55 @@ Stuck? [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-st
 
 ## How it works
 
-High-level lifecycle — durable files under `.retornatus/`, with gates as brakes:
+A focused software-construction cycle — durable files under `.retornatus/`, gates as brakes:
 
 ```text
-classify? (QUICK / STANDARD / COMPLEX)
-      ↓
-elicit Situation? (when the ask is fuzzy)
-      ↓
-Contract (WHAT + constraints + DONE) → activate → gate contract
-      ↓
-Action (+ Tasks when decomposition helps)
-      ↓
-Skill? (research + activate only when skill need says so)
-      ↓
-Execute in the host agent (run / loop next)
-      ↓
-Evidence bound to Claims → gate evidence → verify (Assurance)
-      ↓
-Learning (and optional Rule Candidates → Human Decision)
+Understand  →  Agree     →  Build              →  Prove           →  Learn
+Situation      Contract     Action (+ Tasks)      Evidence            Learning
+(requirements) (WHAT+DONE)  (agent writes code)   + verify            (+ Rules?)
 ```
+
+| Step | In plain words | Command / artifact |
+| --- | --- | --- |
+| **Understand** | Before coding, clarify what “login” / “fix X” actually means | `change elicit` → Situation |
+| **Agree** | Write the finish line you both accept | Contract → `gate contract` |
+| **Build** | Implement under that agreement | Action / Tasks → `loop next` / `run` |
+| **Prove** | “Done” needs evidence, not a chat summary | Evidence → `verify` |
+| **Learn** | Keep what mattered for the next Change | Learning / optional Rules |
+
+When the ask is fuzzy, `change elicit` exits `1` and lists **focused questions** (with options). The agent should ask them in chat; you answer; record with `--answer TOPIC=…`. Clear asks can skip straight to a Contract.
+
+Optional: `change classify` picks QUICK / STANDARD / COMPLEX so ceremony matches risk. Skills load only when needed.
 
 **Status / overview** are projections. If they disagree with files, **the files win**.
 
 ---
 
-## Core mechanisms — why each exists
+## What you get — and why it helps
 
-### 1. Memory — the repo remembers so you do not have to
+### Requirements analysis (Situation)
 
-**Without memory:** Every new session starts cold. You re-paste context, re-explain decisions, and hope the model does not contradict last week’s architecture chat.
+**Without it:** “Add login” becomes three different products in three chats.
 
-**With `.retornatus/`:** Changes, Contracts, Evidence, Questions, and Learnings are files you can diff and review. `wake` rebuilds continuity (and an optional search index) from those files. Chat is a window; **git is the source of truth**.
+**With Situation:** The harness surfaces material questions (actors, scope, out of scope, how you’ll know it worked), reads kickoff files when present, and refuses to pretend the Contract is ready until those answers exist.
 
-| Without `.retornatus/` | With `.retornatus/` |
-| --- | --- |
-| Chat is the source of truth | Git is the source of truth |
-| Handoff = long message | Handoff = `wake` + open the Change |
-| Same mistake twice | Learnings (and Rules after Human Decision) constrain the next run |
-| “What did we decide?” | Inspect the Change folder / `change overview` |
+### Memory — the repo remembers
 
-The index under `.retornatus/index/` is **disposable** — delete and `retornatus wake` to rebuild. Canonical truth stays in the markdown/JSON artifacts.
+Changes, Contracts, Evidence, and Learnings live under `.retornatus/` in git. `wake` rebuilds continuity. Chat is a window; **git is the source of truth**.
 
-**Go deeper:** [Memory](https://luizssantiago92.github.io/retornatus/guide/memory.html)
+### Proof before “done”
 
----
+A Contract states WHAT and DONE. Evidence binds to those claims. `verify` returns SATISFIED / NOT_SATISFIED / INCONCLUSIVE. Gates return non-zero = **STOP**.
 
-### 2. Contract, Evidence, Assurance — “done” has to be checkable
+### Ceremony matches risk
 
-**Without it:** “Done” is a confident paragraph in chat. Nobody can re-check it next week.
+QUICK for a typo; STANDARD for a normal feature; COMPLEX when security, payments, or high novelty need more depth.
 
-**With Retornatus:**
+### Hub + Skills
 
-- A **Contract** states WHAT must be true and what DONE means (claims you can test)  
-- **Evidence** is attributable proof **bound to those claims** (`evidence add --claim …`)  
-- **Assurance** / `verify` asks whether evidence actually supports the claims — SATISFIED, NOT_SATISFIED, or INCONCLUSIVE  
-- **Gates** return non-zero = **STOP** until the artifact is fixed  
+The hub skill is the map every turn. At most one specialization Skill while executing — research current sources when needed, not a mega-pack every message.
 
-| Moment | What you gain |
-| --- | --- |
-| Before the build sprint | Shared finish line (`gate contract`) |
-| During / after implementation | Proof tied to claims, not vibes |
-| Before calling the Change done | `verify` / Assurance verdict you can trust across agents |
-
-> Gates turn “trust the agent” into “the agent has to prove it.”
-
-**Go deeper:** [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html)
-
----
-
-### 3. Complexity lanes — ceremony matches risk
-
-Not every change deserves the same ritual. `change classify` (and optional `--lane`) steers **QUICK / STANDARD / COMPLEX**:
-
-| Lane | Typical work | Ceremony |
-| --- | --- | --- |
-| **QUICK** | Typo, docs, tiny localized fix | Short Contract; often skip Skill; light Evidence |
-| **STANDARD** | Normal feature | Full Change loop + gates; Skill optional |
-| **COMPLEX** | Security, payment, migration, high novelty | Fuller Situation; Skill research more often; stricter proof |
-
-**Without lanes:** A one-line copy tweak and a payment integration get the same bureaucratic weight (or the same chaos).
-
-**With lanes:** Depth is **earned**. You still get a finish line and proof — you do not paste the entire playbook for a typo.
-
-**Go deeper:** [Overview — how much ceremony?](https://luizssantiago92.github.io/retornatus/guide/overview.html) · CLI `change classify`
-
----
-
-### 4. Actions, Tasks, and the loop — progress you can steer
-
-An **Action** is a bounded unit of work under the Contract. **Tasks** appear when decomposition helps (explicit dependencies and resources — declaration order is **not** an automatic dependency chain).
-
-| Mechanism | Advantage |
-| --- | --- |
-| **`loop next`** | Shows the next ready unit of work (projection from durable state) |
-| **`task start / complete / …`** | Lifecycle you can audit; failures are first-class |
-| **`change overview` / `status`** | One-screen view of claims, evidence, tasks, and what’s next |
-
-**Without Tasks:** Big Changes stay as one vague blob — hard to parallelize or resume.  
-**With Tasks (when needed):** Clear ownership of slices; the loop can advance what is actually ready.
-
-**Go deeper:** [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html) · [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html)
-
----
-
-### 5. Hub skill and specialization Skills — focus without a mega-pack
-
-**Hub skill** (installed by `integrate`): the map every turn — Demand→Assurance, gates, git tiers. Load **at most one** specialization Skill while executing.
-
-**Specialization Skills** (`skill need` → research → `skill activate`): on-demand depth for *this* problem (current sources in RESEARCH), not a stale mega-pack pasted every time.
-
-| Without this split | With hub + Skills |
-| --- | --- |
-| Entire methodology dumped into context | Hub stays small; specialize only when needed |
-| Skills never refreshed | Research gate expects real sources (or a governed bypass) |
-| Typo fix loads security playbooks | `skill need` can skip ceremony for trivial Actions |
-
-**Go deeper:** [Skills](https://luizssantiago92.github.io/retornatus/guide/skills.html)
-
----
-
-### 6. Doctor, lessons, ops — keep the harness honest
-
-| Tool | Advantage |
-| --- | --- |
-| **`doctor`** | Separates “process needs care” from hard brakes |
-| **`lesson from-gate`** | A failed gate can become lasting guidance (optional Rule Candidate) |
-| **`ops list / run`** | Light hygiene loops on demand — not the construction path |
-
-**Go deeper:** [FAQ](https://luizssantiago92.github.io/retornatus/guide/faq.html) · [Governance](https://luizssantiago92.github.io/retornatus/guide/governance.html)
+**Go deeper:** [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html) · [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html) · [Memory](https://luizssantiago92.github.io/retornatus/guide/memory.html) · [Skills](https://luizssantiago92.github.io/retornatus/guide/skills.html)
 
 ---
 
@@ -287,7 +208,7 @@ An **Action** is a bounded unit of work under the Contract. **Tasks** appear whe
 | Intent | Command |
 | --- | --- |
 | Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate` |
-| Lane / Situation | `change classify`, `change elicit`, `change create`, `change activate` |
+| Requirements / lane | `change elicit` (`--answer`, `--write`), `change classify`, `change create`, `change activate` |
 | Dashboard | `change overview` |
 | Next work | `loop next` · `task start\|complete\|fail\|reopen` |
 | Skills | `skill need`, `skill create`, `skill activate`, `skill export` |
@@ -298,6 +219,11 @@ An **Action** is a bounded unit of work under the Contract. **Tasks** appear whe
 Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · hub skill after `integrate`.
 
 ---
+
+## What’s new (1.2.0)
+
+- **Situation as requirements analysis** — focused questions with options, `--answer` / `--write`, kickoff discovery  
+- Focused software cycle in hub/README: Understand → Agree → Build → Prove → Learn  
 
 ## What’s new (1.1.x)
 
@@ -321,6 +247,34 @@ Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · 
 | Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
 
 Markdown sources for editors: [`docs/guide/`](docs/guide/README.md). After editing them, run `python scripts/build_docs_html.py` so the site stays in sync.
+
+---
+
+## Credits
+
+Ideas are credited by **influence**, not by superficial similarity. Retornatus does not claim novelty for established software-engineering patterns; its contribution is how those guarantees are separated, constrained, and composed.
+
+### Direct predecessor — Spec Guardrails
+
+**[Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails)** (MIT) is the **direct predecessor** of Retornatus.
+
+Retornatus is a **separate successor architecture** informed by building and dogfooding Spec Guardrails. It is **not** a fork, rename, or line-by-line rewrite.
+
+| Proven concern (from Spec Guardrails dogfooding) | How Retornatus carries the guarantee |
+| --- | --- |
+| Repo-native governance | Durable state under `.retornatus/` |
+| Planning before opportunistic coding | Situation (requirements analysis) → Contract before the build sprint |
+| Gates / brakes | Mechanical STOP checks (non-zero exit) |
+| Evidence before “done” | Claim-bound Evidence → Assurance / `verify` |
+| Persistent memory | Changes, Learnings, Rules in git; `wake` continuity |
+| Human checkpoints | Human Decisions for consequential Rules |
+| Environment awareness | Hub skill + host adapters — agent still executes |
+
+**Original work in Retornatus:** Python domain model and CLI, `.retornatus/` layout, Demand / Situation / Contract / Action (plus Finding / Question / Resolution), Evidence separated from Assurance, complexity lanes (QUICK / STANDARD / COMPLEX), on-demand specialization Skills with research gates, doctor Process vs Brakes, overview / ops / lessons loops, and the public docs site.
+
+**Transitive lineage:** Spec Guardrails itself credits upstream open-source work (spec-driven phases, task graphs, loop engineering, harness vocabulary, and related tools). Those influences arrive **through** Spec Guardrails unless Retornatus independently revisited them — see the full provenance write-up.
+
+**Full credits & lineage:** [credits on the website](https://luizssantiago92.github.io/retornatus/credits.html) · [credits-and-lineage.md](docs/credits-and-lineage.md) · Spec Guardrails’ own [credits](https://github.com/luizssantiago92/spec-guardrails/blob/main/docs/guide/credits.md)
 
 ---
 

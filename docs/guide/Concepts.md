@@ -14,7 +14,7 @@ The statement of intent that opens a Change (`demand_statement`, kind).
 
 ## Situation
 
-Enough understanding to activate a Contract. Produced/elicited before formalization; may include repo signals and focused questions.
+**Requirements analysis** for a Change: enough understanding to activate a Contract. Produced by `change elicit`; may include repo signals, kickoff facts, and focused questions with suggested options (≤5 per round). Record answers with `--answer TOPIC=text` before formalizing obligations.
 
 ## Contract
 
