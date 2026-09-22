@@ -90,7 +90,7 @@ def _run_gate_scan(root: Path) -> OpsLoopResult:
         if not result.passed:
             ok = False
         msg = "; ".join(result.messages) if result.messages else "-"
-        lines.append(f"- {cid}: {status} — {msg}")
+        lines.append(f"{cid}: {status} - {msg}")
     if scanned == 0:
         lines.append("(no active contracts)")
     return OpsLoopResult(loop_id="gate-scan", ok=ok, output="\n".join(lines))

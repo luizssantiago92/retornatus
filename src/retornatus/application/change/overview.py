@@ -45,7 +45,7 @@ class ChangeOverview:
 
     def render(self) -> str:
         lines = [
-            f"# {self.change_id} — {self.title}",
+            f"# {self.change_id} - {self.title}",
             f"lane: {self.lane or 'unset'}",
             (
                 f"contract: v{self.contract_version} "
@@ -56,10 +56,10 @@ class ChangeOverview:
             f"what: {self.what}" if self.what else "what: (none)",
             f"assurance: {self.assurance_verdict or 'n/a'}",
             "",
-            "## Claims ↔ Evidence",
+            "## Claims / Evidence",
         ]
         if not self.claims:
-            lines.append("(no claims — activate a Contract with DONE criteria)")
+            lines.append("(no claims - activate a Contract with DONE criteria)")
         for row in self.claims:
             ev = ", ".join(row.evidence_ids) if row.evidence_ids else "(unbound)"
             types = ",".join(row.required_types) or "-"

@@ -53,9 +53,9 @@ class DoctorReport:
         lines = [self.wake.render()]
         if self.process and self.brakes:
             lines.append("")
-            lines.append(f"process: {self.process.ratio} — {self.process.name}")
+            lines.append(f"process: {self.process.ratio} - {self.process.name}")
             lines.extend(f"  - {d}" for d in self.process.details)
-            lines.append(f"brakes: {self.brakes.ratio} — {self.brakes.name}")
+            lines.append(f"brakes: {self.brakes.ratio} - {self.brakes.name}")
             lines.extend(f"  - {d}" for d in self.brakes.details)
             lines.append(f"mode: {self.mode}")
             lines.append(

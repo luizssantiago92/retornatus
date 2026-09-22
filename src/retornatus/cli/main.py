@@ -2,10 +2,19 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Optional
 
 import typer
+
+# Windows consoles often default to a legacy code page; keep UTF-8 help/status readable.
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:  # noqa: BLE001
+        pass
 
 from retornatus import __version__
 from retornatus.application.adaptation.service import AdaptationService
