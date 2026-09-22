@@ -24,13 +24,9 @@ from retornatus.application.execution.brownfield_fixture import (
 )
 from retornatus.application.execution.context import assemble_execution_context
 from retornatus.application.execution.host_record import HostExecutionService
-from retornatus.application.execution.isolation import (
-    isolation_boundaries,
-)
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import DemandKind
-from retornatus.infrastructure.environment.adapters import detect_environment
 
 
 def test_path_level_freshness_isolated_from_unrelated_commits(tmp_path: Path) -> None:

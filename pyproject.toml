@@ -24,7 +24,7 @@ Repository = "https://github.com/luizssantiago92/retornatus"
 Issues = "https://github.com/luizssantiago92/retornatus/issues"
 
 [project.scripts]
-retornatus = "retornatus.cli.main:run"
+retornatus = "retornatus.cli.main:entrypoint"
 
 [build-system]
 requires = ["hatchling"]

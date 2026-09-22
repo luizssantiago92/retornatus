@@ -12,7 +12,6 @@ from retornatus.application.assurance.evaluate import (
     build_claims_from_contract,
     evaluate_assurance,
 )
-from retornatus.application.assurance.evidence import EvidenceService
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 
@@ -132,9 +131,8 @@ def gate_assurance(
     use_git_state: bool = True,
 ) -> GateResult:
     """Assurance must be SATISFIED for Contract DONE Claims with bound Evidence."""
-    from retornatus.application.assurance.independent import evaluate_change_assurance
-    from retornatus.application.assurance.subject_state import derive_current_subject_states
     from retornatus.application.assurance.evidence import EvidenceService
+    from retornatus.application.assurance.independent import evaluate_change_assurance
 
     repo = FileRepository(root)
     try:

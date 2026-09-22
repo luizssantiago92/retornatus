@@ -38,7 +38,6 @@ from retornatus.infrastructure.persistence.serializers import (
     dump_json_model,
     dump_markdown,
     dump_toml_dict,
-    load_json_model,
     load_markdown,
     load_toml_dict,
 )

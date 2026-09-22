@@ -18,7 +18,6 @@ from retornatus.domain.base import DomainModel
 from retornatus.domain.enums import BoundaryRealization
 from retornatus.domain.ids import change_id_of
 from retornatus.domain.models import (
-    Action,
     Authority,
     Boundaries,
     Boundary,
