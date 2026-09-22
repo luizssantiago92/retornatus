@@ -63,6 +63,11 @@ class CursorAdapter(EnvironmentAdapter):
         )
 
     def ensure_bridge_files(self, root: Path) -> list[Path]:
+        from retornatus.infrastructure.environment.hub_skill import install_hub_skill
+        from retornatus.infrastructure.environment.rule_projection import (
+            project_active_rules_into,
+        )
+
         path = root / ".cursor" / "rules" / "retornatus.mdc"
         path.parent.mkdir(parents=True, exist_ok=True)
         if not path.exists():
@@ -73,8 +78,7 @@ class CursorAdapter(EnvironmentAdapter):
                 "Use the Retornatus hub skill under `.cursor/skills/retornatus/`.\n",
                 encoding="utf-8",
             )
-        from retornatus.infrastructure.environment.hub_skill import install_hub_skill
-
+        project_active_rules_into(path, root)
         hub = install_hub_skill(root)
         return [path, hub]
 
@@ -94,6 +98,10 @@ class ClaudeCodeAdapter(EnvironmentAdapter):
         )
 
     def ensure_bridge_files(self, root: Path) -> list[Path]:
+        from retornatus.infrastructure.environment.rule_projection import (
+            project_active_rules_into,
+        )
+
         path = root / "CLAUDE.md"
         marker = "<!-- retornatus-bridge -->"
         snippet = (
@@ -108,6 +116,7 @@ class ClaudeCodeAdapter(EnvironmentAdapter):
                 path.write_text(text.rstrip() + snippet, encoding="utf-8")
         else:
             path.write_text("# Project\n" + snippet, encoding="utf-8")
+        project_active_rules_into(path, root)
         return [path]
 
 
@@ -121,10 +130,16 @@ class CodexAdapter(EnvironmentAdapter):
         return CapabilityModel(
             environment=self.kind,
             native_rules=True,
+            native_sandbox=True,
             bridge_files=("AGENTS.md",),
+            details={"hint": "Prefer Codex native isolation when available"},
         )
 
     def ensure_bridge_files(self, root: Path) -> list[Path]:
+        from retornatus.infrastructure.environment.rule_projection import (
+            project_active_rules_into,
+        )
+
         path = root / "AGENTS.md"
         marker = "<!-- retornatus-bridge -->"
         snippet = (
@@ -139,6 +154,7 @@ class CodexAdapter(EnvironmentAdapter):
                 path.write_text(text.rstrip() + snippet, encoding="utf-8")
         else:
             path.write_text("# Agents\n" + snippet, encoding="utf-8")
+        project_active_rules_into(path, root)
         return [path]
 
 

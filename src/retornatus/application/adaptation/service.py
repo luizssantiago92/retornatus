@@ -177,4 +177,13 @@ class AdaptationService:
             }
         )
         self.repo.save_rule(activated, expected=rev)
+        # Project active Rules into native Environment bridges when present
+        try:
+            from retornatus.infrastructure.environment.rule_projection import (
+                refresh_detected_bridges,
+            )
+
+            refresh_detected_bridges(self.repo.paths.root)
+        except Exception:  # noqa: BLE001 — activation must not fail on projection
+            pass
         return activated

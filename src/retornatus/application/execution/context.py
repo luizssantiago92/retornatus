@@ -50,6 +50,9 @@ class ExecutionContext(DomainModel):
     environment_capabilities: list[str] = Field(default_factory=list)
     project_context_excerpt: str | None = None
     independent_assurance: bool = False
+    policy_verdict: str | None = None
+    policy_rationale: str | None = None
+    policy_matched_rule_ids: list[str] = Field(default_factory=list)
 
 
 def _tokens(*parts: str | None) -> set[str]:
@@ -198,6 +201,15 @@ def assemble_execution_context(
 
     project_excerpt = load_project_context_snippet(root, max_chars=1200) or None
 
+    from retornatus.application.governance.policy import evaluate_policy
+
+    policy = evaluate_policy(
+        effect=action.objective,
+        rules=repo.list_rules(),
+        authority=action.authority,
+        boundaries=boundaries,
+    )
+
     return ExecutionContext(
         action_id=action.id,
         objective=action.objective,
@@ -215,6 +227,9 @@ def assemble_execution_context(
         environment_capabilities=env_caps,
         project_context_excerpt=project_excerpt,
         independent_assurance=independent_assurance,
+        policy_verdict=policy.verdict.value,
+        policy_rationale=policy.rationale,
+        policy_matched_rule_ids=list(policy.matched_rule_ids),
     )
 
 
