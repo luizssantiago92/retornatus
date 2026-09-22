@@ -40,10 +40,12 @@ Suggested topics: `python`, `ai`, `governance`, `developer-tools`, `cursor`, `cl
 ### Positioning (README / About)
 
 1. Lead with **Website →** plus Docs / Quick start / PyPI — visitors must not hunt.
-2. Sections in order: **What it is** → **What it does** → **How it proves** → **Install (explained)** → What’s new → Doc map.
-3. Install steps name *who* runs them (your app repo vs this harness) and *what each command does*.
-4. Prefer site HTML links for reading; keep relative markdown links for contributors editing sources.
-5. Do not dump full CLI matrices in the README — link the docs hub.
+2. Structure like Spec Guardrails depth: **What it is** → **Install (explained)** → **Verify** → **First change** → **Checklist** → **How it works** → **Core mechanisms** (Memory, Contract/Evidence/Assurance, lanes, Tasks, Skills) with without/with tables → cheat sheet → docs map.
+3. Each mechanism section must answer: what problem it solves, what the user gains, where to go deeper on the site.
+4. Install steps name *who* runs them (your app repo vs this harness) and *what each command does*.
+5. Prefer site HTML links for reading; keep relative markdown links for contributors editing sources.
+6. Do not dump full gate matrices or every CLI flag — link the docs hub / CLI page.
+7. Avoid unrelated brand disclaimers in the README footer unless product/legal requires them.
 
 ### Process (how we use GitHub)
 
