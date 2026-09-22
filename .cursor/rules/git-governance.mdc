@@ -1,0 +1,53 @@
+---
+description: Git blast-radius tiers — commits local; share on ask; merge/publish human-only
+alwaysApply: true
+---
+
+# Git governance (Retornatus)
+
+Adapted from Spec Guardrails **Human-in-the-loop / git blast radius**. Structural gates enforce artifact quality; **git tiers** enforce what leaves the machine.
+
+> Approving a Change or Contract authorizes **local** work — not share, merge, or publish.
+
+## Tiers
+
+| Tier | Agent may do | Requires human |
+| --- | --- | --- |
+| **0 — Local** | Branch (when useful), implement, tests, commit locally (code + `.retornatus/` memory) | — |
+| **1 — Share** | Nothing automatic | Explicit ask: `git push`, open/update PR |
+| **2 — External (owner only)** | **Never** | Merge PR, deploy, force-push, production data, **PyPI/TestPyPI publish**, **release tags that trigger publish** |
+
+### Owner hard rule (this project)
+
+- **Merge** and **publish** (PyPI / TestPyPI / release tags that publish) are **always** the human owner’s job.
+- The agent **must not** merge PRs, create/push `v*` release tags, run publish workflows, or upload packages — even if it seems convenient.
+- When release is ready: prepare notes, confirm CI green, then **stop** and hand off: “Pronto para você fazer merge / tag / publish.”
+
+### Tier 1 (share)
+
+- Only after the user explicitly asks to push and/or open a PR.
+- Do not push “because the feature is done.”
+- Prefer a PR description that points to Change id (`C-xxxx`), Contract DONE, and Evidence / verify status when available.
+
+### Tier 0 (local)
+
+- Prefer small, English commit messages focused on **why**.
+- Commit `.retornatus/` canonical artifacts when they are the durable record of the work (Changes, Evidence, Learnings) — not secrets, not derived `index/` / `runtime/` (see `.gitignore`).
+- Never commit `.env`, tokens, credentials, or API keys.
+- Never use `--no-verify` / skip hooks unless the user explicitly requests it.
+- Never amend commits you did not create in this conversation, or commits already pushed, unless the user explicitly requests amend and safety rules allow it.
+
+## Session handoff
+
+At meaningful stops (session end, Change ready for review):
+
+1. Ensure working tree status is clear (`git status`).
+2. Local commits for finished units are OK (Tier 0).
+3. **Stop before push** unless the user asked for Tier 1.
+4. State the single next human step (e.g. “revise PR” / “merge when ready” / “tag vX.Y.Z to publish”).
+
+## Related
+
+- Retornatus hub: `.cursor/skills/retornatus/SKILL.md`
+- Guide: `docs/guide/Git-governance.md`
+- Spec Guardrails lineage: git-handoff / Human-in-the-loop (predecessor; not a clone)

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "R-0002",
+  "statement": "Do not git push or open/update a pull request unless the human explicitly asked for share (Tier 1) in this conversation.",
+  "applicability": "git push, gh pr create, open pull request",
+  "active": false,
+  "authority": {
+    "schema_version": 1,
+    "category": "HUMAN",
+    "rationale": "Rule candidate awaiting human validation"
+  },
+  "modes": [
+    "INSTRUCTIONAL"
+  ],
+  "relations": []
+}

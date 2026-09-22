@@ -27,6 +27,7 @@ The [README](../../README.md) is the product entry point. This folder is where y
 | [Skills](Skills.md) | On-demand specialization Skills |
 | [Memory](Memory.md) | Learnings, index, wake continuity |
 | [Governance](Governance.md) | Authority, Rules, Policy, Human Decisions, bypass |
+| [Git governance](Git-governance.md) | Commit / PR / merge / publish blast-radius tiers |
 
 ## Reference
 

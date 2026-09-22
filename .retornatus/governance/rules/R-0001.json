@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "R-0001",
+  "statement": "Do not merge pull requests, create release tags that publish, or publish packages to PyPI/TestPyPI as the agent — merge and publish are owner-only.",
+  "applicability": "merge PR, git merge, gh pr merge, release tag v*, uv publish, workflow publish, PyPI",
+  "active": false,
+  "authority": {
+    "schema_version": 1,
+    "category": "HUMAN",
+    "rationale": "Rule candidate awaiting human validation"
+  },
+  "modes": [
+    "INSTRUCTIONAL"
+  ],
+  "relations": []
+}

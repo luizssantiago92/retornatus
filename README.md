@@ -449,6 +449,16 @@ Governed bypass (records reason): `skill activate S-0001 --force --reason "…"`
 
 Learning **informs**; Rules **constrain**. Recurrence alone never auto-promotes an authoritative Rule.
 
+### Git blast radius (Human-in-the-loop)
+
+| Tier | Agent | Human |
+| --- | --- | --- |
+| **0 — Local** | Implement, test, commit | — |
+| **1 — Share** | Only if asked | `git push`, open/update PR |
+| **2 — External** | **Never** (owner-only here) | Merge, deploy, **PyPI publish**, release tags that publish |
+
+Approving a Contract authorizes local work — not share, merge, or publish. Project rule: [`.cursor/rules/git-governance.mdc`](.cursor/rules/git-governance.mdc) · [Git governance](docs/guide/Git-governance.md).
+
 **Go deeper:** [Governance](docs/guide/Governance.md)
 
 ---
@@ -656,7 +666,7 @@ After install in a consumer project, day-to-day artifacts live under **`.retorna
 | --- | --- |
 | **Start** | [Overview](docs/guide/Overview.md) · [Quick start](docs/guide/Quick-start.md) · [FAQ](docs/guide/FAQ.md) |
 | **Core** | [How it works](docs/guide/How-it-works.md) · [Concepts](docs/guide/Concepts.md) · [Memory](docs/guide/Memory.md) · [Skills](docs/guide/Skills.md) |
-| **Enforcement** | [Gates](docs/guide/Gates.md) · [Governance](docs/guide/Governance.md) · [Non-goals](docs/guide/Non-goals.md) |
+| **Enforcement** | [Gates](docs/guide/Gates.md) · [Governance](docs/guide/Governance.md) · [Git governance](docs/guide/Git-governance.md) · [Non-goals](docs/guide/Non-goals.md) |
 | **Platform** | [Architecture](docs/guide/Architecture.md) · [Environments](docs/guide/Environments.md) · [CLI](docs/guide/CLI.md) · [Glossary](docs/guide/Glossary.md) |
 | **Provenance** | [Credits & lineage](docs/credits-and-lineage.md) · [PRD](prd/PRD.md) |
 

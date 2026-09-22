@@ -46,6 +46,18 @@ Deny-style Rules typically start with “Do not” / “Must not” and match vi
 
 Skipping a gate without a durable Bypass + authority is rejected. Example: Skill research bypass with `--force --reason`.
 
+## Git blast radius
+
+Structural gates are not enough — see **[Git governance](Git-governance.md)** for tiers:
+
+| Tier | Meaning |
+| --- | --- |
+| **0 — Local** | Commits on the machine |
+| **1 — Share** | Push / PR — only when the human asks |
+| **2 — External** | Merge, deploy, **PyPI publish** — **owner-only** in this project |
+
+Cursor bridge: `.cursor/rules/git-governance.mdc`.
+
 ## Design stance
 
 > Learning informs; Rules constrain. Recurrence never creates authority automatically.
