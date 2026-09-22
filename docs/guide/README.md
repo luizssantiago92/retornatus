@@ -36,7 +36,12 @@ The [README](../../README.md) is the product entry point. This folder is where y
 | [CLI](CLI.md) | Intention-oriented commands |
 | [Architecture](Architecture.md) | Layers, persistence, native-first adapters |
 | [Environments](Environments.md) | Cursor, Claude Code, Codex, generic |
+## Advanced / provenance
+
+| Guide | Topic |
+| --- | --- |
 | [Non-goals](Non-goals.md) | Honest V1 boundaries |
+| [Credits & lineage](../credits-and-lineage.md) | Predecessor, direct vs transitive influence, original design |
 
 ## Product source of truth
 

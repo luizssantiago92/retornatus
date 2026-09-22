@@ -21,6 +21,7 @@ uv run retornatus --help
 
 - Keep changes scoped; prefer small milestones.
 - Update `docs/guide/` when user-visible behavior changes.
+- When adding external influence, update [`docs/credits-and-lineage.md`](docs/credits-and-lineage.md) in the same PR — credit by real influence; do not promote Spec Guardrails transitive upstreams to “direct” without independent study.
 - Do not claim Spec Guardrails full replacement in marketing copy.
 - Add or extend tests for gates, Policy, and persistence invariants.
 

@@ -78,3 +78,4 @@ You approve product intent and Human Decisions (Rules). The agent implements. Gi
 - [How it works](How-it-works.md) — narrative walkthrough
 - [Gates](Gates.md) — what actually stops incomplete work
 - [Non-goals](Non-goals.md) — what V1 deliberately does not claim
+- [Credits & lineage](../credits-and-lineage.md) — predecessor and provenance
