@@ -339,6 +339,10 @@ class Change(DomainModel):
     id: ChangeId
     title: str = Field(min_length=1)
     demand: Demand
+    lane: str | None = Field(
+        default=None,
+        description="Ceremony lane: QUICK | STANDARD | COMPLEX (optional projection hint)",
+    )
     active_contract_version: int | None = Field(
         default=None,
         ge=1,

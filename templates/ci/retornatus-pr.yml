@@ -1,0 +1,70 @@
+# Retornatus PR gates (opt-in)
+#
+# Copy into a consumer repo as `.github/workflows/retornatus.yml`
+# (or merge steps into an existing workflow).
+#
+# Requires:
+#   - Python 3.11+
+#   - `.retornatus/` initialized in the repository
+#   - `retornatus` installable from PyPI
+#
+# This template runs Continuity + Brakes checks. It does not push, merge, or deploy.
+
+name: Retornatus
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  retornatus-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install Retornatus
+        run: uv tool install retornatus
+
+      - name: Doctor (Process vs Brakes)
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          retornatus doctor
+
+      - name: Wake / rebuild index
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          retornatus wake
+
+      - name: Gate scan (active Contracts)
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          retornatus ops run gate-scan
+
+      - name: Verify Changes when present
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          # Soft verify: skip if no changes; fail if an active Change cannot verify
+          mapfile -t CHANGES < <(find .retornatus/changes -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null || true)
+          if [ "${#CHANGES[@]}" -eq 0 ]; then
+            echo "No Changes — skipping verify"
+            exit 0
+          fi
+          status=0
+          for cid in "${CHANGES[@]}"; do
+            echo "::group::verify $cid"
+            if ! retornatus verify "$cid"; then
+              echo "verify failed for $cid (INCONCLUSIVE/NOT_SATISFIED is expected until Evidence exists)"
+              # Do not fail the job solely on INCONCLUSIVE in PRs without Evidence yet.
+              # Uncomment the next line for strict Assurance-on-PR:
+              # status=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $status

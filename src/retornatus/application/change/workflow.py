@@ -102,6 +102,7 @@ class ChangeWorkflow:
         tasks: list[str] | None = None,
         task_specs: list[TaskSpec] | None = None,
         require_sufficient_situation: bool = False,
+        lane: str | None = None,
     ) -> ChangeWorkflowResult:
         assessment = self.elicit_situation(
             demand_statement=demand_statement,
@@ -119,10 +120,22 @@ class ChangeWorkflow:
             activate_contract = False
 
         change_id = self.next_change_id()
+        if lane is None:
+            from retornatus.application.change.classify import classify_change
+
+            lane = classify_change(
+                demand=demand_statement,
+                what=what,
+                done_criteria=done_criteria,
+                demand_kind=demand_kind,
+                task_count=len(task_specs or tasks or []),
+                constraint_count=len(constraints or []),
+            ).lane.value
         change = Change(
             id=change_id,
             title=title,
             demand=Demand(statement=demand_statement, kind=demand_kind),
+            lane=lane,
         )
         self.repo.save_change(change)
 

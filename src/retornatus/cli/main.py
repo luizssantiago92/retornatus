@@ -13,7 +13,7 @@ from retornatus.application.adaptation.skills import SkillService
 from retornatus.application.change.workflow import ChangeWorkflow, TaskSpec
 from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.bootstrap.wake import wake_up
-from retornatus.domain.enums import DemandKind
+from retornatus.domain.enums import ComplexityLane, DemandKind
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
 
@@ -40,6 +40,8 @@ policy_app = typer.Typer(help="Policy evaluation (ALLOW / DENY / REQUIRE_HUMAN).
 assurance_app = typer.Typer(help="Assurance evaluation and independent review.")
 execution_app = typer.Typer(help="Host Execution observations (not an agent runtime).")
 task_app = typer.Typer(help="Task lifecycle within an Action.")
+lesson_app = typer.Typer(help="Lessons from gate failures (Learning + optional Rule Candidate).")
+ops_app = typer.Typer(help="Operational hygiene loops (not Change construction).")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -53,6 +55,8 @@ app.add_typer(policy_app, name="policy")
 app.add_typer(assurance_app, name="assurance")
 app.add_typer(execution_app, name="execution")
 app.add_typer(task_app, name="task")
+app.add_typer(lesson_app, name="lesson")
+app.add_typer(ops_app, name="ops")
 
 
 def _parse_task_specs(
@@ -365,6 +369,11 @@ def change_create(
         "--resource",
         help="Task resource INDEX:key (e.g. 0:app/main.py) for conflict detection.",
     ),
+    lane: Optional[ComplexityLane] = typer.Option(
+        None,
+        "--lane",
+        help="Ceremony lane QUICK|STANDARD|COMPLEX (auto-classified when omitted).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Create a Change with Situation, Contract, and optional Action."""
@@ -383,8 +392,11 @@ def change_create(
         activate_contract=not draft_contract,
         task_specs=task_specs,
         tasks=None if task_specs else None,
+        lane=lane.value if lane else None,
     )
     typer.echo(f"Created {result.change.id}")
+    if result.change.lane:
+        typer.echo(f"Lane: {result.change.lane}")
     if result.situation_assessment:
         ready = result.situation_assessment.sufficient_for_contract
         typer.echo(f"Situation sufficient: {ready}")
@@ -417,6 +429,46 @@ def change_learn(
     root = (path or Path.cwd()).resolve()
     meta = AdaptationService(root).record_learning(title=title, body=body, summary=summary)
     typer.echo(f"Recorded {meta.id}")
+
+
+@change_app.command("overview")
+def change_overview_cmd(
+    change_id: str = typer.Argument(..., help="Change id (e.g. C-0001)."),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Dashboard: Claims ↔ Evidence, Tasks, Questions, next work."""
+    from retornatus.application.change.overview import build_change_overview
+
+    root = (path or Path.cwd()).resolve()
+    try:
+        overview = build_change_overview(root, change_id)
+    except FileNotFoundError:
+        typer.echo(f"Change not found: {change_id}")
+        raise typer.Exit(code=1) from None
+    typer.echo(overview.render())
+
+
+@change_app.command("classify")
+def change_classify_cmd(
+    demand: str = typer.Option(..., "--demand", "-d"),
+    what: str = typer.Option("", "--what", "-w"),
+    done: Optional[list[str]] = typer.Option(None, "--done"),
+    kind: DemandKind = typer.Option(DemandKind.OTHER, "--kind", "-k"),
+    tasks: int = typer.Option(0, "--tasks", help="Expected task count."),
+    constraints: int = typer.Option(0, "--constraints", help="Expected constraint count."),
+) -> None:
+    """Classify ceremony lane (QUICK | STANDARD | COMPLEX) — advisory."""
+    from retornatus.application.change.classify import classify_change
+
+    result = classify_change(
+        demand=demand,
+        what=what,
+        done_criteria=list(done or []),
+        demand_kind=kind,
+        task_count=tasks,
+        constraint_count=constraints,
+    )
+    typer.echo(result.render())
 
 
 @change_app.command("activate")
@@ -1143,6 +1195,108 @@ def task_reopen(
         typer.echo(str(exc))
         raise typer.Exit(1) from exc
     typer.echo(f"Reopened {task_id} on {action.id}")
+
+
+@lesson_app.command("from-gate")
+def lesson_from_gate(
+    gate: str = typer.Option(
+        ...,
+        "--gate",
+        "-g",
+        help="contract | evidence | assurance | skill-research | policy",
+    ),
+    title: str = typer.Option(..., "--title", "-t"),
+    note: str = typer.Option(..., "--note", "-n"),
+    change_id: Optional[str] = typer.Option(None, "--change", "-c"),
+    skill_id: Optional[str] = typer.Option(None, "--skill", "-s"),
+    action_id: Optional[str] = typer.Option(None, "--action", "-a"),
+    propose_rule: bool = typer.Option(
+        False,
+        "--propose-rule",
+        help="Also create an inactive Rule Candidate (needs Human Decision to activate).",
+    ),
+    no_recheck: bool = typer.Option(
+        False,
+        "--no-recheck",
+        help="Skip re-running the gate (record note only).",
+    ),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Record a Learning from a gate failure; optionally propose a Rule Candidate."""
+    from retornatus.application.adaptation.lessons import record_lesson_from_gate
+
+    root = (path or Path.cwd()).resolve()
+    try:
+        result = record_lesson_from_gate(
+            root,
+            gate=gate,
+            title=title,
+            note=note,
+            change_id=change_id,
+            skill_id=skill_id,
+            action_id=action_id,
+            propose_rule=propose_rule,
+            recheck=not no_recheck,
+        )
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Recorded {result.learning.id}")
+    if result.gate_passed is not None:
+        typer.echo(f"Gate recheck passed: {result.gate_passed}")
+    if result.gate_messages:
+        for msg in result.gate_messages:
+            typer.echo(f"  - {msg}")
+    if result.rule_candidate:
+        typer.echo(
+            f"Rule Candidate {result.rule_candidate.id} (inactive — needs Decision)"
+        )
+
+
+@ops_app.command("list")
+def ops_list() -> None:
+    """List built-in operational hygiene loops."""
+    from retornatus.application.operations import list_ops_loops
+
+    for loop in list_ops_loops():
+        typer.echo(f"{loop.id}\t{loop.title}\t{loop.description}")
+
+
+@ops_app.command("show")
+def ops_show(
+    loop_id: str = typer.Argument(..., help="e.g. doctor-hygiene"),
+) -> None:
+    """Show one operational loop recipe."""
+    from retornatus.application.operations import show_ops_loop
+
+    try:
+        loop = show_ops_loop(loop_id)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"{loop.id}: {loop.title}")
+    typer.echo(loop.description)
+    typer.echo("steps:")
+    for step in loop.steps:
+        typer.echo(f"  - {step}")
+
+
+@ops_app.command("run")
+def ops_run(
+    loop_id: str = typer.Argument(..., help="e.g. gate-scan"),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Run an operational hygiene loop."""
+    from retornatus.application.operations import run_ops_loop
+
+    root = (path or Path.cwd()).resolve()
+    try:
+        result = run_ops_loop(root, loop_id)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(result.output)
+    raise typer.Exit(code=0 if result.ok else 1)
 
 
 def entrypoint() -> None:

@@ -25,11 +25,11 @@ You keep control: the agent proposes and implements; **gates** stop “done” w
 | Silent policy / rule invention | Policy check + Human Decision before authoritative Rules |
 | Failures vanish when the tab closes | Finding → Question → Action leaves a trail |
 
-PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.0.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uv tool install` / `uvx`)
+PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.1.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uv tool install` / `uvx`)
 
 **Docs:** [Overview](docs/guide/Overview.md) · [Quick start](docs/guide/Quick-start.md) · [Full guide index](docs/guide/README.md) · [PRD](prd/PRD.md)
 
-[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First Change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [Pillars](#four-pillars) · [How it works](#how-it-works) · [Gates](#gates-and-guarantees) · [Skills](#on-demand-specialization-skills) · [Governance](#human-decisions-rules--policy) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits-lineage--prior-art)
+[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First Change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [Pillars](#four-pillars) · [How it works](#how-it-works) · [Lanes](#complexity-lanes) · [Overview](#change-overview) · [Gates](#gates-and-guarantees) · [Skills](#on-demand-specialization-skills) · [Lessons](#lessons-from-gate-failures) · [Ops](#operational-loops) · [CI](#ci-template-opt-in) · [Governance](#human-decisions-rules--policy) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits-lineage--prior-art)
 
 ---
 
@@ -80,7 +80,7 @@ Install the CLI once, then bind it to each **project** you want to govern.
 
 ```bash
 uv tool install retornatus
-retornatus --version   # 1.0.x
+retornatus --version   # 1.1.x
 ```
 
 One-shot without a global install:
@@ -122,7 +122,7 @@ retornatus doctor
 | --- | --- |
 | **`init`** | Creates `.retornatus/` (config, changes, governance, adaptation, index, runtime) |
 | **`integrate`** | Installs the Retornatus **hub skill** + Environment bridge projections |
-| **`doctor` / `wake`** | Audits continuity, hub/bridge presence, capabilities, and index health |
+| **`doctor` / `wake`** | Audits continuity; **Process vs Brakes** readiness scores; index health |
 
 Day to day you work in **agent chat**; the agent calls the CLI when a phase needs structure or a gate.
 
@@ -144,7 +144,7 @@ uv run retornatus wake --bridges
 
 Re-run `doctor` after upgrades or machine changes. You are ready when:
 
-- `retornatus --version` prints `1.0.x` (or newer)
+- `retornatus --version` prints `1.1.x` (or newer)
 - `.retornatus/` exists with `config.toml`
 - Hub skill is visible (for example `.cursor/skills/retornatus/SKILL.md` after `integrate`)
 - Your AI coding agent can open the project
@@ -156,6 +156,8 @@ retornatus wake
 retornatus wake --bridges
 retornatus integrate
 ```
+
+`doctor` prints **process** (hub/workflow continuity) and **brakes** (gates + verify usable) scores, plus `mode: Process-only | Brakes-ready`.
 
 Deleting `.retornatus/index/retornatus.db` must **not** destroy semantic history — run `wake` again to rebuild.
 
@@ -174,17 +176,23 @@ Ask it to follow the installed **Retornatus hub skill**. Chat phrases are guidan
 | Step | You do | Agent / CLI does |
 | --- | --- | --- |
 | 1 | Approve Demand / Situation | `change elicit` · `change create` (or `--draft-contract` then `change activate`) |
-| 2 | Confirm Contract WHAT + DONE | `gate contract <C-id>` must exit **0** |
+| 2 | Confirm Contract WHAT + DONE | `gate contract <C-id>` must exit **0**; inspect with `change overview` |
 | 3 | Optional: specialize | `skill create` → research → `gate skill-research` → `skill activate` |
 | 4 | Build one unit at a time | `loop next` · `run <A-id>` · implement in the host |
 | 5 | Demand attributable proof | `evidence add --claim …` · `gate evidence` · `verify` |
-| 6 | Preserve experience | `change learn` · `skill evolve` |
+| 6 | On gate failure | `lesson from-gate --gate … --note "…"` (optional `--propose-rule`) |
+| 7 | Preserve experience | `change learn` · `skill evolve` |
 
 If the agent jumps straight to code: *Stop. Finish Situation + Contract and pass `gate contract` first.*
 
 Or drive the CLI yourself:
 
 ```bash
+retornatus change classify \
+  --demand "Expose a liveness check" \
+  --what "GET /health returns 200 with status ok" \
+  --done "Automated test covers /health"
+
 retornatus change elicit \
   --demand "Expose a liveness check for ops"
 
@@ -196,6 +204,7 @@ retornatus change create \
   --objective "Implement and verify health endpoint"
 
 retornatus gate contract C-0001
+retornatus change overview C-0001
 retornatus loop next C-0001
 retornatus run C-0001/A-001
 # …implement in the host, then:
@@ -324,15 +333,19 @@ Status (`retornatus status`, `loop next`) is a **projection**. If it disagrees w
 
 | Capability | Required? | What happens | Human? |
 | --- | --- | --- | --- |
+| **change classify** | Optional | Ceremony lane QUICK / STANDARD / COMPLEX | — |
+| **change overview** | Ongoing | Claims ↔ Evidence dashboard + next work | — |
 | **init / integrate** | Once per project | Scaffold + hub + bridges | — |
 | **project-init** | Brownfield | Continuity map in `project.md` | — |
 | **change elicit** | Optional | Situation readiness check | As needed |
-| **change create / activate** | Yes (full path) | Demand → Contract (+ optional draft) | Approve intent |
+| **change create / activate** | Yes (full path) | Demand → Contract (+ optional draft / `--lane`) | Approve intent |
 | **Tasks** | When work needs a job list | Explicit Task graph + `task start|complete|…` | — |
 | **Skill** | When specialization earned | Research → activate → export / evolve | Bypass needs reason |
 | **Execution** | Yes | Host agent; `run` assembles context; `execution record` observes | — |
 | **Evidence / verify** | Yes for “done” | Claim-bound Evidence → Assurance verdict | Independent `assurance review` optional |
 | **Finding / Question** | When blocked | Discovery loop with durable trail | — |
+| **lesson from-gate** | On gate failure | Learning (+ optional Rule Candidate) | Decision to activate Rule |
+| **ops list/show/run** | Hygiene | Recurring doctor / wake / draft / gate-scan loops | — |
 | **Learning** | After validated experience | Informs future Context | — |
 | **Rule / Policy / Decision** | When governance tightens | Candidates → Human Decision → Rule; Policy ALLOW/DENY/REQUIRE_HUMAN | **Decision** |
 
@@ -440,6 +453,72 @@ Learning **informs**; Rules **constrain**. Recurrence alone never auto-promotes 
 
 ---
 
+## Complexity lanes
+
+Ceremony should match risk — without cloning Spec Guardrails tiers.
+
+| Lane | When | Typical path |
+| --- | --- | --- |
+| **QUICK** | Typo / docs / tiny wording | Short Contract; `skill need` usually skips; still Evidence before done |
+| **STANDARD** | Normal feature | Full Change loop + gates; Skill optional |
+| **COMPLEX** | Security / payment / migration / many tasks | Skill research, Policy, Assurance review more often |
+
+```bash
+retornatus change classify -d "Add OAuth login" -w "SSO for payment" -k SECURITY
+retornatus change create ... --lane COMPLEX   # or omit to auto-classify
+```
+
+---
+
+## Change overview
+
+Traceability dashboard (projection):
+
+```bash
+retornatus change overview C-0001
+```
+
+Shows lane, Contract, Claims ↔ Evidence bindings, Tasks, open Questions, and `loop next`.
+
+---
+
+## Lessons from gate failures
+
+When a gate stops you, capture experience instead of chat amnesia:
+
+```bash
+retornatus lesson from-gate \
+  --gate evidence \
+  --change C-0001 \
+  --title "Claim unbound before verify" \
+  --note "Bind Evidence with --claim before gate evidence" \
+  --propose-rule   # optional inactive Rule Candidate
+```
+
+Rules never auto-activate — still need `decision record` → `rule activate`.
+
+---
+
+## Operational loops
+
+Recurring **repo hygiene** (not Change construction):
+
+```bash
+retornatus ops list
+retornatus ops show doctor-hygiene
+retornatus ops run gate-scan
+```
+
+Built-ins: `doctor-hygiene`, `wake-index`, `list-drafts`, `gate-scan`.
+
+---
+
+## CI template (opt-in)
+
+Copy [`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) into a consumer repo as `.github/workflows/retornatus.yml` to run `doctor`, `wake`, and `ops run gate-scan` on PRs. Strict `verify` on every PR is commented — enable when Evidence is expected in-branch.
+
+---
+
 ## Finding → Question loop
 
 When implementation discovers unknowns, do not bury them in chat:
@@ -499,7 +578,7 @@ Run from the governed project root (or pass `--path`).
 | `integrate` | Hub skill + Environment bridges |
 | `project-init` | Brownfield continuity map |
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
-| `doctor` | Continuity + governance hygiene |
+| `doctor` | Continuity + **Process vs Brakes** readiness |
 | `status` | Derived Change status |
 | `inspect <id>` | Print artifact JSON |
 | `search <query>` | FTS5 over the derived index |
@@ -509,7 +588,9 @@ Run from the governed project root (or pass `--path`).
 | Command | What it does |
 | --- | --- |
 | `change elicit` | Situation readiness (exit 1 if insufficient) |
-| `change create` | Demand → Situation → Contract → optional Action/Tasks |
+| `change classify` | Ceremony lane QUICK / STANDARD / COMPLEX |
+| `change create` | Demand → Situation → Contract → optional Action/Tasks (`--lane`) |
+| `change overview` | Claims ↔ Evidence dashboard + next work |
 | `change activate` | Activate a draft Contract |
 | `change reopen` | Material Contract version (archive prior) |
 | `change learn` | Record Learning |
@@ -542,6 +623,8 @@ Run from the governed project root (or pass `--path`).
 | --- | --- |
 | `finding add` | Record observation |
 | `question open\|resolve\|reopen` | Question lifecycle |
+| `lesson from-gate` | Learning from gate failure (+ optional Rule Candidate) |
+| `ops list\|show\|run` | Operational hygiene loops |
 | `decision record` | Human Decision |
 | `rule propose` / `rule activate` | Rule Candidate → Rule |
 
@@ -555,6 +638,7 @@ Full surface: `retornatus --help` · [CLI guide](docs/guide/CLI.md).
 
 | Path | What you find |
 | --- | --- |
+| [`templates/ci/`](templates/ci/) | Opt-in PR workflow for doctor / gate-scan |
 | [`src/retornatus/`](src/retornatus/) | Package — CLI, domain, application, infrastructure |
 | [`docs/guide/`](docs/guide/) | Product guide — start at [Quick start](docs/guide/Quick-start.md) |
 | [`docs/credits-and-lineage.md`](docs/credits-and-lineage.md) | Provenance and prior art |

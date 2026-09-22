@@ -74,6 +74,14 @@ class DemandKind(str, Enum):
     OTHER = "OTHER"
 
 
+class ComplexityLane(str, Enum):
+    """Ceremony lane — complexity must be earned (not a Spec Guardrails clone)."""
+
+    QUICK = "QUICK"
+    STANDARD = "STANDARD"
+    COMPLEX = "COMPLEX"
+
+
 class SkillStatus(str, Enum):
     """Skill lifecycle (PRD §39 — evolution belongs to Adaptation)."""
 

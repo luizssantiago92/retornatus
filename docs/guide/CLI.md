@@ -16,19 +16,23 @@ retornatus skill --help
 | `integrate` | Hub skill + detected Environment bridges |
 | `project-init` | Brownfield map → `project/project.md` |
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
-| `doctor` | Continuity + governance hygiene |
+| `doctor` | Process vs Brakes scores + governance hygiene |
 | `status` | Derived Change status |
+| `ops list\|show\|run` | Operational hygiene loops |
 
 ## Change workflow
 
 | Command | Purpose |
 | --- | --- |
+| `change classify` | Ceremony lane QUICK / STANDARD / COMPLEX |
 | `change elicit` | Situation readiness (exit 1 if insufficient) |
 | `change create` | Demand → Situation → Contract → optional Action/Tasks |
+| `change overview` | Claims ↔ Evidence dashboard |
 | `change activate` | Activate draft Contract |
 | `change reopen` | Material Contract version (archive prior) |
 | `change learn` | Record Learning |
 | `change create --task/--depends/--resource` | Explicit Task graph |
+| `change create --lane` | Pin ceremony lane |
 
 ## Tasks and loop
 
@@ -53,6 +57,7 @@ retornatus skill --help
 | `verify` | Assurance over Contract DONE |
 | `assurance plan` / `assurance review` | Independent review path |
 | `run` / `run --assurance` / `run --strict-policy` | Assemble ExecutionContext |
+| `lesson from-gate` | Learning from gate failure (+ optional Rule Candidate) |
 
 ## Problems
 
