@@ -184,9 +184,11 @@ def doctor(
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Run diagnostics on Retornatus state and environment."""
-    report = wake_up(path, ensure_bridges=False, auto_init=False)
+    from retornatus.bootstrap.doctor import run_doctor
+
+    report = run_doctor(path)
     typer.echo(report.render())
-    raise typer.Exit(code=0 if report.initialized and not report.diagnostics else 1)
+    raise typer.Exit(code=0 if report.ok else 1)
 
 
 @app.command()
@@ -402,6 +404,23 @@ def change_learn(
     root = (path or Path.cwd()).resolve()
     meta = AdaptationService(root).record_learning(title=title, body=body, summary=summary)
     typer.echo(f"Recorded {meta.id}")
+
+
+@change_app.command("activate")
+def change_activate(
+    change_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Activate a draft Contract when Situation is sufficient."""
+    root = (path or Path.cwd()).resolve()
+    try:
+        contract = ChangeWorkflow(root).activate_contract(change_id)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(
+        f"Activated {change_id} → contract v{contract.version} active={contract.active}"
+    )
 
 
 @change_app.command("reopen")
@@ -693,7 +712,11 @@ def finding_add(
     change_id: str = typer.Option(..., "--change", "-c"),
     observation: str = typer.Option(..., "--observation", "-o"),
     source: Optional[str] = typer.Option(None, "--source"),
-    number: int = typer.Option(1, "--number"),
+    number: Optional[int] = typer.Option(
+        None,
+        "--number",
+        help="Finding number (default: auto-increment next free).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Record a Finding (relevant observation)."""
@@ -713,7 +736,11 @@ def question_open(
     change_id: str = typer.Option(..., "--change", "-c"),
     statement: str = typer.Option(..., "--statement", "-s"),
     finding: list[str] = typer.Option(..., "--finding", "-f"),
-    number: int = typer.Option(1, "--number"),
+    number: Optional[int] = typer.Option(
+        None,
+        "--number",
+        help="Question number (default: auto-increment next free).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Open a Question grounded in one or more Findings."""
@@ -751,6 +778,18 @@ def question_resolve(
         typer.echo(str(exc))
         raise typer.Exit(1) from exc
     typer.echo(f"Resolved {q.id}")
+
+
+@question_app.command("reopen")
+def question_reopen(
+    question_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Reopen a resolved Question (clears Resolution; condition may have reappeared)."""
+    from retornatus.application.question.loop import QuestionLoop
+
+    q = QuestionLoop(path or Path.cwd()).reopen_question(question_id)
+    typer.echo(f"Reopened {q.id} (lifecycle={q.lifecycle.value})")
 
 
 @loop_app.command("next")

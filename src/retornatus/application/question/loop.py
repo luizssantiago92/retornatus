@@ -50,16 +50,53 @@ class QuestionLoop:
     def __init__(self, root: Path) -> None:
         self.repo = FileRepository(root)
 
+    def next_finding_number(self, change_id: str) -> int:
+        findings_dir = self.repo.paths.change_dir(change_id) / "findings"
+        if not findings_dir.is_dir():
+            return 1
+        nums: list[int] = []
+        for path in findings_dir.glob("F-*.json"):
+            try:
+                nums.append(int(path.stem.split("-", 1)[1]))
+            except (IndexError, ValueError):
+                continue
+        return max(nums, default=0) + 1
+
+    def next_question_number(self, change_id: str) -> int:
+        questions_dir = self.repo.paths.change_dir(change_id) / "questions"
+        if not questions_dir.is_dir():
+            return 1
+        nums: list[int] = []
+        for path in questions_dir.glob("Q-*.json"):
+            try:
+                nums.append(int(path.stem.split("-", 1)[1]))
+            except (IndexError, ValueError):
+                continue
+        return max(nums, default=0) + 1
+
+    def next_action_number(self, change_id: str) -> int:
+        actions_dir = self.repo.paths.change_dir(change_id) / "actions"
+        if not actions_dir.is_dir():
+            return 1
+        nums: list[int] = []
+        for path in actions_dir.glob("A-*.json"):
+            try:
+                nums.append(int(path.stem.split("-", 1)[1]))
+            except (IndexError, ValueError):
+                continue
+        return max(nums, default=0) + 1
+
     def record_finding(
         self,
         *,
         change_id: str,
         observation: str,
-        number: int = 1,
+        number: int | None = None,
         source: str | None = None,
     ) -> Finding:
+        n = number if number is not None else self.next_finding_number(change_id)
         finding = Finding(
-            id=format_owned_id(change_id, "F", number),
+            id=format_owned_id(change_id, "F", n),
             observation=observation,
             source=source,
         )
@@ -72,12 +109,13 @@ class QuestionLoop:
         change_id: str,
         statement: str,
         finding_ids: list[str],
-        number: int = 1,
+        number: int | None = None,
     ) -> Question:
         if not finding_ids:
             raise ValueError("A Question must be grounded in at least one Finding")
+        n = number if number is not None else self.next_question_number(change_id)
         question = Question(
-            id=format_owned_id(change_id, "Q", number),
+            id=format_owned_id(change_id, "Q", n),
             statement=statement,
             grounded_in=finding_ids,
             relations=[
@@ -95,10 +133,11 @@ class QuestionLoop:
         question_id: str,
         objective: str,
         success_conditions: list[str],
-        action_number: int = 2,
+        action_number: int | None = None,
     ) -> Action:
+        n = action_number if action_number is not None else self.next_action_number(change_id)
         action = Action(
-            id=format_owned_id(change_id, "A", action_number),
+            id=format_owned_id(change_id, "A", n),
             origin_kind=ActionOriginKind.QUESTION,
             origin_ref=question_id,
             objective=objective,

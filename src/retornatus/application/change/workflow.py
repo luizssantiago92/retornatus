@@ -232,14 +232,39 @@ class ChangeWorkflow:
 
     def derived_status(self, change_id: str) -> str:
         """Human-readable projection (PRD §44) — not durable truth."""
-        change, _ = self.repo.load_change(change_id)
-        try:
-            contract, _ = self.repo.load_contract(change_id)
-        except FileNotFoundError:
-            return f"{change_id}: demand understood, no contract"
-        if not contract.active:
-            return f"{change_id}: contract draft v{contract.version}"
-        return f"{change_id}: contract v{contract.version} active — {change.title}"
+        from retornatus.application.change.status import project_change_status
+
+        return project_change_status(self.repo.paths.root, change_id).render()
+
+    def activate_contract(self, change_id: str) -> Contract:
+        """
+        Activate a draft Contract after Situation is sufficient.
+
+        Refuses when elicitation still has material gaps.
+        """
+        change, change_rev = self.repo.load_change(change_id)
+        contract, contract_rev = self.repo.load_contract(change_id)
+        if contract.active:
+            return contract
+        assessment = self.elicit_situation(
+            demand_statement=change.demand.statement,
+            what=contract.what,
+            done_criteria=list(contract.done_criteria),
+            constraints=list(contract.constraints),
+        )
+        if not assessment.sufficient_for_contract:
+            raise ValueError(
+                f"Situation insufficient to activate Contract: {assessment.rationale}"
+            )
+        if not contract.done_criteria:
+            raise ValueError("Contract requires at least one done criterion before activation")
+        activated = contract.activate()
+        change = change.model_copy(
+            update={"active_contract_version": activated.version}
+        )
+        self.repo.save_change(change, expected=change_rev)
+        self.repo.save_contract(activated, expected=contract_rev)
+        return activated
 
     def reopen_contract(
         self,

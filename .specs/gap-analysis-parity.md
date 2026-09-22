@@ -1,4 +1,14 @@
-# Gap Analysis — Functional Parity & Hardening (v0.8.0)
+# Gap Analysis — Functional Parity & Hardening (v0.9.0)
+
+## Closed in v0.9.0
+
+| Item | Mechanism | Test |
+| --- | --- | --- |
+| Draft Contract activation | `change activate` after Situation sufficiency | `test_activate_status_doctor` |
+| Rich status projection | `status` / `project_change_status` | same |
+| Doctor hygiene | draft contracts, skill research, inactive rules | same |
+| Question reopen CLI | `question reopen` clears Resolution | same |
+| Finding/Question auto-number | omit `--number` → next free id | same |
 
 ## Closed in v0.8.0
 
