@@ -292,6 +292,7 @@ Mechanical gates return **non-zero = STOP**:
 | `gate skill-research` | Skill has no research URLs / blank PROCEDURE |
 | `gate evidence` | No Evidence artifacts for the Change |
 | `gate assurance` / `verify` | Assurance is not `SATISFIED` |
+| `gate policy` | Action objective is DENY or REQUIRE_HUMAN |
 
 Assurance verdicts:
 
