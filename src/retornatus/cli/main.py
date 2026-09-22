@@ -8,16 +8,6 @@ from typing import Optional
 
 import typer
 
-# Windows consoles often default to a legacy code page; keep UTF-8 help/status readable.
-# Use getattr so mypy accepts TextIO (reconfigure exists on TextIOWrapper only).
-for _stream in (sys.stdout, sys.stderr):
-    _reconfigure = getattr(_stream, "reconfigure", None)
-    if callable(_reconfigure):
-        try:
-            _reconfigure(encoding="utf-8", errors="replace")
-        except Exception:  # noqa: BLE001
-            pass
-
 from retornatus import __version__
 from retornatus.application.adaptation.service import AdaptationService
 from retornatus.application.adaptation.skills import SkillService
@@ -27,6 +17,21 @@ from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import ComplexityLane, DemandKind
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
+
+
+def _configure_stdio() -> None:
+    # Windows consoles often default to a legacy code page; keep UTF-8 help/status readable.
+    # Use getattr so mypy accepts TextIO (reconfigure exists on TextIOWrapper only).
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except Exception:  # noqa: BLE001
+                pass
+
+
+_configure_stdio()
 
 app = typer.Typer(
     name="retornatus",
