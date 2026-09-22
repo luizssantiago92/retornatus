@@ -15,25 +15,25 @@ uv --version
 
 ## 2. Install the CLI
 
-**From TestPyPI (available now — `retornatus==1.0.0`):**
+**From PyPI (recommended):**
+
+```bash
+uv tool install retornatus
+retornatus --version   # 1.0.x
+```
+
+One-shot without a global install: `uvx retornatus --help`.
+
+**From TestPyPI (CI / pre-release dry-run):**
 
 ```bash
 uv tool install \
   --index-url https://test.pypi.org/simple/ \
   --extra-index-url https://pypi.org/simple/ \
   retornatus
-retornatus --version   # 1.0.x
 ```
 
 `--extra-index-url` is required so dependencies still resolve from production PyPI.
-
-**From PyPI (after a `v*` release tag publishes):**
-
-```bash
-uv tool install retornatus
-```
-
-One-shot without a global install: `uvx retornatus --help`.
 
 **From Git or a local clone:**
 

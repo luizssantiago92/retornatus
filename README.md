@@ -37,12 +37,8 @@ Retornatus installs durable structure under `.retornatus/` so Demand → Situati
 **Requirements:** Python 3.11+ · [uv](https://docs.astral.sh/uv/) recommended · an AI coding agent
 
 ```bash
-# Install the CLI (PyPI after a v* tag; TestPyPI and Git work today)
+# Install the CLI from PyPI
 uv tool install retornatus
-# or, until the production package is live:
-# uv tool install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ retornatus
-# uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
-
 retornatus --version   # 1.0.x
 
 cd /path/to/your-app
@@ -106,7 +102,14 @@ Honest non-goals: [docs/guide/Non-goals.md](docs/guide/Non-goals.md).
 
 ## Install options
 
-**From TestPyPI (available now — `retornatus==1.0.0`):**
+**From PyPI (recommended):**
+
+```bash
+uv tool install retornatus
+uvx retornatus --help
+```
+
+**From TestPyPI (CI / pre-release dry-run):**
 
 ```bash
 uv tool install \
@@ -116,13 +119,6 @@ uv tool install \
 ```
 
 `--extra-index-url` keeps dependencies resolving from production PyPI.
-
-**From PyPI (after a `v*` release tag publishes):**
-
-```bash
-uv tool install retornatus
-uvx retornatus --help
-```
 
 **From Git:**
 
