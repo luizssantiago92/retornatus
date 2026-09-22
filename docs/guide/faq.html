@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FAQ — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>FAQ</h1>
+<h2>Is Retornatus an agent framework?</h2>
+<p>No. It is a <strong>governance harness</strong>. The host runs the model; Retornatus structures obligations, proof, and memory.</p>
+<h2>Do I need a cloud account?</h2>
+<p>No. V1 is local and repository-native. No mandatory SaaS runtime or remote database.</p>
+<h2>Must every Change use Skills and Tasks?</h2>
+<p>No. Ceremony scales with complexity. Use <code>skill need</code> and only add Tasks when decomposition helps.</p>
+<h2>Why did <code>verify</code> fail when tests passed?</h2>
+<p>Assurance needs Evidence <strong>bound to Claims</strong> (<code>--claim</code>). Unbound <code>test_result</code> artifacts do not automatically satisfy DONE Claims.</p>
+<h2>Can I delete the SQLite database?</h2>
+<p>Yes. Run <code>retornatus wake</code> to rebuild. Do <strong>not</strong> delete canonical JSON/Markdown under <code>.retornatus/changes/</code> unless you intend to discard history.</p>
+<h2>How is this different from Spec Guardrails?</h2>
+<p><strong>Spec Guardrails</strong> is the <strong>direct predecessor</strong>. Retornatus is a <strong>separate successor architecture</strong> informed by building and dogfooding Spec Guardrails — not a fork or rename.</p>
+<p>Spec Guardrails proved repo-native gates, memory, evidence, and human checkpoints in practice (npm / <code>.specs/</code> / skill-driven phases). Retornatus preserves those <em>guarantees</em> while rethinking <em>mechanisms</em>: structured Demand→Situation→Contract→Action, Evidence ≠ Assurance, Finding→Question→Resolution, native-first Python harness under <code>.retornatus/</code>.</p>
+<p>Command 1:1 parity with Spec Guardrails is <strong>not</strong> a goal. Provenance detail: <a href="../credits.html">Credits &amp; lineage</a>.</p>
+<h2>What does native-first mean for sandboxes?</h2>
+<p>Isolation Boundaries are advisory projections toward host worktrees/sandboxes. Retornatus does not enforce OS-level sandboxes in V1.</p>
+<h2>How do Rules reach Cursor / Claude / Codex?</h2>
+<p>On <code>rule activate</code> and <code>integrate</code> / bridge refresh, active Rules are upserted into host bridge files. Canonical Rules stay in <code>.retornatus/</code>.</p>
+<h2>Who can activate a Rule?</h2>
+<p>Only a recorded Human Decision of kind <code>APPROVE_RULE_ACTIVATION</code> for that Rule id (with matching confirmation token).</p>
+<h2>Where is the product contract?</h2>
+<p><a href="https://github.com/luizssantiago92/retornatus/blob/main/prd/PRD.md"><code>prd/PRD.md</code></a>. Guides in this folder explain; the PRD decides.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

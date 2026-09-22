@@ -25,69 +25,102 @@
 [![CI](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml/badge.svg)](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Retornatus is a **repo-native companion** for people who ship software with AI coding agents.
-It helps you agree on what “done” means, keep that agreement in the project (not only in chat),
-and require visible proof before work is closed.
+## What it is
 
-| Without Retornatus | With Retornatus |
+**Retornatus** is a companion that sits **in your project repository** and helps you run AI coding agents (Cursor, Claude Code, Codex, and similar) with three durable habits:
+
+1. **A clear finish line** before the agent sprints into code  
+2. **Memory that survives the chat tab** (intent and progress live in git)  
+3. **Proof before “done”** — work closes when evidence matches the goal, not when the model sounds confident  
+
+Your agent still **writes the code**. Retornatus **governs the loop and keeps the record** under `.retornatus/`.
+
+It is **not** an IDE, an LLM runtime, or a marketplace of agents.
+
+---
+
+## What it does for you
+
+| Pain today | With Retornatus |
 | --- | --- |
-| The agent jumps to code and sounds finished | A clear finish line exists before the sprint |
-| “Done” is a confident summary | “Done” needs evidence you can inspect |
-| Each chat starts from zero | Project memory survives sessions and handoffs |
-| Same chaos for a typo and a payment change | Ceremony scales with risk |
+| The agent jumps to code and declares victory | You agree on what “done” means first |
+| Each new chat starts from zero | Project memory outlives the session |
+| “Done” is a persuasive summary | “Done” needs inspectable evidence |
+| Tiny typo and payment change get the same chaos | Ceremony scales with risk |
 | Lessons vanish when the tab closes | The next return can learn from the last |
 
-**Website:** [luizssantiago92.github.io/retornatus](https://luizssantiago92.github.io/retornatus/) · **Docs:** [guide hub](https://luizssantiago92.github.io/retornatus/guide/) · **Quick start:** [HTML](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · **PyPI:** [`retornatus`](https://pypi.org/project/retornatus/)
+**Day-to-day shape:** you describe what you want → Retornatus helps turn that into a change with an agreed outcome → the agent implements under that agreement → you close when evidence matches the goal → learning stays in the repo.
 
-Markdown sources for deep guides still live under [docs/guide](docs/guide/README.md).
+Conceptual loop (details on the site):
 
----
-
-## Why use it
-
-- **Stay in control** — the agent builds; you keep the bar for completion.
-- **Stop losing context** — intent and progress live under `.retornatus/` in git.
-- **Fewer false finishes** — gates and evidence make optimistic “done” expensive.
-- **Specialize on demand** — research a skill for *this* problem instead of relying on stale packs.
-- **Works where you already work** — Cursor, Claude Code, Codex, and similar hosts execute; Retornatus governs and records.
+```text
+Demand → Situation → Contract → Action → Evidence → Assurance → return informed
+```
 
 ---
 
-## Install
+## How it proves work (not just claims it)
+
+Retornatus treats “done” as something you can **check**:
+
+- Goals and constraints are written down (a **contract** for the change)  
+- Progress is recorded as **evidence** bound to those goals  
+- Closing requires **assurance** — evidence must support the claims, or the gate stops you  
+
+That is how the project stays honest across agents, teammates, and time. Deep mechanics: [docs hub](https://luizssantiago92.github.io/retornatus/guide/).
+
+---
+
+## Install (step by step)
+
+You need **Python 3.11+**. We recommend [`uv`](https://docs.astral.sh/uv/) (fast installer for Python tools). If you do not have `uv` yet:
 
 ```bash
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Then install Retornatus and prepare **your application repo** (the project you want the agent to work on):
+
+```bash
+# 1) Install the Retornatus CLI once on your machine
 uv tool install retornatus
+
+# 2) Go to YOUR app (not necessarily this harness repo)
 cd /path/to/your-app
+
+# 3) Create .retornatus/ memory + config in this project
 retornatus init
+
+# 4) Drop the hub skill into your agent environment (Cursor, etc.)
 retornatus integrate
+
+# 5) Sanity check — should report the project as initialized
 retornatus doctor
 ```
 
-Requires **Python 3.11+**. [`uv`](https://docs.astral.sh/uv/) is the recommended path; the package is also on [PyPI](https://pypi.org/project/retornatus/).
+What you should see after that:
 
-Then open the project in your AI coding agent. The hub skill teaches the loop; start with the [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html).
+- a `.retornatus/` folder in the project  
+- a hub skill your agent can follow (for example under `.cursor/skills/` on Cursor)  
+- `doctor` without hard “not initialized” brakes  
 
----
+Next: open the project in your AI coding agent and follow the [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) to create the first change.
 
-## How it feels day to day
-
-1. You describe what you want.
-2. You agree on a clear finish line for that work.
-3. Your AI coding agent builds under that agreement; you can check progress anytime.
-4. Work closes when there is **proof you can inspect** — not when the model sounds confident.
-5. What you learned stays in the project for the next return.
-
-Deep mechanics (gates, skills lifecycle, policy) live in the [docs hub](https://luizssantiago92.github.io/retornatus/guide/).
+**Also available:** [PyPI package](https://pypi.org/project/retornatus/) · one-shot without global install: `uvx retornatus --help`
 
 ---
 
 ## What’s new (1.1.x)
 
-- **One-screen progress** — goals, proof, and next steps without digging through chat
-- **Health at a glance** — process care vs hard stops
-- **Lessons that stick** — failed checks can guide the next return
-- **Light hygiene scans** — optional ops loops when you want a checkup
-- **Seedcore** — brand mascot on the site and README
+- **One-screen progress** — goals, proof, and next steps without digging through chat  
+- **Health at a glance** — process care vs hard stops  
+- **Lessons that stick** — failed checks can guide the next return  
+- **Light hygiene scans** — optional ops loops when you want a checkup  
+- **Seedcore** — brand mascot on the site and README  
 
 ---
 
@@ -95,15 +128,14 @@ Deep mechanics (gates, skills lifecycle, policy) live in the [docs hub](https://
 
 | Want… | Go here |
 | --- | --- |
-| Product story & install | [Website](https://luizssantiago92.github.io/retornatus/) |
-| First change walkthrough | [Quick start (HTML)](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
-| Docs hub | [Guide hub](https://luizssantiago92.github.io/retornatus/guide/) |
-| Concepts & pillars | [Overview](docs/guide/Overview.md) |
-| Full guide index (markdown) | [docs/guide](docs/guide/README.md) |
+| Product story | [Website](https://luizssantiago92.github.io/retornatus/) |
+| First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
+| Full guide on the site | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |
+| Concepts overview | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) |
 | Product requirements | [PRD](prd/PRD.md) |
 | Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
 
-Technical depth (gates, lanes, skills lifecycle, CI templates, policy) lives in **documentation** — this README stays focused on positioning and getting started.
+Markdown sources remain under [`docs/guide/`](docs/guide/README.md) for editing; the **website** is the reading experience.
 
 ---
 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gates — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Gates</h1>
+<p>Gates are mechanical brakes. <strong>Non-zero exit = STOP.</strong></p>
+<p>They do not replace judgment; they prevent pretending success when structure or proof is missing.</p>
+<h2>Gate catalog</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Stops when</th></tr></thead>
+<tbody>
+<tr><td><code>retornatus gate contract &lt;C-id&gt;</code></td><td>No active Contract, empty WHAT, or no DONE criteria</td></tr>
+<tr><td><code>retornatus gate skill-research &lt;S-id&gt;</code></td><td>RESEARCH lacks sources / PROCEDURE blank</td></tr>
+<tr><td><code>retornatus gate evidence &lt;C-id&gt;</code></td><td>No Evidence artifacts for the Change</td></tr>
+<tr><td><code>retornatus gate assurance &lt;C-id&gt;</code></td><td>Assurance is not <code>SATISFIED</code></td></tr>
+<tr><td><code>retornatus gate policy &lt;A-id&gt;</code></td><td>Policy is <code>DENY</code> or <code>REQUIRE_HUMAN</code></td></tr>
+<tr><td><code>retornatus verify &lt;C-id&gt;</code></td><td>Same family as assurance over Contract DONE Claims</td></tr>
+</tbody></table></div>
+<p>Related:</p>
+<pre class="code"><code class="language-bash">retornatus policy check --action &lt;A-id&gt;
+retornatus policy check --effect &quot;…&quot;
+retornatus run &lt;A-id&gt; --strict-policy</code></pre>
+<h2>Assurance verdicts</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Verdict</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>SATISFIED</code></td><td>Each required Claim has bound, fresh, type-appropriate Evidence</td></tr>
+<tr><td><code>NOT_SATISFIED</code></td><td>Evidence exists but wrong claim/subject/type or stale</td></tr>
+<tr><td><code>INCONCLUSIVE</code></td><td>Required Evidence missing or unbound</td></tr>
+</tbody></table></div>
+<p>&gt; Agent conclusion ≠ Evidence. A green test suite is evidence of tests — not automatic proof of every Claim unless bound correctly.</p>
+<h2>Process vs brakes</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th></th><th>Process (hub skill)</th><th>Brakes (gates)</th></tr></thead>
+<tbody>
+<tr><td>Who checks</td><td>Agent follows the skill</td><td>CLI exit codes</td></tr>
+<tr><td>Incomplete work</td><td>Agent <em>should</em> stop</td><td>Agent <strong>cannot</strong> claim success via gate</td></tr>
+<tr><td>Best for</td><td>Learning the method</td><td>Teams that need proof between approvals</td></tr>
+</tbody></table></div>
+<h2>Governed bypass</h2>
+<p>Some gates can be skipped only as a recorded decision, e.g.:</p>
+<pre class="code"><code class="language-bash">retornatus skill activate S-0001 --force --reason &quot;Emergency hotfix; research deferred&quot;</code></pre>
+<p>Bypass without reason/authority is rejected. See <a href="governance.html">Governance</a>.</p>
+<h2>Guarantees (product level)</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Guarantee</th><th>Mechanism</th></tr></thead>
+<tbody>
+<tr><td>Contract before build</td><td><code>gate contract</code> + Situation sufficiency</td></tr>
+<tr><td>Research before specialized execution</td><td><code>gate skill-research</code></td></tr>
+<tr><td>Evidence before done</td><td>Claim-bound Evidence + <code>verify</code></td></tr>
+<tr><td>Continuity after crash</td><td>Canonical files + <code>wake</code></td></tr>
+<tr><td>No silent Rule authority</td><td>Human Decision required</td></tr>
+<tr><td>Policy visibility</td><td><code>gate policy</code> / <code>--strict-policy</code></td></tr>
+</tbody></table></div>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

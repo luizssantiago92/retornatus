@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Environments — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Environments</h1>
+<p>Retornatus prefers <strong>native Environment capabilities</strong> over reimplementation.</p>
+<h2>Detection</h2>
+<pre class="code"><code class="language-bash">retornatus wake
+retornatus integrate</code></pre>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Kind</th><th>Detected when</th><th>Bridges</th></tr></thead>
+<tbody>
+<tr><td><code>cursor</code></td><td><code>.cursor/</code> or Cursor env markers</td><td>Hub skill + <code>retornatus.mdc</code> (+ active Rules)</td></tr>
+<tr><td><code>claude_code</code></td><td><code>CLAUDE.md</code> or <code>.claude/</code></td><td>CLAUDE.md markers + Rules section</td></tr>
+<tr><td><code>codex</code></td><td><code>AGENTS.md</code> or <code>.codex/</code></td><td>AGENTS.md markers + Rules section</td></tr>
+<tr><td><code>generic</code></td><td>none of the above</td><td><code>.retornatus/</code> only (+ hub install still available)</td></tr>
+</tbody></table></div>
+<h2>What “native first” means</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Capability</th><th>Preference</th></tr></thead>
+<tbody>
+<tr><td>Rules / instructions</td><td>Host rule files</td></tr>
+<tr><td>Skills</td><td>Host skill directories + <code>skill export</code></td></tr>
+<tr><td>Isolation</td><td>Host worktree / sandbox / subagents (advisory Boundaries)</td></tr>
+<tr><td>Execution</td><td>Host agent runtime</td></tr>
+</tbody></table></div>
+<p>Retornatus records <code>HostExecutionRecord</code> observations; it does not spawn agents.</p>
+<h2>Active Rule projection</h2>
+<p>When Rules are activated, bridges refresh so the host sees the same constraints. Markers:</p>
+<pre class="code"><code class="language-html">&lt;!-- retornatus-active-rules:begin --&gt;
+…
+&lt;!-- retornatus-active-rules:end --&gt;</code></pre>
+<p>Canonical Rules remain in <code>.retornatus/governance/</code>.</p>
+<h2>Hub skill</h2>
+<p><code>integrate</code> installs progressive disclosure text so the agent learns the construction loop without pasting the entire PRD each turn.</p>
+<p>Source template: <code>src/retornatus/infrastructure/environment/hub/SKILL.md</code>.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

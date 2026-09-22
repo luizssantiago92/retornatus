@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Overview — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Overview</h1>
+<p>Retornatus is a <strong>repo-native governance harness</strong> for AI-assisted software development.</p>
+<p>It keeps agents inside a repeatable contract: understand the demand, activate obligations, execute under authority, and close with attributable proof — all durable under <code>.retornatus/</code>, not trapped in chat.</p>
+<p>It is <strong>not</strong>:</p>
+<ul>
+<li>an IDE or agent marketplace</li>
+<li>an LLM runtime or multi-tenant orchestrator</li>
+<li>a clone of another kit’s CLI surface</li>
+</ul>
+<p>Your coding environment <strong>executes</strong>. Retornatus <strong>governs and records</strong>.</p>
+<hr />
+<h2>The problem it solves</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Failure mode</th><th>What Retornatus does</th></tr></thead>
+<tbody>
+<tr><td>Agent jumps to code</td><td>Situation elicitation + Contract before build</td></tr>
+<tr><td>“Done” is a chat claim</td><td>Assurance from Claim-bound Evidence</td></tr>
+<tr><td>Session amnesia</td><td>Files + <code>wake</code> continuity</td></tr>
+<tr><td>One-size ceremony</td><td>Tasks and Skills only when complexity earns them</td></tr>
+<tr><td>Silent rule invention</td><td>Rule Candidates need a Human Decision</td></tr>
+</tbody></table></div>
+<hr />
+<h2>The core loop</h2>
+<pre class="code"><code class="language-text">Demand
+  → Situation
+  → Contract          (WHAT + constraints + DONE)
+  → Action            (+ Tasks when needed)
+  → Skill?            (research current sources)
+  → Execution         (host agent)
+  → Evidence
+  → Assurance         (SATISFIED | NOT_SATISFIED | INCONCLUSIVE)
+  → Learning / Skill evolution</code></pre>
+<p>If work is blocked by discovery:</p>
+<pre class="code"><code class="language-text">Finding → Question → Action → Evidence → Resolution</code></pre>
+<p>Status commands (<code>status</code>, <code>loop next</code>) are <strong>projections</strong>. If they disagree with files, the files win.</p>
+<hr />
+<h2>How much ceremony?</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Work</th><th>Typical path</th></tr></thead>
+<tbody>
+<tr><td>Trivial fix</td><td>Short Contract, skip Skill (<code>skill need</code>), light Evidence</td></tr>
+<tr><td>Normal feature</td><td>Full Change loop + gates</td></tr>
+<tr><td>High-risk / specialized</td><td>Skill research gate + optional independent Assurance + Policy</td></tr>
+</tbody></table></div>
+<p>Complexity must be earned — see <a href="concepts.html">Concepts</a> and the PRD philosophy (§2).</p>
+<hr />
+<h2>How you interact</h2>
+<ol>
+<li><strong>Chat</strong> — ask the agent to follow the Retornatus hub skill (installed by <code>integrate</code>).</li>
+<li><strong>CLI</strong> — intentions such as <code>change create</code>, <code>gate contract</code>, <code>verify</code> (source of truth for gates).</li>
+<li><strong>Files</strong> — inspect <code>.retornatus/changes/…</code> when you need the durable record.</li>
+</ol>
+<p>You approve product intent and Human Decisions (Rules). The agent implements. Git push / merge stay yours.</p>
+<hr />
+<h2>Next steps</h2>
+<ul>
+<li><a href="quick-start.html">Quick start</a> — install and first Change</li>
+<li><a href="how-it-works.html">How it works</a> — narrative walkthrough</li>
+<li><a href="gates.html">Gates</a> — what actually stops incomplete work</li>
+<li><a href="non-goals.html">Non-goals</a> — what V1 deliberately does not claim</li>
+<li><a href="../credits.html">Credits &amp; lineage</a> — predecessor and provenance</li>
+</ul>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

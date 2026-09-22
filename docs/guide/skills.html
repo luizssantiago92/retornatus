@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skills — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Skills</h1>
+<p>Retornatus does <strong>not</strong> ship a giant library of preloaded skills that rot.</p>
+<p>When a Change needs specialization, you create <strong>one</strong> Skill for that need, research <strong>current</strong> sources, then activate under a gate.</p>
+<h2>Lifecycle</h2>
+<pre class="code"><code class="language-text">skill need? → create → research (web/docs) → fill RESEARCH + PROCEDURE
+           → gate skill-research → activate → export? → evolve from Learning</code></pre>
+<pre class="code"><code class="language-bash">retornatus skill need --action C-0001/A-001
+retornatus skill create --need &quot;Stripe webhook signatures (current API)&quot; --action C-0001/A-001
+retornatus inspect S-0001
+# agent fills .retornatus/adaptation/skills/S-0001/SKILL.md
+retornatus gate skill-research S-0001
+retornatus skill activate S-0001
+retornatus skill export S-0001
+retornatus skill evolve S-0001 --note &quot;Added timestamp tolerance&quot;</code></pre>
+<h2>Storage vs projection</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Location</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><code>.retornatus/adaptation/skills/S-xxxx/SKILL.md</code></td><td>Canonical Skill</td></tr>
+<tr><td><code>.cursor/skills/…</code> (or host equivalent)</td><td>Native projection via <code>export</code> / hub</td></tr>
+</tbody></table></div>
+<p>Subagents should consume the <strong>same snapshot</strong> — do not rewrite Skill mid-execution.</p>
+<h2>Complexity-sensitive need</h2>
+<p><code>skill need</code> skips ceremony for trivial Actions (e.g. typo fixes) and flags specialization when complexity or novelty warrants it.</p>
+<h2>Bypass</h2>
+<pre class="code"><code class="language-bash">retornatus skill activate S-0001 --force --reason &quot;…&quot;</code></pre>
+<p>Records Bypass + Decision. Prefer research; bypass is governed exception, not the default path.</p>
+<p>See also: hub skill text under <code>src/retornatus/infrastructure/environment/hub/SKILL.md</code> (installed by <code>integrate</code>).</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

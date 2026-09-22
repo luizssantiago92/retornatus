@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Credits &amp; lineage — Retornatus</title>
-  <meta name="description" content="Provenance of Retornatus: Spec Guardrails predecessor and design influences." />
+  <title>Credits, Lineage &amp; Prior Art — Retornatus</title>
   <link rel="icon" type="image/png" href="assets/retornatus-mascot.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,49 +12,203 @@
 </head>
 <body class="doc-page">
   <div class="atmosphere" aria-hidden="true"></div>
-
   <header class="top">
     <a class="brand" href="./">Retornatus</a>
     <nav>
-      <a href="./#why">Why</a>
+      <a href="./">Site</a>
       <a href="guide/">Docs</a>
       <a href="guide/quick-start.html">Quick start</a>
       <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
     </nav>
   </header>
-
-  <main>
-    <p class="doc-kicker">Provenance</p>
-    <h1>Credits &amp; lineage</h1>
-    <p class="doc-lede">
-      Ideas are credited by <strong>influence</strong>, not by superficial similarity.
-      Retornatus does not claim novelty for established software-engineering patterns.
-    </p>
-
-    <h2>Direct predecessor</h2>
-    <p>
-      <a href="https://github.com/luizssantiago92/spec-guardrails">Spec Guardrails</a> (MIT)
-      is the direct predecessor. Retornatus is a separate successor architecture informed by
-      that dogfooding experience — not a fork or rename.
-    </p>
-
-    <h2>Brand</h2>
-    <p>
-      Brand mascot <strong>Seedcore</strong> is an original illustration for Retornatus.
-      Not affiliated with Pokémon or Nintendo.
-    </p>
-
-    <p class="note">
-      Full write-up (tables, transitive influences, design notes):
-      <a href="https://github.com/luizssantiago92/retornatus/blob/main/docs/credits-and-lineage.md">credits-and-lineage.md on GitHub</a>.
-    </p>
-
+  <main class="doc-prose">
+<h1>Credits, Lineage &amp; Prior Art</h1>
+<p>Ideas are credited by <strong>influence</strong>, not by superficial similarity. Retornatus does not claim novelty for established software-engineering patterns; its design contribution lies in how these ideas are separated, constrained, and composed into its governance model.</p>
+<p>This document records <strong>provenance</strong>, not a bibliography of every related tool.</p>
+<pre class="code"><code class="language-text">Open-source prior art
+        ↓
+Spec Guardrails
+        ↓
+real implementation + dogfooding
+        ↓
+lessons / limitations / proven guarantees
+        ↓
+Retornatus-specific research &amp; design
+        ↓
+Retornatus</code></pre>
+<hr />
+<h2>A. Direct predecessor — Spec Guardrails</h2>
+<p><strong><a href="https://github.com/luizssantiago92/spec-guardrails">Spec Guardrails</a></strong> (MIT) is the <strong>direct predecessor</strong> of Retornatus.</p>
+<p>Retornatus is a <strong>separate successor architecture</strong> informed by lessons learned while building and dogfooding Spec Guardrails. It is <strong>not</strong> a fork, rename, or line-by-line rewrite of Spec Guardrails.</p>
+<pre class="code"><code class="language-text">Spec Guardrails
+      ↓
+experience
+      ↓
+failure analysis
+      ↓
+preserve proven guarantees
+      ↓
+rethink mechanisms
+      ↓
+Retornatus</code></pre>
+<h3>What Spec Guardrails demonstrated in practice</h3>
+<p>Dogfooding Spec Guardrails showed the practical value of:</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Proven concern</th><th>How Spec Guardrails exercised it</th></tr></thead>
+<tbody>
+<tr><td>Repo-native governance</td><td>Durable project state under <code>.specs/</code></td></tr>
+<tr><td>Planning before implementation</td><td>Spec → tasks → execute → verify phases</td></tr>
+<tr><td>Gates / brakes</td><td>Mechanical STOP checks (exit codes)</td></tr>
+<tr><td>Tasks and controlled parallelism</td><td>Task graphs, waves, loop patterns</td></tr>
+<tr><td>Evidence before “done”</td><td>Verification / proof expectations</td></tr>
+<tr><td>Persistent project memory</td><td>Feature archives and memory index</td></tr>
+<tr><td>Human checkpoints</td><td>Approvals at meaningful boundaries</td></tr>
+<tr><td>Restart continuity</td><td>State that survives chat handoffs</td></tr>
+<tr><td>Environment / agent integration</td><td>Cursor, Claude, Copilot, Codex adapters</td></tr>
+</tbody></table></div>
+<h3>What Retornatus aims to preserve</h3>
+<p>Useful <strong>guarantees</strong>, not Spec Guardrails’ npm packaging, skill tree, or command surface:</p>
+<ul>
+<li>governance before opportunistic coding</li>
+<li>non-zero gates as brakes</li>
+<li>attributable proof rather than chat self-report</li>
+<li>memory that outlives a session</li>
+<li>human authority for consequential constraints</li>
+<li>environment awareness without replacing the host</li>
+</ul>
+<h3>Why a separate product</h3>
+<p>The Retornatus PRD treats Spec Guardrails as <strong>archaeology first</strong> (inspect implementation, not only docs), then redesigns mechanisms under <strong>native-first</strong> and <strong>complexity must be earned</strong> (<a href="https://github.com/luizssantiago92/retornatus/blob/main/prd/PRD.md">PRD §66</a>).</p>
+<p>Retornatus therefore:</p>
+<ul>
+<li>uses a structured Python domain model and <code>.retornatus/</code> layout</li>
+<li>separates Demand / Situation / Contract / Action (and Finding / Question / Resolution)</li>
+<li>separates Evidence from Assurance</li>
+<li>prefers host-native isolation and skills over rebuilding them</li>
+<li>does <strong>not</strong> claim 1:1 Spec Guardrails command replacement</li>
+</ul>
+<h3>Spec Guardrails’ own lineage (transitive — do not duplicate)</h3>
+<p>Spec Guardrails itself incorporates and credits prior work in spec-driven development, task graphs, loop engineering, agent skills, and harness engineering. Those <strong>transitive</strong> influences are documented in Spec Guardrails’ own lineage and are <strong>not</strong> repeated here as direct Retornatus influences unless Retornatus independently revisited the original source.</p>
+<p>Primary reference:</p>
+<ul>
+<li><a href="https://github.com/luizssantiago92/spec-guardrails/blob/main/docs/guide/credits.md">Spec Guardrails — Credits and lineage</a></li>
+</ul>
+<p>Upstream names recorded there (for navigation only — <strong>not</strong> Retornatus direct influences):  </p>
+<p><code>tlc-spec-driven</code>, <code>addyosmani/agent-skills</code>, <code>graph-engineering</code>, <code>loop-engineering</code>, Addy Osmani’s Loop Engineering essay, <code>awesome-harness-engineering</code>, <code>loopgate_harness</code>, <code>obra/superpowers</code>, plus cited-not-vendored adjacent tools (e.g. DeepCode, RepoGraph, Graphify, RTK, NVIDIA SkillSpector).</p>
+<p><strong>Audit note:</strong> A search of this repository’s design artifacts (PRD, docs, implementation notes, commit messages) found <strong>no evidence</strong> that Retornatus independently re-studied those upstreams in a way that added influence beyond what arrived through Spec Guardrails. They therefore remain <strong>transitive</strong>.</p>
+<p><strong>Code:</strong> Retornatus does not vendor Spec Guardrails’ Node package, Python gate scripts, or skill trees. Relationship is conceptual / experiential. Spec Guardrails license: <strong>MIT</strong>.</p>
+<hr />
+<h2>B. Direct Retornatus research</h2>
+<p>Include only sources with justifiable evidence of study <strong>during Retornatus design</strong>, beyond Spec Guardrails archaeology.</p>
+<h3>B.1 Host Environment capability surfaces</h3>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Source</th><th>What was studied</th><th>What influenced Retornatus</th><th>What Retornatus did differently</th></tr></thead>
+<tbody>
+<tr><td><a href="https://cursor.com">Cursor</a> (rules / skills layout)</td><td>Native rules (<code>.cursor/rules</code>), skills progressive disclosure</td><td>Cursor adapter, hub skill install, Rule projection into <code>.mdc</code></td><td>Govern via <code>.retornatus/</code>; bridges are projections only</td></tr>
+<tr><td><a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a> (<code>CLAUDE.md</code> / <code>.claude</code>)</td><td>Project instruction surfaces</td><td>Claude Code adapter + bridge markers</td><td>No Claude-specific domain policy in Core</td></tr>
+<tr><td><a href="https://github.com/openai/codex">OpenAI Codex</a> / <code>AGENTS.md</code> patterns</td><td>Agent instruction files, isolation hints</td><td>Codex adapter + <code>AGENTS.md</code> bridges; advisory isolation Boundaries</td><td>Does not spawn Codex sandboxes; records host execution observations</td></tr>
+</tbody></table></div>
+<p><strong>Nature:</strong> environment integration research. <strong>No code vendored</strong> from these products into Retornatus.</p>
+<h3>B.2 Implementation libraries (runtime dependencies)</h3>
+<p>These are engineering dependencies, not governance prior art:</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Package</th><th>License (as published)</th><th>Role in Retornatus</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/pydantic/pydantic">Pydantic</a></td><td>MIT</td><td>Structured domain models / validation</td></tr>
+<tr><td><a href="https://github.com/fastapi/typer">Typer</a></td><td>MIT</td><td>Intention-oriented CLI</td></tr>
+<tr><td><a href="https://github.com/hukkin/tomli-w">tomli-w</a></td><td>MIT</td><td>TOML writing for project config</td></tr>
+<tr><td>Python <a href="https://docs.python.org/3/library/sqlite3.html">sqlite3</a> + FTS5</td><td>PSF</td><td>Derived disposable index</td></tr>
+</tbody></table></div>
+<p><strong>No modified copies</strong> of these libraries are vendored in-tree; they are normal package dependencies (<code>pyproject.toml</code>).</p>
+<h3>B.3 No additional direct conceptual upstreams recorded</h3>
+<p>As of this audit, <strong>no other external repositories</strong> are classified as direct Retornatus conceptual influences. If future work independently revisits a Spec Guardrails upstream (or a new source) and that study changes Retornatus design, document it here in the same PR with: source, what was studied, what changed, license, and whether any code was adapted.</p>
+<hr />
+<h2>C. Evaluated alternatives (studied / rejected for V1)</h2>
+<p>These are <strong>design decisions</strong>, not claims that Retornatus “is based on” the rejected approach. Primary evidence: <a href="https://github.com/luizssantiago92/retornatus/blob/main/prd/PRD.md">PRD §65 Explicit V1 Non-Goals</a> and native-first philosophy (§2.2).</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Evaluated direction</th><th>Question</th><th>Decision</th><th>Result in Retornatus V1</th></tr></thead>
+<tbody>
+<tr><td>Graph database / vector store for Memory</td><td>Do we need a graph/vector DB?</td><td><strong>No</strong></td><td>Canonical files + relations + derived SQLite/FTS</td></tr>
+<tr><td>Mandatory Loop Engine</td><td>Is a durable Loop engine required?</td><td><strong>No</strong></td><td><code>loop next</code> as <strong>projection</strong> over ready work</td></tr>
+<tr><td>Proprietary sandbox / worktree orchestrator</td><td>Rebuild host isolation?</td><td><strong>No</strong></td><td>Advisory Boundaries → native host isolation</td></tr>
+<tr><td>Agent Pool / permanent specialist agents</td><td>Encode personas in the domain?</td><td><strong>No</strong></td><td>Specialization via Assignment + Context + Skills</td></tr>
+<tr><td>Automatic Rule graduation</td><td>May recurrence create authority?</td><td><strong>No</strong></td><td>Rule Candidate → Human Decision → Rule</td></tr>
+<tr><td>Event store / distributed scheduler / SaaS control plane</td><td>Remote orchestration?</td><td><strong>No</strong></td><td>Local repository-native harness</td></tr>
+<tr><td>Spec Guardrails command 1:1 clone</td><td>Drop-in CLI replacement?</td><td><strong>No</strong></td><td>Behavioral parity where useful; separate UX</td></tr>
+</tbody></table></div>
+<p>Where Spec Guardrails’ docs cite adjacent graph/harness tools as <em>referenced, not vendored</em>, Retornatus treats graph-memory approaches as a <strong>class of alternative</strong> rejected in the PRD — without listing those tools as Retornatus direct influences.</p>
+<hr />
+<h2>D. Original Retornatus design</h2>
+<p>“Original” here means <strong>decisions composed inside Retornatus’ architecture</strong>, not invention of generic software-engineering ideas.</p>
+<p>Retornatus introduces <strong>within its own architecture</strong> the following separations and compositions.</p>
+<h3>Core work spine</h3>
+<pre class="code"><code class="language-text">Demand → Situation → Contract → Action → Execution (host)</code></pre>
+<p>Distinctions enforced in the model:</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Separation</th><th>Intent</th></tr></thead>
+<tbody>
+<tr><td>Demand ≠ Contract</td><td>Intent is not yet an obligation</td></tr>
+<tr><td>Contract ≠ Action</td><td>Obligation is not the response</td></tr>
+<tr><td>Action ≠ Task</td><td>Decomposition is optional</td></tr>
+<tr><td>Task ≠ Execution</td><td>Planned work ≠ host run</td></tr>
+</tbody></table></div>
+<h3>Discovery spine</h3>
+<pre class="code"><code class="language-text">Finding → Question → Action → Evidence → Assurance → Resolution</code></pre>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Separation</th><th>Intent</th></tr></thead>
+<tbody>
+<tr><td>Finding ≠ Question</td><td>Observation is not yet a problem frame</td></tr>
+<tr><td>Question ≠ Resolution</td><td>Problems are not closed by assertion</td></tr>
+<tr><td>Evidence ≠ Assurance</td><td>Observation ≠ verdict</td></tr>
+<tr><td>Resolution is established, not claimed</td><td>Agent self-report is insufficient when proof is required</td></tr>
+</tbody></table></div>
+<h3>Adaptation spine</h3>
+<pre class="code"><code class="language-text">Experience → Learning → Graduation → Rule Candidate → Human Authority → Active Rule</code></pre>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Separation</th><th>Intent</th></tr></thead>
+<tbody>
+<tr><td>Learning ≠ Skill</td><td>Informs vs teaches how</td></tr>
+<tr><td>Skill ≠ Rule</td><td>Procedure vs constraint</td></tr>
+<tr><td>Rule ≠ Policy</td><td>Standing constraint vs effect evaluation</td></tr>
+</tbody></table></div>
+<h3>Structural choices</h3>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Choice</th><th>Retornatus modeling</th></tr></thead>
+<tbody>
+<tr><td>Structured domain model</td><td>Validated entities (Pydantic) instead of implicit script/doc semantics alone</td></tr>
+<tr><td>Native-first</td><td>Govern; do not duplicate host agent runtime / sandbox / subagents</td></tr>
+<tr><td>Capability-oriented Environment</td><td>Core depends on capabilities; adapters speak environment</td></tr>
+<tr><td>Context Assembly</td><td>Context assembled, not inherited; follows responsibility; sufficient, not comprehensive</td></tr>
+<tr><td>Derived coordination</td><td>Readiness / parallelizable sets as projections — not mandatory canonical Wave/Loop engines</td></tr>
+<tr><td>On-demand researched Skills</td><td>Create/research/activate one Skill when needed; evolve from Learning</td></tr>
+<tr><td>Complexity discipline</td><td>A mechanism must save more complexity than it introduces; complexity earned by concrete failure</td></tr>
+</tbody></table></div>
+<p>Product contract: <a href="https://github.com/luizssantiago92/retornatus/blob/main/prd/PRD.md"><code>prd/PRD.md</code></a>. User-facing concepts: <a href="guide/concepts.html">docs/guide/Concepts.md</a>.</p>
+<hr />
+<h2>Licensing summary</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Artifact</th><th>License</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Retornatus (this repository)</td><td>MIT</td><td><a href="guide/license.html"><code>LICENSE</code></a></td></tr>
+<tr><td>Spec Guardrails (predecessor)</td><td>MIT</td><td>Conceptual/experiential influence; <strong>no code vendored</strong></td></tr>
+<tr><td>Pydantic, Typer, tomli-w</td><td>MIT</td><td>Dependencies via packaging</td></tr>
+<tr><td>Host products (Cursor / Claude Code / Codex)</td><td>Proprietary / host terms</td><td>Adapters write local bridge files only</td></tr>
+</tbody></table></div>
+<p><strong>Derived/vendored third-party source trees:</strong> none identified in <code>src/</code> at audit time (no NOTICE files, no copied skill packs from Spec Guardrails or its upstreams).</p>
+<hr />
+<h2>How to update this document</h2>
+<p>When adding an influence:</p>
+<ol>
+<li>State whether it is <strong>predecessor</strong>, <strong>direct</strong>, <strong>transitive</strong>, or <strong>evaluated-and-rejected</strong>.</li>
+<li>Cite evidence (PRD section, design note, or concrete adapter/code change).</li>
+<li>Record license and whether any code was adapted.</li>
+<li>Do <strong>not</strong> promote Spec Guardrails upstreams to “direct” without new independent study.</li>
+</ol>
+<p>Keep the <a href="guide/index.html">README</a> section short; keep detail here.</p>
     <div class="doc-nav-secondary">
-      <a class="btn ghost" href="./">← Product site</a>
-      <a class="btn primary" href="guide/">Docs hub →</a>
+      <a class="btn ghost" href="guide/">← Docs hub</a>
+      <a class="btn primary" href="./">Product site →</a>
     </div>
   </main>
-
   <footer>
     <p>
       <strong>Retornatus</strong> —

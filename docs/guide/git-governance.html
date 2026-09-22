@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Git governance — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Git governance</h1>
+<p>Structural gates enforce artifact quality under <code>.retornatus/</code>. <strong>Git tiers</strong> enforce what leaves the machine.</p>
+<p>Retornatus adopts the same blast-radius idea as Spec Guardrails’ Human-in-the-loop / git-handoff — adapted to Contracts and this repo’s ownership model.</p>
+<p>&gt; Approving a Change or Contract authorizes <strong>local</strong> work — not share, merge, or publish.</p>
+<h2>Tiers</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Tier</th><th>What the agent may do</th><th>What needs the human</th></tr></thead>
+<tbody>
+<tr><td><strong>0 — Local</strong></td><td>Implement, test, commit locally (code + <code>.retornatus/</code> memory)</td><td>—</td></tr>
+<tr><td><strong>1 — Share</strong></td><td>Nothing automatic</td><td>Explicit ask: <code>git push</code>, open/update PR</td></tr>
+<tr><td><strong>2 — External</strong></td><td><strong>Never</strong> (owner-only in this project)</td><td>Merge, deploy, force-push, production data, <strong>PyPI publish</strong>, <strong>release tags that publish</strong></td></tr>
+</tbody></table></div>
+<h3>Owner hard rule</h3>
+<p>In this repository (and by default for Retornatus-governed work here):</p>
+<ul>
+<li><strong>Merge</strong> and <strong>publish</strong> stay with the human owner.</li>
+<li>Agents prepare work, local commits, and (when asked) PRs — then stop.</li>
+<li>Do not create/push <code>v*</code> tags that trigger Publish workflows; do not run <code>uv publish</code> / workflow_dispatch publish for the owner.</li>
+</ul>
+<h2>What to commit (Tier 0)</h2>
+<p><strong>Usually yes</strong></p>
+<ul>
+<li>Application / package source and tests</li>
+<li>Docs that describe shipped behavior</li>
+<li>Canonical <code>.retornatus/</code> artifacts for the Change (contracts, evidence, learnings, skills, decisions)</li>
+</ul>
+<p><strong>Usually no</strong></p>
+<ul>
+<li>Secrets (<code>.env</code>, tokens, credentials)</li>
+<li>Derived <code>.retornatus/index/</code> and <code>.retornatus/runtime/</code> (see root <code>.gitignore</code>)</li>
+<li>Accidental IDE noise</li>
+</ul>
+<h2>Commit messages</h2>
+<ul>
+<li>English, concise, focused on <strong>why</strong></li>
+<li>Prefer Conventional Commits style when natural (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>, <code>test:</code>)</li>
+<li>Do not bypass hooks (<code>--no-verify</code>) unless the owner explicitly requests it</li>
+</ul>
+<h2>Handoff checklist</h2>
+<p>Before ending a session or asking for review:</p>
+<ol>
+<li><code>git status</code> is understood (clean or intentional leftovers)</li>
+<li>Local commits exist for finished units (Tier 0)</li>
+<li>No Tier 1/2 actions unless the owner asked</li>
+<li>One concrete next human step (review PR / merge / tag to publish)</li>
+</ol>
+<h2>Cursor bridge</h2>
+<p>Project rule: <a href="https://github.com/luizssantiago92/retornatus/blob/main/.cursor/rules/git-governance.mdc"><code>.cursor/rules/git-governance.mdc</code></a> (<code>alwaysApply: true</code>).</p>
+<h2>Related</h2>
+<ul>
+<li><a href="governance.html">Governance</a> — Rules, Policy, Human Decisions</li>
+<li><a href="non-goals.html">Non-goals</a> — what V1 does not claim</li>
+<li>Spec Guardrails: <a href="https://github.com/luizssantiago92/spec-guardrails#human-in-the-loop-and-git-governance">Human-in-the-loop</a> (predecessor)</li>
+</ul>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

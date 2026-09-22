@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tutorial 01 — First Change — Retornatus</title>
+  <link rel="icon" type="image/png" href="../../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../../">Retornatus</a>
+    <nav>
+      <a href="../../">Site</a>
+      <a href="../">Docs</a>
+      <a href="../quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Tutorial 01 — First Change</h1>
+<p>Build a tiny governed Change end-to-end. Substitute your stack’s health route as needed.</p>
+<h2>Setup</h2>
+<pre class="code"><code class="language-bash">retornatus init
+retornatus integrate
+retornatus doctor</code></pre>
+<h2>Elicit and create</h2>
+<pre class="code"><code class="language-bash">retornatus change elicit \
+  --demand &quot;Expose a liveness check for ops&quot; \
+  --what &quot;GET /health returns 200 with status ok&quot; \
+  --done &quot;Automated test covers /health&quot; \
+  --done &quot;Endpoint documented&quot;
+
+retornatus change create \
+  --title &quot;Add health endpoint&quot; \
+  --demand &quot;Expose a liveness check for ops&quot; \
+  --what &quot;GET /health returns 200 with status ok&quot; \
+  --done &quot;Automated test covers /health&quot; \
+  --done &quot;Endpoint documented&quot; \
+  --objective &quot;Implement and verify health endpoint&quot; \
+  --task &quot;Implement handler&quot; \
+  --task &quot;Add automated test&quot; \
+  --depends &quot;1:0&quot;</code></pre>
+<p>Note the printed <code>C-0001</code> / <code>A-001</code> / <code>T-001</code> ids.</p>
+<h2>Gate and plan work</h2>
+<pre class="code"><code class="language-bash">retornatus gate contract C-0001
+retornatus status
+retornatus loop next C-0001
+retornatus run C-0001/A-001</code></pre>
+<p>Implement in your agent/host. Advance tasks:</p>
+<pre class="code"><code class="language-bash">retornatus task start C-0001/T-001
+retornatus task complete C-0001/T-001
+retornatus loop next C-0001</code></pre>
+<h2>Optional Skill</h2>
+<p>Only if <code>skill need</code> says specialization is required:</p>
+<pre class="code"><code class="language-bash">retornatus skill need --action C-0001/A-001
+retornatus skill create --need &quot;Framework health-check patterns (current docs)&quot; --action C-0001/A-001
+# research + fill SKILL.md
+retornatus gate skill-research S-0001
+retornatus skill activate S-0001</code></pre>
+<h2>Prove</h2>
+<p>Claim ids follow Contract DONE order (<code>claim-done-1</code>, …). Adjust if your inspect output differs.</p>
+<pre class="code"><code class="language-bash">retornatus evidence add -c C-0001 -t test_result -s &quot;/health&quot; \
+  --source pytest --state passing --claim C-0001/claim-done-1
+retornatus evidence add -c C-0001 -t repository_observation -s &quot;docs/health.md&quot; \
+  --source filesystem --claim C-0001/claim-done-2
+retornatus gate evidence C-0001
+retornatus verify C-0001</code></pre>
+<p>Expect <code>SATISFIED</code>. If <code>INCONCLUSIVE</code>, check <code>--claim</code> binding.</p>
+<h2>Preserve</h2>
+<pre class="code"><code class="language-bash">retornatus change learn \
+  --title &quot;Health endpoint Evidence must be Claim-bound&quot; \
+  --body &quot;Tutorial 01: verify required --claim on evidence add.&quot;</code></pre>
+<h2>Checkpoint</h2>
+<ul>
+<li>[ ] <code>gate contract</code> exited 0</li>
+<li>[ ] Tasks progressed via lifecycle commands</li>
+<li>[ ] <code>verify</code> returned SATISFIED</li>
+<li>[ ] Learning recorded</li>
+</ul>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="../">← Docs hub</a>
+      <a class="btn primary" href="../../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../../">Site</a> ·
+      <a href="../">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

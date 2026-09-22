@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Architecture — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Architecture</h1>
+<p>Retornatus is a Python package with clear layers. Domain policy does not live in Environment adapters.</p>
+<pre class="code"><code class="language-text">CLI (intentions)
+  → Application (Change, gates, Assurance, Skills, Policy, Question loop)
+  → Domain (Pydantic models, IDs, relations)
+  → Infrastructure (files, SQLite index, adapters, hub skill)
+  → Bootstrap (init, wake, doctor, project-init)</code></pre>
+<h2>Invariants</h2>
+<ol>
+<li><strong>Files persist truth</strong> under <code>.retornatus/</code></li>
+<li><strong>Models validate truth</strong> (schema versioning, optimistic concurrency)</li>
+<li><strong>SQLite indexes and finds</strong> — never sole authority</li>
+<li><strong>Status is a projection</strong></li>
+<li><strong>Native first</strong> — adapters project; hosts execute</li>
+</ol>
+<h2>Package map</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Path</th><th>Responsibility</th></tr></thead>
+<tbody>
+<tr><td><code>src/retornatus/cli/</code></td><td>Typer entrypoints</td></tr>
+<tr><td><code>src/retornatus/domain/</code></td><td>Models, enums, relations</td></tr>
+<tr><td><code>src/retornatus/application/</code></td><td>Workflows and gates</td></tr>
+<tr><td><code>src/retornatus/infrastructure/</code></td><td>Persistence, index, Environment</td></tr>
+<tr><td><code>src/retornatus/bootstrap/</code></td><td>init / wake / doctor</td></tr>
+</tbody></table></div>
+<h2>Filesystem (consumer project)</h2>
+<pre class="code"><code class="language-text">.retornatus/
+  config.toml
+  changes/C-xxxx/
+    change.json
+    situation.md
+    contract.json
+    contracts/vN.json      # archives
+    actions/
+    findings/
+    questions/
+    evidence/
+  governance/              # rules, bypasses, …
+  adaptation/              # learnings, skills
+  project/                 # project.md, decisions
+  index/                   # disposable SQLite
+  runtime/                 # disposable host observations</code></pre>
+<p>Exact layout: PRD §52.</p>
+<h2>Adapters</h2>
+<pre class="code"><code class="language-text">detect Environment → CapabilityModel → ensure_bridge_files</code></pre>
+<p>Adapters must not invent domain Policy. They translate capabilities and write bridge projections (including active Rules). See <a href="environments.html">Environments</a>.</p>
+<h2>Design test (before new abstractions)</h2>
+<p>From PRD §71:</p>
+<pre class="code"><code class="language-text">Concrete failure?
+  → Existing Retornatus mechanism?
+  → Environment native solution?
+  → Simpler established pattern?
+  → Only then: new mechanism</code></pre>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

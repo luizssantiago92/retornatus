@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CLI reference — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>CLI reference</h1>
+<p>Intention-oriented commands. Run from the governed project (or pass <code>--path</code>).</p>
+<pre class="code"><code class="language-bash">retornatus --help
+retornatus gate --help
+retornatus skill --help</code></pre>
+<h2>Continuity</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>init</code></td><td>Create <code>.retornatus/</code></td></tr>
+<tr><td><code>integrate</code></td><td>Hub skill + detected Environment bridges</td></tr>
+<tr><td><code>project-init</code></td><td>Brownfield map → <code>project/project.md</code></td></tr>
+<tr><td><code>wake</code> / <code>wake --bridges</code></td><td>Reconstruct state; rebuild index; optional bridges</td></tr>
+<tr><td><code>doctor</code></td><td>Process vs Brakes scores + governance hygiene</td></tr>
+<tr><td><code>status</code></td><td>Derived Change status</td></tr>
+<tr><td>`ops list\</td><td>show\</td><td>run`</td><td>Operational hygiene loops</td></tr>
+</tbody></table></div>
+<h2>Change workflow</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>change classify</code></td><td>Ceremony lane QUICK / STANDARD / COMPLEX</td></tr>
+<tr><td><code>change elicit</code></td><td>Situation readiness (exit 1 if insufficient)</td></tr>
+<tr><td><code>change create</code></td><td>Demand → Situation → Contract → optional Action/Tasks</td></tr>
+<tr><td><code>change overview</code></td><td>Claims ↔ Evidence dashboard</td></tr>
+<tr><td><code>change activate</code></td><td>Activate draft Contract</td></tr>
+<tr><td><code>change reopen</code></td><td>Material Contract version (archive prior)</td></tr>
+<tr><td><code>change learn</code></td><td>Record Learning</td></tr>
+<tr><td><code>change create --task/--depends/--resource</code></td><td>Explicit Task graph</td></tr>
+<tr><td><code>change create --lane</code></td><td>Pin ceremony lane</td></tr>
+</tbody></table></div>
+<h2>Tasks and loop</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>`task start\</td><td>complete\</td><td>fail\</td><td>reopen`</td><td>Durable Task lifecycle</td></tr>
+<tr><td><code>loop next</code> / <code>loop next --all-ready</code></td><td>Ready work projection</td></tr>
+</tbody></table></div>
+<h2>Skills</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>skill create/list/need/activate/evolve/export</code></td><td>Specialization lifecycle</td></tr>
+</tbody></table></div>
+<h2>Proof and policy</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>evidence add --claim</code></td><td>Claim-bound Evidence (<code>--git-state</code> optional)</td></tr>
+<tr><td>`gate contract\</td><td>evidence\</td><td>skill-research\</td><td>assurance\</td><td>policy`</td><td>STOP gates</td></tr>
+<tr><td>`policy check --effect\</td><td>--action`</td><td>ALLOW / DENY / REQUIRE_HUMAN</td></tr>
+<tr><td><code>verify</code></td><td>Assurance over Contract DONE</td></tr>
+<tr><td><code>assurance plan</code> / <code>assurance review</code></td><td>Independent review path</td></tr>
+<tr><td><code>run</code> / <code>run --assurance</code> / <code>run --strict-policy</code></td><td>Assemble ExecutionContext</td></tr>
+<tr><td><code>lesson from-gate</code></td><td>Learning from gate failure (+ optional Rule Candidate)</td></tr>
+</tbody></table></div>
+<h2>Problems</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>finding add</code></td><td>Record observation (auto-number)</td></tr>
+<tr><td>`question open\</td><td>resolve\</td><td>reopen`</td><td>Question lifecycle</td></tr>
+</tbody></table></div>
+<h2>Human boundary</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>decision record</code></td><td>Human Decision</td></tr>
+<tr><td><code>rule propose</code> / <code>rule activate --decision</code></td><td>Rule Candidate → Rule</td></tr>
+</tbody></table></div>
+<h2>Inspection</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>inspect &lt;id&gt;</code></td><td>Print artifact JSON</td></tr>
+<tr><td><code>search &lt;query&gt;</code></td><td>FTS5 over index</td></tr>
+<tr><td><code>execution record</code> / <code>execution list</code></td><td>Host execution observations</td></tr>
+</tbody></table></div>
+<p>IDs are stable strings such as <code>C-0001</code>, <code>C-0001/A-001</code>, <code>S-0001</code>, <code>R-0001</code>, <code>D-0001</code>.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Governance — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Governance</h1>
+<p>Governance in Retornatus is <strong>local and explicit</strong>: Authority, Boundaries, Rules, Policy, and Human Decisions.</p>
+<h2>Authority</h2>
+<p>Actions carry Authority (e.g. DELEGATED for routine work, HUMAN when judgment is required). Policy uses Authority when evaluating effects.</p>
+<h2>Boundaries</h2>
+<p>Describe operational scope (filesystem root, isolation hints). Many are <strong>advisory</strong> — the host realizes worktrees/sandboxes. Retornatus records and projects; it does not replace the host sandbox.</p>
+<h2>Rules</h2>
+<pre class="code"><code class="language-text">Learning → Rule Candidate (inactive)
+        → Human Decision (APPROVE_RULE_ACTIVATION)
+        → Active Rule</code></pre>
+<pre class="code"><code class="language-bash">retornatus rule propose --statement &quot;Do not commit secrets&quot; --applicability &quot;commit secrets&quot;
+retornatus decision record --kind APPROVE_RULE_ACTIVATION \
+  --subject R-0001 --summary &quot;Approve&quot; --confirm R-0001
+retornatus rule activate R-0001 --decision D-0001</code></pre>
+<p>Setting <code>authority=HUMAN</code> on a Rule object is <strong>not</strong> enough — activation requires a Decision artifact whose subject and confirmation match the Rule id.</p>
+<p>Active Rules are projected into Environment bridges (Cursor / CLAUDE.md / AGENTS.md). Canonical truth remains under <code>.retornatus/</code>.</p>
+<h2>Policy</h2>
+<pre class="code"><code class="language-bash">retornatus policy check --effect &quot;commit secrets to repo&quot;
+retornatus policy check --action C-0001/A-001
+retornatus gate policy C-0001/A-001
+retornatus run C-0001/A-001 --strict-policy</code></pre>
+<p>Verdicts: <code>ALLOW</code> · <code>DENY</code> · <code>REQUIRE_HUMAN</code>.</p>
+<p>Deny-style Rules typically start with “Do not” / “Must not” and match via applicability.</p>
+<h2>Bypass</h2>
+<p>Skipping a gate without a durable Bypass + authority is rejected. Example: Skill research bypass with <code>--force --reason</code>.</p>
+<h2>Git blast radius</h2>
+<p>Structural gates are not enough — see <strong><a href="git-governance.html">Git governance</a></strong> for tiers:</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Tier</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><strong>0 — Local</strong></td><td>Commits on the machine</td></tr>
+<tr><td><strong>1 — Share</strong></td><td>Push / PR — only when the human asks</td></tr>
+<tr><td><strong>2 — External</strong></td><td>Merge, deploy, <strong>PyPI publish</strong> — <strong>owner-only</strong> in this project</td></tr>
+</tbody></table></div>
+<p>Cursor bridge: <code>.cursor/rules/git-governance.mdc</code>.</p>
+<h2>Design stance</h2>
+<p>&gt; Learning informs; Rules constrain. Recurrence never creates authority automatically.</p>
+<p>Details: PRD §§31–35, §48.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

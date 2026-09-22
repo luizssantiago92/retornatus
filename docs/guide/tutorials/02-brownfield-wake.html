@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tutorial 02 — Brownfield wake — Retornatus</title>
+  <link rel="icon" type="image/png" href="../../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../../">Retornatus</a>
+    <nav>
+      <a href="../../">Site</a>
+      <a href="../">Docs</a>
+      <a href="../quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Tutorial 02 — Brownfield wake</h1>
+<p>Install Retornatus on an <strong>existing</strong> application repo and recover continuity.</p>
+<h2>Setup</h2>
+<pre class="code"><code class="language-bash">cd /path/to/existing-app
+retornatus init
+retornatus project-init
+retornatus integrate
+retornatus wake --bridges
+retornatus doctor</code></pre>
+<p>Inspect <code>.retornatus/project/project.md</code> — stack, tests, and layout signals should appear for Situation elicitation.</p>
+<h2>Open a small Change</h2>
+<p>Pick a real, low-risk improvement (docs fix, health check, logging). Prefer a Demand you can prove with a test or repository observation.</p>
+<pre class="code"><code class="language-bash">retornatus change elicit --demand &quot;…&quot; --what &quot;…&quot; --done &quot;…&quot;
+retornatus change create …
+retornatus gate contract C-0001</code></pre>
+<p>If elicitation is insufficient, keep a draft Contract and activate later:</p>
+<pre class="code"><code class="language-bash">retornatus change create … --draft-contract
+# …gather answers…
+retornatus change activate C-0001</code></pre>
+<h2>Prove continuity after interruption</h2>
+<pre class="code"><code class="language-bash">rm .retornatus/index/retornatus.db
+retornatus wake
+retornatus status
+retornatus search &quot;health&quot;   # or a token from your Learning/Change</code></pre>
+<p>Change ids, Rules, and Learnings should still resolve; the index count should be non-zero after wake.</p>
+<h2>Checkpoint</h2>
+<ul>
+<li>[ ] <code>project.md</code> exists and reflects the repo</li>
+<li>[ ] Host bridges exist for your Environment</li>
+<li>[ ] Index rebuilds after deletion</li>
+<li>[ ] <code>doctor</code> shows no blocking diagnostics (warnings about drafts are OK)</li>
+</ul>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="../">← Docs hub</a>
+      <a class="btn primary" href="../../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../../">Site</a> ·
+      <a href="../">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

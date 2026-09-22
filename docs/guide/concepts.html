@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Concepts — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Concepts</h1>
+<p>Short definitions of the domain objects you will see in CLI output and under <code>.retornatus/</code>. Full vocabulary: <a href="glossary.html">Glossary</a> · PRD §§9–41.</p>
+<h2>Change</h2>
+<p>A durable unit of governed work. Owns Situation, Contract versions, Actions, Findings, Questions, Evidence.</p>
+<p>Id shape: <code>C-0001</code>.</p>
+<h2>Demand</h2>
+<p>The statement of intent that opens a Change (<code>demand_statement</code>, kind).</p>
+<h2>Situation</h2>
+<p>Enough understanding to activate a Contract. Produced/elicited before formalization; may include repo signals and focused questions.</p>
+<h2>Contract</h2>
+<p>Authoritative WHAT + constraints + DONE. Immutable once active; material change → new version (<code>change reopen</code>).</p>
+<h2>Action</h2>
+<p>Bounded work with objective, success conditions, Authority, optional Tasks. Origin may be Contract or Question.</p>
+<p>Id: <code>C-0001/A-001</code>.</p>
+<h2>Task</h2>
+<p>Optional decomposition inside an Action. Lifecycle: PENDING → ACTIVE → COMPLETED | FAILED (with reopen). <strong>READY / BLOCKED</strong> are derived, not stored as truth.</p>
+<h2>Skill</h2>
+<p>On-demand specialization artifact (<code>SKILL.md</code> with RESEARCH + PROCEDURE). Created for a need, gated before activation, exportable to native host skills.</p>
+<h2>Evidence</h2>
+<p>Attributable observation (type, subject, source, producer, optional <code>subject_state</code>). Should SUPPORT a Claim for Assurance.</p>
+<h2>Claim</h2>
+<p>A statement that must be established (often derived from Contract DONE). Evidence binds via SUPPORTS.</p>
+<h2>Assurance</h2>
+<p>Evaluation of Claims against Evidence → <code>SATISFIED</code> | <code>NOT_SATISFIED</code> | <code>INCONCLUSIVE</code>.</p>
+<h2>Finding / Question / Resolution</h2>
+<p>Discovery path when execution surfaces a relevant observation. Questions are grounded in Findings; Resolution establishes outcome (with Evidence when verifiable).</p>
+<h2>Rule / Learning / Decision</h2>
+<ul>
+<li><strong>Learning</strong> — validated experience (informs)</li>
+<li><strong>Rule Candidate</strong> — proposed constraint (not yet authoritative)</li>
+<li><strong>Decision</strong> — Human boundary artifact required to activate a Rule</li>
+<li><strong>Rule</strong> — active constraint; may be projected into host bridges</li>
+</ul>
+<h2>Policy</h2>
+<p>Evaluation of a governed effect → <code>ALLOW</code> | <code>DENY</code> | <code>REQUIRE_HUMAN</code> (Rules + Authority + Boundaries).</p>
+<h2>Authority / Boundaries</h2>
+<p>Authority categories constrain who may act (DELEGATED, HUMAN, RULED, …). Boundaries describe scope (often advisory isolation projections for the host).</p>
+<h2>Status / Runtime / Memory</h2>
+<ul>
+<li><strong>Status</strong> — derived projection (<code>status</code>, <code>loop next</code>)</li>
+<li><strong>Runtime</strong> — disposable operational data (safe to clear)</li>
+<li><strong>Memory</strong> — durable Learnings and engineering continuity (not Evidence, not Status)</li>
+</ul>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How it works — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>How it works</h1>
+<p>A complete Change from demand to continuity.</p>
+<h2>1. Continuity first</h2>
+<pre class="code"><code class="language-bash">retornatus wake
+# or: retornatus wake --bridges</code></pre>
+<p>Wake reconstructs Environment capabilities, Change ids, Rules, Learnings, and rebuilds the disposable SQLite index from files.</p>
+<h2>2. Demand and Situation</h2>
+<p>A <strong>Demand</strong> is the human intent. <strong>Situation</strong> is enough project understanding to formalize a Contract — not a full design doc.</p>
+<pre class="code"><code class="language-bash">retornatus change elicit --demand &quot;…&quot; --what &quot;…&quot; --done &quot;…&quot;</code></pre>
+<p>Exit <code>0</code> means Situation looks sufficient; exit <code>1</code> means focused questions remain. Repo signals (stack, tests, CI) feed elicitation on brownfield projects (<code>project-init</code>).</p>
+<h2>3. Contract</h2>
+<p>An active <strong>Contract</strong> is the authoritative obligation: WHAT, constraints, DONE.</p>
+<pre class="code"><code class="language-bash">retornatus change create …          # activates when Situation is sufficient
+retornatus change create … --draft-contract
+retornatus change activate C-0001   # later
+retornatus gate contract C-0001     # must exit 0</code></pre>
+<p>Material changes archive the prior version (<code>change reopen</code>) — Contracts are not silently mutated.</p>
+<h2>4. Action and Tasks</h2>
+<p>An <strong>Action</strong> is a bounded unit of work under Authority. <strong>Tasks</strong> appear when decomposition helps; declaration order is <strong>not</strong> an automatic dependency chain.</p>
+<pre class="code"><code class="language-bash">retornatus change create … --task &quot;Implement&quot; --task &quot;Test&quot; --depends &quot;1:0&quot;
+retornatus loop next C-0001
+retornatus task start C-0001/T-001</code></pre>
+<p><code>loop next</code> never returns BLOCKED work as “next”.</p>
+<h2>5. Specialization (optional)</h2>
+<pre class="code"><code class="language-bash">retornatus skill need --action C-0001/A-001
+retornatus skill create --need &quot;…&quot; --action C-0001/A-001
+# agent researches current docs → fills RESEARCH + PROCEDURE
+retornatus gate skill-research S-0001
+retornatus skill activate S-0001
+retornatus skill export S-0001</code></pre>
+<p>Governed bypass: <code>skill activate --force --reason &quot;…&quot;</code> records Bypass + Decision.</p>
+<h2>6. Execution context</h2>
+<pre class="code"><code class="language-bash">retornatus run C-0001/A-001
+retornatus run C-0001/A-001 --strict-policy</code></pre>
+<p>Retornatus assembles Rules, Learnings, Skills, Boundaries, and Policy — it does <strong>not</strong> run the model. The host agent implements.</p>
+<h2>7. Evidence and Assurance</h2>
+<pre class="code"><code class="language-bash">retornatus evidence add -c C-0001 -t test_result -s &quot;…&quot; \
+  --source pytest --claim C-0001/claim-done-1
+retornatus gate evidence C-0001
+retornatus verify C-0001</code></pre>
+<p>Verdicts: <code>SATISFIED</code> · <code>NOT_SATISFIED</code> · <code>INCONCLUSIVE</code>. Evidence must bind to Claims; staleness uses path-aware <code>commit:&lt;sha&gt;</code> when available.</p>
+<p>Independent review when needed: <code>assurance plan</code> / <code>assurance review</code> / <code>run --assurance</code>.</p>
+<h2>8. Problems become structure</h2>
+<pre class="code"><code class="language-bash">retornatus finding add --change C-0001 --observation &quot;…&quot;
+retornatus question open --change C-0001 --statement &quot;…&quot; --finding C-0001/F-001
+retornatus question resolve C-0001/Q-001 --summary &quot;…&quot; --evidence C-0001/E-001
+retornatus question reopen C-0001/Q-001   # if the condition returns</code></pre>
+<p>Verifiable Questions require Evidence — a summary alone is not establishment.</p>
+<h2>9. Adaptation</h2>
+<pre class="code"><code class="language-bash">retornatus change learn --title &quot;…&quot; --body &quot;…&quot;
+retornatus skill evolve S-0001 --note &quot;…&quot;
+retornatus rule propose --statement &quot;Do not …&quot; --applicability &quot;…&quot;
+retornatus decision record --kind APPROVE_RULE_ACTIVATION \
+  --subject R-0001 --summary &quot;…&quot; --confirm R-0001
+retornatus rule activate R-0001 --decision D-0001</code></pre>
+<p>Learning informs; Rules constrain. Activation always needs a Human Decision.</p>
+<h2>10. Restart</h2>
+<p>Delete <code>.retornatus/index/retornatus.db</code> and run <code>wake</code> — semantic history in files remains; the index rebuilds.</p>
+<p>Full acceptance narrative: PRD §69.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

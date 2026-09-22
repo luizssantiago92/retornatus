@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Memory — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Memory</h1>
+<p>Memory is durable engineering continuity — not Runtime, not Status, not Evidence.</p>
+<p>&gt; Memory remembers; it does not decide.</p>
+<h2>What persists</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Artifact</th><th>Where</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>Learnings</td><td><code>.retornatus/adaptation/learnings/</code></td><td>Validated experience</td></tr>
+<tr><td>Rules</td><td><code>.retornatus/governance/rules/</code></td><td>Constraints (after Human Decision)</td></tr>
+<tr><td>Change history</td><td><code>.retornatus/changes/</code></td><td>Situation, Contracts, Evidence, Questions</td></tr>
+<tr><td>Project notes</td><td><code>.retornatus/project/project.md</code></td><td>Brownfield continuity (<code>project-init</code>)</td></tr>
+</tbody></table></div>
+<h2>Derived index</h2>
+<p>SQLite + FTS5 under <code>.retornatus/index/</code> is <strong>disposable</strong>:</p>
+<pre class="code"><code class="language-bash">rm .retornatus/index/retornatus.db   # safe
+retornatus wake                      # rebuilds from files
+retornatus search &quot;evidence&quot;</code></pre>
+<h2>Recording Learning</h2>
+<pre class="code"><code class="language-bash">retornatus change learn \
+  --title &quot;Always bind Evidence with --claim&quot; \
+  --body &quot;Verify stayed INCONCLUSIVE until Claims were linked.&quot; \
+  --summary &quot;Claim-bound Evidence&quot;</code></pre>
+<p>Learnings may seed Rule Candidates; they never auto-activate Rules.</p>
+<h2>Context assembly</h2>
+<p><code>retornatus run &lt;action-id&gt;</code> selects <strong>relevant</strong> Rules and Learnings (applicability / tokens) — sufficient context, not the entire history.</p>
+<p>Independent Assurance contexts omit author-linked Learning conclusions (<code>run --assurance</code>).</p>
+<h2>Wake Up</h2>
+<pre class="code"><code class="language-bash">retornatus wake
+retornatus wake --bridges
+retornatus doctor</code></pre>
+<p>Wake reports Environment, Changes, Rules, Learnings, index health, and hygiene warnings (draft Contracts, inactive Rules, …).</p>
+<p>See PRD §§36–38, §45.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

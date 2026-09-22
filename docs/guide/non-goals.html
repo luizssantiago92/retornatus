@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Non-goals (V1) — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Non-goals (V1)</h1>
+<p>Retornatus V1 is intentionally bounded. These are <strong>not bugs</strong> — they are product choices.</p>
+<h2>Out of scope</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Non-goal</th><th>Rationale</th></tr></thead>
+<tbody>
+<tr><td>Multi-provider live LLM integration tests as default CI</td><td>Environment owns execution; harness tests structure and gates</td></tr>
+<tr><td>Enforced OS sandbox / worktree orchestration</td><td>Prefer native host isolation; Boundaries stay advisory</td></tr>
+<tr><td>Drop-in 1:1 Spec Guardrails command replacement</td><td>Behavioral parity ≠ clone; avoids coupling to another product’s surface</td></tr>
+<tr><td>Remote multi-tenant control plane</td><td>Local repository-native harness</td></tr>
+<tr><td>Permanent agent personas / identity model</td><td>Specialization via Assignment + Context + Skills</td></tr>
+<tr><td>Automatic authoritative Rules from recurrence</td><td>Human Decision required</td></tr>
+</tbody></table></div>
+<p>PRD §65 lists explicit V1 non-goals in full.</p>
+<h2>What “done” means for V1</h2>
+<p>A developer can wake a repo, open a Change, activate a Contract, execute under the host, record Claim-bound Evidence, reach Assurance <code>SATISFIED</code>, preserve Learning, and recover via <code>wake</code> after interruption — without chat as canonical state.</p>
+<p>See PRD §§69–70.</p>
+<h2>Reopening a non-goal</h2>
+<p>Only when a <strong>concrete failure mode</strong> appears that existing mechanisms and the Environment cannot solve (PRD §71). Prefer gates that <em>prove</em> host behavior over rebuilding host capabilities inside Retornatus.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

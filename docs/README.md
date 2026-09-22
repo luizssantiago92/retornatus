@@ -1,19 +1,20 @@
 # Documentation
 
-**Website (GitHub Pages):** [luizssantiago92.github.io/retornatus](https://luizssantiago92.github.io/retornatus/)
+**Website:** [luizssantiago92.github.io/retornatus](https://luizssantiago92.github.io/retornatus/)
 
 | Path | Audience |
 | --- | --- |
-| [`index.html`](index.html) | Public landing (product story + install) |
-| [`guide/`](guide/index.html) | Docs hub (HTML) |
-| [`guide/quick-start.html`](guide/quick-start.html) | Quick start (HTML) |
-| [`credits.html`](credits.html) | Credits & lineage (HTML) |
-| [guide/*.md](guide/README.md) | Full technical markdown sources |
-| [credits-and-lineage.md](credits-and-lineage.md) | Full provenance write-up |
-| [`prd/PRD.md`](../prd/PRD.md) | Product requirements (canonical) |
+| [`index.html`](index.html) | Public landing |
+| [`guide/`](guide/index.html) | Docs hub (all pages on the site) |
+| [`guide/*.html`](guide/index.html) | Full technical guides (built from markdown) |
+| [`credits.html`](credits.html) | Credits & lineage |
+| [guide/*.md](guide/README.md) | Markdown sources (edit these, then rebuild) |
+| [`prd/PRD.md`](../prd/PRD.md) | Product requirements |
 
-Local preview: open [`index.html`](index.html) in a browser (needs `assets/` + `site.css` beside it).
+After editing any `docs/**/*.md` guide, regenerate HTML:
 
-Brand art: [`assets/retornatus-mascot.png`](assets/retornatus-mascot.png) (**Seedcore**).
+```bash
+python scripts/build_docs_html.py
+```
 
-Start: [Website](https://luizssantiago92.github.io/retornatus/) → [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) → [Docs hub](https://luizssantiago92.github.io/retornatus/guide/).
+Local preview: open [`index.html`](index.html) in a browser.
