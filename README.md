@@ -139,6 +139,7 @@ Active Rules are projected into those bridges when present. Canonical Rules stay
 | --- | --- |
 | [`src/retornatus/`](src/retornatus/) | Package — CLI, domain, application, infrastructure |
 | [`docs/guide/`](docs/guide/) | Product documentation |
+| [`docs/credits-and-lineage.md`](docs/credits-and-lineage.md) | Provenance and prior art |
 | [`prd/PRD.md`](prd/PRD.md) | Product requirements (V1) |
 | [`tests/`](tests/) | Unit, adversarial, and construction dogfood |
 | [`.specs/`](.specs/) | Internal parity / gap notes for maintainers |
@@ -151,6 +152,21 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Preserve **native-first** and **complexi
 uv sync
 uv run pytest -q
 ```
+
+## Credits, Lineage & Prior Art
+
+Retornatus grew directly from the experience of building and dogfooding **[Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails)**. It is a **separate successor architecture** — not a fork or rename — that preserves proven governance guarantees while rethinking mechanisms (structured Contracts, Evidence ≠ Assurance, native-first Environment adapters, …).
+
+| Category | What belongs here |
+| --- | --- |
+| **Direct predecessor** | Spec Guardrails (MIT) — practical proof of repo-native gates, memory, evidence, human checkpoints |
+| **Direct Retornatus research** | Host capability surfaces (Cursor / Claude Code / Codex adapters); runtime libraries (Pydantic, Typer, …) |
+| **Transitive prior art** | Spec Guardrails’ own upstreams (`tlc-spec-driven`, loop/graph harness essays, …) — documented **there**, not re-listed as Retornatus direct influences |
+| **Original composition** | Demand→Situation→Contract→Action; Finding→Question→Resolution; Learning/Skill/Rule/Policy separations |
+
+Full provenance, evaluated alternatives, and licensing notes: **[docs/credits-and-lineage.md](docs/credits-and-lineage.md)** · Spec Guardrails lineage: [credits.md](https://github.com/luizssantiago92/spec-guardrails/blob/main/docs/guide/credits.md).
+
+> Ideas are credited by influence, not by superficial similarity.
 
 ## License
 

@@ -22,7 +22,11 @@ Yes. Run `retornatus wake` to rebuild. Do **not** delete canonical JSON/Markdown
 
 ## How is this different from Spec Guardrails?
 
-Related prior work in the same ecosystem, **separate product**. Spec Guardrails emphasizes spec-driven phases and npm packaging; Retornatus emphasizes Change/Contract/Skill/Evidence continuity as a Python harness. Behavioral overlap exists; command 1:1 parity is **not** a goal. See [Non-goals](Non-goals.md).
+**Spec Guardrails** is the **direct predecessor**. Retornatus is a **separate successor architecture** informed by building and dogfooding Spec Guardrails — not a fork or rename.
+
+Spec Guardrails proved repo-native gates, memory, evidence, and human checkpoints in practice (npm / `.specs/` / skill-driven phases). Retornatus preserves those *guarantees* while rethinking *mechanisms*: structured Demand→Situation→Contract→Action, Evidence ≠ Assurance, Finding→Question→Resolution, native-first Python harness under `.retornatus/`.
+
+Command 1:1 parity with Spec Guardrails is **not** a goal. Provenance detail: [Credits & lineage](../credits-and-lineage.md).
 
 ## What does native-first mean for sandboxes?
 
