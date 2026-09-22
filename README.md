@@ -1,11 +1,19 @@
 # Retornatus
 
+<p align="center">
+  <img src=".assets/retornatus-mascot.png" alt="Retornatus Seedcore mascot" width="280" />
+</p>
+
+<p align="center">
+  <strong>Repo-native governance harness for AI-assisted software development.</strong><br />
+  <em>Govern the work. Bound the agent. Verify the outcome.</em>
+</p>
+
 [![PyPI version](https://img.shields.io/pypi/v/retornatus.svg)](https://pypi.org/project/retornatus/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml/badge.svg)](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-
-**Repo-native governance harness for AI-assisted software development.**
+[![Site](https://img.shields.io/badge/site-docs-informational.svg)](https://luizssantiago92.github.io/retornatus/)
 
 More than a checklist — a **governance harness** (Contracts, gates, on-demand Skills, Evidence, Assurance, and Memory) that lives inside your repository.
 
@@ -27,7 +35,7 @@ You keep control: the agent proposes and implements; **gates** stop “done” w
 
 PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.1.x** · primary run via [`uv`](https://docs.astral.sh/uv/) (`uv tool install` / `uvx`)
 
-**Docs:** [Overview](docs/guide/Overview.md) · [Quick start](docs/guide/Quick-start.md) · [Full guide index](docs/guide/README.md) · [PRD](prd/PRD.md)
+**Docs:** [Site](https://luizssantiago92.github.io/retornatus/) · [Overview](docs/guide/Overview.md) · [Quick start](docs/guide/Quick-start.md) · [Full guide index](docs/guide/README.md) · [PRD](prd/PRD.md)
 
 [What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First Change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [Pillars](#four-pillars) · [How it works](#how-it-works) · [Lanes](#complexity-lanes) · [Overview](#change-overview) · [Gates](#gates-and-guarantees) · [Skills](#on-demand-specialization-skills) · [Lessons](#lessons-from-gate-failures) · [Ops](#operational-loops) · [CI](#ci-template-opt-in) · [Governance](#human-decisions-rules--policy) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits-lineage--prior-art)
 

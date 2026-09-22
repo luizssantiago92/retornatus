@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retornatus — Govern the work. Bound the agent. Verify the outcome.</title>
+  <meta name="description" content="Repo-native governance harness for AI-assisted software development. Contracts, gates, Evidence, and memory under .retornatus/." />
+  <meta property="og:title" content="Retornatus" />
+  <meta property="og:description" content="Govern the work. Bound the agent. Verify the outcome." />
+  <meta property="og:image" content="assets/retornatus-mascot.png" />
+  <link rel="icon" type="image/png" href="assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="brand" href="./">Retornatus</a>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="guide/">Docs</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+      <a href="https://pypi.org/project/retornatus/">PyPI</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="mark">Retornatus</p>
+        <h1>Govern the work.<br />Bound the agent.<br />Verify the outcome.</h1>
+        <p class="lede">
+          A repo-native governance harness for AI coding agents —
+          Contracts before code, gates that stop false “done”, and Evidence that lives in git.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install</a>
+          <a class="btn ghost" href="guide/Quick-start.md">Quick start</a>
+        </div>
+      </div>
+      <figure class="hero-mascot">
+        <img
+          src="assets/retornatus-mascot.png"
+          width="520"
+          height="520"
+          alt="Retornatus Seedcore — original seed-pod alien mascot with a proof crystal core and orbital trail"
+        />
+      </figure>
+    </section>
+
+    <section class="band" id="why">
+      <h2>Without it / with it</h2>
+      <div class="compare">
+        <div>
+          <h3>Without</h3>
+          <ul>
+            <li>Jumps to code and says “done”</li>
+            <li>Each chat starts from zero</li>
+            <li>Stale skill packs for every stack</li>
+          </ul>
+        </div>
+        <div>
+          <h3>With Retornatus</h3>
+          <ul>
+            <li>Active Contract + DONE criteria first</li>
+            <li><code>.retornatus/</code> survives sessions</li>
+            <li>One Skill researched <em>now</em> for this Change</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="pillars">
+      <h2>Four pillars</h2>
+      <div class="cards">
+        <article>
+          <h3>Contract</h3>
+          <p>WHAT, constraints, and DONE before build.</p>
+        </article>
+        <article>
+          <h3>Gates &amp; Assurance</h3>
+          <p>Non-zero exit = STOP. Claim-bound Evidence → verdict.</p>
+        </article>
+        <article>
+          <h3>Memory</h3>
+          <p>Files + <code>wake</code> beat chat scrollback.</p>
+        </article>
+        <article>
+          <h3>On-demand Skills</h3>
+          <p>Research current sources — no rotting packs.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="band" id="loop">
+      <h2>How work moves</h2>
+      <pre class="loop" aria-label="Construction loop">Demand → Situation → Contract → Action
+       → Skill? → Execution (host) → Evidence → Assurance
+       → Learning / Skill evolution → return informed</pre>
+      <p class="note">Your host executes. Retornatus governs and records.</p>
+    </section>
+
+    <section class="band" id="install">
+      <h2>Install</h2>
+      <pre class="code"><code>uv tool install retornatus
+cd /path/to/your-app
+retornatus init
+retornatus integrate
+retornatus doctor</code></pre>
+      <p class="note">
+        Python 3.11+ ·
+        <a href="https://docs.astral.sh/uv/">uv</a> recommended ·
+        then open the project in your AI coding agent.
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="guide/Quick-start.md">Read the quick start</a>
+        <a class="btn ghost" href="https://pypi.org/project/retornatus/">View on PyPI</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="guide/">Guide</a> ·
+      <a href="credits-and-lineage.md">Credits &amp; lineage</a>
+    </p>
+    <p class="tiny">Brand mascot: <strong>Seedcore</strong> — original illustration. Not affiliated with Pokémon or Nintendo.</p>
+  </footer>
+</body>
+</html>
