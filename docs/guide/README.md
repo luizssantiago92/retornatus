@@ -2,9 +2,11 @@
 
 Guides for **Retornatus 1.0**.
 
-The [README](../../README.md) is the product entry point. This folder is where you go deeper: concepts, workflows, gates, governance, and CLI reference in plain language.
+**Browse on the website:** [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) · [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html)
 
-**New here?** Start with [Overview](Overview.md), then [Quick start](Quick-start.md).
+The [README](../../README.md) is the product entry point. This folder is the markdown source for deeper topics (concepts, workflows, gates, governance, CLI). HTML pages on GitHub Pages link here for the long form.
+
+**New here?** Start with the [website Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html), then [Overview](Overview.md).
 
 ---
 

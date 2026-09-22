@@ -9,11 +9,21 @@
   <em>Govern the work. Bound the agent. Verify the outcome.</em>
 </p>
 
+<p align="center">
+  <a href="https://luizssantiago92.github.io/retornatus/"><strong>Website →</strong></a>
+  ·
+  <a href="https://luizssantiago92.github.io/retornatus/guide/">Docs</a>
+  ·
+  <a href="https://luizssantiago92.github.io/retornatus/guide/quick-start.html">Quick start</a>
+  ·
+  <a href="https://pypi.org/project/retornatus/">PyPI</a>
+</p>
+
+[![Website](https://img.shields.io/badge/website-live-14b8a6?style=flat)](https://luizssantiago92.github.io/retornatus/)
 [![PyPI version](https://img.shields.io/pypi/v/retornatus.svg)](https://pypi.org/project/retornatus/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml/badge.svg)](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Site](https://img.shields.io/badge/site-docs-informational.svg)](https://luizssantiago92.github.io/retornatus/)
 
 Retornatus is a **repo-native companion** for people who ship software with AI coding agents.
 It helps you agree on what “done” means, keep that agreement in the project (not only in chat),
@@ -27,7 +37,9 @@ and require visible proof before work is closed.
 | Same chaos for a typo and a payment change | Ceremony scales with risk |
 | Lessons vanish when the tab closes | The next return can learn from the last |
 
-**Site:** [luizssantiago92.github.io/retornatus](https://luizssantiago92.github.io/retornatus/) · **Docs:** [guide](docs/guide/README.md) · **PyPI:** [`retornatus`](https://pypi.org/project/retornatus/)
+**Website:** [luizssantiago92.github.io/retornatus](https://luizssantiago92.github.io/retornatus/) · **Docs:** [guide hub](https://luizssantiago92.github.io/retornatus/guide/) · **Quick start:** [HTML](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · **PyPI:** [`retornatus`](https://pypi.org/project/retornatus/)
+
+Markdown sources for deep guides still live under [docs/guide](docs/guide/README.md).
 
 ---
 
@@ -53,7 +65,7 @@ retornatus doctor
 
 Requires **Python 3.11+**. [`uv`](https://docs.astral.sh/uv/) is the recommended path; the package is also on [PyPI](https://pypi.org/project/retornatus/).
 
-Then open the project in your AI coding agent. The hub skill teaches the loop; start with [Quick start](docs/guide/Quick-start.md).
+Then open the project in your AI coding agent. The hub skill teaches the loop; start with the [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html).
 
 ---
 
@@ -65,7 +77,7 @@ Then open the project in your AI coding agent. The hub skill teaches the loop; s
 4. Work closes when there is **proof you can inspect** — not when the model sounds confident.
 5. What you learned stays in the project for the next return.
 
-Deep mechanics (gates, skills lifecycle, policy) live in the [guide](docs/guide/README.md).
+Deep mechanics (gates, skills lifecycle, policy) live in the [docs hub](https://luizssantiago92.github.io/retornatus/guide/).
 
 ---
 
@@ -83,13 +95,13 @@ Deep mechanics (gates, skills lifecycle, policy) live in the [guide](docs/guide/
 
 | Want… | Go here |
 | --- | --- |
-| Product story & install | [Site](https://luizssantiago92.github.io/retornatus/) |
-| First change walkthrough | [Quick start](docs/guide/Quick-start.md) |
+| Product story & install | [Website](https://luizssantiago92.github.io/retornatus/) |
+| First change walkthrough | [Quick start (HTML)](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
+| Docs hub | [Guide hub](https://luizssantiago92.github.io/retornatus/guide/) |
 | Concepts & pillars | [Overview](docs/guide/Overview.md) |
-| Full guide index | [docs/guide](docs/guide/README.md) |
+| Full guide index (markdown) | [docs/guide](docs/guide/README.md) |
 | Product requirements | [PRD](prd/PRD.md) |
-| CLI reference & gates | [Commands](docs/guide/Commands.md) (if present) / guide index |
-| Credits & lineage | [Credits](docs/credits-and-lineage.md) |
+| Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
 
 Technical depth (gates, lanes, skills lifecycle, CI templates, policy) lives in **documentation** — this README stays focused on positioning and getting started.
 

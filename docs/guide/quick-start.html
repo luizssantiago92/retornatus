@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quick start — Retornatus</title>
+  <meta name="description" content="Get Retornatus running in a project in about ten minutes." />
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../#why">Why</a>
+      <a href="../#install">Install</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="doc-kicker">Guide</p>
+    <h1>Quick start</h1>
+    <p class="doc-lede">Get Retornatus running in a project in about ten minutes.</p>
+
+    <h2>1. Prerequisites</h2>
+    <ul>
+      <li>Python 3.11+</li>
+      <li><a href="https://docs.astral.sh/uv/">uv</a> (recommended)</li>
+      <li>An AI coding agent (Cursor, Claude Code, Codex, …)</li>
+    </ul>
+    <pre class="code"><code>python --version
+uv --version</code></pre>
+
+    <h2>2. Install the CLI</h2>
+    <p><strong>From PyPI (recommended):</strong></p>
+    <pre class="code"><code>uv tool install retornatus
+retornatus --version   # 1.1.x</code></pre>
+    <p class="note">One-shot without a global install: <code>uvx retornatus --help</code>.</p>
+
+    <p><strong>From TestPyPI (CI / pre-release dry-run):</strong></p>
+    <pre class="code"><code>uv tool install \
+  --index-url https://test.pypi.org/simple/ \
+  --extra-index-url https://pypi.org/simple/ \
+  retornatus</code></pre>
+    <p class="note"><code>--extra-index-url</code> is required so dependencies still resolve from production PyPI.</p>
+
+    <p><strong>From Git or a local clone:</strong></p>
+    <pre class="code"><code>uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
+# or
+uv tool install --force /path/to/retornatus</code></pre>
+
+    <h2>3. Initialize the project</h2>
+    <p>In the <strong>application</strong> repository (not necessarily this harness repo):</p>
+    <pre class="code"><code>cd /path/to/your-app
+retornatus init
+retornatus integrate
+retornatus doctor</code></pre>
+    <p>You should see:</p>
+    <ul>
+      <li><code>.retornatus/config.toml</code></li>
+      <li>Hub skill (e.g. <code>.cursor/skills/retornatus/SKILL.md</code> on Cursor)</li>
+      <li><code>doctor</code> reporting initialized state</li>
+    </ul>
+    <p>Optional for brownfield repos:</p>
+    <pre class="code"><code>retornatus project-init
+retornatus wake --bridges</code></pre>
+
+    <h2>4. Create your first change</h2>
+    <p><strong>Via agent (recommended):</strong> open chat and ask it to follow the Retornatus hub skill, for example:</p>
+    <pre class="code"><code>Create a Retornatus Change for GET /health returning 200.
+Contract and gates before code.</code></pre>
+    <p><strong>Via CLI:</strong></p>
+    <pre class="code"><code>retornatus change elicit \
+  --demand "Expose a liveness check for ops" \
+  --what "GET /health returns 200 with status ok" \
+  --done "Automated test covers /health"
+
+retornatus change create \
+  --title "Add health endpoint" \
+  --demand "Expose a liveness check for ops" \
+  --what "GET /health returns 200 with status ok" \
+  --done "Automated test covers /health" \
+  --objective "Implement and verify health endpoint"
+
+retornatus gate contract C-0001</code></pre>
+    <p class="note">If Situation is incomplete, use <code>--draft-contract</code> on create, then <code>retornatus change activate C-0001</code> when ready.</p>
+
+    <h2>5. Execute and prove</h2>
+    <pre class="code"><code>retornatus loop next C-0001
+retornatus run C-0001/A-001
+# implement in the host…
+retornatus evidence add -c C-0001 -t test_result -s "/health" \
+  --source pytest --state passing --claim C-0001/claim-done-1
+retornatus gate evidence C-0001
+retornatus verify C-0001</code></pre>
+    <p>Non-zero gate exit = <strong>STOP</strong>. Do not treat a chat summary as success.</p>
+
+    <h2>6. Preserve the return</h2>
+    <pre class="code"><code>retornatus change learn \
+  --title "Health checks need Claim-bound test_result Evidence" \
+  --body "Dogfood: verify failed until --claim was set."
+retornatus status</code></pre>
+
+    <h2>Troubleshooting</h2>
+    <div class="doc-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Symptom</th><th>Check</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Not initialized</code></td><td><code>retornatus init</code></td></tr>
+          <tr><td>Hub skill missing</td><td><code>retornatus integrate</code></td></tr>
+          <tr><td>Index empty after crash</td><td><code>retornatus wake</code> (rebuilds from files)</td></tr>
+          <tr><td>Contract gate fails</td><td>Active Contract with WHAT + DONE</td></tr>
+          <tr><td>Verify inconclusive</td><td>Evidence must SUPPORT the Claim id</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      More:
+      <a href="https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/FAQ.md">FAQ</a> ·
+      <a href="https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Gates.md">Gates</a> ·
+      <a href="https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/tutorials/01-first-change.md">Tutorial: first Change</a>
+      · markdown source: <a href="https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Quick-start.md">Quick-start.md</a>
+    </p>
+
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../#install">Install on the site →</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

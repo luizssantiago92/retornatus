@@ -359,6 +359,144 @@ footer .tiny {
   opacity: 0.85;
 }
 
+/* —— Documentation pages —— */
+body.doc-page main {
+  max-width: 760px;
+  padding-top: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+.doc-kicker {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.doc-page h1 {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--mist);
+}
+
+.doc-lede {
+  margin: 0 0 2rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+.doc-page h2 {
+  margin: 2.25rem 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--mist);
+  border-top: 1px solid var(--line);
+  padding-top: 1.5rem;
+}
+
+.doc-page h2:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.doc-page p,
+.doc-page li {
+  color: var(--mist);
+}
+
+.doc-page ul,
+.doc-page ol {
+  padding-left: 1.25rem;
+  max-width: 40rem;
+}
+
+.doc-page li {
+  margin-bottom: 0.55rem;
+}
+
+.doc-table-wrap {
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+}
+
+.doc-page table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.doc-page th,
+.doc-page td {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.doc-page th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.doc-page td a {
+  font-weight: 500;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.5rem;
+  margin: 1rem 0 2rem;
+}
+
+.doc-card {
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.doc-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.doc-card h3 a {
+  color: var(--mist);
+  text-decoration: none;
+}
+
+.doc-card h3 a:hover {
+  color: var(--teal);
+  text-decoration: underline;
+}
+
+.doc-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.doc-nav-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+}
+
+@media (max-width: 860px) {
+  .doc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 860px) {
   .hero {
     grid-template-columns: 1fr;
