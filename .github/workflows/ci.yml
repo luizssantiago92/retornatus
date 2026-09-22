@@ -24,7 +24,8 @@ jobs:
         run: uvx ruff@0.11.0 check src tests
 
       - name: Typecheck (mypy)
-        run: uvx --from mypy mypy src/retornatus --ignore-missing-imports
+        # Pin mypy — unpinned uvx can drift and break CI on TextIO.reconfigure etc.
+        run: uvx --from mypy==1.15.0 mypy src/retornatus --ignore-missing-imports
 
       - name: Tests
         run: uv run pytest -q
