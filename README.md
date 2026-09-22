@@ -37,8 +37,13 @@ Retornatus installs durable structure under `.retornatus/` so Demand → Situati
 **Requirements:** Python 3.11+ · [uv](https://docs.astral.sh/uv/) recommended · an AI coding agent
 
 ```bash
-# Install the CLI (from this clone until PyPI is live)
-uv tool install --force /path/to/retornatus
+# Install the CLI (PyPI after a v* tag; TestPyPI and Git work today)
+uv tool install retornatus
+# or, until the production package is live:
+# uv tool install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ retornatus
+# uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
+
+retornatus --version   # 1.0.x
 
 cd /path/to/your-app
 retornatus init
@@ -101,15 +106,35 @@ Honest non-goals: [docs/guide/Non-goals.md](docs/guide/Non-goals.md).
 
 ## Install options
 
+**From TestPyPI (available now — `retornatus==1.0.0`):**
+
 ```bash
-# Persistent tool
-uv tool install --force /path/to/retornatus
+uv tool install \
+  --index-url https://test.pypi.org/simple/ \
+  --extra-index-url https://pypi.org/simple/ \
+  retornatus
+```
 
-# One-shot
-uvx --from /path/to/retornatus retornatus --help
+`--extra-index-url` keeps dependencies resolving from production PyPI.
 
-# From Git
+**From PyPI (after a `v*` release tag publishes):**
+
+```bash
+uv tool install retornatus
+uvx retornatus --help
+```
+
+**From Git:**
+
+```bash
 uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
+```
+
+**From a local clone:**
+
+```bash
+uv tool install --force /path/to/retornatus
+uvx --from /path/to/retornatus retornatus --help
 ```
 
 **Contributors / dogfood in this repo:**
@@ -119,6 +144,8 @@ uv sync
 uv run retornatus --help
 uv run pytest -q
 ```
+
+Re-run `uv tool install --force …` after upgrades. Project state under `.retornatus/` is preserved.
 
 ## Environments
 
