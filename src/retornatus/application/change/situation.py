@@ -249,7 +249,7 @@ def assess_situation(
             )
         )
     else:
-        assessment.known_facts.append(f"Proposed WHAT: {what.strip()}")
+        assessment.known_facts.append(f"Proposed WHAT: {(what or '').strip()}")
         if _AMBIGUOUS_MARKERS.search(what or ""):
             assessment.ambiguities.append("WHAT contains unresolved hedging language")
 

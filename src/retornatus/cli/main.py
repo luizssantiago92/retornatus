@@ -1145,10 +1145,10 @@ def task_reopen(
     typer.echo(f"Reopened {task_id} on {action.id}")
 
 
-def run() -> None:
+def entrypoint() -> None:
     """Console-script entrypoint for packaging / ``uv tool install``."""
     app()
 
 
 if __name__ == "__main__":
-    run()
+    entrypoint()

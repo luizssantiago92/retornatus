@@ -9,7 +9,7 @@ from retornatus.application.adaptation.skill_need import assess_skill_need
 from retornatus.application.assurance.independent import evaluate_change_assurance
 from retornatus.application.change.loop import project_next_work
 from retornatus.application.change.readiness import synchronize_action
-from retornatus.domain.enums import QuestionLifecycle, TaskLifecycle
+from retornatus.domain.enums import QuestionLifecycle
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 

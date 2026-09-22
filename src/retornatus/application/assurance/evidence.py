@@ -63,6 +63,7 @@ class EvidenceService:
                 Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id)
             )
 
+        final_state: str | None
         if subject_state is not None:
             final_state = subject_state
         elif capture_git:

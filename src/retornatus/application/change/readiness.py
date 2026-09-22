@@ -160,9 +160,9 @@ def synchronize_action(action: Action) -> SyncProjection:
 
     # Parallelizable = ready tasks that do not share resources with each other
     conflicted: set[str] = set()
-    for a, b in conflict_pairs:
-        conflicted.add(a)
-        conflicted.add(b)
+    for left_id, right_id in conflict_pairs:
+        conflicted.add(left_id)
+        conflicted.add(right_id)
     parallelizable = [tid for tid in ready if tid not in conflicted]
 
     return SyncProjection(
