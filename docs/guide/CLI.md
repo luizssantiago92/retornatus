@@ -45,7 +45,7 @@ retornatus skill --help
 
 | Command | Purpose |
 | --- | --- |
-| `skill create/list/need/activate/evolve/export` | Specialization lifecycle |
+| `skill need --prompt\|--action` / `skill create/list/activate/evolve/export` | Specialization lifecycle (Action optional) |
 
 ## Proof and policy
 

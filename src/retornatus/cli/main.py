@@ -640,15 +640,55 @@ def skill_list(path: Optional[Path] = typer.Option(None, "--path", "-p")) -> Non
 
 @skill_app.command("need")
 def skill_need(
-    action_id: str = typer.Option(..., "--action", "-a"),
+    action_id: Optional[str] = typer.Option(
+        None,
+        "--action",
+        "-a",
+        help="Action id (optional when using --prompt / --demand).",
+    ),
+    prompt: Optional[str] = typer.Option(
+        None,
+        "--prompt",
+        help="Freeform user request — assess Skill need before an Action exists.",
+    ),
+    demand: Optional[str] = typer.Option(
+        None,
+        "--demand",
+        "-d",
+        help="Demand text for early Skill need (with optional --what).",
+    ),
+    what: Optional[str] = typer.Option(
+        None,
+        "--what",
+        "-w",
+        help="Proposed WHAT (pairs with --demand or alone as prompt text).",
+    ),
     path: Optional[Path] = typer.Option(None, "--path", "-p"),
 ) -> None:
-    """Assess whether an on-demand Skill is required (complexity-sensitive)."""
+    """Assess whether an on-demand Skill is required (complexity-sensitive).
+
+    Action is optional: use --prompt / --demand when the need appears in chat
+    before Contract/Action.
+    """
     from retornatus.application.adaptation.skill_need import assess_skill_need
 
     root = (path or Path.cwd()).resolve()
-    assessment = assess_skill_need(root, action_id)
+    if not action_id and not prompt and not demand and not what:
+        typer.echo("Provide --action or --prompt/--demand/--what")
+        raise typer.Exit(2)
+    try:
+        assessment = assess_skill_need(
+            root,
+            action_id,
+            prompt=prompt,
+            demand=demand,
+            what=what,
+        )
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(2) from exc
     typer.echo(f"required={assessment.required}")
+    typer.echo(f"source={assessment.source}")
     typer.echo(assessment.rationale)
     if assessment.suggested_need:
         typer.echo(f"suggested_need={assessment.suggested_need}")

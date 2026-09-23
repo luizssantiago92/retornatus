@@ -48,9 +48,14 @@ retornatus task start C-0001/T-001
 
 `loop next` never returns BLOCKED work as “next”.
 
-## 5. Specialization (optional)
+## 5. Specialization (optional — as soon as needed)
 
 ```bash
+# From a chat prompt, before Action exists:
+retornatus skill need --prompt "…"
+retornatus skill create --need "…"
+
+# Or once an Action exists:
 retornatus skill need --action C-0001/A-001
 retornatus skill create --need "…" --action C-0001/A-001
 # agent researches current docs → fills RESEARCH + PROCEDURE

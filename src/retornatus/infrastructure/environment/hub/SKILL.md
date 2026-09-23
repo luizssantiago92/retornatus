@@ -33,6 +33,16 @@ Retornatus compresses the software lifecycle into five durable steps — do not 
 | **Prove** | Done needs evidence | Evidence → `verify` / Assurance |
 | **Learn** | Keep what mattered | Learning / optional Rules |
 
+## Chat intake (before Action — do not wait)
+
+When the human sends a **normal prompt** (no BRD, no Contract yet), **proactively** check — do not wait for them to ask:
+
+1. **Vague / unfinished requirements?** → run `change elicit` (or ask the Focused questions it prints). Offer this; do not silently invent WHAT/DONE.
+2. **Specialized domain?** (OAuth, Stripe, K8s, migrations, security, unfamiliar SDK, …) → run `skill need --prompt "..."` (or `--demand` / `--what`). If `required=true`, **propose** `skill create --need "..."` immediately — Action is **optional**. Link `--change` / `--action` later when they exist.
+3. **Trivial typo/docs?** → skip Skill and keep Situation light; still use a short Contract before claiming done.
+
+Skill ceremony is **complexity-sensitive**, not Action-gated. Prefer proposing early over surprising the human mid-build.
+
 ## Default construction loop
 
 1. `retornatus wake` (or `wake --bridges`) / `project-init` for brownfield context
@@ -47,7 +57,7 @@ Retornatus compresses the software lifecycle into five durable steps — do not 
 5. Activate draft Contracts when ready: `retornatus change activate <C-id>`
 6. Gate: `retornatus gate contract <C-id>` — must exit 0
 7. Dashboard: `retornatus change overview <C-id>` / `retornatus status`
-8. If specialization needed: `retornatus skill need --action <A-id>` then `skill create --need "..." --action <A-id>`
+8. If specialization needed (any time): `skill need --prompt "..."` **or** `skill need --action <A-id>` → `skill create --need "..."` (optional `--action` / `--change`)
 9. **Research current sources on the web**, fill RESEARCH + PROCEDURE in `SKILL.md`
 10. `retornatus gate skill-research <S-id>` then `retornatus skill activate <S-id>`
     - Bypass only as governed decision: `skill activate --force --reason "..."`
@@ -71,6 +81,7 @@ Retornatus compresses the software lifecycle into five durable steps — do not 
 ## Hard rules
 
 - Never jump from a vague Demand to code — finish Situation (`change elicit` exit 0) first
+- When the prompt is vague or specialized, **offer** elicit / Skill need — do not wait for the human to name those commands
 - Never claim DONE without Assurance `SATISFIED` from Claim-bound Evidence
 - Never activate a Skill with empty RESEARCH (no source URLs) without governed bypass
 - Prefer native environment tools; do not reinvent sandboxes
@@ -81,6 +92,7 @@ Retornatus compresses the software lifecycle into five durable steps — do not 
 - Status / overview are derived projections — durable truth lives under `.retornatus/`
 - Respect Policy DENY / REQUIRE_HUMAN — do not proceed past a failed `gate policy`
 - Load at most one specialization Skill per execution turn
+- Skill need does **not** require an Action — create early when specialization is clear
 - **Git tiers:** Tier 0 = local commits OK; Tier 1 = push/PR only when the human asks; Tier 2 = merge / deploy / **PyPI publish** / release tags that publish are **owner-only** — never do them as the agent
 - Follow `.cursor/rules/git-governance.mdc` when present
 
@@ -102,7 +114,7 @@ When a release is ready: summarize, confirm CI, stop — owner merges / tags / p
 | Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate` |
 | Situation / lane | `change classify`, `change elicit` (`--answer`, `--write`), `change create`, `change activate`, `change reopen` |
 | Dashboard | `change overview` |
-| Skill | `skill create/list/need/activate/evolve/export` |
+| Skill | `skill need --prompt\|--action`, `skill create/list/activate/evolve/export` |
 | Proof | `evidence add --claim`, `verify`, `gate *` |
 | Policy | `policy check`, `gate policy`, `run --strict-policy` |
 | Problems | `finding add`, `question open/resolve/reopen` |
