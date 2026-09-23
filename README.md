@@ -1,7 +1,7 @@
 # Retornatus
 
 <p align="center">
-  <img src=".assets/retornatus-mascot.png" alt="Retornatus Seedcore mascot" width="280" />
+  <img src=".assets/retornatus-mascot.png" alt="Ember — Retornatus mascot" width="280" />
 </p>
 
 <p align="center">
@@ -36,10 +36,11 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Jumps to code and says “done” | Written finish line first; “done” needs evidence |
 | Each chat starts from zero | `.retornatus/` survives sessions and handoffs |
 | Same ceremony for a typo and a payment flow | Complexity lanes match depth to risk |
-| Whole playbook pasted every turn | Hub + at most one specialization skill per turn |
+| Whole playbook pasted every turn | Hub + at most one specialization Skill per turn |
+| Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.2.x**
+PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.2.1**
 
 [What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
@@ -47,11 +48,19 @@ PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.2.x**
 
 ## What it is
 
-A **governance layer** for AI-assisted software work — not an IDE, not an LLM runtime, and not an agent marketplace.
+A **governance harness** for AI-assisted software work — not an IDE, not an LLM runtime, and not an agent marketplace. The host agent still writes code; Retornatus structures obligations, proof, and memory under **`.retornatus/`**.
 
 After install, work moves through a durable loop you can inspect in files:
 
-**Demand** → **Situation** → **Contract** (WHAT + DONE) → **Action** (+ **Tasks** when needed) → **Evidence** → **Assurance** → **Learning**
+**Demand** → **Situation** (requirements) → **Contract** (WHAT + DONE) → **Action** (+ **Tasks** when needed) → **Evidence** → **Assurance** → **Learning**
+
+Along that loop the harness also:
+
+- Sizes ceremony to risk (**QUICK** / **STANDARD** / **COMPLEX**)
+- Surfaces **focused questions** when the ask is fuzzy (`change elicit`)
+- Scores readiness (**Process** vs **Brakes**) via `doctor`
+- Stages freeform chat into Skill proposals only with **human confirmation** (`intake analyze`)
+- Loads at most **one** specialization Skill when needed (`skill need` / `skill create`)
 
 You approve product intent and consequential Rules. The agent implements. Push, merge, and publish stay on your terms ([git governance](https://luizssantiago92.github.io/retornatus/guide/git-governance.html)).
 
@@ -125,9 +134,9 @@ Ask it to follow the installed **Retornatus hub skill**. Prefer chat for product
 
 | Step | You do | Agent / CLI does |
 | --- | --- | --- |
-| 1 | Describe what you want | **Requirements analysis** (`change elicit`) — if questions remain, answer them in chat; size the work (`change classify`) |
+| 1 | Describe what you want | Optional **intake** staging (`intake analyze`) and/or **requirements analysis** (`change elicit`) — answer focused questions in chat; size the work (`change classify`) |
 | 2 | Agree how you’ll know it’s done | Create/activate the finish line → check it (`gate contract`) |
-| 3 | Let it build | Work the next ready step (`loop next` / `run`); split into jobs only when useful |
+| 3 | Let it build | Work the next ready step (`loop next` / `run`); specialize only if needed (`skill need` → human confirm → `skill create`) |
 | 4 | Demand proof | Attach proof to the goals → done check (`verify`) |
 
 If the agent jumps straight to code: *Stop. Finish Situation (requirements) + Contract (and pass `gate contract`) before the build sprint.*
@@ -169,7 +178,9 @@ Situation      Contract     Action (+ Tasks)      Evidence            Learning
 
 When the ask is fuzzy, `change elicit` exits `1` and lists **focused questions** (with options). The agent should ask them in chat; you answer; record with `--answer TOPIC=…`. Clear asks can skip straight to a Contract.
 
-Optional: `change classify` picks QUICK / STANDARD / COMPLEX so ceremony matches risk. Skills load only when needed.
+Optional: `change classify` picks QUICK / STANDARD / COMPLEX so ceremony matches risk.
+
+For a freeform chat prompt that might need specialization, prefer **`intake analyze`**: it stages the ask against `.retornatus/`, proposes a Skill only when you answer `CREATE=yes`, and never auto-creates from chat alone. Early signal without creating: `skill need --prompt "…"`.
 
 **Status / overview** are projections. If they disagree with files, **the files win**.
 
@@ -195,9 +206,18 @@ A Contract states WHAT and DONE. Evidence binds to those claims. `verify` return
 
 QUICK for a typo; STANDARD for a normal feature; COMPLEX when security, payments, or high novelty need more depth.
 
-### Hub + Skills
+### Hub + Skills (human-controlled)
 
 The hub skill is the map every turn. At most one specialization Skill while executing — research current sources when needed, not a mega-pack every message.
+
+Two Skill worlds:
+
+| Path | When | Control |
+| --- | --- | --- |
+| **Analyzed intake** | Freeform prompt may need specialization | `intake analyze` → human answers → `--create-skill` only with `CREATE=yes` |
+| **Manual** | You explicitly ask for a Skill | `skill create --need "…"` |
+
+`skill need --prompt` can flag need early (no Action required). Agents must not invent Skills from a vague prompt without your confirmation.
 
 **Go deeper:** [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html) · [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html) · [Memory](https://luizssantiago92.github.io/retornatus/guide/memory.html) · [Skills](https://luizssantiago92.github.io/retornatus/guide/skills.html)
 
@@ -209,12 +229,13 @@ The hub skill is the map every turn. At most one specialization Skill while exec
 | --- | --- |
 | Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate` |
 | Requirements / lane | `change elicit` (`--answer`, `--write`), `change classify`, `change create`, `change activate` |
+| Prompt intake | `intake analyze` (`--answer`, `--create-skill` with human `CREATE=yes`) |
 | Dashboard | `change overview` |
 | Next work | `loop next` · `task start\|complete\|fail\|reopen` |
-| Skills | `skill need`, `skill create`, `skill activate`, `skill export` |
+| Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
 | Proof | `evidence add --claim …`, `gate *`, `verify` |
 | Learning | `change learn`, `lesson from-gate` |
-| Human boundary | `decision record`, `rule propose\|activate` |
+| Human boundary | `decision record`, `rule propose\|activate` · `policy evaluate` |
 
 Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · hub skill after `integrate`.
 
@@ -276,7 +297,7 @@ Retornatus is a **separate successor architecture** informed by building and dog
 | Human checkpoints | Human Decisions for consequential Rules |
 | Environment awareness | Hub skill + host adapters — agent still executes |
 
-**Original work in Retornatus:** Python domain model and CLI, `.retornatus/` layout, Demand / Situation / Contract / Action (plus Finding / Question / Resolution), Evidence separated from Assurance, complexity lanes (QUICK / STANDARD / COMPLEX), on-demand specialization Skills with research gates, doctor Process vs Brakes, overview / ops / lessons loops, and the public docs site.
+**Original work in Retornatus:** Python domain model and CLI, `.retornatus/` layout, Demand / Situation / Contract / Action (plus Finding / Question / Resolution), Evidence separated from Assurance, complexity lanes (QUICK / STANDARD / COMPLEX), on-demand specialization Skills with research gates, human-controlled prompt intake (`intake analyze`), doctor Process vs Brakes, overview / ops / lessons loops, and the public docs site.
 
 **Transitive lineage:** Spec Guardrails itself credits upstream open-source work (spec-driven phases, task graphs, loop engineering, harness vocabulary, and related tools). Those influences arrive **through** Spec Guardrails unless Retornatus independently revisited them — see the full provenance write-up.
 
