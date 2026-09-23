@@ -220,6 +220,12 @@ Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · 
 
 ---
 
+## What’s new (1.2.1)
+
+- **Prompt intake** — `intake analyze` stages a freeform request against `.retornatus/`, proposes Skill only with human `CREATE=yes`  
+- **Two Skill worlds** — analyzed intake (controlled) or manual `skill create`  
+- **Early skill need** — `skill need --prompt` without requiring an Action  
+
 ## What’s new (1.2.0)
 
 - **Situation as requirements analysis** — focused questions with options, `--answer` / `--write`, kickoff discovery  
