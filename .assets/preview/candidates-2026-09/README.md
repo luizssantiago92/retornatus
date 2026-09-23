@@ -13,5 +13,7 @@ in the site/README until one candidate is chosen and refined.
 | 4 | `mascot-candidate-04-forge.png` | **Forge** — angular precision shell, hex trail |
 | 5 | `mascot-candidate-05-ember.png` | **Ember** — luminous ethereal return/cycle glow |
 
-Pick one number (or mix traits). Further edits happen before replacing
-the live mascot assets.
+**Selected:** #5 **Ember** (`SELECTED-ember.png`).
+
+Await owner refinement notes, then replace live mascot assets
+(`.assets/retornatus-mascot.png`, docs favicon/hero copies).
