@@ -84,6 +84,6 @@ def test_hub_skill_documents_early_skill_and_elicit(tmp_path: Path) -> None:
     hub = install_hub_skill(tmp_path)
     text = hub.read_text(encoding="utf-8")
     assert "Chat intake" in text
-    assert "skill need --prompt" in text
-    assert "offer" in text.lower() or "proactively" in text.lower()
-    assert "Action not required" in text or "Action is **optional**" in text or "Action optional" in text
+    assert "intake analyze" in text
+    assert "skill need --prompt" in text or "skill create" in text
+    assert "CREATE=yes" in text or "create_authorized" in text or "human" in text.lower()

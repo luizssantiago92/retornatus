@@ -2,29 +2,40 @@
 
 Retornatus does **not** ship a giant library of preloaded skills that rot.
 
-When work needs specialization, you create **one** Skill for that need, research **current** sources, then activate under a gate. An Action is **optional** — propose Skills as soon as the need is visible in chat.
+When work needs specialization, you create **one** Skill for that need, research **current** sources, then activate under a gate.
+
+## Two worlds
+
+| Path | When | Control |
+| --- | --- | --- |
+| **Analyzed intake** | Freeform chat prompt may need specialization | `intake analyze` → human answers → `--create-skill` |
+| **Manual** | Human explicitly asks for a Skill | `skill create --need "…"` |
+
+Agents must **not** auto-create Skills from a prompt without human `CREATE=yes`.
+
+```bash
+retornatus intake analyze --prompt "Add Stripe webhook signature verification"
+# ask Focused questions in chat, then:
+retornatus intake analyze --prompt "…" \
+  --answer "SPECIALIZATION=yes — create a Skill" \
+  --answer "NEED=Stripe webhook signatures (current API)" \
+  --answer "CREATE=yes — create DRAFT now" \
+  --create-skill
+```
 
 ## Lifecycle
 
 ```text
-skill need? (prompt or Action) → create → research (web/docs) → fill RESEARCH + PROCEDURE
-           → gate skill-research → activate → export? → evolve from Learning
+intake analyze? / skill need? → (human confirm) → create → research → activate
 ```
 
 ```bash
-# Early — freeform prompt, before Contract/Action
+# Early signal only (no create):
 retornatus skill need --prompt "Add Stripe webhook signature verification"
-retornatus skill create --need "Stripe webhook signatures (current API)"
 
-# Later — bound to an Action when one exists
+# Bound to an Action when one exists:
 retornatus skill need --action C-0001/A-001
 retornatus skill create --need "Stripe webhook signatures (current API)" --action C-0001/A-001
-retornatus inspect S-0001
-# agent fills .retornatus/adaptation/skills/S-0001/SKILL.md
-retornatus gate skill-research S-0001
-retornatus skill activate S-0001
-retornatus skill export S-0001
-retornatus skill evolve S-0001 --note "Added timestamp tolerance"
 ```
 
 ## Storage vs projection

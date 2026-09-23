@@ -58,6 +58,9 @@ execution_app = typer.Typer(help="Host Execution observations (not an agent runt
 task_app = typer.Typer(help="Task lifecycle within an Action.")
 lesson_app = typer.Typer(help="Lessons from gate failures (Learning + optional Rule Candidate).")
 ops_app = typer.Typer(help="Operational hygiene loops (not Change construction).")
+intake_app = typer.Typer(
+    help="Analyze freeform prompts; propose Skills only with human confirmation."
+)
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -73,6 +76,7 @@ app.add_typer(execution_app, name="execution")
 app.add_typer(task_app, name="task")
 app.add_typer(lesson_app, name="lesson")
 app.add_typer(ops_app, name="ops")
+app.add_typer(intake_app, name="intake")
 
 
 def _parse_task_specs(
@@ -693,6 +697,85 @@ def skill_need(
     if assessment.suggested_need:
         typer.echo(f"suggested_need={assessment.suggested_need}")
     raise typer.Exit(code=0 if not assessment.required else 2)
+
+
+@intake_app.command("analyze")
+def intake_analyze(
+    prompt: str = typer.Option(
+        ...,
+        "--prompt",
+        "-p",
+        help="Freeform user request to analyze before Skill/Contract work.",
+    ),
+    answer: Optional[list[str]] = typer.Option(
+        None,
+        "--answer",
+        help="Human answer TOPIC=text (repeatable). Example: CREATE=yes — create DRAFT now",
+    ),
+    create_skill: bool = typer.Option(
+        False,
+        "--create-skill",
+        help="Create DRAFT Skill only when intake authorized CREATE=yes.",
+    ),
+    change_id: Optional[str] = typer.Option(None, "--change", "-c"),
+    action_id: Optional[str] = typer.Option(None, "--action", "-a"),
+    path: Optional[Path] = typer.Option(None, "--path"),
+) -> None:
+    """Analyze a chat prompt through intake stages; propose Skill with human control.
+
+    Two worlds: manual ``skill create``, or this analyzed path (propose → ask → create).
+    """
+    from retornatus.application.adaptation.intake import (
+        IntakeVerdict,
+        analyze_prompt_intake,
+        create_skill_from_intake,
+    )
+
+    root = (path or Path.cwd()).resolve()
+    if not is_initialized(root):
+        initialize_project(root)
+
+    answers: dict[str, str] = {}
+    for item in answer or []:
+        if "=" not in item:
+            typer.echo(f"Invalid --answer {item!r}; expected TOPIC=text")
+            raise typer.Exit(2)
+        topic, text = item.split("=", 1)
+        answers[topic.strip()] = text.strip()
+
+    try:
+        analysis = analyze_prompt_intake(root, prompt, answers=answers or None)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(2) from exc
+
+    typer.echo(analysis.to_markdown())
+    typer.echo(f"verdict={analysis.verdict.value}")
+    typer.echo(f"create_authorized={analysis.create_authorized}")
+
+    if create_skill:
+        try:
+            skill = create_skill_from_intake(
+                root,
+                analysis,
+                change_id=change_id,
+                action_id=action_id,
+            )
+        except ValueError as exc:
+            typer.echo(str(exc))
+            raise typer.Exit(1) from exc
+        typer.echo(
+            f"Created {skill.id} ({skill.status.value}) — research RESEARCH + PROCEDURE next"
+        )
+        raise typer.Exit(0)
+
+    # Exit codes: 0 routine/reuse/authorized; 2 propose (questions remain); 1 error
+    if analysis.verdict is IntakeVerdict.PROPOSE_SKILL and analysis.focused_questions:
+        raise typer.Exit(2)
+    if analysis.verdict is IntakeVerdict.CREATE_SKILL and analysis.create_authorized:
+        typer.echo("Hint: re-run with --create-skill to write the DRAFT Skill.")
+        raise typer.Exit(0)
+    raise typer.Exit(0)
 
 
 @skill_app.command("activate")

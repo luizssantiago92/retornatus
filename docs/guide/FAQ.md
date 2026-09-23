@@ -10,7 +10,7 @@ No. V1 is local and repository-native. No mandatory SaaS runtime or remote datab
 
 ## Must every Change use Skills and Tasks?
 
-No. Ceremony scales with complexity. Use `skill need` (with `--prompt` early, or `--action` later) and only add Tasks when decomposition helps. Agents should **offer** elicit / Skill need when the chat prompt is vague or specialized — not wait for you to name those commands.
+No. Ceremony scales with complexity. For freeform chat prompts, prefer `intake analyze` (propose Skill → human CREATE=yes) or explicit `skill create`. Use `skill need` as a signal only. Agents should **not** invent Skills without confirmation.
 
 ## Why did `verify` fail when tests passed?
 
