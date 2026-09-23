@@ -64,7 +64,7 @@ def classify_change(
         recommendations.extend(
             [
                 "Use full Contract + gate contract before build",
-                "Consider skill create + gate skill-research for specialized topics",
+                "Propose skill need --prompt early (Action optional) + gate skill-research",
                 "Prefer Claim-bound Evidence + verify; consider assurance review",
                 "Run policy check / gate policy for risky effects",
             ]
@@ -105,7 +105,7 @@ def classify_change(
             [
                 "Declare explicit Tasks with depends/resources when needed",
                 "Use loop next --all-ready for independent READY tasks",
-                "skill need if specialized topics appear mid-build",
+                "skill need --prompt as soon as specialized topics appear (not only mid-Action)",
             ]
         )
         return LaneClassification(
@@ -118,7 +118,7 @@ def classify_change(
         [
             "Full Change loop: Contract → gates → Evidence → verify",
             "Tasks only when the work needs a job list",
-            "Skill only when skill need says required",
+            "Skill only when skill need says required (prompt or Action)",
         ]
     )
     return LaneClassification(

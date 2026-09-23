@@ -41,11 +41,19 @@ retornatus skill --help
 | `task start\|complete\|fail\|reopen` | Durable Task lifecycle |
 | `loop next` / `loop next --all-ready` | Ready work projection |
 
+## Intake
+
+| Command | Purpose |
+| --- | --- |
+| `intake analyze --prompt` | Stage-based prompt analysis; propose Skill with human questions |
+| `intake analyze --answer TOPIC=…` | Record human answers (SPECIALIZATION / NEED / CREATE) |
+| `intake analyze --create-skill` | Create DRAFT Skill only when `create_authorized=true` |
+
 ## Skills
 
 | Command | Purpose |
 | --- | --- |
-| `skill create/list/need/activate/evolve/export` | Specialization lifecycle |
+| `skill need --prompt\|--action` / `skill create/list/activate/evolve/export` | Specialization lifecycle (Action optional; manual create still allowed) |
 
 ## Proof and policy
 
