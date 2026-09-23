@@ -187,34 +187,63 @@ nav a:focus-visible,
   position: relative;
   margin: 0;
   justify-self: center;
-  max-width: min(100%, 440px);
+  width: min(100%, 460px);
+  aspect-ratio: 1 / 1.02;
+  isolation: isolate;
 }
 
-/* Soft energy under the transparent PNG — page atmosphere shows through */
+/* Local energy field — only behind the mascot, page atmosphere shows through */
+.mascot-stage {
+  position: absolute;
+  inset: 8% 0 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 42% 48% 40% 45% / 38% 42% 48% 44%;
+}
+
 .mascot-glow {
   position: absolute;
-  inset: 14% 12% 10%;
+  inset: 18% 10% 8%;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 46% 40%, rgba(245, 158, 11, 0.28), transparent 45%),
-    radial-gradient(circle at 58% 62%, rgba(45, 212, 191, 0.22), transparent 55%);
-  filter: blur(20px);
-  opacity: 0.7;
-  pointer-events: none;
-  z-index: 0;
+    radial-gradient(ellipse 70% 55% at 48% 42%, rgba(245, 158, 11, 0.34), transparent 58%),
+    radial-gradient(ellipse 80% 60% at 55% 68%, rgba(45, 212, 191, 0.28), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 40% 75%, rgba(251, 191, 36, 0.18), transparent 55%);
+  filter: blur(22px);
+  opacity: 0.85;
 }
 
-.hero-mascot img {
+.mascot-waves {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -4%;
+  width: 112%;
+  height: 68%;
+  opacity: 0.9;
+}
+
+.wave-layer path {
+  stroke-linecap: round;
+  stroke-dasharray: 12 10;
+}
+
+.wave-orbs .orb {
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.7));
+}
+
+.mascot-sprite {
   position: relative;
   z-index: 1;
   display: block;
   width: 100%;
   height: auto;
-  /* Keep crystal readable — light aura only, no heavy amber bloom */
+  /* Transparent PNG — soft aura so it sits on the energy field */
   filter:
-    drop-shadow(0 0 10px rgba(245, 158, 11, 0.22))
-    drop-shadow(0 0 18px rgba(45, 212, 191, 0.18))
-    drop-shadow(0 18px 36px rgba(13, 18, 25, 0.35));
+    drop-shadow(0 0 12px rgba(245, 158, 11, 0.28))
+    drop-shadow(0 0 22px rgba(45, 212, 191, 0.22))
+    drop-shadow(0 22px 40px rgba(13, 18, 25, 0.28));
 }
 
 @keyframes float-in {
@@ -228,36 +257,112 @@ nav a:focus-visible,
   }
 }
 
-@keyframes drift {
+/* Ride the energy — gentle bob + slight sway */
+@keyframes drift-ride {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) translateX(0) rotate(-1.2deg);
+  }
+  25% {
+    transform: translateY(-10px) translateX(4px) rotate(0.6deg);
   }
   50% {
-    transform: translateY(-12px);
+    transform: translateY(-16px) translateX(0) rotate(1.4deg);
+  }
+  75% {
+    transform: translateY(-8px) translateX(-4px) rotate(-0.4deg);
   }
 }
 
 @keyframes pulse-glow {
   0%,
   100% {
-    opacity: 0.75;
+    opacity: 0.7;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.06);
+  }
+}
+
+@keyframes wave-flow-a {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-36px);
+  }
+}
+
+@keyframes wave-flow-b {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(28px);
+  }
+}
+
+@keyframes orb-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(10px, -14px);
+    opacity: 1;
+  }
+}
+
+@keyframes dash-crawl {
+  to {
+    stroke-dashoffset: -88;
   }
 }
 
 /* Motion is opt-in (modern a11y pattern) */
 @media (prefers-reduced-motion: no-preference) {
   .hero-mascot {
-    animation: float-in 0.9s ease-out both, drift 7s ease-in-out 1s infinite;
+    animation: float-in 0.9s ease-out both;
+  }
+
+  .mascot-sprite {
+    animation: drift-ride 6.5s ease-in-out 0.6s infinite;
   }
 
   .mascot-glow {
     animation: pulse-glow 4.5s ease-in-out infinite;
+  }
+
+  .wave-a {
+    animation: wave-flow-a 9s linear infinite;
+  }
+
+  .wave-b {
+    animation: wave-flow-b 11s linear infinite;
+  }
+
+  .wave-layer path {
+    animation: dash-crawl 3.8s linear infinite;
+  }
+
+  .orb.o1 { animation: orb-drift 5.2s ease-in-out infinite; }
+  .orb.o2 { animation: orb-drift 6.1s ease-in-out 0.4s infinite; }
+  .orb.o3 { animation: orb-drift 4.7s ease-in-out 0.9s infinite; }
+  .orb.o4 { animation: orb-drift 5.8s ease-in-out 1.2s infinite; }
+  .orb.o5 { animation: orb-drift 6.4s ease-in-out 0.2s infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-sprite,
+  .mascot-glow,
+  .wave-a,
+  .wave-b,
+  .wave-layer path,
+  .orb {
+    animation: none !important;
   }
 }
 
@@ -540,7 +645,7 @@ body.doc-page main {
 
   .hero-mascot {
     order: -1;
-    max-width: 280px;
+    width: min(100%, 300px);
   }
 
   .compare {
