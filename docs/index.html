@@ -43,12 +43,53 @@
           <a class="btn ghost" href="guide/quick-start.html">Quick start</a>
         </div>
       </div>
-      <figure class="hero-mascot">
-        <div class="mascot-glow" aria-hidden="true"></div>
+      <figure class="hero-mascot" aria-label="Ember mascot over energy waves">
+        <div class="mascot-stage" aria-hidden="true">
+          <div class="mascot-glow"></div>
+          <svg class="mascot-waves" viewBox="0 0 480 320" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <defs>
+              <linearGradient id="waveGold" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0" />
+                <stop offset="35%" stop-color="#fbbf24" stop-opacity="0.85" />
+                <stop offset="70%" stop-color="#14b8a6" stop-opacity="0.75" />
+                <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="waveTeal" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#0f766e" stop-opacity="0" />
+                <stop offset="40%" stop-color="#2dd4bf" stop-opacity="0.7" />
+                <stop offset="75%" stop-color="#f59e0b" stop-opacity="0.55" />
+                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0" />
+              </linearGradient>
+              <filter id="waveSoft" x="-20%" y="-40%" width="140%" height="180%">
+                <feGaussianBlur stdDeviation="2.2" />
+              </filter>
+            </defs>
+            <g class="wave-layer wave-a" filter="url(#waveSoft)">
+              <path fill="none" stroke="url(#waveGold)" stroke-width="3.2"
+                d="M-40 210 C 40 150, 120 270, 200 200 S 360 140, 520 210" />
+              <path fill="none" stroke="url(#waveTeal)" stroke-width="2.4" opacity="0.85"
+                d="M-40 235 C 50 180, 140 290, 230 220 S 380 160, 520 240" />
+            </g>
+            <g class="wave-layer wave-b" filter="url(#waveSoft)">
+              <path fill="none" stroke="url(#waveTeal)" stroke-width="2.8"
+                d="M-40 250 C 60 200, 150 300, 250 240 S 400 190, 520 255" />
+              <path fill="none" stroke="url(#waveGold)" stroke-width="2" opacity="0.7"
+                d="M-40 185 C 70 240, 160 130, 260 190 S 390 250, 520 180" />
+            </g>
+            <g class="wave-orbs">
+              <circle class="orb o1" cx="90" cy="210" r="3.2" fill="#fbbf24" />
+              <circle class="orb o2" cx="170" cy="245" r="2.4" fill="#2dd4bf" />
+              <circle class="orb o3" cx="260" cy="195" r="3" fill="#f59e0b" />
+              <circle class="orb o4" cx="340" cy="230" r="2.2" fill="#5eead4" />
+              <circle class="orb o5" cx="410" cy="205" r="2.8" fill="#fcd34d" />
+            </g>
+          </svg>
+        </div>
         <img
+          class="mascot-sprite"
           src="assets/retornatus-mascot.png"
-          width="520"
-          height="520"
+          width="738"
+          height="750"
           fetchpriority="high"
           decoding="async"
           alt="Ember — Retornatus mascot floating with a glowing proof crystal and luminous return trail"
