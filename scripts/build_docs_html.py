@@ -26,6 +26,8 @@ PAGES: list[tuple[str, str]] = [
     ("guide/Architecture.md", "guide/architecture.html"),
     ("guide/Environments.md", "guide/environments.html"),
     ("guide/Non-goals.md", "guide/non-goals.html"),
+    ("guide/From-spec-guardrails.md", "guide/from-spec-guardrails.html"),
+    ("guide/Landscape.md", "guide/landscape.html"),
     ("guide/tutorials/README.md", "guide/tutorials/index.html"),
     ("guide/tutorials/01-first-change.md", "guide/tutorials/01-first-change.html"),
     ("guide/tutorials/02-brownfield-wake.md", "guide/tutorials/02-brownfield-wake.html"),
@@ -48,6 +50,8 @@ STEM_MAP = {
     "Architecture": "architecture.html",
     "Environments": "environments.html",
     "Non-goals": "non-goals.html",
+    "From-spec-guardrails": "from-spec-guardrails.html",
+    "Landscape": "landscape.html",
     "01-first-change": "01-first-change.html",
     "02-brownfield-wake": "02-brownfield-wake.html",
     "credits-and-lineage": "../credits.html",
@@ -268,22 +272,56 @@ def extract_title(md: str, fallback: str) -> str:
     return fallback
 
 
-def build() -> None:
+def render_one(src_rel: str, out_rel: str) -> str:
+    src = DOCS / src_rel
+    raw = src.read_text(encoding="utf-8")
+    raw = rewrite_md_links(raw, out_rel)
+    title = extract_title(raw, Path(out_rel).stem)
+    body = convert_markdown(raw)
+    return render_page(title, body, out_rel)
+
+
+def build(*, check: bool = False) -> int:
+    """Write HTML pages, or exit 1 when check=True and committed HTML is stale."""
+    drift: list[str] = []
     for src_rel, out_rel in PAGES:
         src = DOCS / src_rel
         if not src.exists():
             print("skip missing", src)
             continue
-        raw = src.read_text(encoding="utf-8")
-        raw = rewrite_md_links(raw, out_rel)
-        title = extract_title(raw, Path(out_rel).stem)
-        body = convert_markdown(raw)
-        page = render_page(title, body, out_rel)
+        page = render_one(src_rel, out_rel)
         out = DOCS / out_rel
+        if check:
+            if not out.exists():
+                drift.append(f"missing {out.relative_to(ROOT)}")
+                continue
+            current = out.read_text(encoding="utf-8")
+            if current != page:
+                drift.append(f"stale {out.relative_to(ROOT)}")
+            else:
+                print("ok", out.relative_to(ROOT))
+            continue
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page, encoding="utf-8", newline="\n")
         print("wrote", out.relative_to(ROOT))
+    if check and drift:
+        print("HTML out of sync with markdown sources:")
+        for item in drift:
+            print(" ", item)
+        print("Fix: uv run python scripts/build_docs_html.py")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    build()
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Exit non-zero if generated HTML would differ from files on disk.",
+    )
+    args = parser.parse_args()
+    sys.exit(build(check=args.check))

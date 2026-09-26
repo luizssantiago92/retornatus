@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>From Spec Guardrails — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>From Spec Guardrails</h1>
+<p><a href="https://github.com/luizssantiago92/spec-guardrails">Spec Guardrails</a> is the <strong>direct predecessor</strong> of Retornatus. This page is a migration map — not a 1:1 command clone.</p>
+<p>Retornatus preserves the <em>guarantees</em> (plan before code, gates as brakes, proof before done, repo memory, human checkpoints) and rethinks the <em>mechanisms</em>.</p>
+<h2>Phase → Retornatus</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Spec Guardrails idea</th><th>Retornatus equivalent</th></tr></thead>
+<tbody>
+<tr><td>Spec / clarify before code</td><td><strong>Situation</strong> via <code>change elicit</code> (requirements analysis)</td></tr>
+<tr><td>Written acceptance</td><td><strong>Contract</strong> (WHAT + DONE) → <code>gate contract</code></td></tr>
+<tr><td>Tasks / waves</td><td><strong>Action</strong> + embedded <strong>Tasks</strong> → <code>loop next</code> / <code>task *</code></td></tr>
+<tr><td>Execute under host</td><td><code>run</code> assembles ExecutionContext (agent still writes code)</td></tr>
+<tr><td>Verify / proof</td><td>Claim-bound <strong>Evidence</strong> → <code>verify</code> / <code>gate assurance</code></td></tr>
+<tr><td>Memory / restart</td><td><code>.retornatus/</code> + <code>wake</code> / Learnings</td></tr>
+<tr><td>Human approval</td><td><strong>Decision</strong> → Rule activate; Policy <code>REQUIRE_HUMAN</code></td></tr>
+<tr><td>Skills pack</td><td>Hub skill + <strong>one</strong> on-demand Skill (<code>intake analyze</code> / <code>skill create</code>)</td></tr>
+</tbody></table></div>
+<h2>Mental remap</h2>
+<pre class="code"><code class="language-text">SG:   Spec → Tasks → Execute → Verify
+Reto: Situation → Contract → Action(+Tasks) → Evidence → Assurance → Learning</code></pre>
+<h2>Commands people ask about</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>You used to think…</th><th>Try in Retornatus</th></tr></thead>
+<tbody>
+<tr><td>“Write the spec”</td><td><code>change elicit</code> then <code>change create</code> / <code>change activate</code></td></tr>
+<tr><td>“Break into tasks”</td><td><code>change create --task …</code> or Tasks on the Action</td></tr>
+<tr><td>“What’s next?”</td><td><code>loop next &lt;C-id&gt;</code> / <code>change overview &lt;C-id&gt;</code></td></tr>
+<tr><td>“Are we done?”</td><td><code>evidence add --claim …</code> then <code>verify &lt;C-id&gt;</code></td></tr>
+<tr><td>“Load the skill pack”</td><td><code>integrate</code> (hub) + optional <code>intake analyze</code> / <code>skill need --prompt</code></td></tr>
+<tr><td>“Doctor / health”</td><td><code>doctor</code> (Process vs Brakes)</td></tr>
+</tbody></table></div>
+<h2>What deliberately did <strong>not</strong> come over</h2>
+<ul>
+<li>Drop-in CLI clone of Spec Guardrails commands</li>
+<li>npm packaging / <code>.specs/</code> layout</li>
+<li>Rebuilding host sandboxes inside the harness</li>
+</ul>
+<p>See <a href="../credits.html">Credits &amp; lineage</a> and <a href="non-goals.html">Non-goals</a>.</p>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

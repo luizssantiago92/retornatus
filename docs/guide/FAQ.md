@@ -26,7 +26,7 @@ Yes. Run `retornatus wake` to rebuild. Do **not** delete canonical JSON/Markdown
 
 Spec Guardrails proved repo-native gates, memory, evidence, and human checkpoints in practice (npm / `.specs/` / skill-driven phases). Retornatus preserves those *guarantees* while rethinking *mechanisms*: structured Demand→Situation→Contract→Action, Evidence ≠ Assurance, Finding→Question→Resolution, native-first Python harness under `.retornatus/`.
 
-Command 1:1 parity with Spec Guardrails is **not** a goal. Provenance detail: [Credits & lineage](../credits-and-lineage.md).
+Command 1:1 parity with Spec Guardrails is **not** a goal. Migration map: [From Spec Guardrails](From-spec-guardrails.md). Provenance: [Credits & lineage](../credits-and-lineage.md). Adjacent products: [Landscape](Landscape.md).
 
 ## What does native-first mean for sandboxes?
 

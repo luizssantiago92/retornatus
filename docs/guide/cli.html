@@ -79,9 +79,11 @@ retornatus skill --help</code></pre>
 <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td><code>evidence add --claim</code></td><td>Claim-bound Evidence (<code>--git-state</code> optional)</td></tr>
-<tr><td>`gate contract\</td><td>evidence\</td><td>skill-research\</td><td>assurance\</td><td>policy`</td><td>STOP gates</td></tr>
+<tr><td>`gate contract\</td><td>evidence\</td><td>skill-research\</td><td>assurance\</td><td>policy\</td><td>budget`</td><td>STOP gates</td></tr>
 <tr><td>`policy check --effect\</td><td>--action`</td><td>ALLOW / DENY / REQUIRE_HUMAN</td></tr>
-<tr><td><code>verify</code></td><td>Assurance over Contract DONE</td></tr>
+<tr><td><code>verify</code> / <code>verify --receipt</code></td><td>Assurance over Contract DONE (+ optional HMAC receipt)</td></tr>
+<tr><td><code>receipt verify &lt;path&gt;</code></td><td>Check a portable receipt against the local key</td></tr>
+<tr><td><code>action budget &lt;A-id&gt; --max N</code></td><td>Set Action attempt ceiling (<code>--clear</code> removes it)</td></tr>
 <tr><td><code>assurance plan</code> / <code>assurance review</code></td><td>Independent review path</td></tr>
 <tr><td><code>run</code> / <code>run --assurance</code> / <code>run --strict-policy</code></td><td>Assemble ExecutionContext</td></tr>
 <tr><td><code>lesson from-gate</code></td><td>Learning from gate failure (+ optional Rule Candidate)</td></tr>

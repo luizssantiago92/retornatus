@@ -13,6 +13,7 @@ They do not replace judgment; they prevent pretending success when structure or 
 | `retornatus gate evidence <C-id>` | No Evidence artifacts for the Change |
 | `retornatus gate assurance <C-id>` | Assurance is not `SATISFIED` |
 | `retornatus gate policy <A-id>` | Policy is `DENY` or `REQUIRE_HUMAN` |
+| `retornatus gate budget <A-id>` | Action `attempt_count` reached `max_attempts` |
 | `retornatus verify <C-id>` | Same family as assurance over Contract DONE Claims |
 
 Related:
@@ -21,6 +22,9 @@ Related:
 retornatus policy check --action <A-id>
 retornatus policy check --effect "…"
 retornatus run <A-id> --strict-policy
+retornatus action budget <A-id> --max 5
+retornatus verify <C-id> --receipt   # portable HMAC receipt
+retornatus receipt verify path/to/receipt.json
 ```
 
 ## Assurance verdicts

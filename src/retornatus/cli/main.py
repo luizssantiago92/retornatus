@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from typing import Optional
@@ -61,6 +62,8 @@ ops_app = typer.Typer(help="Operational hygiene loops (not Change construction).
 intake_app = typer.Typer(
     help="Analyze freeform prompts; propose Skills only with human confirmation."
 )
+action_app = typer.Typer(help="Action utilities (budget / attempt ceiling).")
+receipt_app = typer.Typer(help="Portable HMAC receipts for verify results.")
 app.add_typer(change_app, name="change")
 app.add_typer(skill_app, name="skill")
 app.add_typer(gate_app, name="gate")
@@ -77,6 +80,8 @@ app.add_typer(task_app, name="task")
 app.add_typer(lesson_app, name="lesson")
 app.add_typer(ops_app, name="ops")
 app.add_typer(intake_app, name="intake")
+app.add_typer(action_app, name="action")
+app.add_typer(receipt_app, name="receipt")
 
 
 def _parse_task_specs(
@@ -289,15 +294,24 @@ def verify(
         "--no-git",
         help="Do not derive subject freshness from git HEAD.",
     ),
+    receipt: bool = typer.Option(
+        False,
+        "--receipt",
+        help="Write a portable HMAC receipt under .retornatus/assurance/receipts/.",
+    ),
 ) -> None:
     """Run Assurance against a Change's contract DONE Claims (bound Evidence)."""
     from retornatus.application.assurance.independent import evaluate_change_assurance
+    from retornatus.application.assurance.receipt import write_verify_receipt
 
     root = (path or Path.cwd()).resolve()
     result = evaluate_change_assurance(
         root, change_id, use_git_state=not no_git
     )
     typer.echo(result.model_dump_json(indent=2))
+    if receipt:
+        out = write_verify_receipt(root, change_id, result)
+        typer.echo(f"receipt: {out}")
     raise typer.Exit(code=0 if result.verdict.value == "SATISFIED" else 1)
 
 
@@ -942,6 +956,68 @@ def gate_assurance_cmd(
     for msg in result.messages:
         typer.echo(msg)
     raise typer.Exit(result.exit_code)
+
+
+@gate_app.command("budget")
+def gate_budget_cmd(
+    action_id: str = typer.Argument(...),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Gate: Action attempt budget not exhausted (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_budget
+
+    result = gate_budget(path or Path.cwd(), action_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@action_app.command("budget")
+def action_budget_cmd(
+    action_id: str = typer.Argument(..., help="Action id (C-xxxx/A-yyy)."),
+    max_attempts: Optional[int] = typer.Option(
+        None,
+        "--max",
+        help="Maximum attempts before gate budget STOPs. Omit with --clear.",
+    ),
+    clear: bool = typer.Option(
+        False,
+        "--clear",
+        help="Remove the attempt ceiling (unlimited).",
+    ),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Set or clear an Action attempt budget."""
+    from retornatus.application.change.tasks import TaskService
+
+    if clear:
+        action = TaskService(path or Path.cwd()).set_max_attempts(action_id, None)
+    elif max_attempts is None:
+        typer.echo("Provide --max N or --clear")
+        raise typer.Exit(code=1)
+    else:
+        action = TaskService(path or Path.cwd()).set_max_attempts(
+            action_id, max_attempts
+        )
+    typer.echo(
+        f"{action.id}: max_attempts={action.max_attempts!r} "
+        f"attempt_count={action.attempt_count}"
+    )
+
+
+@receipt_app.command("verify")
+def receipt_verify_cmd(
+    receipt_path: Path = typer.Argument(..., help="Path to receipt JSON."),
+    path: Optional[Path] = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Verify an HMAC receipt against the local project key."""
+    from retornatus.application.assurance.receipt import load_and_verify_receipt
+
+    ok, msg, data = load_and_verify_receipt(
+        (path or Path.cwd()).resolve(), receipt_path
+    )
+    typer.echo(json.dumps({"ok": ok, "message": msg, "change_id": data.get("change_id"), "verdict": data.get("verdict")}, indent=2))
+    raise typer.Exit(code=0 if ok else 1)
 
 
 @evidence_app.command("add")

@@ -1,6 +1,6 @@
 # Documentation
 
-Guides for **Retornatus 1.0**.
+Guides for **Retornatus 1.3**.
 
 **Browse on the website:** [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) · [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html)
 
@@ -20,6 +20,8 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 | [Concepts](Concepts.md) | Change, Contract, Evidence, Assurance, Skill, … |
 | [Glossary](Glossary.md) | Short definitions |
 | [FAQ](FAQ.md) | Common questions |
+| [From Spec Guardrails](From-spec-guardrails.md) | Migration map from the predecessor |
+| [Landscape](Landscape.md) | How Retornatus compares to adjacent harnesses |
 
 ## Workflows
 
@@ -39,6 +41,7 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 | [CLI](CLI.md) | Intention-oriented commands |
 | [Architecture](Architecture.md) | Layers, persistence, native-first adapters |
 | [Environments](Environments.md) | Cursor, Claude Code, Codex, generic |
+
 ## Advanced / provenance
 
 | Guide | Topic |

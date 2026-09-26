@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Landscape — adjacent harnesses — Retornatus</title>
+  <link rel="icon" type="image/png" href="../assets/retornatus-mascot.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../site.css" />
+</head>
+<body class="doc-page">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="../">Retornatus</a>
+    <nav>
+      <a href="../">Site</a>
+      <a href="./">Docs</a>
+      <a href="quick-start.html">Quick start</a>
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a>
+    </nav>
+  </header>
+  <main class="doc-prose">
+<h1>Landscape — adjacent harnesses</h1>
+<p>How Retornatus sits next to other open-source “agent governance / harness” projects (as of research in 2026). This is <strong>positioning</strong>, not a claim that Retornatus replaces them.</p>
+<h2>Family resemblance</h2>
+<p>All of these attack the same pain: agents are optimistic; “done” needs structure and proof. They differ in <strong>where</strong> they put authority (repo files vs runtime wrapper vs crypto receipts).</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Project</th><th>Core bet</th><th>Similar to Retornatus?</th></tr></thead>
+<tbody>
+<tr><td><strong>Retornatus</strong></td><td>Repo-native Change loop under <code>.retornatus/</code>; host writes code; Evidence ≠ Assurance</td><td>—</td></tr>
+<tr><td><a href="https://github.com/luizssantiago92/spec-guardrails">Spec Guardrails</a></td><td>Predecessor; <code>.specs/</code> + skill-driven phases</td><td><strong>Closest lineage</strong> — same family, different architecture</td></tr>
+<tr><td><a href="https://github.com/Kibertum/tausik-core">TAUSIK</a></td><td>Fail-closed gates + <strong>ed25519 signed receipts</strong></td><td>Similar <em>goals</em>; heavier crypto/enforcement product</td></tr>
+<tr><td><a href="https://github.com/SkeinRank/claim-plane">Claim Plane</a></td><td>Control plane around Codex: scope admission, diff verify, sealed digests</td><td>Similar <em>proof-of-delivery</em>; more session/runtime control plane</td></tr>
+<tr><td><a href="https://github.com/Keesan12/martin-loop">MartinLoop</a></td><td>Budgets, verifier gates, signed run records around CLIs</td><td>Similar <em>gates</em>; focuses on run budgets / wrappers</td></tr>
+<tr><td><a href="https://github.com/MAHADEV369/HighHarness">HighHarness</a></td><td>Default-deny tool permissions + hash-chained episode logs</td><td>Similar <em>audit trail</em>; permission engine is host-layer (we stay native-first)</td></tr>
+<tr><td><a href="https://github.com/agent-receipts/obsigna">obsigna / Agent Receipts</a></td><td>Cryptographic receipt protocol (PyPI SDK + daemon)</td><td>Complementary — we now emit a <strong>light HMAC receipt</strong> on <code>verify</code>; not a full receipt mesh</td></tr>
+<tr><td><a href="https://github.com/microsoft/agent-governance-toolkit">Microsoft AGT</a></td><td>MCP-governed tool calls + offline receipts / SLSA</td><td>Enterprise toolkit; different packaging surface</td></tr>
+<tr><td><a href="https://openai.com/index/harness-engineering/">OpenAI harness practice</a></td><td><code>AGENTS.md</code> map + mechanical CI invariants</td><td>Pattern we adopt for discoverability — not a competing product</td></tr>
+<tr><td><a href="https://github.com/breim/loop-harness">loop-harness</a></td><td>Qualify/scaffold autonomous loops (maker/checker)</td><td>Adjacent for <em>ops loops</em>; Retornatus <code>ops</code> stays lighter</td></tr>
+</tbody></table></div>
+<h2>Are we “the same”?</h2>
+<p><strong>Short answer: same problem class, different product shape.</strong></p>
+<ul>
+<li><strong>Yes, similar:</strong> plan/gates/proof/memory; host-agnostic intent; stop-on-failure exits.</li>
+<li><strong>No, not clones:</strong> Retornatus is a <strong>structured Change method</strong> (Situation→Contract→Evidence→Assurance) in Python under git — not a permission proxy, not a Codex control plane, not a signed-receipt network.</li>
+</ul>
+<h2>What Retornatus uniquely emphasizes</h2>
+<ol>
+<li><strong>Situation as requirements analysis</strong> before Contract  </li>
+<li><strong>Evidence bound to Claims</strong> with Assurance as a separate judgment  </li>
+<li><strong>Complexity lanes</strong> (QUICK / STANDARD / COMPLEX)  </li>
+<li><strong>Human-controlled Skill intake</strong> (<code>CREATE=yes</code>)  </li>
+<li><strong>Native-first</strong> — prefer Cursor/Codex isolation over rebuilding sandboxes  </li>
+</ol>
+<h2>What we borrowed as ideas (not code)</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Idea in Retornatus</th><th>Inspired by (class)</th></tr></thead>
+<tbody>
+<tr><td><code>verify --receipt</code> (HMAC, local key)</td><td>TAUSIK / obsigna / AGT receipt class</td></tr>
+<tr><td>Optional Action attempt budget</td><td>MartinLoop budget class</td></tr>
+<tr><td><code>AGENTS.md</code> map</td><td>OpenAI harness practice</td></tr>
+<tr><td>Docs HTML <code>--check</code> in CI</td><td>Doc-gardening / mechanical invariants</td></tr>
+</tbody></table></div>
+<p>No code was vendored from those repositories. Relationship is conceptual.</p>
+<h2>Honest overlap gaps</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>They often have</th><th>Retornatus stance</th></tr></thead>
+<tbody>
+<tr><td>Live multi-provider agent runtime tests</td><td>Environment owns agents (non-goal)</td></tr>
+<tr><td>Enforced sandbox orchestration</td><td>Advisory Boundaries + host native tools</td></tr>
+<tr><td>Default-deny tool firewall</td><td>Host policy; not rebuilt here</td></tr>
+<tr><td>Full Ed25519 receipt mesh / SLSA export</td><td>Start with local HMAC receipt; expand if needed</td></tr>
+</tbody></table></div>
+    <div class="doc-nav-secondary">
+      <a class="btn ghost" href="./">← Docs hub</a>
+      <a class="btn primary" href="../">Product site →</a>
+    </div>
+  </main>
+  <footer>
+    <p>
+      <strong>Retornatus</strong> —
+      MIT ·
+      <a href="https://github.com/luizssantiago92/retornatus">GitHub</a> ·
+      <a href="../">Site</a> ·
+      <a href="./">Docs</a>
+    </p>
+  </footer>
+</body>
+</html>

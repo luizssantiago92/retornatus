@@ -27,5 +27,8 @@ jobs:
         # Pin mypy — unpinned uvx can drift and break CI on TextIO.reconfigure etc.
         run: uvx --from mypy==1.15.0 mypy src/retornatus --ignore-missing-imports
 
+      - name: Docs HTML sync
+        run: uv run python scripts/build_docs_html.py --check
+
       - name: Tests
         run: uv run pytest -q
