@@ -18,7 +18,7 @@ retornatus skill --help
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
 | `doctor` | Process vs Brakes scores + governance hygiene |
 | `status` | Derived Change status |
-| `ops list\|show\|run` | Operational hygiene loops |
+| `ops list` / `ops show` / `ops run` | Operational hygiene loops |
 
 ## Change workflow
 
@@ -38,7 +38,7 @@ retornatus skill --help
 
 | Command | Purpose |
 | --- | --- |
-| `task start\|complete\|fail\|reopen` | Durable Task lifecycle |
+| `task start` / `complete` / `fail` / `reopen` | Durable Task lifecycle |
 | `loop next` / `loop next --all-ready` | Ready work projection |
 
 ## Intake
@@ -53,15 +53,16 @@ retornatus skill --help
 
 | Command | Purpose |
 | --- | --- |
-| `skill need --prompt\|--action` / `skill create/list/activate/evolve/export` | Specialization lifecycle (Action optional; manual create still allowed) |
+| `skill need --prompt` / `--action` | Assess specialization need (Action optional) |
+| `skill create` / `list` / `activate` / `evolve` / `export` | Specialization lifecycle (manual create still allowed) |
 
 ## Proof and policy
 
 | Command | Purpose |
 | --- | --- |
 | `evidence add --claim` | Claim-bound Evidence (`--git-state` optional) |
-| `gate contract\|evidence\|skill-research\|assurance\|policy\|budget` | STOP gates |
-| `policy check --effect\|--action` | ALLOW / DENY / REQUIRE_HUMAN |
+| `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates |
+| `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN |
 | `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional HMAC receipt) |
 | `receipt verify <path>` | Check a portable receipt against the local key |
 | `action budget <A-id> --max N` | Set Action attempt ceiling (`--clear` removes it) |
@@ -74,7 +75,7 @@ retornatus skill --help
 | Command | Purpose |
 | --- | --- |
 | `finding add` | Record observation (auto-number) |
-| `question open\|resolve\|reopen` | Question lifecycle |
+| `question open` / `resolve` / `reopen` | Question lifecycle |
 
 ## Human boundary
 

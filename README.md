@@ -40,7 +40,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.3.x** (developing **1.3.0**)
+Package version **1.3.0** (this repo). PyPI may lag until you tag `v1.3.0`: [`retornatus`](https://pypi.org/project/retornatus/)
 
 [What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
@@ -231,12 +231,12 @@ Two Skill worlds:
 | Requirements / lane | `change elicit` (`--answer`, `--write`), `change classify`, `change create`, `change activate` |
 | Prompt intake | `intake analyze` (`--answer`, `--create-skill` with human `CREATE=yes`) |
 | Dashboard | `change overview` |
-| Next work | `loop next` · `task start\|complete\|fail\|reopen` |
+| Next work | `loop next` · `task start` / `complete` / `fail` / `reopen` |
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
 | Proof | `evidence add --claim …`, `gate *`, `verify` / `verify --receipt`, `receipt verify` |
 | Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
-| Human boundary | `decision record`, `rule propose\|activate` · `policy evaluate` |
+| Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |
 
 Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · hub skill after `integrate`.
 
@@ -278,6 +278,8 @@ Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · 
 | First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
 | Full technical guide | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |
 | Concepts | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html) |
+| Coming from Spec Guardrails | [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) |
+| Adjacent harnesses | [Landscape](https://luizssantiago92.github.io/retornatus/guide/landscape.html) |
 | Product requirements | [PRD](prd/PRD.md) |
 | Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
 

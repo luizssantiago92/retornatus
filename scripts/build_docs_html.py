@@ -113,6 +113,39 @@ def inline_format(text: str) -> str:
     return text
 
 
+def split_table_row(line: str) -> list[str]:
+    """Split a markdown table row on |, ignoring pipes inside `code` and \\| escapes."""
+    body = line.strip()
+    if body.startswith("|"):
+        body = body[1:]
+    if body.endswith("|"):
+        body = body[:-1]
+    cells: list[str] = []
+    buf: list[str] = []
+    in_code = False
+    i = 0
+    while i < len(body):
+        ch = body[i]
+        if ch == "`":
+            in_code = not in_code
+            buf.append(ch)
+            i += 1
+            continue
+        if not in_code and ch == "\\" and i + 1 < len(body) and body[i + 1] == "|":
+            buf.append("|")
+            i += 2
+            continue
+        if not in_code and ch == "|":
+            cells.append("".join(buf).strip())
+            buf = []
+            i += 1
+            continue
+        buf.append(ch)
+        i += 1
+    cells.append("".join(buf).strip())
+    return cells
+
+
 def convert_markdown(md: str) -> str:
     lines = md.replace("\r\n", "\n").split("\n")
     out: list[str] = []
@@ -162,7 +195,7 @@ def convert_markdown(md: str) -> str:
                 if re.match(r"^\s*\|?\s*[-:| ]+\s*\|?\s*$", lines[i]):
                     i += 1
                     continue
-                cells = [c.strip() for c in lines[i].strip().strip("|").split("|")]
+                cells = split_table_row(lines[i])
                 rows.append(cells)
                 i += 1
             if rows:
