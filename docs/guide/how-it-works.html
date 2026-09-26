@@ -47,8 +47,13 @@ retornatus gate contract C-0001     # must exit 0</code></pre>
 retornatus loop next C-0001
 retornatus task start C-0001/T-001</code></pre>
 <p><code>loop next</code> never returns BLOCKED work as “next”.</p>
-<h2>5. Specialization (optional)</h2>
-<pre class="code"><code class="language-bash">retornatus skill need --action C-0001/A-001
+<h2>5. Specialization (optional — as soon as needed)</h2>
+<pre class="code"><code class="language-bash"># From a chat prompt, before Action exists:
+retornatus skill need --prompt &quot;…&quot;
+retornatus skill create --need &quot;…&quot;
+
+# Or once an Action exists:
+retornatus skill need --action C-0001/A-001
 retornatus skill create --need &quot;…&quot; --action C-0001/A-001
 # agent researches current docs → fills RESEARCH + PROCEDURE
 retornatus gate skill-research S-0001

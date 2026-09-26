@@ -28,7 +28,7 @@
 <h2>Do I need a cloud account?</h2>
 <p>No. V1 is local and repository-native. No mandatory SaaS runtime or remote database.</p>
 <h2>Must every Change use Skills and Tasks?</h2>
-<p>No. Ceremony scales with complexity. Use <code>skill need</code> and only add Tasks when decomposition helps.</p>
+<p>No. Ceremony scales with complexity. For freeform chat prompts, prefer <code>intake analyze</code> (propose Skill → human CREATE=yes) or explicit <code>skill create</code>. Use <code>skill need</code> as a signal only. Agents should <strong>not</strong> invent Skills without confirmation.</p>
 <h2>Why did <code>verify</code> fail when tests passed?</h2>
 <p>Assurance needs Evidence <strong>bound to Claims</strong> (<code>--claim</code>). Unbound <code>test_result</code> artifacts do not automatically satisfy DONE Claims.</p>
 <h2>Can I delete the SQLite database?</h2>
