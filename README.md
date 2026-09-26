@@ -40,7 +40,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.2.1**
+PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.3.x** (developing **1.3.0**)
 
 [What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
@@ -233,13 +233,21 @@ Two Skill worlds:
 | Dashboard | `change overview` |
 | Next work | `loop next` · `task start\|complete\|fail\|reopen` |
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
-| Proof | `evidence add --claim …`, `gate *`, `verify` |
+| Proof | `evidence add --claim …`, `gate *`, `verify` / `verify --receipt`, `receipt verify` |
+| Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
 | Human boundary | `decision record`, `rule propose\|activate` · `policy evaluate` |
 
 Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · hub skill after `integrate`.
 
 ---
+
+## What’s new (1.3.0)
+
+- **Verify receipts** — `verify --receipt` writes a portable HMAC receipt; `receipt verify` checks it  
+- **Action attempt budget** — `action budget --max N` + `gate budget` stop runaway retries  
+- **AGENTS.md** map for host agents + CI check that docs HTML stays in sync with markdown  
+- **From Spec Guardrails** migration page + **Landscape** comparison with adjacent harnesses  
 
 ## What’s new (1.2.1)
 

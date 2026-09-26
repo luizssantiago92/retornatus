@@ -60,9 +60,11 @@ retornatus skill --help
 | Command | Purpose |
 | --- | --- |
 | `evidence add --claim` | Claim-bound Evidence (`--git-state` optional) |
-| `gate contract\|evidence\|skill-research\|assurance\|policy` | STOP gates |
+| `gate contract\|evidence\|skill-research\|assurance\|policy\|budget` | STOP gates |
 | `policy check --effect\|--action` | ALLOW / DENY / REQUIRE_HUMAN |
-| `verify` | Assurance over Contract DONE |
+| `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional HMAC receipt) |
+| `receipt verify <path>` | Check a portable receipt against the local key |
+| `action budget <A-id> --max N` | Set Action attempt ceiling (`--clear` removes it) |
 | `assurance plan` / `assurance review` | Independent review path |
 | `run` / `run --assurance` / `run --strict-policy` | Assemble ExecutionContext |
 | `lesson from-gate` | Learning from gate failure (+ optional Rule Candidate) |

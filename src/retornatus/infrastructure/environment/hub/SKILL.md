@@ -74,7 +74,8 @@ Two worlds, one control point: **analyzed proposal with human answers**, or **ex
 15. Record proof bound to Claims: `retornatus evidence add ... --type test_result --claim <claim-id>`
 16. If blocked by discovery: `finding add` → `question open` (IDs auto-number) → resolve with Evidence
 17. Reopen Questions when the condition reappears: `question reopen <Q-id>`
-18. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0)
+18. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0); optional `verify --receipt` for a portable HMAC receipt
+18b. Optional attempt ceiling: `action budget <A-id> --max N` then `gate budget <A-id>` before retry loops
 19. On gate failure: `lesson from-gate --gate <name> --change <C-id> --title "..." --note "..."` (optional `--propose-rule`)
 20. Independent review when needed: `retornatus run <A-id> --assurance`
 21. Material Contract change: `change reopen` (archives prior version)

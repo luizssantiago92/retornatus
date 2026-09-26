@@ -139,6 +139,13 @@ class Action(DomainModel):
     authority: Authority
     tasks: list[Task] = Field(default_factory=list)
     relations: list[Relation] = Field(default_factory=list)
+    # Optional attempt budget (MartinLoop-class stop condition; None = unlimited)
+    max_attempts: int | None = Field(
+        default=None,
+        ge=1,
+        description="Stop when attempt_count reaches this ceiling",
+    )
+    attempt_count: int = Field(default=0, ge=0)
 
     @model_validator(mode="after")
     def _tasks_belong_to_action_change(self) -> Self:

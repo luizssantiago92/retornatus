@@ -34,12 +34,16 @@
 <tr><td><code>retornatus gate evidence &lt;C-id&gt;</code></td><td>No Evidence artifacts for the Change</td></tr>
 <tr><td><code>retornatus gate assurance &lt;C-id&gt;</code></td><td>Assurance is not <code>SATISFIED</code></td></tr>
 <tr><td><code>retornatus gate policy &lt;A-id&gt;</code></td><td>Policy is <code>DENY</code> or <code>REQUIRE_HUMAN</code></td></tr>
+<tr><td><code>retornatus gate budget &lt;A-id&gt;</code></td><td>Action <code>attempt_count</code> reached <code>max_attempts</code></td></tr>
 <tr><td><code>retornatus verify &lt;C-id&gt;</code></td><td>Same family as assurance over Contract DONE Claims</td></tr>
 </tbody></table></div>
 <p>Related:</p>
 <pre class="code"><code class="language-bash">retornatus policy check --action &lt;A-id&gt;
 retornatus policy check --effect &quot;…&quot;
-retornatus run &lt;A-id&gt; --strict-policy</code></pre>
+retornatus run &lt;A-id&gt; --strict-policy
+retornatus action budget &lt;A-id&gt; --max 5
+retornatus verify &lt;C-id&gt; --receipt   # portable HMAC receipt
+retornatus receipt verify path/to/receipt.json</code></pre>
 <h2>Assurance verdicts</h2>
 <div class="doc-table-wrap"><table>
 <thead><tr><th>Verdict</th><th>Meaning</th></tr></thead>

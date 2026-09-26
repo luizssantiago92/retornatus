@@ -84,7 +84,21 @@ class TaskService:
         return self.set_lifecycle(task_id, TaskLifecycle.COMPLETED)
 
     def fail(self, task_id: str) -> Action:
-        return self.set_lifecycle(task_id, TaskLifecycle.FAILED)
+        action = self.set_lifecycle(task_id, TaskLifecycle.FAILED)
+        return self.record_attempt(action.id)
+
+    def record_attempt(self, action_id: str) -> Action:
+        """Increment Action.attempt_count (used by fail / explicit budget tracking)."""
+        action, rev = self.repo.load_action(action_id)
+        updated = action.model_copy(update={"attempt_count": action.attempt_count + 1})
+        self.repo.save_action(updated, expected=rev)
+        return updated
+
+    def set_max_attempts(self, action_id: str, max_attempts: int | None) -> Action:
+        action, rev = self.repo.load_action(action_id)
+        updated = action.model_copy(update={"max_attempts": max_attempts})
+        self.repo.save_action(updated, expected=rev)
+        return updated
 
     def reopen(self, task_id: str) -> Action:
         return self.set_lifecycle(task_id, TaskLifecycle.PENDING, force=True)

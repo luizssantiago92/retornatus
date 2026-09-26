@@ -21,6 +21,7 @@ class GateName(str, Enum):
     SKILL_RESEARCH = "skill-research"
     ASSURANCE = "assurance"
     POLICY = "policy"
+    BUDGET = "budget"
 
 
 @dataclass
@@ -164,6 +165,36 @@ def gate_assurance(
     for claim_id, status in result.claim_results.items():
         detail.append(f"  {claim_id}: {status}")
     return GateResult(GateName.ASSURANCE, ok, detail)
+
+
+def gate_budget(root: Path, action_id: str) -> GateResult:
+    """Optional Action attempt budget — STOP when attempts are exhausted."""
+    repo = FileRepository(root)
+    try:
+        action, _ = repo.load_action(action_id)
+    except FileNotFoundError:
+        return GateResult(GateName.BUDGET, False, [f"Action not found: {action_id}"])
+    if action.max_attempts is None:
+        return GateResult(
+            GateName.BUDGET,
+            True,
+            ["No max_attempts set (unlimited)"],
+        )
+    remaining = action.max_attempts - action.attempt_count
+    if action.attempt_count >= action.max_attempts:
+        return GateResult(
+            GateName.BUDGET,
+            False,
+            [
+                f"Attempt budget exhausted: {action.attempt_count}/{action.max_attempts}",
+                "Record a Decision / raise max_attempts before continuing",
+            ],
+        )
+    return GateResult(
+        GateName.BUDGET,
+        True,
+        [f"Attempts {action.attempt_count}/{action.max_attempts} ({remaining} remaining)"],
+    )
 
 
 def gate_policy(root: Path, action_id: str) -> GateResult:

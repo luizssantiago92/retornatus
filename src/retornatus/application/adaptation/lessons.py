@@ -8,6 +8,7 @@ from pathlib import Path
 from retornatus.application.adaptation.service import AdaptationService
 from retornatus.application.governance.gates import (
     gate_assurance,
+    gate_budget,
     gate_contract,
     gate_evidence,
     gate_policy,
@@ -72,10 +73,15 @@ def record_lesson_from_gate(
                 raise ValueError("action_id required for gate policy")
             result = gate_policy(root, action_id)
             passed, messages = result.passed, list(result.messages)
+        elif gate_key == "budget":
+            if not action_id:
+                raise ValueError("action_id required for gate budget")
+            result = gate_budget(root, action_id)
+            passed, messages = result.passed, list(result.messages)
         else:
             raise ValueError(
                 f"Unknown gate `{gate}`. "
-                "Use: contract, evidence, assurance, skill-research, policy"
+                "Use: contract, evidence, assurance, skill-research, policy, budget"
             )
 
     related = [x for x in (change_id, skill_id, action_id) if x]
