@@ -60,11 +60,19 @@ retornatus skill --help</code></pre>
 <tr><td>`task start\</td><td>complete\</td><td>fail\</td><td>reopen`</td><td>Durable Task lifecycle</td></tr>
 <tr><td><code>loop next</code> / <code>loop next --all-ready</code></td><td>Ready work projection</td></tr>
 </tbody></table></div>
+<h2>Intake</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Command</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>intake analyze --prompt</code></td><td>Stage-based prompt analysis; propose Skill with human questions</td></tr>
+<tr><td><code>intake analyze --answer TOPIC=…</code></td><td>Record human answers (SPECIALIZATION / NEED / CREATE)</td></tr>
+<tr><td><code>intake analyze --create-skill</code></td><td>Create DRAFT Skill only when <code>create_authorized=true</code></td></tr>
+</tbody></table></div>
 <h2>Skills</h2>
 <div class="doc-table-wrap"><table>
 <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
 <tbody>
-<tr><td><code>skill create/list/need/activate/evolve/export</code></td><td>Specialization lifecycle</td></tr>
+<tr><td>`skill need --prompt\</td><td>--action<code> / </code>skill create/list/activate/evolve/export`</td><td>Specialization lifecycle (Action optional; manual create still allowed)</td></tr>
 </tbody></table></div>
 <h2>Proof and policy</h2>
 <div class="doc-table-wrap"><table>

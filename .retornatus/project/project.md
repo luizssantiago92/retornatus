@@ -4,7 +4,7 @@ Retornatus continuity map for `retornatus`.
 
 ## Identity
 
-- Path: `C:\Users\c.barbosa.CELLAIRIS\Downloads\Luiz\Projetos\retornatus`
+- Path: repository root (clone path varies by machine)
 - README signal: # Retornatus
 
 ## Language / stack
