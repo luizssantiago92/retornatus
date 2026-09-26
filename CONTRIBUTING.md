@@ -20,10 +20,18 @@ uv run retornatus --help
 ## Pull requests
 
 - Keep changes scoped; prefer small milestones.
-- Update `docs/guide/` when user-visible behavior changes.
+- Update `docs/guide/` when user-visible behavior changes, then run `uv run python scripts/build_docs_html.py` so Pages HTML stays in sync.
 - When adding external influence, update [`docs/credits-and-lineage.md`](docs/credits-and-lineage.md) in the same PR — credit by real influence; do not promote Spec Guardrails transitive upstreams to “direct” without independent study.
 - Do not claim Spec Guardrails full replacement in marketing copy.
 - Add or extend tests for gates, Policy, and persistence invariants.
+
+## GitHub discoverability (owner)
+
+Homepage should stay `https://luizssantiago92.github.io/retornatus/`.
+
+Suggested repository topics (set in the GitHub UI or with `gh repo edit --add-topic …`):
+
+`python` · `ai` · `governance` · `developer-tools` · `cursor` · `cli` · `uv` · `llm` · `agents` · `software-engineering` · `harness`
 
 ## Where to look
 

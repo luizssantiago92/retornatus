@@ -42,7 +42,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 
 PyPI: [`retornatus`](https://pypi.org/project/retornatus/) **1.2.1**
 
-[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
+[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
 ---
 
