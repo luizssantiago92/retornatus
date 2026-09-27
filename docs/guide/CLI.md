@@ -62,10 +62,15 @@ retornatus skill --help
 | --- | --- |
 | `evidence add --claim` | Self-reported Evidence (`provenance=self_reported`). Fine for narrative types |
 | `evidence run [options] -- <command…>` | Run a command (no shell, cwd = project root) and record `provenance=executed` |
+| `checks run -c <C-id>` | Execute `[assurance] required_checks` and record Evidence |
 | `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates |
-| `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN |
+| `gate suppressions` | STOP when added lines contain suppression or skip markers (`--staged`, `--base`) |
+| `gate scope <C-id>` | STOP when the diff leaves Task resources or hits denied/sensitive paths (`--base`, `--staged`) |
+| `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
+| `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |
 | `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional Ed25519 receipt) |
-| `verify --allow-self-reported` | Migration opt-out: accept self-reported test/build/lint evidence |
+| `verify --run-checks` | Run required checks, record Evidence, then verify |
+| `verify --allow-self-reported` | Migration opt-out: accept self-reported test/build/lint evidence. Does not bypass required checks |
 | `receipt keygen` / `receipt keygen --print` | Write the public key into `.retornatus/keys/`. Private key goes to the user config dir, or stdout for a CI secret |
 | `receipt sign --change <C-id>` | Sign the current Assurance result |
 | `receipt verify <path>` | Check a receipt with the committed public key |

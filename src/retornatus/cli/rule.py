@@ -15,6 +15,21 @@ def rule_propose(
     statement: str = typer.Option(..., "--statement", "-s"),
     applicability: str = typer.Option(..., "--applicability", "-a"),
     learning_id: str | None = typer.Option(None, "--from-learning", "-l"),
+    effect_type: str | None = typer.Option(
+        None,
+        "--effect-type",
+        help="Structured effect type, for example write or exec.",
+    ),
+    path_glob: list[str] | None = typer.Option(
+        None,
+        "--path-glob",
+        help="Path glob for structured matching, repeatable.",
+    ),
+    command_pattern: list[str] | None = typer.Option(
+        None,
+        "--command-pattern",
+        help="Command pattern for structured matching, repeatable.",
+    ),
     path: Path | None = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Propose a Rule Candidate (never auto-activates)."""
@@ -23,6 +38,9 @@ def rule_propose(
         statement=statement,
         applicability=applicability,
         from_learning_id=learning_id,
+        effect_type=effect_type,
+        path_globs=list(path_glob or []),
+        command_patterns=list(command_pattern or []),
     )
     typer.echo(f"Proposed candidate {candidate.id} (active={candidate.active})")
 

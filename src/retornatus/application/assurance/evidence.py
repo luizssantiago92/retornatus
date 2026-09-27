@@ -7,6 +7,7 @@ from pathlib import Path
 
 from retornatus.application.assurance.execute import (
     DEFAULT_COMMAND_TIMEOUT_SECONDS,
+    CommandCapture,
     capture_command,
 )
 from retornatus.application.assurance.subject_state import capture_subject_state
@@ -123,6 +124,40 @@ class EvidenceService:
             command,
             timeout_seconds=timeout_seconds,
         )
+        return self.record_executed(
+            change_id=change_id,
+            evidence_type=evidence_type,
+            subject=subject,
+            capture=capture,
+            source=source,
+            producer=producer,
+            subject_state=subject_state,
+            supports_action_id=supports_action_id,
+            supports_claim_id=supports_claim_id,
+            challenges_claim_id=challenges_claim_id,
+            capture_git=capture_git,
+        )
+
+    def record_executed(
+        self,
+        *,
+        change_id: str,
+        evidence_type: str,
+        subject: str,
+        capture: CommandCapture,
+        source: str | None = None,
+        producer: str = "retornatus",
+        subject_state: str | None = None,
+        supports_action_id: str | None = None,
+        supports_claim_id: str | None = None,
+        challenges_claim_id: str | None = None,
+        capture_git: bool = False,
+    ) -> Evidence:
+        """Persist an already-captured command as executed Evidence.
+
+        Callers that run several checks capture first, then record, so later
+        evidence files do not dirty the snapshot of an earlier command.
+        """
         eid = format_owned_id(change_id, "E", self.next_evidence_number(change_id))
         relations: list[Relation] = []
         if supports_action_id:
@@ -155,7 +190,7 @@ class EvidenceService:
             id=eid,
             type=evidence_type,
             subject=subject,
-            source=source if source else shlex.join(command),
+            source=source if source else shlex.join(capture.argv),
             producer=producer,
             subject_state=final_state,
             provenance=EvidenceProvenance.EXECUTED,

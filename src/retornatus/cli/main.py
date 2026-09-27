@@ -9,11 +9,13 @@ from retornatus.cli.groups import app
 from retornatus.cli import action as _action
 from retornatus.cli import assurance as _assurance
 from retornatus.cli import change as _change
+from retornatus.cli import checks as _checks
 from retornatus.cli import decision as _decision
 from retornatus.cli import evidence as _evidence
 from retornatus.cli import execution as _execution
 from retornatus.cli import finding as _finding
 from retornatus.cli import gate as _gate
+from retornatus.cli import hooks as _hooks
 from retornatus.cli import intake as _intake
 from retornatus.cli import lesson as _lesson
 from retornatus.cli import loop as _loop
@@ -32,6 +34,8 @@ _REGISTERED = (
     _change,
     _skill,
     _gate,
+    _checks,
+    _hooks,
     _evidence,
     _finding,
     _question,

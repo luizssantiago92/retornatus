@@ -13,7 +13,9 @@
 | **Demand** | Intent that opens a Change |
 | **Decision** | Human boundary artifact |
 | **Evidence** | Attributable observation, ideally Claim-bound. Provenance `executed` or `self_reported` |
-| **UNVERIFIED** | Claim status when execution-type Evidence was not produced by `evidence run` |
+| **UNVERIFIED** | Claim status when execution-type Evidence was not produced by `evidence run`, or its argv does not match a required check |
+| **Required check** | Owner-declared argv in `[assurance] required_checks`. The only command that can satisfy that execution type |
+| **Scope gate** | `gate scope` — diff paths must be Task resources or under `.retornatus/` |
 | **Finding** | Relevant observation |
 | **Gate** | Mechanical check; non-zero = STOP |
 | **Hub skill** | Progressive disclosure skill teaching the loop |

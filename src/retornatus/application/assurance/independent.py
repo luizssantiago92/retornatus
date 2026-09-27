@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from retornatus.application.assurance.evaluate import (
+    EXECUTION_EVIDENCE_TYPES,
     AssuranceResult,
     Claim,
     build_claims_from_contract,
@@ -16,11 +17,17 @@ from retornatus.application.assurance.evaluate import (
     infer_required_evidence_types,
 )
 from retornatus.application.assurance.evidence import EvidenceService
-from retornatus.application.assurance.settings import allow_self_reported_enabled
+from retornatus.application.assurance.settings import (
+    allow_self_reported_enabled,
+    load_required_checks,
+    uncommitted_changes_mode,
+)
 from retornatus.application.assurance.subject_state import (
     capture_subject_state,
     current_git_head,
     derive_current_subject_states,
+    subjects_with_uncommitted_changes,
+    substantive_worktree_clean,
 )
 from retornatus.application.execution.context import (
     ExecutionContext,
@@ -138,11 +145,18 @@ def record_independent_review_evidence(
     return ev.id
 
 
-def commit_mismatch_warnings(root: Path, evidence: list[Evidence]) -> list[str]:
+def commit_mismatch_warnings(
+    root: Path,
+    evidence: list[Evidence],
+    *,
+    strict_execution: bool = False,
+) -> list[str]:
     """Warn when executed Evidence recorded a HEAD that is no longer current.
 
-    This does not fail Assurance. Subject-state staleness (``commit:<sha>``)
-    remains a separate, failing freshness check.
+    This does not fail Assurance unless required checks are configured
+    (``strict_execution``). In that case execution-type mismatches are reported
+    as stale failures by :func:`evaluate_assurance`, not as soft warnings.
+    Subject-state staleness (``commit:<sha>``) remains a separate check.
     """
     head = current_git_head(root)
     if not head:
@@ -153,6 +167,8 @@ def commit_mismatch_warnings(root: Path, evidence: list[Evidence]) -> list[str]:
         if not recorded:
             continue
         if recorded.casefold() == head.casefold():
+            continue
+        if strict_execution and item.type in EXECUTION_EVIDENCE_TYPES:
             continue
         warnings.append(
             f"{item.id} recorded git_commit {recorded} does not match HEAD {head} "
@@ -182,13 +198,31 @@ def evaluate_change_assurance(
     )
     if allow_self_reported is None:
         allow_self_reported = allow_self_reported_enabled(root)
+    checks = load_required_checks(root)
+    dirty_subjects: set[str] = set()
+    mode = "default"
+    head: str | None = None
+    clean: bool | None = None
+    if use_git_state:
+        dirty_subjects = subjects_with_uncommitted_changes(
+            root, [item.subject for item in evidence]
+        )
+        mode = uncommitted_changes_mode(root)
+        if checks:
+            head = current_git_head(root)
+            clean = substantive_worktree_clean(root)
     result = evaluate_assurance(
         claims=claims,
         evidence=evidence,
         current_subject_states=current_states or None,
         allow_self_reported=allow_self_reported,
+        required_checks=checks or None,
+        git_head=head,
+        worktree_clean=clean,
+        uncommitted_subjects=dirty_subjects or None,
+        uncommitted_mode=mode,
     )
-    extra = commit_mismatch_warnings(root, evidence)
+    extra = commit_mismatch_warnings(root, evidence, strict_execution=bool(checks))
     if extra:
         result = result.model_copy(update={"warnings": [*result.warnings, *extra]})
     return result

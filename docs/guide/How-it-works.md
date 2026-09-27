@@ -90,6 +90,8 @@ retornatus verify C-0001
 
 `evidence add` stores provenance `self_reported`. For `test_result`, `security_test`, `build_result`, and `lint_result` that does not satisfy `verify` (the claim is `UNVERIFIED`, exit code is not 0). Pass `--allow-self-reported` or set `[assurance] allow_self_reported = true` while migrating. Review notes and repository observations stay self-reportable and are labeled as such.
 
+When `[assurance] required_checks` is set, only those argv lists can satisfy execution claims, and only if the exit code is 0, the recorded commit is still HEAD, and the worktree is clean of source edits. `verify --run-checks` (or `checks run`) runs the declared commands itself. Uncommitted edits to a subject path mark evidence stale (fail for execution types by default). `gate suppressions` and `gate scope` look at the real diff; `hooks install` runs them on commit. See [Gates](Gates.md).
+
 Verdicts: `SATISFIED` · `NOT_SATISFIED` · `INCONCLUSIVE`. Evidence must bind to Claims. Subject match is exact after normalization, plus a one-way path suffix (`docs/health.md` can satisfy claim `/health.md`; `/` does not satisfy `/health`). `subject_state` of the form `commit:<sha>` still fails freshness when the subject moves. A mismatch between the recorded execution commit and current HEAD is only a warning.
 
 Independent review when needed: `assurance plan` / `assurance review` / `run --assurance`.

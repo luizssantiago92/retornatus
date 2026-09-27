@@ -22,6 +22,8 @@ class GateName(str, Enum):
     ASSURANCE = "assurance"
     POLICY = "policy"
     BUDGET = "budget"
+    SUPPRESSIONS = "suppressions"
+    SCOPE = "scope"
 
 
 @dataclass
@@ -146,17 +148,35 @@ def gate_assurance(
     if not contract.done_criteria:
         return GateResult(GateName.ASSURANCE, False, ["Contract has no DONE criteria"])
 
-    from retornatus.application.assurance.settings import allow_self_reported_enabled
+    from retornatus.application.assurance.settings import (
+        allow_self_reported_enabled,
+        load_required_checks,
+        uncommitted_changes_mode,
+    )
+    from retornatus.application.assurance.subject_state import (
+        current_git_head,
+        subjects_with_uncommitted_changes,
+        substantive_worktree_clean,
+    )
 
     allowed = allow_self_reported_enabled(root)
     if current_subject_states is not None:
         claims = build_claims_from_contract(contract)
         evidence = EvidenceService(root).list_for_change(change_id)
+        checks = load_required_checks(root)
+        dirty = subjects_with_uncommitted_changes(
+            root, [item.subject for item in evidence]
+        )
         result = evaluate_assurance(
             claims=claims,
             evidence=evidence,
             current_subject_states=current_subject_states,
             allow_self_reported=allowed,
+            required_checks=checks or None,
+            git_head=current_git_head(root) if checks else None,
+            worktree_clean=substantive_worktree_clean(root) if checks else None,
+            uncommitted_subjects=dirty or None,
+            uncommitted_mode=uncommitted_changes_mode(root),
         )
     else:
         result = evaluate_change_assurance(
@@ -228,4 +248,41 @@ def gate_policy(root: Path, action_id: str) -> GateResult:
     ]
     if decision.matched_rule_ids:
         messages.append("matched_rules: " + ", ".join(decision.matched_rule_ids))
+    for warning in decision.warnings:
+        messages.append(f"WARN {warning}")
     return GateResult(GateName.POLICY, ok, messages)
+
+
+def gate_suppressions(
+    root: Path,
+    *,
+    base: str | None = None,
+    staged: bool = False,
+) -> GateResult:
+    """STOP when added diff lines introduce suppression or skip markers."""
+    from retornatus.application.governance.diff_scan import format_hit, scan_suppressions
+
+    hits = scan_suppressions(root, base=base, staged=staged)
+    if not hits:
+        return GateResult(
+            GateName.SUPPRESSIONS,
+            True,
+            ["No suppression markers in added lines"],
+        )
+    messages = [f"{len(hits)} suppression marker(s) in added lines:"]
+    messages.extend(format_hit(hit) for hit in hits)
+    return GateResult(GateName.SUPPRESSIONS, False, messages)
+
+
+def gate_scope(
+    root: Path,
+    change_id: str,
+    *,
+    base: str | None = None,
+    staged: bool = False,
+) -> GateResult:
+    """STOP when the diff leaves Task.resources or touches denied/sensitive paths."""
+    from retornatus.application.governance.scope import evaluate_scope
+
+    report = evaluate_scope(root, change_id, base=base, staged=staged)
+    return GateResult(GateName.SCOPE, report.passed, report.messages)

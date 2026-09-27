@@ -81,6 +81,9 @@ class AdaptationService:
         statement: str,
         applicability: str,
         from_learning_id: str | None = None,
+        effect_type: str | None = None,
+        path_globs: list[str] | None = None,
+        command_patterns: list[str] | None = None,
     ) -> Rule:
         """
         Graduation produces a Rule Candidate — never auto-activates (PRD §40–§41).
@@ -94,6 +97,9 @@ class AdaptationService:
             id=self.next_rule_id(),
             statement=statement,
             applicability=applicability,
+            effect_type=effect_type,
+            path_globs=list(path_globs or []),
+            command_patterns=list(command_patterns or []),
             active=False,
             authority=Authority(
                 category=AuthorityCategory.HUMAN,

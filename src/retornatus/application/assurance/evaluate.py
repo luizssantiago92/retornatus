@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from enum import Enum
 
 from pydantic import Field
@@ -263,6 +264,86 @@ def execution_proof_kind(
     return "unverified"
 
 
+def _check_applies(evidence_type: str, types: frozenset[str]) -> bool:
+    return not types or evidence_type in types
+
+
+def required_check_issue(
+    evidence: Evidence,
+    checks: Sequence[object],
+    *,
+    git_head: str | None,
+    worktree_clean: bool | None,
+) -> tuple[str, str] | None:
+    """Why executed evidence fails an owner-declared required check.
+
+    Returns ``("unverified"|"stale", message)`` or None when the evidence is
+    not constrained (no checks, non-execution type, or already a failing run).
+
+    Self-reported execution evidence stays unverified even when
+    ``allow_self_reported`` is set: the owner named the commands that count.
+    """
+    if not checks or evidence.type not in EXECUTION_EVIDENCE_TYPES:
+        return None
+    from retornatus.application.assurance.settings import RequiredCheck
+
+    typed: list[RequiredCheck] = [c for c in checks if isinstance(c, RequiredCheck)]
+    if not typed:
+        return None
+    applicable = [c for c in typed if _check_applies(evidence.type, c.types)]
+    if evidence.provenance is not EvidenceProvenance.EXECUTED:
+        names = ", ".join(c.name for c in applicable) or ", ".join(c.name for c in typed)
+        return (
+            "unverified",
+            f"{evidence.id} is self-reported; required check ({names}) must be executed",
+        )
+    if evidence.timed_out or evidence.exit_code != 0:
+        return None
+    argv = list(evidence.command or [])
+    matched = any(list(check.run) == argv for check in applicable)
+    if not matched:
+        rendered = " ".join(argv) if argv else "(none)"
+        names = ", ".join(
+            f"{c.name}={' '.join(c.run)}" for c in applicable
+        ) or "(none apply to this type)"
+        return (
+            "unverified",
+            f"{evidence.id} argv [{rendered}] does not match a required check ({names})",
+        )
+    if git_head is None:
+        return None
+    recorded = (evidence.git_commit or "").strip()
+    if not recorded or recorded.casefold() != git_head.strip().casefold():
+        shown = recorded or "none"
+        return (
+            "stale",
+            f"{evidence.id} recorded commit {shown} != HEAD {git_head} (stale required check)",
+        )
+    if evidence.worktree_dirty is not False:
+        return (
+            "stale",
+            f"{evidence.id} ran against a dirty worktree; required checks need a clean tree",
+        )
+    if worktree_clean is False:
+        return (
+            "stale",
+            f"{evidence.id} worktree has uncommitted changes since the required check",
+        )
+    return None
+
+
+def uncommitted_subject_fails(evidence_type: str, mode: str) -> bool:
+    """Whether uncommitted edits to a subject path fail the claim.
+
+    ``default`` fails execution types and only warns for narrative evidence.
+    """
+    if mode == "warn":
+        return False
+    if mode == "fail":
+        return True
+    return evidence_type in EXECUTION_EVIDENCE_TYPES
+
+
 def describe_evidence(evidence: Evidence, *, allow_self_reported: bool) -> str:
     """One-line label so verify output shows provenance and trust."""
     provenance = evidence.provenance.value
@@ -299,6 +380,11 @@ def evaluate_assurance(
     evidence: list[Evidence] | list[tuple[str, str]],
     current_subject_states: dict[str, str] | None = None,
     allow_self_reported: bool = False,
+    required_checks: Sequence[object] | None = None,
+    git_head: str | None = None,
+    worktree_clean: bool | None = None,
+    uncommitted_subjects: set[str] | None = None,
+    uncommitted_mode: str = "default",
 ) -> AssuranceResult:
     """
     Evaluate whether Evidence structurally supports each Claim.
@@ -310,28 +396,68 @@ def evaluate_assurance(
     - Execution types (test/build/lint/security test) satisfy only when
       provenance is ``executed`` and the exit code is 0, unless
       ``allow_self_reported`` is set
+    - When ``required_checks`` is set, execution evidence must be an exact argv
+      match, exit 0, recorded commit == ``git_head``, and a clean worktree.
+      ``allow_self_reported`` does not bypass that.
+    - Uncommitted edits to a claim subject path are stale when the mode fails
+      (default: execution types fail, narrative types warn)
     - Missing Evidence → INCONCLUSIVE; wrong Evidence → NOT_SATISFIED when present but unfit
     - Self-reported execution evidence → claim result UNVERIFIED and overall
       not SATISFIED
     """
     items = _normalize_evidence(evidence)
     evidence_ids = [e.id for e in items]
+    checks = list(required_checks or [])
+    check_issues: dict[str, tuple[str, str]] = {}
+    if checks:
+        for item in items:
+            issue = required_check_issue(
+                item,
+                checks,
+                git_head=git_head,
+                worktree_clean=worktree_clean,
+            )
+            if issue is not None:
+                check_issues[item.id] = issue
     labels = [
         describe_evidence(e, allow_self_reported=allow_self_reported) for e in items
     ]
+    for item in items:
+        issue = check_issues.get(item.id)
+        if issue is not None:
+            labels.append(f"{item.id} required_check={issue[0]}")
     unverified_ids = [
         e.id
         for e in items
         if execution_proof_kind(e, allow_self_reported=allow_self_reported) == "unverified"
+        or check_issues.get(e.id, ("", ""))[0] == "unverified"
     ]
     warnings: list[str] = []
-    if allow_self_reported:
+    seen_warnings: set[str] = set()
+
+    def _warn(message: str) -> None:
+        if message not in seen_warnings:
+            seen_warnings.add(message)
+            warnings.append(message)
+
+    for issue in check_issues.values():
+        _warn(issue[1])
+    dirty_subjects = uncommitted_subjects or set()
+    for item in items:
+        if item.subject not in dirty_subjects:
+            continue
+        fails = uncommitted_subject_fails(item.type, uncommitted_mode)
+        tail = " (stale)" if fails else " (warning)"
+        _warn(
+            f"{item.id} subject {item.subject!r} has uncommitted changes{tail}"
+        )
+    if allow_self_reported and not checks:
         for item in items:
             if (
                 item.type in EXECUTION_EVIDENCE_TYPES
                 and item.provenance is not EvidenceProvenance.EXECUTED
             ):
-                warnings.append(
+                _warn(
                     f"{item.id} self-reported {item.type} accepted via allow_self_reported"
                 )
 
@@ -347,6 +473,7 @@ def evaluate_assurance(
 
     claim_results: dict[str, str] = {}
     unmet: list[str] = []
+    stale_claim_ids: list[str] = []
     inconclusive: list[str] = []
     unverified_claims: list[str] = []
     supporting_ids: list[str] = []
@@ -365,11 +492,24 @@ def evaluate_assurance(
         ]
         fresh_ids = {id(e) for e in fresh}
         stale = [e for e in structural if id(e) not in fresh_ids]
+        for item in list(fresh):
+            if item.subject in dirty_subjects and uncommitted_subject_fails(
+                item.type, uncommitted_mode
+            ):
+                fresh.remove(item)
+                stale.append(item)
 
         satisfying: list[Evidence] = []
         unverified: list[Evidence] = []
         failing: list[Evidence] = []
         for item in fresh:
+            issue = check_issues.get(item.id)
+            if issue is not None:
+                if issue[0] == "stale":
+                    stale.append(item)
+                else:
+                    unverified.append(item)
+                continue
             kind = execution_proof_kind(item, allow_self_reported=allow_self_reported)
             if kind == "satisfying":
                 satisfying.append(item)
@@ -386,6 +526,8 @@ def evaluate_assurance(
         if stale or failing:
             claim_results[claim.id] = "NOT_SATISFIED"
             unmet.append(claim.id)
+            if stale:
+                stale_claim_ids.append(claim.id)
             continue
 
         if unverified:
@@ -419,16 +561,36 @@ def evaluate_assurance(
             claim_results[claim.id] = "INCONCLUSIVE"
             inconclusive.append(claim.id)
 
+    stale_notes = [
+        message
+        for kind, message in check_issues.values()
+        if kind == "stale"
+    ]
+    uncommitted_fail_notes = [
+        message for message in warnings if message.endswith("(stale)")
+    ]
     if unmet:
         verdict = AssuranceVerdict.NOT_SATISFIED
-        rationale = f"Unmet claims: {', '.join(unmet)}"
+        if stale_claim_ids and (stale_notes or uncommitted_fail_notes):
+            rationale = "Stale evidence: " + "; ".join(
+                [*uncommitted_fail_notes, *stale_notes]
+            )
+        else:
+            rationale = f"Unmet claims: {', '.join(unmet)}"
     elif unverified_claims:
         verdict = AssuranceVerdict.NOT_SATISFIED
-        rationale = (
-            "Unverified claims (self-reported execution evidence does not satisfy): "
-            + ", ".join(unverified_claims)
-            + ". Re-record with `evidence run` or pass --allow-self-reported."
-        )
+        if checks and any(check_issues.get(cid) for cid in unverified_ids):
+            rationale = (
+                "Unverified claims (required check not met): "
+                + ", ".join(unverified_claims)
+                + ". Run `verify --run-checks` or `checks run`."
+            )
+        else:
+            rationale = (
+                "Unverified claims (self-reported execution evidence does not satisfy): "
+                + ", ".join(unverified_claims)
+                + ". Re-record with `evidence run` or pass --allow-self-reported."
+            )
     elif inconclusive:
         verdict = AssuranceVerdict.INCONCLUSIVE
         rationale = f"Insufficient evidence for claims: {', '.join(inconclusive)}"

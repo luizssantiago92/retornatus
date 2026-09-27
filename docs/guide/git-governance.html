@@ -60,6 +60,18 @@
 <li>Prefer Conventional Commits style when natural (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>, <code>test:</code>)</li>
 <li>Do not bypass hooks (<code>--no-verify</code>) unless the owner explicitly requests it</li>
 </ul>
+<h2>Hooks</h2>
+<pre class="code"><code class="language-bash">retornatus hooks install
+retornatus hooks status
+retornatus hooks remove</code></pre>
+<p>The hooks directory is <code>git rev-parse --git-path hooks</code>, so <code>core.hooksPath</code> and linked worktrees are honored. Scripts are POSIX <code>sh</code> and call <code>python -m retornatus</code>, which Git for Windows can run.</p>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Hook</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>pre-commit</code></td><td><code>gate suppressions --staged</code>, then <code>hooks scope</code> (scope gate on the index) when a Contract is active</td></tr>
+<tr><td><code>commit-msg</code></td><td>Reads the message file from <code>$1</code>. It does not open <code>.git/COMMIT_EDITMSG</code> itself</td></tr>
+</tbody></table></div>
+<p>Existing user hooks are kept outside <code># retornatus:begin</code> / <code># retornatus:end</code> and run after the Retornatus block. <code>hooks remove</code> deletes only that block.</p>
 <h2>Handoff checklist</h2>
 <p>Before ending a session or asking for review:</p>
 <ol>

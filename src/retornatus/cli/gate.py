@@ -6,6 +6,7 @@ from pathlib import Path
 
 import typer
 
+from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import gate_app
 
 @gate_app.command("policy")
@@ -87,6 +88,53 @@ def gate_budget_cmd(
     from retornatus.application.governance.gates import gate_budget
 
     result = gate_budget(path or Path.cwd(), action_id)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@gate_app.command("suppressions")
+def gate_suppressions_cmd(
+    path: Path | None = typer.Option(None, "--path", "-p"),
+    staged: bool = typer.Option(
+        False,
+        "--staged",
+        help="Scan the index (staged diff) instead of HEAD plus unstaged edits.",
+    ),
+    base: str | None = typer.Option(
+        None,
+        "--base",
+        help="Scan added lines in git diff base...HEAD.",
+    ),
+) -> None:
+    """Gate: added diff lines must not introduce suppression markers (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_suppressions
+
+    result = gate_suppressions(resolve_root(path), base=base, staged=staged)
+    for msg in result.messages:
+        typer.echo(msg)
+    raise typer.Exit(result.exit_code)
+
+
+@gate_app.command("scope")
+def gate_scope_cmd(
+    change_id: str = typer.Argument(...),
+    path: Path | None = typer.Option(None, "--path", "-p"),
+    base: str | None = typer.Option(
+        None,
+        "--base",
+        help="Compare git diff --name-only base...HEAD with Task.resources.",
+    ),
+    staged: bool = typer.Option(
+        False,
+        "--staged",
+        help="Compare the index only. Without --base or --staged, staged and unstaged changes are used.",
+    ),
+) -> None:
+    """Gate: diff stays inside Task.resources and .retornatus (exit 1 = STOP)."""
+    from retornatus.application.governance.gates import gate_scope
+
+    result = gate_scope(resolve_root(path), change_id, base=base, staged=staged)
     for msg in result.messages:
         typer.echo(msg)
     raise typer.Exit(result.exit_code)

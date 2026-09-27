@@ -41,6 +41,12 @@ intake_app = typer.Typer(
     help="Analyze freeform prompts; propose Skills only with human confirmation."
 )
 action_app = typer.Typer(help="Action utilities (budget / attempt ceiling).")
+checks_app = typer.Typer(
+    help="Run owner-declared required checks and record Evidence."
+)
+hooks_app = typer.Typer(
+    help="Git hooks: suppression scan, scope gate, commit message path."
+)
 receipt_app = typer.Typer(
     help=(
         "Ed25519 verify receipts. The private key stays outside the repository; "
@@ -65,4 +71,6 @@ app.add_typer(lesson_app, name="lesson")
 app.add_typer(ops_app, name="ops")
 app.add_typer(intake_app, name="intake")
 app.add_typer(action_app, name="action")
+app.add_typer(checks_app, name="checks")
+app.add_typer(hooks_app, name="hooks")
 app.add_typer(receipt_app, name="receipt")
