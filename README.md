@@ -202,6 +202,8 @@ Changes, Contracts, Evidence, and Learnings live under `.retornatus/` in git. `w
 
 A Contract states WHAT and DONE. Evidence binds to those claims. `verify` returns SATISFIED / NOT_SATISFIED / INCONCLUSIVE. Gates return non-zero = **STOP**.
 
+Test, security-test, build, and lint results only count when Retornatus ran the command (`evidence run … -- <command>`). The record stores argv, exit code, timing, a SHA-256 of combined stdout/stderr, and the git HEAD (when the directory is a repository). `evidence add` is self-reported: for those types `verify` marks the evidence **UNVERIFIED** and does not exit 0. Narrative notes (`review_result`, `repository_observation`) can still be recorded with `evidence add` and are labeled self-reported. While migrating, `verify --allow-self-reported` or `[assurance] allow_self_reported = true` in `.retornatus/config.toml` restores the old acceptance. A recorded commit that no longer matches HEAD is a warning, not a failure.
+
 ### Ceremony matches risk
 
 QUICK for a typo; STANDARD for a normal feature; COMPLEX when security, payments, or high novelty need more depth.
@@ -233,7 +235,7 @@ Two Skill worlds:
 | Dashboard | `change overview` |
 | Next work | `loop next` · `task start` / `complete` / `fail` / `reopen` |
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
-| Proof | `evidence add --claim …`, `gate *`, `verify` / `verify --receipt`, `receipt verify` |
+| Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `gate *`, `verify` / `verify --allow-self-reported` / `verify --receipt`, `receipt verify` |
 | Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
 | Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |

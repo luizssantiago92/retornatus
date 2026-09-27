@@ -67,15 +67,15 @@ retornatus skill activate S-0001
 Claim ids follow Contract DONE order (`claim-done-1`, …). Adjust if your inspect output differs.
 
 ```bash
-retornatus evidence add -c C-0001 -t test_result -s "/health" \
-  --source pytest --state passing --claim C-0001/claim-done-1
+retornatus evidence run -c C-0001 -t test_result -s "/health" \
+  --claim C-0001/claim-done-1 -- python -m pytest -q
 retornatus evidence add -c C-0001 -t repository_observation -s "docs/health.md" \
   --source filesystem --claim C-0001/claim-done-2
 retornatus gate evidence C-0001
 retornatus verify C-0001
 ```
 
-Expect `SATISFIED`. If `INCONCLUSIVE`, check `--claim` binding.
+Expect `SATISFIED`. If `INCONCLUSIVE`, check `--claim` binding. If `UNVERIFIED`, the test Evidence was typed in with `evidence add` instead of executed by `evidence run`.
 
 ## Preserve
 

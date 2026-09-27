@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from retornatus.application.adaptation.service import AdaptationService
@@ -91,10 +92,11 @@ def test_health_endpoint_construction_dogfood(tmp_path: Path) -> None:
     claims = build_claims_from_contract(created.contract)
     assert len(claims) == 2
 
-    EvidenceService(tmp_path).add(
+    EvidenceService(tmp_path).run(
         change_id=cid,
         evidence_type="test_result",
         subject="/health",
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
         source="host_boundary",
         producer="simulate_health_endpoint_implementation",
         subject_state=host.subject_state,

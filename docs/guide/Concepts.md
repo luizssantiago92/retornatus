@@ -36,7 +36,7 @@ On-demand specialization artifact (`SKILL.md` with RESEARCH + PROCEDURE). Create
 
 ## Evidence
 
-Attributable observation (type, subject, source, producer, optional `subject_state`). Should SUPPORT a Claim for Assurance.
+Attributable observation (type, subject, source, producer, optional `subject_state`). Provenance is `self_reported` (`evidence add`) or `executed` (`evidence run`, which records argv, exit code, output hash, and git HEAD when available). Execution types must be `executed` with exit code 0 before Assurance treats them as proof. Should SUPPORT a Claim.
 
 ## Claim
 

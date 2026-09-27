@@ -52,6 +52,28 @@ def current_git_head(root: Path) -> str | None:
     return sha or None
 
 
+def worktree_is_dirty(root: Path) -> bool | None:
+    """Whether ``git status --porcelain`` reports changes.
+
+    Returns None when git is unavailable or ``root`` is not a work tree.
+    Untracked files count as dirty. A non-git directory is not an error.
+    """
+    if current_git_head(root) is None:
+        return None
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain"],
+            check=False,
+            capture_output=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if completed.returncode != 0:
+        return None
+    return bool(completed.stdout.strip())
+
+
 def _normalize_repo_path(root: Path, subject: str) -> Path | None:
     """Return absolute path if subject looks like a file/dir under root."""
     cleaned = subject.strip().lstrip("./")

@@ -99,8 +99,8 @@ If Situation is incomplete, use `--draft-contract` on create, then `retornatus c
 retornatus loop next C-0001
 retornatus run C-0001/A-001
 # implement in the host…
-retornatus evidence add -c C-0001 -t test_result -s "/health" \
-  --source pytest --state passing --claim C-0001/claim-done-1
+retornatus evidence run -c C-0001 -t test_result -s "/health" \
+  --claim C-0001/claim-done-1 -- python -m pytest -q
 retornatus gate evidence C-0001
 retornatus verify C-0001
 ```
@@ -125,5 +125,6 @@ retornatus status
 | Index empty after crash | `retornatus wake` (rebuilds from files) |
 | Contract gate fails | Active Contract with WHAT + DONE |
 | Verify inconclusive | Evidence must SUPPORT the Claim id |
+| Verify UNVERIFIED | Test/build/lint Evidence came from `evidence add`. Use `evidence run`, or `--allow-self-reported` while migrating |
 
 More: [FAQ](FAQ.md) · [Gates](Gates.md) · [Tutorial: first Change](tutorials/01-first-change.md)

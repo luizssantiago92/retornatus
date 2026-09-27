@@ -31,7 +31,7 @@ Reto: Situation → Contract → Action(+Tasks) → Evidence → Assurance → L
 | “Write the spec” | `change elicit` then `change create` / `change activate` |
 | “Break into tasks” | `change create --task …` or Tasks on the Action |
 | “What’s next?” | `loop next <C-id>` / `change overview <C-id>` |
-| “Are we done?” | `evidence add --claim …` then `verify <C-id>` |
+| “Are we done?” | `evidence run --claim … -- <command>` for tests/build/lint, then `verify <C-id>` |
 | “Load the skill pack” | `integrate` (hub) + optional `intake analyze` / `skill need --prompt` |
 | “Doctor / health” | `doctor` (Process vs Brakes) |
 

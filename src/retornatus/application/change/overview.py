@@ -10,6 +10,7 @@ from retornatus.application.assurance.evaluate import (
     evaluate_assurance,
 )
 from retornatus.application.assurance.evidence import EvidenceService
+from retornatus.application.assurance.settings import allow_self_reported_enabled
 from retornatus.application.assurance.subject_state import derive_current_subject_states
 from retornatus.application.change.loop import project_next_work
 from retornatus.application.change.readiness import synchronize_action
@@ -122,6 +123,7 @@ def build_change_overview(root: Path, change_id: str) -> ChangeOverview:
             claims=built,
             evidence=evidence_list,
             current_subject_states=current_states,
+            allow_self_reported=allow_self_reported_enabled(root),
         )
         assurance_verdict = result.verdict.value
         for claim in built:
@@ -153,8 +155,8 @@ def build_change_overview(root: Path, change_id: str) -> ChangeOverview:
             if r.type is RelationType.SUPPORTS
         ]
         evidence_lines.append(
-            f"{ev.id} type={ev.type} subject={ev.subject} "
-            f"supports={','.join(supports) or '-'}"
+            f"{ev.id} type={ev.type} provenance={ev.provenance.value} "
+            f"subject={ev.subject} supports={','.join(supports) or '-'}"
         )
 
     task_lines: list[str] = []

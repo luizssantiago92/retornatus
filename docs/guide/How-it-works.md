@@ -78,13 +78,19 @@ Retornatus assembles Rules, Learnings, Skills, Boundaries, and Policy — it doe
 ## 7. Evidence and Assurance
 
 ```bash
-retornatus evidence add -c C-0001 -t test_result -s "…" \
-  --source pytest --claim C-0001/claim-done-1
+retornatus evidence run -c C-0001 -t test_result -s "/health" \
+  --claim C-0001/claim-done-1 -- python -m pytest -q
+retornatus evidence add -c C-0001 -t repository_observation -s "docs/health.md" \
+  --source filesystem --claim C-0001/claim-done-2
 retornatus gate evidence C-0001
 retornatus verify C-0001
 ```
 
-Verdicts: `SATISFIED` · `NOT_SATISFIED` · `INCONCLUSIVE`. Evidence must bind to Claims; staleness uses path-aware `commit:<sha>` when available.
+`evidence run` executes the command itself (no shell, cwd = project root, `--timeout` optional) and stores argv, exit code, start/end, duration, SHA-256 of combined stdout/stderr, a truncated tail, the full output file next to the Evidence JSON, and git HEAD plus dirty state when the directory is a repository. Provenance is `executed`. A non-zero exit or a timeout is failing Evidence.
+
+`evidence add` stores provenance `self_reported`. For `test_result`, `security_test`, `build_result`, and `lint_result` that does not satisfy `verify` (the claim is `UNVERIFIED`, exit code is not 0). Pass `--allow-self-reported` or set `[assurance] allow_self_reported = true` while migrating. Review notes and repository observations stay self-reportable and are labeled as such.
+
+Verdicts: `SATISFIED` · `NOT_SATISFIED` · `INCONCLUSIVE`. Evidence must bind to Claims. Subject match is exact after normalization, plus a one-way path suffix (`docs/health.md` can satisfy claim `/health.md`; `/` does not satisfy `/health`). `subject_state` of the form `commit:<sha>` still fails freshness when the subject moves. A mismatch between the recorded execution commit and current HEAD is only a warning.
 
 Independent review when needed: `assurance plan` / `assurance review` / `run --assurance`.
 

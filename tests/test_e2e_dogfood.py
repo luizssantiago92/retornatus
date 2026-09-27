@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from retornatus.application.adaptation.service import AdaptationService
@@ -15,7 +16,12 @@ from retornatus.application.governance.policy import PolicyVerdict, evaluate_pol
 from retornatus.application.question.loop import QuestionLoop
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.wake import wake_up
-from retornatus.domain.enums import AuthorityCategory, DecisionKind, DemandKind
+from retornatus.domain.enums import (
+    AuthorityCategory,
+    DecisionKind,
+    DemandKind,
+    EvidenceProvenance,
+)
 from retornatus.domain.ids import format_owned_id
 from retornatus.domain.models import Authority, Evidence
 from retornatus.domain.relations import Relation, RelationType
@@ -83,6 +89,9 @@ def test_full_dogfood_flow(tmp_path: Path) -> None:
         source="pytest",
         producer="test_full_dogfood_flow",
         subject_state="passing",
+        provenance=EvidenceProvenance.EXECUTED,
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
+        exit_code=0,
         relations=[Relation(type=RelationType.SUPPORTS, target_id=claim_id)],
     )
     repo.save_evidence(evidence)

@@ -16,6 +16,8 @@ No. Ceremony scales with complexity. For freeform chat prompts, prefer `intake a
 
 Assurance needs Evidence **bound to Claims** (`--claim`). Unbound `test_result` artifacts do not automatically satisfy DONE Claims.
 
+If the claim result is `UNVERIFIED`, the Evidence was self-reported (`evidence add`). Execution types (`test_result`, `security_test`, `build_result`, `lint_result`) satisfy only when `evidence run` recorded exit code 0. `verify --allow-self-reported` (or `[assurance] allow_self_reported = true` in config) is the migration opt-out. Review notes and file observations can still use `evidence add`; output labels them `self-reported`.
+
 ## Can I delete the SQLite database?
 
 Yes. Run `retornatus wake` to rebuild. Do **not** delete canonical JSON/Markdown under `.retornatus/changes/` unless you intend to discard history.

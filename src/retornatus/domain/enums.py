@@ -99,6 +99,17 @@ class SkillSource(str, Enum):
     IMPORTED = "IMPORTED"
 
 
+class EvidenceProvenance(str, Enum):
+    """How an Evidence record was produced.
+
+    ``self_reported`` is whatever an agent or human typed into ``evidence add``.
+    ``executed`` means Retornatus itself ran the command (``evidence run``).
+    """
+
+    SELF_REPORTED = "self_reported"
+    EXECUTED = "executed"
+
+
 class DecisionKind(str, Enum):
     """Kinds of durable human decisions (local harness boundary)."""
 

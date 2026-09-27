@@ -48,11 +48,18 @@ retornatus receipt verify path/to/receipt.json</code></pre>
 <div class="doc-table-wrap"><table>
 <thead><tr><th>Verdict</th><th>Meaning</th></tr></thead>
 <tbody>
-<tr><td><code>SATISFIED</code></td><td>Each required Claim has bound, fresh, type-appropriate Evidence</td></tr>
-<tr><td><code>NOT_SATISFIED</code></td><td>Evidence exists but wrong claim/subject/type or stale</td></tr>
+<tr><td><code>SATISFIED</code></td><td>Each required Claim has bound, fresh, type-appropriate Evidence. Execution types must be <code>executed</code> with exit code 0</td></tr>
+<tr><td><code>NOT_SATISFIED</code></td><td>Evidence exists but is wrong, failing, stale, or only self-reported for an execution type</td></tr>
 <tr><td><code>INCONCLUSIVE</code></td><td>Required Evidence missing or unbound</td></tr>
 </tbody></table></div>
-<p>&gt; Agent conclusion ≠ Evidence. A green test suite is evidence of tests — not automatic proof of every Claim unless bound correctly.</p>
+<p>Claim results may also say <code>UNVERIFIED</code>: a <code>test_result</code>, <code>security_test</code>, <code>build_result</code>, or <code>lint_result</code> was self-reported (<code>evidence add</code>) instead of produced by <code>evidence run</code>. That claim does not yield overall <code>SATISFIED</code> (exit 0).</p>
+<p><code>verify</code> prints one line per Evidence (<code>provenance=… status=…</code>) before the JSON. Narrative types stay acceptable and are labeled <code>status=self-reported</code>.</p>
+<p>Migration opt-out: <code>verify --allow-self-reported</code>, or in <code>.retornatus/config.toml</code>:</p>
+<pre class="code"><code class="language-toml">[assurance]
+allow_self_reported = true</code></pre>
+<p>If executed Evidence recorded a git commit and HEAD has moved, <code>verify</code> prints <code>WARN … stale snapshot; not a failure</code>. That warning does not change the verdict. Freshness that uses <code>subject_state</code> of the form <code>commit:&lt;sha&gt;</code> (<code>--git-state</code>) can still mark Evidence stale and fail the claim.</p>
+<p>Subject matching is exact after strip, case-fold, and trailing-slash normalization (<code>/Health/</code> matches <code>/health</code>). A shorter evidence subject is not treated as contained in the claim (<code>/</code> does not match <code>/health</code>). A longer evidence path may end with the claim&#x27;s path token (<code>docs/health.md</code> matches claim <code>/health.md</code>); the reverse does not.</p>
+<p>&gt; Agent conclusion ≠ Evidence. A green test suite is evidence of tests — not automatic proof of every Claim unless bound correctly and actually executed by the harness.</p>
 <h2>Process vs brakes</h2>
 <div class="doc-table-wrap"><table>
 <thead><tr><th></th><th>Process (hub skill)</th><th>Brakes (gates)</th></tr></thead>

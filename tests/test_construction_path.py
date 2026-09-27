@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from retornatus.application.assurance.evaluate import build_claims_from_contract
@@ -43,10 +44,11 @@ def test_gates_and_construction_path(tmp_path: Path) -> None:
     assert len(claims) == 1
     claim = claims[0]
 
-    EvidenceService(tmp_path).add(
+    EvidenceService(tmp_path).run(
         change_id=cid,
         evidence_type="test_result",
         subject="/health",
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
         source="pytest",
         producer="test",
         subject_state="passing",

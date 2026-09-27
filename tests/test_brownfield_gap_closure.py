@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from retornatus.application.assurance.evaluate import (
@@ -126,10 +127,11 @@ def test_brownfield_full_gap_closure(tmp_path: Path) -> None:
     # claim-3 should need review_result
     assert "review_result" in claims[2].required_evidence_types
 
-    EvidenceService(tmp_path).add(
+    EvidenceService(tmp_path).run(
         change_id=cid,
         evidence_type="test_result",
         subject="/health",
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
         source="host_boundary",
         producer="dogfood",
         supports_claim_id=claims[0].id,
@@ -158,7 +160,7 @@ def test_brownfield_full_gap_closure(tmp_path: Path) -> None:
         tmp_path,
         change_id=cid,
         claim_id=claims[2].id,
-        subject="health surface",
+        subject=claims[2].subject or "health surface",
         summary="Fresh review: endpoint is minimal and safe",
         verdict="approved",
     )
@@ -183,10 +185,11 @@ def test_brownfield_full_gap_closure(tmp_path: Path) -> None:
     assert stale.verdict is AssuranceVerdict.NOT_SATISFIED
 
     # Re-capture Evidence at new HEAD for behavioral claims
-    EvidenceService(tmp_path).add(
+    EvidenceService(tmp_path).run(
         change_id=cid,
         evidence_type="test_result",
         subject="/health",
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
         source="host_boundary",
         producer="dogfood-refresh",
         supports_claim_id=claims[0].id,
@@ -205,7 +208,7 @@ def test_brownfield_full_gap_closure(tmp_path: Path) -> None:
         tmp_path,
         change_id=cid,
         claim_id=claims[2].id,
-        subject="health surface",
+        subject=claims[2].subject or "health surface",
         summary="Re-review after version bump",
         verdict="approved",
     )
