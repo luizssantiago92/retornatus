@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
@@ -174,10 +175,11 @@ def test_security_review_dogfood(tmp_path: Path) -> None:
     )
     TaskService(tmp_path).complete(created.action.tasks[0].id)
 
-    EvidenceService(tmp_path).add(
+    EvidenceService(tmp_path).run(
         change_id=cid,
         evidence_type="security_test",
         subject="/admin",
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
         source="pytest",
         producer="dogfood",
         subject_state="denied",

@@ -41,7 +41,7 @@
 <h2>Skill</h2>
 <p>On-demand specialization artifact (<code>SKILL.md</code> with RESEARCH + PROCEDURE). Created for a need, gated before activation, exportable to native host skills.</p>
 <h2>Evidence</h2>
-<p>Attributable observation (type, subject, source, producer, optional <code>subject_state</code>). Should SUPPORT a Claim for Assurance.</p>
+<p>Attributable observation (type, subject, source, producer, optional <code>subject_state</code>). Provenance is <code>self_reported</code> (<code>evidence add</code>) or <code>executed</code> (<code>evidence run</code>, which records argv, exit code, output hash, and git HEAD when available). Execution types must be <code>executed</code> with exit code 0 before Assurance treats them as proof. Should SUPPORT a Claim.</p>
 <h2>Claim</h2>
 <p>A statement that must be established (often derived from Contract DONE). Evidence binds via SUPPORTS.</p>
 <h2>Assurance</h2>

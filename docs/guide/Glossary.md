@@ -12,7 +12,8 @@
 | **Contract** | Authoritative WHAT + constraints + DONE |
 | **Demand** | Intent that opens a Change |
 | **Decision** | Human boundary artifact |
-| **Evidence** | Attributable observation, ideally Claim-bound |
+| **Evidence** | Attributable observation, ideally Claim-bound. Provenance `executed` or `self_reported` |
+| **UNVERIFIED** | Claim status when execution-type Evidence was not produced by `evidence run` |
 | **Finding** | Relevant observation |
 | **Gate** | Mechanical check; non-zero = STOP |
 | **Hub skill** | Progressive disclosure skill teaching the loop |

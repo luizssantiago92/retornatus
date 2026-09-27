@@ -146,6 +146,9 @@ def gate_assurance(
     if not contract.done_criteria:
         return GateResult(GateName.ASSURANCE, False, ["Contract has no DONE criteria"])
 
+    from retornatus.application.assurance.settings import allow_self_reported_enabled
+
+    allowed = allow_self_reported_enabled(root)
     if current_subject_states is not None:
         claims = build_claims_from_contract(contract)
         evidence = EvidenceService(root).list_for_change(change_id)
@@ -153,10 +156,14 @@ def gate_assurance(
             claims=claims,
             evidence=evidence,
             current_subject_states=current_subject_states,
+            allow_self_reported=allowed,
         )
     else:
         result = evaluate_change_assurance(
-            root, change_id, use_git_state=use_git_state
+            root,
+            change_id,
+            use_git_state=use_git_state,
+            allow_self_reported=allowed,
         )
     ok = result.verdict is AssuranceVerdict.SATISFIED
     detail = [
@@ -164,6 +171,9 @@ def gate_assurance(
     ]
     for claim_id, status in result.claim_results.items():
         detail.append(f"  {claim_id}: {status}")
+    detail.extend(result.evidence_labels)
+    for warning in result.warnings:
+        detail.append(f"WARN {warning}")
     return GateResult(GateName.ASSURANCE, ok, detail)
 
 

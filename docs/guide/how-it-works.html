@@ -65,11 +65,15 @@ retornatus skill export S-0001</code></pre>
 retornatus run C-0001/A-001 --strict-policy</code></pre>
 <p>Retornatus assembles Rules, Learnings, Skills, Boundaries, and Policy — it does <strong>not</strong> run the model. The host agent implements.</p>
 <h2>7. Evidence and Assurance</h2>
-<pre class="code"><code class="language-bash">retornatus evidence add -c C-0001 -t test_result -s &quot;…&quot; \
-  --source pytest --claim C-0001/claim-done-1
+<pre class="code"><code class="language-bash">retornatus evidence run -c C-0001 -t test_result -s &quot;/health&quot; \
+  --claim C-0001/claim-done-1 -- python -m pytest -q
+retornatus evidence add -c C-0001 -t repository_observation -s &quot;docs/health.md&quot; \
+  --source filesystem --claim C-0001/claim-done-2
 retornatus gate evidence C-0001
 retornatus verify C-0001</code></pre>
-<p>Verdicts: <code>SATISFIED</code> · <code>NOT_SATISFIED</code> · <code>INCONCLUSIVE</code>. Evidence must bind to Claims; staleness uses path-aware <code>commit:&lt;sha&gt;</code> when available.</p>
+<p><code>evidence run</code> executes the command itself (no shell, cwd = project root, <code>--timeout</code> optional) and stores argv, exit code, start/end, duration, SHA-256 of combined stdout/stderr, a truncated tail, the full output file next to the Evidence JSON, and git HEAD plus dirty state when the directory is a repository. Provenance is <code>executed</code>. A non-zero exit or a timeout is failing Evidence.</p>
+<p><code>evidence add</code> stores provenance <code>self_reported</code>. For <code>test_result</code>, <code>security_test</code>, <code>build_result</code>, and <code>lint_result</code> that does not satisfy <code>verify</code> (the claim is <code>UNVERIFIED</code>, exit code is not 0). Pass <code>--allow-self-reported</code> or set <code>[assurance] allow_self_reported = true</code> while migrating. Review notes and repository observations stay self-reportable and are labeled as such.</p>
+<p>Verdicts: <code>SATISFIED</code> · <code>NOT_SATISFIED</code> · <code>INCONCLUSIVE</code>. Evidence must bind to Claims. Subject match is exact after normalization, plus a one-way path suffix (<code>docs/health.md</code> can satisfy claim <code>/health.md</code>; <code>/</code> does not satisfy <code>/health</code>). <code>subject_state</code> of the form <code>commit:&lt;sha&gt;</code> still fails freshness when the subject moves. A mismatch between the recorded execution commit and current HEAD is only a warning.</p>
 <p>Independent review when needed: <code>assurance plan</code> / <code>assurance review</code> / <code>run --assurance</code>.</p>
 <h2>8. Problems become structure</h2>
 <pre class="code"><code class="language-bash">retornatus finding add --change C-0001 --observation &quot;…&quot;

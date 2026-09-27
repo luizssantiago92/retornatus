@@ -16,14 +16,17 @@ from retornatus.application.assurance.evaluate import (
     infer_required_evidence_types,
 )
 from retornatus.application.assurance.evidence import EvidenceService
+from retornatus.application.assurance.settings import allow_self_reported_enabled
 from retornatus.application.assurance.subject_state import (
     capture_subject_state,
+    current_git_head,
     derive_current_subject_states,
 )
 from retornatus.application.execution.context import (
     ExecutionContext,
     assemble_assurance_context,
 )
+from retornatus.domain.models import Evidence
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 
@@ -135,13 +138,41 @@ def record_independent_review_evidence(
     return ev.id
 
 
+def commit_mismatch_warnings(root: Path, evidence: list[Evidence]) -> list[str]:
+    """Warn when executed Evidence recorded a HEAD that is no longer current.
+
+    This does not fail Assurance. Subject-state staleness (``commit:<sha>``)
+    remains a separate, failing freshness check.
+    """
+    head = current_git_head(root)
+    if not head:
+        return []
+    warnings: list[str] = []
+    for item in evidence:
+        recorded = item.git_commit
+        if not recorded:
+            continue
+        if recorded.casefold() == head.casefold():
+            continue
+        warnings.append(
+            f"{item.id} recorded git_commit {recorded} does not match HEAD {head} "
+            "(stale snapshot; not a failure)"
+        )
+    return warnings
+
+
 def evaluate_change_assurance(
     root: Path,
     change_id: str,
     *,
     use_git_state: bool = True,
+    allow_self_reported: bool | None = None,
 ) -> AssuranceResult:
-    """Evaluate Contract Claims with derived subject states when possible."""
+    """Evaluate Contract Claims with derived subject states when possible.
+
+    ``allow_self_reported=None`` reads ``[assurance] allow_self_reported`` from
+    project config (default false).
+    """
     repo = FileRepository(root)
     contract, _ = repo.load_contract(change_id)
     claims = build_claims_from_contract(contract)
@@ -149,8 +180,15 @@ def evaluate_change_assurance(
     current_states = (
         derive_current_subject_states(root, evidence) if use_git_state else {}
     )
-    return evaluate_assurance(
+    if allow_self_reported is None:
+        allow_self_reported = allow_self_reported_enabled(root)
+    result = evaluate_assurance(
         claims=claims,
         evidence=evidence,
         current_subject_states=current_states or None,
+        allow_self_reported=allow_self_reported,
     )
+    extra = commit_mismatch_warnings(root, evidence)
+    if extra:
+        result = result.model_copy(update={"warnings": [*result.warnings, *extra]})
+    return result

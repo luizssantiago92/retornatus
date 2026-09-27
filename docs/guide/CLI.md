@@ -60,10 +60,12 @@ retornatus skill --help
 
 | Command | Purpose |
 | --- | --- |
-| `evidence add --claim` | Claim-bound Evidence (`--git-state` optional) |
+| `evidence add --claim` | Self-reported Evidence (`provenance=self_reported`). Fine for narrative types |
+| `evidence run [options] -- <command…>` | Run a command (no shell, cwd = project root) and record `provenance=executed` |
 | `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates |
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN |
 | `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional HMAC receipt) |
+| `verify --allow-self-reported` | Migration opt-out: accept self-reported test/build/lint evidence |
 | `receipt verify <path>` | Check a portable receipt against the local key |
 | `action budget <A-id> --max N` | Set Action attempt ceiling (`--clear` removes it) |
 | `assurance plan` / `assurance review` | Independent review path |

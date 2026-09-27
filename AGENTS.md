@@ -19,7 +19,7 @@ Repo-native **governance harness** for AI-assisted software work. You write the 
 - Next work: `retornatus loop next <C-id>` · `task start|complete|fail|reopen`
 - Context: `retornatus run <A-id>` (optional `--strict-policy`)
 - Skills: `intake analyze` (human `CREATE=yes`) or `skill need --prompt` / `skill create`
-- Proof: `evidence add … --claim <id>` → `retornatus verify <C-id>`  
+- Proof: `evidence run … --claim <id> -- <command>` for test/build/lint results (`evidence add` is self-reported and does not satisfy those types) → `retornatus verify <C-id>`  
   - Optional portable receipt: `verify <C-id> --receipt`
 - Attempt budget (optional): `action budget <A-id> --max N` · `gate budget <A-id>`
 

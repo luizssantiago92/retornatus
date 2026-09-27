@@ -84,8 +84,8 @@ retornatus gate contract C-0001</code></pre>
 <pre class="code"><code class="language-bash">retornatus loop next C-0001
 retornatus run C-0001/A-001
 # implement in the host…
-retornatus evidence add -c C-0001 -t test_result -s &quot;/health&quot; \
-  --source pytest --state passing --claim C-0001/claim-done-1
+retornatus evidence run -c C-0001 -t test_result -s &quot;/health&quot; \
+  --claim C-0001/claim-done-1 -- python -m pytest -q
 retornatus gate evidence C-0001
 retornatus verify C-0001</code></pre>
 <p>Non-zero gate exit = <strong>STOP</strong>. Do not treat a chat summary as success.</p>
@@ -103,6 +103,7 @@ retornatus status</code></pre>
 <tr><td>Index empty after crash</td><td><code>retornatus wake</code> (rebuilds from files)</td></tr>
 <tr><td>Contract gate fails</td><td>Active Contract with WHAT + DONE</td></tr>
 <tr><td>Verify inconclusive</td><td>Evidence must SUPPORT the Claim id</td></tr>
+<tr><td>Verify UNVERIFIED</td><td>Test/build/lint Evidence came from <code>evidence add</code>. Use <code>evidence run</code>, or <code>--allow-self-reported</code> while migrating</td></tr>
 </tbody></table></div>
 <p>More: <a href="faq.html">FAQ</a> · <a href="gates.html">Gates</a> · <a href="tutorials/01-first-change.html">Tutorial: first Change</a></p>
     <div class="doc-nav-secondary">

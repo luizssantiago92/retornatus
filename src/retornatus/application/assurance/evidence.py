@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
+import shlex
 from pathlib import Path
 
+from retornatus.application.assurance.execute import (
+    DEFAULT_COMMAND_TIMEOUT_SECONDS,
+    capture_command,
+)
 from retornatus.application.assurance.subject_state import capture_subject_state
+from retornatus.domain.enums import EvidenceProvenance
 from retornatus.domain.ids import format_owned_id
 from retornatus.domain.models import Evidence
 from retornatus.domain.relations import Relation, RelationType
+from retornatus.infrastructure.persistence.atomic import atomic_write_bytes
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 
@@ -80,6 +87,89 @@ class EvidenceService:
             source=source,
             producer=producer,
             subject_state=final_state,
+            provenance=EvidenceProvenance.SELF_REPORTED,
+            relations=relations,
+        )
+        self.repo.save_evidence(evidence)
+        return evidence
+
+    def run(
+        self,
+        *,
+        change_id: str,
+        evidence_type: str,
+        subject: str,
+        command: list[str],
+        source: str | None = None,
+        producer: str = "retornatus",
+        timeout_seconds: float = DEFAULT_COMMAND_TIMEOUT_SECONDS,
+        subject_state: str | None = None,
+        supports_action_id: str | None = None,
+        supports_claim_id: str | None = None,
+        challenges_claim_id: str | None = None,
+        capture_git: bool = False,
+    ) -> Evidence:
+        """Execute ``command`` and record the capture as Evidence.
+
+        A non-zero exit, a timeout, or a failure to start the process is still
+        persisted. Assurance must not treat that record as passing.
+        ``provenance`` is always ``executed``. ``git_commit`` / ``worktree_dirty``
+        describe HEAD before the command; they are None outside git.
+        ``capture_git`` only fills ``subject_state`` (the freshness field), the
+        same way ``add(..., capture_git=True)`` does.
+        """
+        capture = capture_command(
+            self.root,
+            command,
+            timeout_seconds=timeout_seconds,
+        )
+        eid = format_owned_id(change_id, "E", self.next_evidence_number(change_id))
+        relations: list[Relation] = []
+        if supports_action_id:
+            relations.append(
+                Relation(type=RelationType.SUPPORTS, target_id=supports_action_id)
+            )
+        if supports_claim_id:
+            relations.append(
+                Relation(type=RelationType.SUPPORTS, target_id=supports_claim_id)
+            )
+        if challenges_claim_id:
+            relations.append(
+                Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id)
+            )
+
+        artifact_path = self.repo.paths.evidence_output(eid)
+        atomic_write_bytes(artifact_path, capture.output_bytes)
+        output_artifact = artifact_path.resolve().relative_to(self.root).as_posix()
+
+        if subject_state is not None:
+            final_state: str | None = subject_state
+        elif capture_git:
+            final_state = capture_subject_state(
+                self.root, use_git=True, subject=subject
+            )
+        else:
+            final_state = None
+
+        evidence = Evidence(
+            id=eid,
+            type=evidence_type,
+            subject=subject,
+            source=source if source else shlex.join(command),
+            producer=producer,
+            subject_state=final_state,
+            provenance=EvidenceProvenance.EXECUTED,
+            command=list(capture.argv),
+            exit_code=capture.exit_code,
+            started_at=capture.started_at,
+            ended_at=capture.ended_at,
+            duration_ms=capture.duration_ms,
+            output_sha256=capture.output_sha256,
+            output_tail=capture.output_tail,
+            output_artifact=output_artifact,
+            git_commit=capture.git_commit,
+            worktree_dirty=capture.worktree_dirty,
+            timed_out=capture.timed_out,
             relations=relations,
         )
         self.repo.save_evidence(evidence)

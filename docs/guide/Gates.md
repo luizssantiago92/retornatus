@@ -31,11 +31,26 @@ retornatus receipt verify path/to/receipt.json
 
 | Verdict | Meaning |
 | --- | --- |
-| `SATISFIED` | Each required Claim has bound, fresh, type-appropriate Evidence |
-| `NOT_SATISFIED` | Evidence exists but wrong claim/subject/type or stale |
+| `SATISFIED` | Each required Claim has bound, fresh, type-appropriate Evidence. Execution types must be `executed` with exit code 0 |
+| `NOT_SATISFIED` | Evidence exists but is wrong, failing, stale, or only self-reported for an execution type |
 | `INCONCLUSIVE` | Required Evidence missing or unbound |
 
-> Agent conclusion ≠ Evidence. A green test suite is evidence of tests — not automatic proof of every Claim unless bound correctly.
+Claim results may also say `UNVERIFIED`: a `test_result`, `security_test`, `build_result`, or `lint_result` was self-reported (`evidence add`) instead of produced by `evidence run`. That claim does not yield overall `SATISFIED` (exit 0).
+
+`verify` prints one line per Evidence (`provenance=… status=…`) before the JSON. Narrative types stay acceptable and are labeled `status=self-reported`.
+
+Migration opt-out: `verify --allow-self-reported`, or in `.retornatus/config.toml`:
+
+```toml
+[assurance]
+allow_self_reported = true
+```
+
+If executed Evidence recorded a git commit and HEAD has moved, `verify` prints `WARN … stale snapshot; not a failure`. That warning does not change the verdict. Freshness that uses `subject_state` of the form `commit:<sha>` (`--git-state`) can still mark Evidence stale and fail the claim.
+
+Subject matching is exact after strip, case-fold, and trailing-slash normalization (`/Health/` matches `/health`). A shorter evidence subject is not treated as contained in the claim (`/` does not match `/health`). A longer evidence path may end with the claim's path token (`docs/health.md` matches claim `/health.md`); the reverse does not.
+
+> Agent conclusion ≠ Evidence. A green test suite is evidence of tests — not automatic proof of every Claim unless bound correctly and actually executed by the harness.
 
 ## Process vs brakes
 

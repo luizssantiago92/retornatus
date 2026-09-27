@@ -14,6 +14,7 @@ from retornatus.domain.enums import (
     BoundaryRealization,
     DecisionKind,
     DemandKind,
+    EvidenceProvenance,
     QuestionDisposition,
     QuestionLifecycle,
     RuleApplicationMode,
@@ -212,7 +213,11 @@ class Question(DomainModel):
 
 
 class Evidence(DomainModel):
-    """Attributable observable information (PRD §23)."""
+    """Attributable observable information (PRD §23).
+
+    Execution fields are optional so Evidence written before they existed still
+    loads. Missing provenance is treated as ``self_reported``.
+    """
 
     id: EvidenceId
     type: str = Field(min_length=1)
@@ -221,6 +226,36 @@ class Evidence(DomainModel):
     producer: str = Field(min_length=1)
     observed_at: datetime = Field(default_factory=_utc_now)
     subject_state: str | None = None
+    provenance: EvidenceProvenance = Field(
+        default=EvidenceProvenance.SELF_REPORTED,
+        description="self_reported (evidence add) or executed (evidence run)",
+    )
+    command: list[str] | None = Field(
+        default=None,
+        description="Exact argv when provenance is executed",
+    )
+    exit_code: int | None = None
+    started_at: datetime | None = None
+    ended_at: datetime | None = None
+    duration_ms: int | None = Field(default=None, ge=0)
+    output_sha256: str | None = Field(
+        default=None,
+        description="SHA-256 hex of combined stdout/stderr bytes",
+    )
+    output_tail: str | None = Field(
+        default=None,
+        description="Truncated tail of combined stdout/stderr",
+    )
+    output_artifact: str | None = Field(
+        default=None,
+        description="Project-relative path of the full output file",
+    )
+    git_commit: str | None = Field(
+        default=None,
+        description="HEAD at execution time; None outside a git work tree",
+    )
+    worktree_dirty: bool | None = None
+    timed_out: bool = False
     relations: list[Relation] = Field(default_factory=list)
 
 

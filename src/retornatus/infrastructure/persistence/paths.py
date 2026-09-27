@@ -91,6 +91,10 @@ class RetornatusPaths:
         local = evidence_id.split("/", 1)[1]
         return self.change_dir(change) / "evidence" / f"{local}.json"
 
+    def evidence_output(self, evidence_id: str) -> Path:
+        """Full combined stdout/stderr captured for executed Evidence."""
+        return self.evidence_json(evidence_id).with_suffix(".output.txt")
+
     def rule_json(self, rule_id: str) -> Path:
         return self.rules / f"{rule_id}.json"
 

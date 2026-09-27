@@ -64,13 +64,13 @@ retornatus gate skill-research S-0001
 retornatus skill activate S-0001</code></pre>
 <h2>Prove</h2>
 <p>Claim ids follow Contract DONE order (<code>claim-done-1</code>, …). Adjust if your inspect output differs.</p>
-<pre class="code"><code class="language-bash">retornatus evidence add -c C-0001 -t test_result -s &quot;/health&quot; \
-  --source pytest --state passing --claim C-0001/claim-done-1
+<pre class="code"><code class="language-bash">retornatus evidence run -c C-0001 -t test_result -s &quot;/health&quot; \
+  --claim C-0001/claim-done-1 -- python -m pytest -q
 retornatus evidence add -c C-0001 -t repository_observation -s &quot;docs/health.md&quot; \
   --source filesystem --claim C-0001/claim-done-2
 retornatus gate evidence C-0001
 retornatus verify C-0001</code></pre>
-<p>Expect <code>SATISFIED</code>. If <code>INCONCLUSIVE</code>, check <code>--claim</code> binding.</p>
+<p>Expect <code>SATISFIED</code>. If <code>INCONCLUSIVE</code>, check <code>--claim</code> binding. If <code>UNVERIFIED</code>, the test Evidence was typed in with <code>evidence add</code> instead of executed by <code>evidence run</code>.</p>
 <h2>Preserve</h2>
 <pre class="code"><code class="language-bash">retornatus change learn \
   --title &quot;Health endpoint Evidence must be Claim-bound&quot; \
