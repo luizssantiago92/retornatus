@@ -8,6 +8,7 @@ import typer
 
 from retornatus.cli.groups import action_app
 
+
 @action_app.command("budget")
 def action_budget_cmd(
     action_id: str = typer.Argument(..., help="Action id (C-xxxx/A-yyy)."),

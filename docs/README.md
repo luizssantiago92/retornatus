@@ -7,14 +7,16 @@
 | [`index.html`](index.html) | Public landing |
 | [`guide/`](guide/index.html) | Docs hub (all pages on the site) |
 | [`guide/*.html`](guide/index.html) | Full technical guides (built from markdown) |
-| [`credits.html`](credits.html) | Credits & lineage |
-| [guide/*.md](guide/README.md) | Markdown sources (edit these, then rebuild) |
-| [`prd/PRD.md`](../prd/PRD.md) | Product requirements |
+| [`credits.html`](credits.html) | Credits & lineage (generated on Pages; not committed) |
+| [guide/*.md](guide/README.md) | Markdown sources (edit these) |
+| [`archive/PRD.md`](archive/PRD.md) | Product requirements |
 
-After editing any `docs/**/*.md` guide, regenerate HTML:
+GitHub Pages generates HTML from the markdown. To preview locally:
 
 ```bash
 python scripts/build_docs_html.py
 ```
+
+Do not commit that HTML.
 
 Local preview: open [`index.html`](index.html) in a browser.

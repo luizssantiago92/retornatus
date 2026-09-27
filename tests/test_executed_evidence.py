@@ -9,7 +9,6 @@ import sys
 from pathlib import Path
 
 import pytest
-
 from typer.testing import CliRunner
 
 from retornatus.application.assurance.evaluate import (

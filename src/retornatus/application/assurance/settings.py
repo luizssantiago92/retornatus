@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+
 @dataclass(frozen=True)
 class RequiredCheck:
     """One owner-declared command that may satisfy execution-type claims.

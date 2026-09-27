@@ -28,7 +28,7 @@ import json
 import os
 import re
 import warnings
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -59,7 +59,7 @@ _LEGACY_WARNING = (
 
 
 def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
 
 
 def user_config_dir() -> Path:
@@ -471,7 +471,7 @@ def write_verify_receipt(
         git_head=_git_head(root),
     )
     signed = sign_payload(root, payload)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     out = out_dir / f"{change_id}-{stamp}.json"
     out.write_text(json.dumps(signed, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return out

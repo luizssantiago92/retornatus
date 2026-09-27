@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from retornatus.domain.enums import AuthorityCategory, SkillSource, SkillStatus
@@ -19,7 +19,7 @@ def _slugify(text: str) -> str:
 
 
 def _utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def build_skill_body(

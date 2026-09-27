@@ -100,9 +100,7 @@ def project_task_state(
     blocked_by: list[str] = []
     for dep in task.depends_on:
         dep_task = tasks_by_id.get(dep)
-        if dep_task is None:
-            blocked_by.append(dep)
-        elif not _terminal_completed(dep_task.lifecycle):
+        if dep_task is None or not _terminal_completed(dep_task.lifecycle):
             blocked_by.append(dep)
 
     conflicts: list[str] = []

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Self
 
 from pydantic import Field, field_validator, model_validator
@@ -39,7 +39,7 @@ from retornatus.domain.relations import Relation
 
 
 def _utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Demand(DomainModel):

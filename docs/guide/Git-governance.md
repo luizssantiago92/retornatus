@@ -21,6 +21,7 @@ In this repository (and by default for Retornatus-governed work here):
 - **Merge** and **publish** stay with the human owner.
 - Agents prepare work, local commits, and (when asked) PRs — then stop.
 - Do not create/push `v*` tags that trigger Publish workflows; do not run `uv publish` / workflow_dispatch publish for the owner.
+- Release steps (Trusted Publishing, changelog section, tags for versions already on PyPI): [CONTRIBUTING — Releases](../../CONTRIBUTING.md#releases).
 
 ## What to commit (Tier 0)
 

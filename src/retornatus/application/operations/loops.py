@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
 
 from retornatus.bootstrap.doctor import run_doctor
 from retornatus.bootstrap.wake import wake_up

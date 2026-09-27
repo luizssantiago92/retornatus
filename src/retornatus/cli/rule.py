@@ -10,6 +10,7 @@ from retornatus.application.adaptation.service import AdaptationService
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import rule_app
 
+
 @rule_app.command("propose")
 def rule_propose(
     statement: str = typer.Option(..., "--statement", "-s"),

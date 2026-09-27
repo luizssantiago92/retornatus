@@ -9,6 +9,7 @@ import typer
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import execution_app
 
+
 @execution_app.command("record")
 def execution_record(
     action_id: str = typer.Option(..., "--action", "-a"),

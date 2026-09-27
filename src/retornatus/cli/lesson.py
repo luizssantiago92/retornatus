@@ -9,6 +9,7 @@ import typer
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import lesson_app
 
+
 @lesson_app.command("from-gate")
 def lesson_from_gate(
     gate: str = typer.Option(

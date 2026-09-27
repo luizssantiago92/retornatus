@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+from retornatus.application.adaptation.skills import SkillService
 from retornatus.application.assurance.evaluate import build_claims_from_contract
 from retornatus.application.assurance.evidence import EvidenceService
 from retornatus.application.change.loop import next_work
@@ -15,7 +16,6 @@ from retornatus.application.governance.gates import (
     gate_evidence,
     gate_skill_research,
 )
-from retornatus.application.adaptation.skills import SkillService
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.project_init import project_init
 from retornatus.domain.enums import DemandKind

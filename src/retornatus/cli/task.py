@@ -8,6 +8,7 @@ import typer
 
 from retornatus.cli.groups import task_app
 
+
 @task_app.command("start")
 def task_start(
     task_id: str = typer.Argument(...),

@@ -9,6 +9,7 @@ import typer
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import assurance_app
 
+
 @assurance_app.command("plan")
 def assurance_plan(
     change_id: str = typer.Argument(...),

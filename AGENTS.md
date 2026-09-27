@@ -28,8 +28,8 @@ Repo-native **governance harness** for AI-assisted software work. You write the 
 From repo root, after code changes:
 
 ```bash
-uvx ruff@0.11.0 check src tests
-uvx --from mypy==1.15.0 mypy src/retornatus --ignore-missing-imports
+uv run ruff check src tests scripts
+uv run mypy
 uv run python scripts/build_docs_html.py --check
 uv run pytest -q
 ```
@@ -39,7 +39,7 @@ uv run pytest -q
 | Topic | Where |
 | --- | --- |
 | Hub procedure | `.cursor/skills/retornatus/SKILL.md` (after `integrate`) |
-| Product PRD | `prd/PRD.md` |
+| Product PRD | `docs/archive/PRD.md` |
 | User docs | `docs/guide/` → site HTML via `scripts/build_docs_html.py` |
 | SG migration | `docs/guide/From-spec-guardrails.md` |
 | Landscape | `docs/guide/Landscape.md` |

@@ -1,7 +1,7 @@
 # Retornatus
 
 <p align="center">
-  <img src=".assets/retornatus-mascot.png" alt="Ember — Retornatus mascot" width="280" />
+  <img src="docs/assets/retornatus-mascot.webp" alt="Ember — Retornatus mascot" width="280" />
 </p>
 
 <p align="center">
@@ -40,7 +40,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-Package version **1.3.0** (this repo). PyPI may lag until you tag `v1.3.0`: [`retornatus`](https://pypi.org/project/retornatus/)
+Package **1.3.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
 
 [What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
 
@@ -323,10 +323,10 @@ CLI mistakes print `error: …` instead of a traceback. An invalid id such as `v
 | Concepts | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html) |
 | Coming from Spec Guardrails | [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) |
 | Adjacent harnesses | [Landscape](https://luizssantiago92.github.io/retornatus/guide/landscape.html) |
-| Product requirements | [PRD](prd/PRD.md) |
+| Product requirements | [PRD](docs/archive/PRD.md) |
 | Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
 
-Markdown sources for editors: [`docs/guide/`](docs/guide/README.md). After editing them, run `python scripts/build_docs_html.py` so the site stays in sync.
+Markdown sources for editors: [`docs/guide/`](docs/guide/README.md). GitHub Pages generates the HTML from those files. To preview locally, run `python scripts/build_docs_html.py` (the output is gitignored).
 
 ---
 

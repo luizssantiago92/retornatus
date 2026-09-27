@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - "docs/**"
+      - "scripts/build_docs_html.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -27,6 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate docs HTML
+        run: python scripts/build_docs_html.py
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

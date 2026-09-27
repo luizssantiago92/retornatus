@@ -23,18 +23,18 @@ from retornatus.application.change.loop import project_next_work
 from retornatus.application.change.readiness import synchronize_action
 from retornatus.application.change.situation import assess_situation, collect_repo_signals
 from retornatus.application.change.workflow import ChangeWorkflow, TaskSpec
-from retornatus.application.execution.brownfield_fixture import (
-    git_commit_all,
-    seed_brownfield_service,
-)
-from retornatus.application.execution.host_boundary import (
-    simulate_health_endpoint_implementation,
-)
 from retornatus.application.governance.gates import gate_assurance, gate_contract
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.project_init import project_init
 from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import DemandKind
+from tests.support.brownfield_fixture import (
+    git_commit_all,
+    seed_brownfield_service,
+)
+from tests.support.host_boundary import (
+    simulate_health_endpoint_implementation,
+)
 
 
 def test_brownfield_full_gap_closure(tmp_path: Path) -> None:

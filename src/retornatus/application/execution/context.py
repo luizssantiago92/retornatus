@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from pydantic import Field
@@ -33,7 +33,7 @@ class ExecutionContext(DomainModel):
     """Stable assembled context for a bounded execution."""
 
     action_id: str
-    assembled_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    assembled_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     objective: str
     success_conditions: list[str] = Field(default_factory=list)
     contract_what: str | None = None
@@ -78,9 +78,7 @@ def _rule_applies(rule: Rule, haystack: set[str]) -> bool:
     if app and (app in joined or any(tok in app for tok in haystack if len(tok) > 4)):
         return True
     # Broad applicability markers
-    if app in {"all", "all changes", "*", "global"}:
-        return True
-    return False
+    return app in {"all", "all changes", "*", "global"}
 
 
 def _learning_relevant(learning: LearningMetadata, haystack: set[str]) -> bool:

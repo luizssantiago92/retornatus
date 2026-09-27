@@ -14,6 +14,7 @@ retornatus integrate
 | `cursor` | `.cursor/` or Cursor env markers | Hub skill + `retornatus.mdc` (+ active Rules) |
 | `claude_code` | `CLAUDE.md` or `.claude/` | CLAUDE.md markers + Rules section |
 | `codex` | `AGENTS.md` or `.codex/` | AGENTS.md markers + Rules section |
+| `github_copilot` | `.github/copilot-instructions.md` or `.github/` | `.github/copilot-instructions.md` |
 | `generic` | none of the above | `.retornatus/` only (+ hub install still available) |
 
 ## What “native first” means
@@ -29,7 +30,15 @@ Retornatus records `HostExecutionRecord` observations; it does not spawn agents.
 
 ## Active Rule projection
 
-When Rules are activated, bridges refresh so the host sees the same constraints. Markers:
+When Rules are activated, bridges refresh so the host sees the same constraints. The instruction block uses begin/end markers and is replaced when its text changes (it is not appended again):
+
+```html
+<!-- retornatus-bridge:begin -->
+…
+<!-- retornatus-bridge:end -->
+```
+
+Active Rules use a separate marked section:
 
 ```html
 <!-- retornatus-active-rules:begin -->

@@ -9,6 +9,7 @@ import typer
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import ops_app
 
+
 @ops_app.command("list")
 def ops_list() -> None:
     """List built-in operational hygiene loops."""

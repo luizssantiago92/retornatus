@@ -19,9 +19,6 @@ from retornatus.application.execution.context import (
     assemble_assurance_context,
     assemble_execution_context,
 )
-from retornatus.application.execution.host_boundary import (
-    simulate_health_endpoint_implementation,
-)
 from retornatus.application.governance.gates import (
     gate_assurance,
     gate_contract,
@@ -32,6 +29,9 @@ from retornatus.bootstrap.project_init import project_init
 from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import DemandKind
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
+from tests.support.host_boundary import (
+    simulate_health_endpoint_implementation,
+)
 
 
 def test_health_endpoint_construction_dogfood(tmp_path: Path) -> None:

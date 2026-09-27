@@ -13,6 +13,7 @@ from retornatus.cli.common import parse_task_specs, resolve_root
 from retornatus.cli.groups import change_app
 from retornatus.domain.enums import ComplexityLane, DemandKind
 
+
 @change_app.command("elicit")
 def change_elicit(
     demand: str = typer.Option(..., "--demand", "-d"),
@@ -180,12 +181,26 @@ def change_learn(
 def change_overview_cmd(
     change_id: str = typer.Argument(..., help="Change id (e.g. C-0001)."),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    output_format: str = typer.Option(
+        "text",
+        "--format",
+        help="text (dashboard) or pr (markdown pull-request body).",
+    ),
 ) -> None:
     """Dashboard: Claims ↔ Evidence, Tasks, Questions, next work."""
-    from retornatus.application.change.overview import build_change_overview
+    from retornatus.application.change.overview import (
+        build_change_overview,
+        render_pull_request,
+    )
+    from retornatus.domain.errors import UsageError
 
+    if output_format not in {"text", "pr"}:
+        raise UsageError("--format must be text or pr")
     root = resolve_root(path)
     try:
+        if output_format == "pr":
+            typer.echo(render_pull_request(root, change_id))
+            return
         overview = build_change_overview(root, change_id)
     except FileNotFoundError:
         typer.echo(f"Change not found: {change_id}")
@@ -195,16 +210,28 @@ def change_overview_cmd(
 
 @change_app.command("classify")
 def change_classify_cmd(
-    demand: str = typer.Option(..., "--demand", "-d"),
+    demand: str = typer.Option("", "--demand", "-d"),
     what: str = typer.Option("", "--what", "-w"),
     done: list[str] | None = typer.Option(None, "--done"),
     kind: DemandKind = typer.Option(DemandKind.OTHER, "--kind", "-k"),
     tasks: int = typer.Option(0, "--tasks", help="Expected task count."),
     constraints: int = typer.Option(0, "--constraints", help="Expected constraint count."),
+    from_diff: str | None = typer.Option(
+        None,
+        "--from-diff",
+        help="Git base ref. Combine changed-file count, lines, and sensitive globs with text heuristics.",
+    ),
+    path: Path | None = typer.Option(None, "--path", "-p"),
 ) -> None:
     """Classify ceremony lane (QUICK | STANDARD | COMPLEX) — advisory."""
-    from retornatus.application.change.classify import classify_change
+    from retornatus.application.change.classify import classify_change, collect_diff_signals
+    from retornatus.domain.errors import UsageError
 
+    if not demand.strip() and not from_diff:
+        raise UsageError("Pass --demand and/or --from-diff")
+    diff = None
+    if from_diff:
+        diff = collect_diff_signals(resolve_root(path), from_diff)
     result = classify_change(
         demand=demand,
         what=what,
@@ -212,6 +239,7 @@ def change_classify_cmd(
         demand_kind=kind,
         task_count=tasks,
         constraint_count=constraints,
+        diff=diff,
     )
     typer.echo(result.render())
 

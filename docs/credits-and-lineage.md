@@ -69,7 +69,7 @@ Useful **guarantees**, not Spec Guardrails’ npm packaging, skill tree, or comm
 
 ### Why a separate product
 
-The Retornatus PRD treats Spec Guardrails as **archaeology first** (inspect implementation, not only docs), then redesigns mechanisms under **native-first** and **complexity must be earned** ([PRD §66](../prd/PRD.md)).
+The Retornatus PRD treats Spec Guardrails as **archaeology first** (inspect implementation, not only docs), then redesigns mechanisms under **native-first** and **complexity must be earned** ([PRD §66](archive/PRD.md)).
 
 Retornatus therefore:
 
@@ -131,7 +131,7 @@ As of this audit, **no other external repositories** are classified as direct Re
 
 ## C. Evaluated alternatives (studied / rejected for V1)
 
-These are **design decisions**, not claims that Retornatus “is based on” the rejected approach. Primary evidence: [PRD §65 Explicit V1 Non-Goals](../prd/PRD.md) and native-first philosophy (§2.2).
+These are **design decisions**, not claims that Retornatus “is based on” the rejected approach. Primary evidence: [PRD §65 Explicit V1 Non-Goals](archive/PRD.md) and native-first philosophy (§2.2).
 
 | Evaluated direction | Question | Decision | Result in Retornatus V1 |
 | --- | --- | --- | --- |
@@ -205,7 +205,7 @@ Experience → Learning → Graduation → Rule Candidate → Human Authority �
 | On-demand researched Skills | Create/research/activate one Skill when needed; evolve from Learning |
 | Complexity discipline | A mechanism must save more complexity than it introduces; complexity earned by concrete failure |
 
-Product contract: [`prd/PRD.md`](../prd/PRD.md). User-facing concepts: [docs/guide/Concepts.md](guide/Concepts.md).
+Product contract: [`prd/PRD.md`](archive/PRD.md). User-facing concepts: [docs/guide/Concepts.md](guide/Concepts.md).
 
 ---
 

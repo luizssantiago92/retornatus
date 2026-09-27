@@ -25,7 +25,7 @@ from retornatus.domain.errors import UsageError
 
 def translate_cli_error(exc: BaseException) -> tuple[str, int] | None:
     """Return ``(message, exit_code)`` or ``None`` to let Typer handle it."""
-    if isinstance(exc, (Exit, Abort, TyperException)):
+    if isinstance(exc, Exit | Abort | TyperException):
         return None
     if isinstance(exc, UsageError):
         return (str(exc), 2)
@@ -51,7 +51,7 @@ def translate_cli_error(exc: BaseException) -> tuple[str, int] | None:
 class GuardedTyperGroup(TyperGroup):
     """Top-level handler: domain errors become a line on stderr, not a traceback."""
 
-    def invoke(self, ctx: typer.Context) -> Any:
+    def invoke(self, ctx: typer.Context) -> Any:  # type: ignore[override]
         try:
             return super().invoke(ctx)
         except Exception as exc:

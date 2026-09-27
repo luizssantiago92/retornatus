@@ -24,10 +24,10 @@ retornatus skill --help
 
 | Command | Purpose |
 | --- | --- |
-| `change classify` | Ceremony lane QUICK / STANDARD / COMPLEX |
+| `change classify` | Ceremony lane QUICK / STANDARD / COMPLEX. `--from-diff <base>` adds file count, lines changed, and scope-gate sensitive paths |
 | `change elicit` | Requirements analysis / Situation readiness (`--answer`, `--write`; exit 1 if insufficient) |
 | `change create` | Demand → Situation → Contract → optional Action/Tasks |
-| `change overview` | Claims ↔ Evidence dashboard |
+| `change overview` | Claims ↔ Evidence dashboard. `--format pr` prints a markdown pull-request body (executed vs self-reported, exit code, commit, stale/unverified, required checks, gates) |
 | `change activate` | Activate draft Contract |
 | `change reopen` | Material Contract version (archive prior) |
 | `change learn` | Record Learning |

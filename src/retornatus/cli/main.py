@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from retornatus.cli.groups import app
-
 # Register commands. Import order of root commands is the definition order
 # inside each module; Typer lists direct commands before subcommand groups.
 from retornatus.cli import action as _action
@@ -27,6 +25,7 @@ from retornatus.cli import root as _root
 from retornatus.cli import rule as _rule
 from retornatus.cli import skill as _skill
 from retornatus.cli import task as _task
+from retornatus.cli.groups import app
 
 # Imported for side effects (command registration).
 _REGISTERED = (

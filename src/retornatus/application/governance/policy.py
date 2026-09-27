@@ -179,19 +179,17 @@ def _structured_matches(
 ) -> bool:
     if rule.effect_type and rule.effect_type.casefold() not in types:
         return False
-    if rule.path_globs:
-        if not any(
-            _path_matches(path, rule.path_globs) for path in paths
-        ):
-            return False
-    if rule.command_patterns:
-        if not any(
-            command_matches(command, pattern)
-            for command in commands
-            for pattern in rule.command_patterns
-        ):
-            return False
-    return True
+    if rule.path_globs and not any(
+        _path_matches(path, rule.path_globs) for path in paths
+    ):
+        return False
+    if not rule.command_patterns:
+        return True
+    return any(
+        command_matches(command, pattern)
+        for command in commands
+        for pattern in rule.command_patterns
+    )
 
 
 def _path_matches(path: str, globs: list[str]) -> bool:

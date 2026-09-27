@@ -12,7 +12,46 @@ class EnvironmentKind(str, Enum):
     CURSOR = "cursor"
     CLAUDE_CODE = "claude_code"
     CODEX = "codex"
+    GITHUB_COPILOT = "github_copilot"
     GENERIC = "generic"
+
+
+# Distinct begin/end so a later ensure_bridge_files replaces the block.
+BRIDGE_BEGIN = "<!-- retornatus-bridge:begin -->"
+BRIDGE_END = "<!-- retornatus-bridge:end -->"
+# Older adapters used one marker twice and never rewrote the body.
+_LEGACY_BRIDGE_MARKER = "<!-- retornatus-bridge -->"
+
+
+def upsert_managed_block(text: str, body: str) -> str:
+    """Insert or replace the Retornatus bridge block. Host text outside it stays."""
+    block = f"{BRIDGE_BEGIN}\n{body.rstrip()}\n{BRIDGE_END}"
+    if BRIDGE_BEGIN in text and BRIDGE_END in text:
+        start = text.index(BRIDGE_BEGIN)
+        end = text.index(BRIDGE_END, start) + len(BRIDGE_END)
+        return text[:start] + block + text[end:]
+    if text.count(_LEGACY_BRIDGE_MARKER) >= 2:
+        start = text.index(_LEGACY_BRIDGE_MARKER)
+        second = text.index(_LEGACY_BRIDGE_MARKER, start + len(_LEGACY_BRIDGE_MARKER))
+        end = second + len(_LEGACY_BRIDGE_MARKER)
+        return text[:start] + block + text[end:]
+    base = text.rstrip()
+    if base:
+        return base + "\n\n" + block + "\n"
+    return block + "\n"
+
+
+def _write_bridge(path: Path, root: Path, *, title: str, body: str) -> Path:
+    """Upsert the managed block, then refresh the active-Rules section."""
+    from retornatus.infrastructure.environment.rule_projection import (
+        project_active_rules_into,
+    )
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    existing = path.read_text(encoding="utf-8") if path.is_file() else f"# {title}\n"
+    path.write_text(upsert_managed_block(existing, body), encoding="utf-8")
+    project_active_rules_into(path, root)
+    return path
 
 
 @dataclass(frozen=True)
@@ -98,25 +137,15 @@ class ClaudeCodeAdapter(EnvironmentAdapter):
         )
 
     def ensure_bridge_files(self, root: Path) -> list[Path]:
-        from retornatus.infrastructure.environment.rule_projection import (
-            project_active_rules_into,
+        path = _write_bridge(
+            root / "CLAUDE.md",
+            root,
+            title="Project",
+            body=(
+                "## Retornatus\n"
+                "Respect Contracts, Rules, Authority, and Evidence under `.retornatus/`.\n"
+            ),
         )
-
-        path = root / "CLAUDE.md"
-        marker = "<!-- retornatus-bridge -->"
-        snippet = (
-            f"\n{marker}\n"
-            "## Retornatus\n"
-            "Respect Contracts, Rules, Authority, and Evidence under `.retornatus/`.\n"
-            f"{marker}\n"
-        )
-        if path.exists():
-            text = path.read_text(encoding="utf-8")
-            if marker not in text:
-                path.write_text(text.rstrip() + snippet, encoding="utf-8")
-        else:
-            path.write_text("# Project\n" + snippet, encoding="utf-8")
-        project_active_rules_into(path, root)
         return [path]
 
 
@@ -136,25 +165,46 @@ class CodexAdapter(EnvironmentAdapter):
         )
 
     def ensure_bridge_files(self, root: Path) -> list[Path]:
-        from retornatus.infrastructure.environment.rule_projection import (
-            project_active_rules_into,
+        path = _write_bridge(
+            root / "AGENTS.md",
+            root,
+            title="Agents",
+            body=(
+                "## Retornatus\n"
+                "Use `.retornatus/` as canonical governance state.\n"
+            ),
+        )
+        return [path]
+
+
+class GitHubCopilotAdapter(EnvironmentAdapter):
+    """GitHub Copilot custom instructions (``.github/copilot-instructions.md``)."""
+
+    kind = EnvironmentKind.GITHUB_COPILOT
+
+    def detect(self, root: Path) -> bool:
+        instructions = root / ".github" / "copilot-instructions.md"
+        return instructions.is_file() or (root / ".github").is_dir()
+
+    def capabilities(self, root: Path) -> CapabilityModel:
+        return CapabilityModel(
+            environment=self.kind,
+            native_rules=True,
+            bridge_files=(".github/copilot-instructions.md",),
+            details={"hint": "Copilot reads .github/copilot-instructions.md"},
         )
 
-        path = root / "AGENTS.md"
-        marker = "<!-- retornatus-bridge -->"
-        snippet = (
-            f"\n{marker}\n"
-            "## Retornatus\n"
-            "Use `.retornatus/` as canonical governance state.\n"
-            f"{marker}\n"
+    def ensure_bridge_files(self, root: Path) -> list[Path]:
+        path = _write_bridge(
+            root / ".github" / "copilot-instructions.md",
+            root,
+            title="GitHub Copilot instructions",
+            body=(
+                "## Retornatus\n"
+                "Use `.retornatus/` as canonical governance state. "
+                "Govern the work. Bound the agent. Verify the outcome.\n"
+            ),
         )
-        if path.exists():
-            text = path.read_text(encoding="utf-8")
-            if marker not in text:
-                path.write_text(text.rstrip() + snippet, encoding="utf-8")
-        else:
-            path.write_text("# Agents\n" + snippet, encoding="utf-8")
-        project_active_rules_into(path, root)
         return [path]
 
 
@@ -162,6 +212,7 @@ ADAPTERS: list[EnvironmentAdapter] = [
     CursorAdapter(),
     ClaudeCodeAdapter(),
     CodexAdapter(),
+    GitHubCopilotAdapter(),
     GenericAdapter(),
 ]
 
