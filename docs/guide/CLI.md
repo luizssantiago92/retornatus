@@ -64,13 +64,33 @@ retornatus skill --help
 | `evidence run [options] -- <command…>` | Run a command (no shell, cwd = project root) and record `provenance=executed` |
 | `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates |
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN |
-| `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional HMAC receipt) |
+| `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional Ed25519 receipt) |
 | `verify --allow-self-reported` | Migration opt-out: accept self-reported test/build/lint evidence |
-| `receipt verify <path>` | Check a portable receipt against the local key |
+| `receipt keygen` / `receipt keygen --print` | Write the public key into `.retornatus/keys/`. Private key goes to the user config dir, or stdout for a CI secret |
+| `receipt sign --change <C-id>` | Sign the current Assurance result |
+| `receipt verify <path>` | Check a receipt with the committed public key |
 | `action budget <A-id> --max N` | Set Action attempt ceiling (`--clear` removes it) |
 | `assurance plan` / `assurance review` | Independent review path |
 | `run` / `run --assurance` / `run --strict-policy` | Assemble ExecutionContext |
 | `lesson from-gate` | Learning from gate failure (+ optional Rule Candidate) |
+
+## Exit codes
+
+| Code | When |
+| --- | --- |
+| `0` | Success. Gate passed. `verify` is `SATISFIED`. Receipt signature ok |
+| `1` | Gate STOP. `verify` is not `SATISFIED`. Signature failed. Known id or file missing |
+| `2` | Usage: invalid id, path outside `.retornatus`, empty or unusable search text, malformed signing key, invalid receipt JSON |
+
+`gate` and `verify` keep those meanings for real checks. A bad id is usage (`2`), not a traceback. Search treats your text as literal tokens (hyphens and quotes are not FTS operators).
+
+## Receipts
+
+Ed25519. Public key: `.retornatus/keys/<key-id>.pub` (committed). Private key: `RETORNATUS_SIGNING_KEY` or the user config directory — never inside the project, and never copied from the environment onto disk.
+
+An agent that can read the private key can still sign. Keep the key out of the agent's environment. In CI, put the PEM in a GitHub Actions secret and run `retornatus verify <C-id> --receipt` with `RETORNATUS_SIGNING_KEY` set. Clones verify with only the public key.
+
+Legacy HMAC receipts verify only where the old local key exists. The result is `legacy_hmac`, `portable: false`, plus a deprecation warning.
 
 ## Problems
 

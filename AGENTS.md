@@ -20,7 +20,7 @@ Repo-native **governance harness** for AI-assisted software work. You write the 
 - Context: `retornatus run <A-id>` (optional `--strict-policy`)
 - Skills: `intake analyze` (human `CREATE=yes`) or `skill need --prompt` / `skill create`
 - Proof: `evidence run … --claim <id> -- <command>` for test/build/lint results (`evidence add` is self-reported and does not satisfy those types) → `retornatus verify <C-id>`  
-  - Optional portable receipt: `verify <C-id> --receipt`
+  - Optional Ed25519 receipt: `verify <C-id> --receipt` (public key in `.retornatus/keys/`; private key outside the repo and outside the agent environment)
 - Attempt budget (optional): `action budget <A-id> --max N` · `gate budget <A-id>`
 
 ## Verification stack (this repository)

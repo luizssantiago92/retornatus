@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "id": "C-0002/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Receipts are Ed25519-signed with the private key outside the repo and the public key committed; the CLI rejects bad ids and bad FTS queries with documented exit codes",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "Tampered or wrong-key receipts fail verification",
+    "A fresh clone verifies with only the committed public key",
+    "Invalid ids and FTS queries print a clean error and a documented exit code"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0002/T-001",
+      "description": "Switch receipts to Ed25519 with public keys in the repo",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0002/T-002",
+      "description": "Validate ids, contain paths, and quote FTS queries",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0002/T-003",
+      "description": "Split the CLI and map domain errors to exit codes",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0002/T-004",
+      "description": "Document the threat model and CI signing pattern",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

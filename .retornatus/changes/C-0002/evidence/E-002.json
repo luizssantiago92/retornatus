@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0002/E-002",
+  "type": "test_result",
+  "subject": "A fresh clone verifies with only the committed public key",
+  "source": "pytest fresh-clone receipt verify",
+  "producer": "retornatus",
+  "observed_at": "2026-09-27T04:40:49.169203Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_receipt_and_budget.py::test_verify_from_clone_with_public_key_only"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-27T04:40:48.863653Z",
+  "ended_at": "2026-09-27T04:40:49.161755Z",
+  "duration_ms": 298,
+  "output_sha256": "76af71df60bb5f93ea635e8763126ecf98e837672c9980e80aefde989b203765",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+  "output_artifact": ".retornatus/changes/C-0002/evidence/E-002.output.txt",
+  "git_commit": "ef870ac978185fd948f3b3165b4f7e7bfdb51029",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0002/claim-done-2",
+      "note": null
+    }
+  ]
+}

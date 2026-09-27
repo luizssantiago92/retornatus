@@ -5,6 +5,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
+from retornatus.domain.errors import SearchQueryError
 from retornatus.infrastructure.persistence.paths import RetornatusPaths
 from retornatus.infrastructure.persistence.repository import FileRepository
 
@@ -157,21 +158,54 @@ class RetornatusIndex:
     def search(self, query: str, *, limit: int = 20) -> list[dict[str, str]]:
         if not self.paths.index_db.is_file():
             self.rebuild()
+        match = fts_match_query(query)
         conn = self.connect()
         try:
-            rows = conn.execute(
-                """
-                SELECT documents_fts.id, documents_fts.kind, entities.title
-                FROM documents_fts
-                JOIN entities ON entities.id = documents_fts.id
-                WHERE documents_fts MATCH ?
-                LIMIT ?
-                """,
-                (query, limit),
-            ).fetchall()
+            try:
+                rows = self._match(conn, match, limit)
+            except sqlite3.OperationalError:
+                try:
+                    rows = self._match(conn, fts_phrase(query), limit)
+                except sqlite3.OperationalError as exc:
+                    raise SearchQueryError(
+                        "Search query is not valid for the index. "
+                        "Use plain words; punctuation is matched literally."
+                    ) from exc
             return [
                 {"id": r[0], "kind": r[1], "title": r[2] or ""}
                 for r in rows
             ]
         finally:
             conn.close()
+
+    @staticmethod
+    def _match(
+        conn: sqlite3.Connection, query: str, limit: int
+    ) -> list[sqlite3.Row]:
+        return conn.execute(
+            """
+            SELECT documents_fts.id, documents_fts.kind, entities.title
+            FROM documents_fts
+            JOIN entities ON entities.id = documents_fts.id
+            WHERE documents_fts MATCH ?
+            LIMIT ?
+            """,
+            (query, limit),
+        ).fetchall()
+
+
+def fts_phrase(query: str) -> str:
+    """One FTS5 phrase, with embedded quotes escaped."""
+    return '"' + query.replace('"', '""') + '"'
+
+
+def fts_match_query(query: str) -> str:
+    """Quote each token so FTS5 operators and punctuation stay literal.
+
+    Implicit AND between tokens is preserved. Raw MATCH syntax (column
+    filters, NOT, unmatched quotes) is not passed through.
+    """
+    tokens = query.split()
+    if not tokens:
+        raise SearchQueryError("Search query is empty")
+    return " ".join(fts_phrase(token) for token in tokens)

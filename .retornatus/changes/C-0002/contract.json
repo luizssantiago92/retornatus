@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0002",
+  "version": 1,
+  "what": "Receipts are Ed25519-signed with the private key outside the repo and the public key committed; the CLI rejects bad ids and bad FTS queries with documented exit codes",
+  "constraints": [],
+  "done_criteria": [
+    "Tampered or wrong-key receipts fail verification",
+    "A fresh clone verifies with only the committed public key",
+    "Invalid ids and FTS queries print a clean error and a documented exit code"
+  ],
+  "active": true,
+  "activated_at": "2026-09-27T04:31:10.182889Z"
+}

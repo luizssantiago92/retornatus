@@ -23,8 +23,9 @@ retornatus policy check --action <A-id>
 retornatus policy check --effect "…"
 retornatus run <A-id> --strict-policy
 retornatus action budget <A-id> --max 5
-retornatus verify <C-id> --receipt   # portable HMAC receipt
-retornatus receipt verify path/to/receipt.json
+retornatus receipt keygen            # public key in-repo; private key outside it
+retornatus verify <C-id> --receipt   # Ed25519 receipt (needs the private key)
+retornatus receipt verify path/to/receipt.json   # public key only
 ```
 
 ## Assurance verdicts

@@ -14,7 +14,7 @@ All of these attack the same pain: agents are optimistic; “done” needs struc
 | [Claim Plane](https://github.com/SkeinRank/claim-plane) | Control plane around Codex: scope admission, diff verify, sealed digests | Similar *proof-of-delivery*; more session/runtime control plane |
 | [MartinLoop](https://github.com/Keesan12/martin-loop) | Budgets, verifier gates, signed run records around CLIs | Similar *gates*; focuses on run budgets / wrappers |
 | [HighHarness](https://github.com/MAHADEV369/HighHarness) | Default-deny tool permissions + hash-chained episode logs | Similar *audit trail*; permission engine is host-layer (we stay native-first) |
-| [obsigna / Agent Receipts](https://github.com/agent-receipts/obsigna) | Cryptographic receipt protocol (PyPI SDK + daemon) | Complementary — we now emit a **light HMAC receipt** on `verify`; not a full receipt mesh |
+| [obsigna / Agent Receipts](https://github.com/agent-receipts/obsigna) | Cryptographic receipt protocol (PyPI SDK + daemon) | Complementary — `verify --receipt` emits an **Ed25519** receipt checked with a committed public key; not a full receipt mesh |
 | [Microsoft AGT](https://github.com/microsoft/agent-governance-toolkit) | MCP-governed tool calls + offline receipts / SLSA | Enterprise toolkit; different packaging surface |
 | [OpenAI harness practice](https://openai.com/index/harness-engineering/) | `AGENTS.md` map + mechanical CI invariants | Pattern we adopt for discoverability — not a competing product |
 | [loop-harness](https://github.com/breim/loop-harness) | Qualify/scaffold autonomous loops (maker/checker) | Adjacent for *ops loops*; Retornatus `ops` stays lighter |
@@ -38,7 +38,7 @@ All of these attack the same pain: agents are optimistic; “done” needs struc
 
 | Idea in Retornatus | Inspired by (class) |
 | --- | --- |
-| `verify --receipt` (HMAC, local key) | TAUSIK / obsigna / AGT receipt class |
+| `verify --receipt` (Ed25519, committed public key) | TAUSIK / obsigna / AGT receipt class |
 | Optional Action attempt budget | MartinLoop budget class |
 | `AGENTS.md` map | OpenAI harness practice |
 | Docs HTML `--check` in CI | Doc-gardening / mechanical invariants |
@@ -52,4 +52,4 @@ No code was vendored from those repositories. Relationship is conceptual.
 | Live multi-provider agent runtime tests | Environment owns agents (non-goal) |
 | Enforced sandbox orchestration | Advisory Boundaries + host native tools |
 | Default-deny tool firewall | Host policy; not rebuilt here |
-| Full Ed25519 receipt mesh / SLSA export | Start with local HMAC receipt; expand if needed |
+| Full receipt mesh / SLSA export | Ed25519 verify receipts are local signatures, not a receipt network |
