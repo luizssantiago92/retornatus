@@ -45,7 +45,7 @@
       "schema_version": 1,
       "id": "C-0003/T-004",
       "description": "Record changelog and run the verification stack",
-      "lifecycle": "ACTIVE",
+      "lifecycle": "COMPLETED",
       "depends_on": [
         "C-0003/T-001",
         "C-0003/T-002",

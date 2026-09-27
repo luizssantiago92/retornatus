@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0003/E-004",
+  "type": "test_result",
+  "subject": "Workflows and the consumer template use full commit SHAs, contents read, and per",
+  "source": "uv run pytest -q --cov-fail-under=0 tests/test_workflow_hardening.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-27T19:33:44.964541Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--cov-fail-under=0",
+    "tests/test_workflow_hardening.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-27T19:33:44.720266Z",
+  "ended_at": "2026-09-27T19:33:44.958714Z",
+  "duration_ms": 238,
+  "output_sha256": "af87ea82cb922f819212aa164d8c90ed87ca739efdae510bad80402d1d8e2fcf",
+  "output_tail": "..../workspace/.venv/lib/python3.12/site-packages/coverage/inorout.py:558: CoverageWarning: Module retornatus was never imported. (module-not-imported); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-module-not-imported\n  self.warn(f\"Module {pkg} was never imported.\", slug=\"module-not-imported\")\n/workspace/.venv/lib/python3.12/site-packages/coverage/control.py:967: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-no-data-collected\n  self._warn(\"No data was collected.\", slug=\"no-data-collected\")\n/workspace/.venv/lib/python3.12/site-packages/pytest_cov/plugin.py:366: CovReportWarning: Failed to generate report: No data to report.\n\n  warnings.warn(CovReportWarning(message), stacklevel=1)\n\nWARNING: Failed to generate report: No data to report.\n\n                                                                         [100%]\n4 passed in 0.03s\n",
+  "output_artifact": ".retornatus/changes/C-0003/evidence/E-004.output.txt",
+  "git_commit": "67d792f586ae652f246d3250953a8cb4f2e5d635",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0003/claim-done-1",
+      "note": null
+    }
+  ]
+}

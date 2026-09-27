@@ -1,0 +1,97 @@
+....                                                                     [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                                           Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------------------------
+src/retornatus/__init__.py                                         1      0   100%
+src/retornatus/__main__.py                                         4      4     0%   3-8
+src/retornatus/application/adaptation/intake.py                  190    190     0%   11-424
+src/retornatus/application/adaptation/lessons.py                  61     61     0%   3-133
+src/retornatus/application/adaptation/service.py                  76     76     0%   3-197
+src/retornatus/application/adaptation/skill_need.py               41     41     0%   3-127
+src/retornatus/application/adaptation/skills.py                  119    119     0%   3-320
+src/retornatus/application/assurance/checks.py                    55     55     0%   3-123
+src/retornatus/application/assurance/evaluate.py                 292    242    17%   76-97, 107-110, 115, 129-137, 143-150, 155-165, 182-189, 194-210, 216-234, 254-262, 266, 284-330, 338-342, 347-369, 406-600
+src/retornatus/application/assurance/evidence.py                  75     75     0%   3-221
+src/retornatus/application/assurance/execute.py                   65     65     0%   7-112
+src/retornatus/application/assurance/independent.py               90     90     0%   6-225
+src/retornatus/application/assurance/receipt.py                  338    226    33%   65, 73-78, 90, 153-158, 162-168, 172-176, 180-191, 196-218, 229, 234-241, 246-256, 279-285, 289-292, 296-310, 318-340, 348-364, 368-378, 387-388, 402-403, 409-418, 422-435, 440-446, 450, 454-464, 468, 472-497, 506-519, 523-530, 534
+src/retornatus/application/assurance/settings.py                  71     71     0%   3-129
+src/retornatus/application/assurance/subject_state.py            231    231     0%   9-404
+src/retornatus/application/change/classify.py                     83     83     0%   3-232
+src/retornatus/application/change/loop.py                         57     57     0%   3-96
+src/retornatus/application/change/overview.py                    188    188     0%   3-360
+src/retornatus/application/change/readiness.py                   105     77    27%   20-49, 53-56, 84, 93-120, 131-166
+src/retornatus/application/change/situation.py                   264    220    17%   73-141, 146-152, 163-185, 194-233, 237-247, 251-258, 263-273, 278-288, 292-293, 298-305, 322-336, 359-587, 597-624, 632-635
+src/retornatus/application/change/status.py                       87     87     0%   3-114
+src/retornatus/application/change/tasks.py                        62     43    31%   34-37, 42, 56-78, 81, 84, 87-88, 92-95, 98-101, 104, 107-114
+src/retornatus/application/change/workflow.py                    137    108    21%   54, 57-65, 78-83, 113-181, 201-250, 254-256, 264-286, 303-372
+src/retornatus/application/execution/context.py                  102    102     0%   3-235
+src/retornatus/application/execution/host_record.py               55     55     0%   7-99
+src/retornatus/application/execution/isolation.py                 49     49     0%   7-127
+src/retornatus/application/governance/bypass.py                   51     51     0%   3-97
+src/retornatus/application/governance/diff.py                    176    176     0%   7-253
+src/retornatus/application/governance/diff_scan.py                83     83     0%   3-145
+src/retornatus/application/governance/gates.py                   173    137    21%   37, 73-94, 99-122, 130-152, 165-182, 193-253, 258-279, 288-309, 319-330, 341-344
+src/retornatus/application/governance/globs.py                    34     34     0%   7-50
+src/retornatus/application/governance/policy.py                  138    105    24%   41, 46-53, 73-131, 138-139, 143-147, 160-170, 180-188, 196-198, 202-209, 227-243, 256-262, 266-276
+src/retornatus/application/governance/scope.py                   152    152     0%   3-259
+src/retornatus/application/operations/__init__.py                  2      2     0%   3-11
+src/retornatus/application/operations/loops.py                    83     83     0%   3-149
+src/retornatus/application/question/loop.py                       86     86     0%   3-207
+src/retornatus/bootstrap/__init__.py                               2      0   100%
+src/retornatus/bootstrap/doctor.py                               153    153     0%   3-254
+src/retornatus/bootstrap/hooks.py                                144    144     0%   13-240
+src/retornatus/bootstrap/init.py                                  33      1    97%   75
+src/retornatus/bootstrap/project_init.py                          80     66    18%   27-35, 39-54, 58-67, 83-183
+src/retornatus/bootstrap/wake.py                                  68     68     0%   3-109
+src/retornatus/cli/action.py                                      14     14     0%   3-39
+src/retornatus/cli/assurance.py                                   25     25     0%   3-60
+src/retornatus/cli/change.py                                     110    110     0%   3-296
+src/retornatus/cli/checks.py                                      15     15     0%   3-35
+src/retornatus/cli/common.py                                      44     44     0%   3-71
+src/retornatus/cli/decision.py                                    17     17     0%   3-46
+src/retornatus/cli/errors.py                                      37     37     0%   13-63
+src/retornatus/cli/evidence.py                                    40     40     0%   3-141
+src/retornatus/cli/execution.py                                   23     23     0%   3-57
+src/retornatus/cli/finding.py                                      9      9     0%   3-33
+src/retornatus/cli/gate.py                                        61     61     0%   3-141
+src/retornatus/cli/groups.py                                      46     46     0%   3-76
+src/retornatus/cli/hooks.py                                       47     47     0%   3-90
+src/retornatus/cli/intake.py                                      41     41     0%   3-90
+src/retornatus/cli/lesson.py                                      22     22     0%   3-64
+src/retornatus/cli/loop.py                                        21     21     0%   3-41
+src/retornatus/cli/main.py                                        28     28     0%   3-62
+src/retornatus/cli/ops.py                                         34     34     0%   3-56
+src/retornatus/cli/policy.py                                      26     26     0%   3-82
+src/retornatus/cli/question.py                                    23     23     0%   3-70
+src/retornatus/cli/receipt.py                                     41     41     0%   3-120
+src/retornatus/cli/root.py                                       159    159     0%   3-329
+src/retornatus/cli/rule.py                                        21     21     0%   3-71
+src/retornatus/cli/skill.py                                       64     64     0%   3-177
+src/retornatus/cli/task.py                                        40     40     0%   3-73
+src/retornatus/constants.py                                        1      0   100%
+src/retornatus/domain/__init__.py                                  6      0   100%
+src/retornatus/domain/base.py                                      6      0   100%
+src/retornatus/domain/enums.py                                    66      0   100%
+src/retornatus/domain/errors.py                                    7      0   100%
+src/retornatus/domain/ids.py                                      80     38    52%   27-30, 34-36, 42, 47, 51, 55, 59, 63, 67, 71, 75, 79, 87-89, 106-109, 113-117, 121-123, 127-132
+src/retornatus/domain/models.py                                  210     46    78%   91-99, 118-122, 153-168, 202-212, 290-293, 299, 303-307, 373-382
+src/retornatus/domain/relations.py                                19      0   100%
+src/retornatus/infrastructure/environment/adapters.py            107     54    50%   28-41, 46-54, 75, 78, 82, 93, 96, 105-122, 129, 132, 140-149, 156, 159, 168-177, 186-187, 190, 198-208, 221-227
+src/retornatus/infrastructure/environment/hub_skill.py            13     13     0%   3-25
+src/retornatus/infrastructure/environment/rule_projection.py      39     39     0%   3-67
+src/retornatus/infrastructure/index/sqlite_index.py               77     77     0%   3-210
+src/retornatus/infrastructure/persistence/__init__.py              4      0   100%
+src/retornatus/infrastructure/persistence/atomic.py               21     15    29%   17-35, 39
+src/retornatus/infrastructure/persistence/concurrency.py          24     10    58%   23, 27, 31-34, 39-42
+src/retornatus/infrastructure/persistence/migrations.py           29     17    41%   24-26, 34-51
+src/retornatus/infrastructure/persistence/paths.py                99     51    48%   28-29, 33, 37, 41, 45, 49, 53, 57, 61, 65, 69, 74, 78-82, 85-86, 89, 92, 95, 98-99, 102-104, 107-108, 111-112, 115-116, 119-120, 124, 127-128, 131-132, 135-136, 139-140, 143-144, 147, 150-152
+src/retornatus/infrastructure/persistence/repository.py          176    126    28%   57-58, 63-72, 81-90, 95-98, 106-110, 120-131, 134-138, 148-152, 155, 158-160, 173, 181, 189, 196, 201, 204, 209, 214, 219, 224, 229, 234, 239, 242, 245-251, 256-257, 262, 265-271, 276-277, 282, 285-291, 300-302, 307-310, 313-320, 329-332, 335-338, 341-351
+src/retornatus/infrastructure/persistence/serializers.py          30     17    43%   16, 22, 26, 30, 39-42, 46-54
+--------------------------------------------------------------------------------------------
+TOTAL                                                           6378   5467    14%
+
+11 empty files skipped.
+4 passed in 0.99s
