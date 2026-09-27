@@ -29,5 +29,7 @@ dist/
 Thumbs.db
 
 # Retornatus derived / ephemeral (canonical truth stays under .retornatus/)
+# Ed25519 public keys under .retornatus/keys/*.pub are canonical and must be committed.
+# Never commit a private key. It lives in the user config dir or RETORNATUS_SIGNING_KEY.
 .retornatus/index/
 .retornatus/runtime/

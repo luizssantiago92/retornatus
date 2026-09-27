@@ -235,7 +235,7 @@ Two Skill worlds:
 | Dashboard | `change overview` |
 | Next work | `loop next` · `task start` / `complete` / `fail` / `reopen` |
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
-| Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `gate *`, `verify` / `verify --allow-self-reported` / `verify --receipt`, `receipt verify` |
+| Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `gate *`, `verify` / `verify --allow-self-reported` / `verify --receipt`, `receipt keygen` / `sign` / `verify` |
 | Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
 | Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |
@@ -244,9 +244,43 @@ Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · 
 
 ---
 
+## Verify receipts
+
+`verify --receipt` and `receipt sign` write an **Ed25519** receipt under `.retornatus/assurance/receipts/`. The signature covers the verify verdict. `receipt verify` checks it.
+
+**What a receipt proves.** Someone who held the private key signed that result. It does not prove the agent was sandboxed, and it is not a receipt network.
+
+**Where the keys live.**
+
+| Material | Where | Committed? |
+| --- | --- | --- |
+| Public key | `.retornatus/keys/<key-id>.pub` | Yes. `<key-id>` is the SHA-256 fingerprint of the raw public key |
+| Private key | User config directory, or `RETORNATUS_SIGNING_KEY` (PEM, base64, or even-length hex) | **No.** Never inside the repo, and never copied there from the environment |
+
+`receipt keygen` writes the public key into the repo and the private key under the user config dir (`$XDG_CONFIG_HOME/retornatus` or `%APPDATA%\retornatus`). `receipt keygen --print` prints the private key instead, for a CI secret.
+
+**Threat model.** An agent that can read the private key can produce a valid signature. Keep `RETORNATUS_SIGNING_KEY` and the config-dir key **out of the agent's environment**. Verification needs only the committed public key, so a fresh clone can check a receipt without the secret.
+
+**CI.** Store the private key as a GitHub Actions secret and sign in CI, where the agent that edits the repo does not see it:
+
+```yaml
+- name: Sign verify receipt
+  env:
+    RETORNATUS_SIGNING_KEY: ${{ secrets.RETORNATUS_SIGNING_KEY }}
+  run: retornatus verify C-0001 --receipt
+```
+
+Anyone who clones the repo (the public key is already in `.retornatus/keys/`) can run `retornatus receipt verify path/to/receipt.json`.
+
+**Legacy HMAC.** Older `HMAC-SHA256` receipts still verify only on a machine that has the old local key. `receipt verify` reports them as `legacy_hmac` with `portable: false` and prints a deprecation warning. That key is not written into the repo.
+
+CLI mistakes print `error: …` instead of a traceback. An invalid id such as `verify ../../../tmp` exits `2`. Search text with quotes or hyphens is matched as literal words (it does not crash). Gates and `verify` still use `0` for pass / SATISFIED and `1` for STOP / not SATISFIED.
+
+---
+
 ## What’s new (1.3.0)
 
-- **Verify receipts** — `verify --receipt` writes a portable HMAC receipt; `receipt verify` checks it  
+- **Verify receipts** — Ed25519 signature checked with the committed public key; private key stays outside the repo (`verify --receipt`, `receipt verify`). Legacy HMAC receipts are `legacy_hmac` and not portable  
 - **Action attempt budget** — `action budget --max N` + `gate budget` stop runaway retries  
 - **AGENTS.md** map for host agents + CI check that docs HTML stays in sync with markdown  
 - **From Spec Guardrails** migration page + **Landscape** comparison with adjacent harnesses  

@@ -7,6 +7,8 @@ from typing import Annotated
 
 from pydantic import AfterValidator, StringConstraints
 
+from retornatus.domain.errors import InvalidIdentifierError
+
 # Project-level: L-0001, R-0001, D-0001, S-0001 (Skill)
 _PROJECT_ID = re.compile(r"^(?P<prefix>[LRDS])-(?P<num>\d{4,})$")
 # Change: C-0001
@@ -15,6 +17,8 @@ _CHANGE_ID = re.compile(r"^C-(?P<num>\d{4,})$")
 _OWNED_ID = re.compile(
     r"^(?P<change>C-\d{4,})/(?P<kind>[ATFQE])-(?P<num>\d{3,})$"
 )
+# Bypass records: B-0001
+_BYPASS_ID = re.compile(r"^B-(?P<num>\d{4,})$")
 
 _StrictStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
@@ -22,20 +26,20 @@ _StrictStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=
 def _validate_project_id(value: str, *, allowed: frozenset[str], label: str) -> str:
     match = _PROJECT_ID.fullmatch(value)
     if match is None or match.group("prefix") not in allowed:
-        raise ValueError(f"Invalid {label} id: {value!r}")
+        raise InvalidIdentifierError(f"Invalid {label} id: {value!r}")
     return value
 
 
 def _validate_change_id(value: str) -> str:
     if _CHANGE_ID.fullmatch(value) is None:
-        raise ValueError(f"Invalid Change id: {value!r}")
+        raise InvalidIdentifierError(f"Invalid Change id: {value!r}")
     return value
 
 
 def _validate_owned_id(value: str, *, kind: str, label: str) -> str:
     match = _OWNED_ID.fullmatch(value)
     if match is None or match.group("kind") != kind:
-        raise ValueError(f"Invalid {label} id: {value!r}")
+        raise InvalidIdentifierError(f"Invalid {label} id: {value!r}")
     return value
 
 
@@ -79,6 +83,12 @@ def validate_evidence_id(value: str) -> str:
     return _validate_owned_id(value, kind="E", label="Evidence")
 
 
+def validate_bypass_id(value: str) -> str:
+    if _BYPASS_ID.fullmatch(value) is None:
+        raise InvalidIdentifierError(f"Invalid Bypass id: {value!r}")
+    return value
+
+
 LearningId = Annotated[_StrictStr, AfterValidator(validate_learning_id)]
 RuleId = Annotated[_StrictStr, AfterValidator(validate_rule_id)]
 DecisionId = Annotated[_StrictStr, AfterValidator(validate_decision_id)]
@@ -95,7 +105,7 @@ def change_id_of(owned_id: str) -> str:
     """Extract ``C-NNNN`` from a Change-owned identifier."""
     match = _OWNED_ID.fullmatch(owned_id)
     if match is None:
-        raise ValueError(f"Not a Change-owned id: {owned_id!r}")
+        raise InvalidIdentifierError(f"Not a Change-owned id: {owned_id!r}")
     return match.group("change")
 
 

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0002",
+  "title": "Ed25519 receipts and CLI error handling",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Replace HMAC receipts with Ed25519 public keys and harden the CLI against path and search crashes",
+    "kind": "OTHER"
+  },
+  "lane": "QUICK",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-27T04:31:10.179025Z"
+}

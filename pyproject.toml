@@ -8,9 +8,10 @@ license = { text = "MIT" }
 authors = [{ name = "Retornatus Contributors" }]
 keywords = ["governance", "ai", "software-engineering", "harness"]
 dependencies = [
+    "cryptography>=42",
     "pydantic>=2.0",
-    "typer>=0.12",
     "tomli-w>=1.0",
+    "typer>=0.12",
 ]
 
 [project.optional-dependencies]

@@ -83,14 +83,29 @@ retornatus skill --help</code></pre>
 <tr><td><code>evidence run [options] -- &lt;command…&gt;</code></td><td>Run a command (no shell, cwd = project root) and record <code>provenance=executed</code></td></tr>
 <tr><td><code>gate contract</code> / <code>evidence</code> / <code>skill-research</code> / <code>assurance</code> / <code>policy</code> / <code>budget</code></td><td>STOP gates</td></tr>
 <tr><td><code>policy check --effect</code> / <code>--action</code></td><td>ALLOW / DENY / REQUIRE_HUMAN</td></tr>
-<tr><td><code>verify</code> / <code>verify --receipt</code></td><td>Assurance over Contract DONE (+ optional HMAC receipt)</td></tr>
+<tr><td><code>verify</code> / <code>verify --receipt</code></td><td>Assurance over Contract DONE (+ optional Ed25519 receipt)</td></tr>
 <tr><td><code>verify --allow-self-reported</code></td><td>Migration opt-out: accept self-reported test/build/lint evidence</td></tr>
-<tr><td><code>receipt verify &lt;path&gt;</code></td><td>Check a portable receipt against the local key</td></tr>
+<tr><td><code>receipt keygen</code> / <code>receipt keygen --print</code></td><td>Write the public key into <code>.retornatus/keys/</code>. Private key goes to the user config dir, or stdout for a CI secret</td></tr>
+<tr><td><code>receipt sign --change &lt;C-id&gt;</code></td><td>Sign the current Assurance result</td></tr>
+<tr><td><code>receipt verify &lt;path&gt;</code></td><td>Check a receipt with the committed public key</td></tr>
 <tr><td><code>action budget &lt;A-id&gt; --max N</code></td><td>Set Action attempt ceiling (<code>--clear</code> removes it)</td></tr>
 <tr><td><code>assurance plan</code> / <code>assurance review</code></td><td>Independent review path</td></tr>
 <tr><td><code>run</code> / <code>run --assurance</code> / <code>run --strict-policy</code></td><td>Assemble ExecutionContext</td></tr>
 <tr><td><code>lesson from-gate</code></td><td>Learning from gate failure (+ optional Rule Candidate)</td></tr>
 </tbody></table></div>
+<h2>Exit codes</h2>
+<div class="doc-table-wrap"><table>
+<thead><tr><th>Code</th><th>When</th></tr></thead>
+<tbody>
+<tr><td><code>0</code></td><td>Success. Gate passed. <code>verify</code> is <code>SATISFIED</code>. Receipt signature ok</td></tr>
+<tr><td><code>1</code></td><td>Gate STOP. <code>verify</code> is not <code>SATISFIED</code>. Signature failed. Known id or file missing</td></tr>
+<tr><td><code>2</code></td><td>Usage: invalid id, path outside <code>.retornatus</code>, empty or unusable search text, malformed signing key, invalid receipt JSON</td></tr>
+</tbody></table></div>
+<p><code>gate</code> and <code>verify</code> keep those meanings for real checks. A bad id is usage (<code>2</code>), not a traceback. Search treats your text as literal tokens (hyphens and quotes are not FTS operators).</p>
+<h2>Receipts</h2>
+<p>Ed25519. Public key: <code>.retornatus/keys/&lt;key-id&gt;.pub</code> (committed). Private key: <code>RETORNATUS_SIGNING_KEY</code> or the user config directory — never inside the project, and never copied from the environment onto disk.</p>
+<p>An agent that can read the private key can still sign. Keep the key out of the agent&#x27;s environment. In CI, put the PEM in a GitHub Actions secret and run <code>retornatus verify &lt;C-id&gt; --receipt</code> with <code>RETORNATUS_SIGNING_KEY</code> set. Clones verify with only the public key.</p>
+<p>Legacy HMAC receipts verify only where the old local key exists. The result is <code>legacy_hmac</code>, <code>portable: false</code>, plus a deprecation warning.</p>
 <h2>Problems</h2>
 <div class="doc-table-wrap"><table>
 <thead><tr><th>Command</th><th>Purpose</th></tr></thead>

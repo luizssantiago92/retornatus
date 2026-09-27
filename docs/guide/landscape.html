@@ -35,7 +35,7 @@
 <tr><td><a href="https://github.com/SkeinRank/claim-plane">Claim Plane</a></td><td>Control plane around Codex: scope admission, diff verify, sealed digests</td><td>Similar <em>proof-of-delivery</em>; more session/runtime control plane</td></tr>
 <tr><td><a href="https://github.com/Keesan12/martin-loop">MartinLoop</a></td><td>Budgets, verifier gates, signed run records around CLIs</td><td>Similar <em>gates</em>; focuses on run budgets / wrappers</td></tr>
 <tr><td><a href="https://github.com/MAHADEV369/HighHarness">HighHarness</a></td><td>Default-deny tool permissions + hash-chained episode logs</td><td>Similar <em>audit trail</em>; permission engine is host-layer (we stay native-first)</td></tr>
-<tr><td><a href="https://github.com/agent-receipts/obsigna">obsigna / Agent Receipts</a></td><td>Cryptographic receipt protocol (PyPI SDK + daemon)</td><td>Complementary — we now emit a <strong>light HMAC receipt</strong> on <code>verify</code>; not a full receipt mesh</td></tr>
+<tr><td><a href="https://github.com/agent-receipts/obsigna">obsigna / Agent Receipts</a></td><td>Cryptographic receipt protocol (PyPI SDK + daemon)</td><td>Complementary — <code>verify --receipt</code> emits an <strong>Ed25519</strong> receipt checked with a committed public key; not a full receipt mesh</td></tr>
 <tr><td><a href="https://github.com/microsoft/agent-governance-toolkit">Microsoft AGT</a></td><td>MCP-governed tool calls + offline receipts / SLSA</td><td>Enterprise toolkit; different packaging surface</td></tr>
 <tr><td><a href="https://openai.com/index/harness-engineering/">OpenAI harness practice</a></td><td><code>AGENTS.md</code> map + mechanical CI invariants</td><td>Pattern we adopt for discoverability — not a competing product</td></tr>
 <tr><td><a href="https://github.com/breim/loop-harness">loop-harness</a></td><td>Qualify/scaffold autonomous loops (maker/checker)</td><td>Adjacent for <em>ops loops</em>; Retornatus <code>ops</code> stays lighter</td></tr>
@@ -58,7 +58,7 @@
 <div class="doc-table-wrap"><table>
 <thead><tr><th>Idea in Retornatus</th><th>Inspired by (class)</th></tr></thead>
 <tbody>
-<tr><td><code>verify --receipt</code> (HMAC, local key)</td><td>TAUSIK / obsigna / AGT receipt class</td></tr>
+<tr><td><code>verify --receipt</code> (Ed25519, committed public key)</td><td>TAUSIK / obsigna / AGT receipt class</td></tr>
 <tr><td>Optional Action attempt budget</td><td>MartinLoop budget class</td></tr>
 <tr><td><code>AGENTS.md</code> map</td><td>OpenAI harness practice</td></tr>
 <tr><td>Docs HTML <code>--check</code> in CI</td><td>Doc-gardening / mechanical invariants</td></tr>
@@ -71,7 +71,7 @@
 <tr><td>Live multi-provider agent runtime tests</td><td>Environment owns agents (non-goal)</td></tr>
 <tr><td>Enforced sandbox orchestration</td><td>Advisory Boundaries + host native tools</td></tr>
 <tr><td>Default-deny tool firewall</td><td>Host policy; not rebuilt here</td></tr>
-<tr><td>Full Ed25519 receipt mesh / SLSA export</td><td>Start with local HMAC receipt; expand if needed</td></tr>
+<tr><td>Full receipt mesh / SLSA export</td><td>Ed25519 verify receipts are local signatures, not a receipt network</td></tr>
 </tbody></table></div>
     <div class="doc-nav-secondary">
       <a class="btn ghost" href="./">← Docs hub</a>

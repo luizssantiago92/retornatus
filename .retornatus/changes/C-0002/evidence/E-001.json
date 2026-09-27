@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0002/E-001",
+  "type": "test_result",
+  "subject": "Tampered or wrong-key receipts fail verification",
+  "source": "pytest receipt tamper and wrong-key",
+  "producer": "retornatus",
+  "observed_at": "2026-09-27T04:40:48.678895Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_receipt_and_budget.py::test_receipt_roundtrip",
+    "tests/test_receipt_and_budget.py::test_wrong_public_key_fails",
+    "tests/test_cli_robustness.py::test_receipt_keygen_sign_and_verify"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-27T04:40:48.274937Z",
+  "ended_at": "2026-09-27T04:40:48.674780Z",
+  "duration_ms": 399,
+  "output_sha256": "704d54d2279476b018517267a8ebc5993f930e5bbc21c5a90a2ece64846fe69f",
+  "output_tail": "...                                                                      [100%]\n3 passed in 0.24s\n",
+  "output_artifact": ".retornatus/changes/C-0002/evidence/E-001.output.txt",
+  "git_commit": "ef870ac978185fd948f3b3165b4f7e7bfdb51029",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0002/claim-done-1",
+      "note": null
+    }
+  ]
+}
