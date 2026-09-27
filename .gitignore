@@ -28,6 +28,30 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Generated docs HTML (GitHub Pages runs scripts/build_docs_html.py).
+# Hand-written site files stay tracked: docs/index.html, docs/guide/index.html, docs/site.css.
+docs/credits.html
+docs/guide/overview.html
+docs/guide/quick-start.html
+docs/guide/how-it-works.html
+docs/guide/concepts.html
+docs/guide/glossary.html
+docs/guide/faq.html
+docs/guide/skills.html
+docs/guide/memory.html
+docs/guide/governance.html
+docs/guide/git-governance.html
+docs/guide/gates.html
+docs/guide/cli.html
+docs/guide/architecture.html
+docs/guide/environments.html
+docs/guide/non-goals.html
+docs/guide/from-spec-guardrails.html
+docs/guide/landscape.html
+docs/guide/tutorials/index.html
+docs/guide/tutorials/01-first-change.html
+docs/guide/tutorials/02-brownfield-wake.html
+
 # Retornatus derived / ephemeral (canonical truth stays under .retornatus/)
 # Ed25519 public keys under .retornatus/keys/*.pub are canonical and must be committed.
 # Never commit a private key. It lives in the user config dir or RETORNATUS_SIGNING_KEY.

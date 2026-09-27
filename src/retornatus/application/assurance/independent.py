@@ -128,10 +128,7 @@ def record_independent_review_evidence(
     Host/Environment performs the review; Retornatus records attributable Evidence.
     """
     state = capture_subject_state(root, use_git=use_git_state, subject=subject)
-    if state:
-        subject_state = f"{state}|review:{verdict}"
-    else:
-        subject_state = f"review:{verdict}"
+    subject_state = f"{state}|review:{verdict}" if state else f"review:{verdict}"
 
     ev = EvidenceService(root).add(
         change_id=change_id,

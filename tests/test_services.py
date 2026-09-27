@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from retornatus.application.assurance.evaluate import Claim, AssuranceVerdict, evaluate_assurance
+from retornatus.application.assurance.evaluate import AssuranceVerdict, Claim, evaluate_assurance
 from retornatus.application.governance.policy import PolicyVerdict, evaluate_policy
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.wake import wake_up

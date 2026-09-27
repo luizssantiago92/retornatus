@@ -62,7 +62,10 @@ STEM_MAP = {
 def md_href_to_html(href: str, current_out: str) -> str:
     if href.startswith(("http://", "https://", "mailto:", "#")):
         return href
-    if "prd/" in href or href.startswith("../../"):
+    path_only = href.split("#", 1)[0]
+    if path_only.endswith("PRD.md"):
+        return "https://github.com/luizssantiago92/retornatus/blob/main/docs/archive/PRD.md"
+    if href.startswith("../../"):
         clean = re.sub(r"^(\.\./)+", "", href)
         return f"https://github.com/luizssantiago92/retornatus/blob/main/{clean}"
     frag = ""
@@ -244,7 +247,7 @@ def render_page(title: str, body_html: str, out_rel: str) -> str:
     depth = out_rel.count("/")
     prefix = "../" * depth
     css = f"{prefix}site.css"
-    icon = f"{prefix}assets/retornatus-mascot.png"
+    icon = f"{prefix}assets/retornatus-mascot.webp"
     home = prefix if depth else "./"
     if out_rel.startswith("guide/tutorials/"):
         docs, qs = "../", "../quick-start.html"
@@ -260,10 +263,13 @@ def render_page(title: str, body_html: str, out_rel: str) -> str:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{safe_title} — Retornatus</title>
-  <link rel="icon" type="image/png" href="{icon}" />
+  <link rel="icon" type="image/webp" href="{icon}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="{css}" />
 </head>
 <body class="doc-page">
@@ -315,34 +321,35 @@ def render_one(src_rel: str, out_rel: str) -> str:
 
 
 def build(*, check: bool = False) -> int:
-    """Write HTML pages, or exit 1 when check=True and committed HTML is stale."""
-    drift: list[str] = []
+    """Write HTML pages next to the markdown, or only prove they render.
+
+    Generated HTML is not committed. GitHub Pages runs this script before
+    upload. ``--check`` fails when a source is missing or renders empty.
+    """
+    problems: list[str] = []
     for src_rel, out_rel in PAGES:
         src = DOCS / src_rel
         if not src.exists():
-            print("skip missing", src)
+            problems.append(f"missing source {src_rel}")
             continue
         page = render_one(src_rel, out_rel)
-        out = DOCS / out_rel
-        if check:
-            if not out.exists():
-                drift.append(f"missing {out.relative_to(ROOT)}")
-                continue
-            current = out.read_text(encoding="utf-8")
-            if current != page:
-                drift.append(f"stale {out.relative_to(ROOT)}")
-            else:
-                print("ok", out.relative_to(ROOT))
+        if not page.strip():
+            problems.append(f"empty render {out_rel}")
             continue
+        if check:
+            print("ok", out_rel)
+            continue
+        out = DOCS / out_rel
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page, encoding="utf-8", newline="\n")
         print("wrote", out.relative_to(ROOT))
-    if check and drift:
-        print("HTML out of sync with markdown sources:")
-        for item in drift:
+    if problems:
+        print("Docs HTML build failed:")
+        for item in problems:
             print(" ", item)
-        print("Fix: uv run python scripts/build_docs_html.py")
         return 1
+    if check:
+        print("Docs sources render. Commit the markdown; Pages generates the HTML.")
     return 0
 
 
@@ -354,7 +361,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Exit non-zero if generated HTML would differ from files on disk.",
+        help="Exit non-zero if a markdown source is missing or renders empty. Does not require committed HTML.",
     )
     args = parser.parse_args()
     sys.exit(build(check=args.check))

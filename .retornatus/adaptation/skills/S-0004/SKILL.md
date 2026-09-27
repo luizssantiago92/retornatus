@@ -51,7 +51,7 @@ Suggested topics: `python`, `ai`, `governance`, `developer-tools`, `cursor`, `cl
 
 1. **Tier 0** local commit OK; **Tier 1** push/PR only when asked; **Tier 2** merge/publish/tag = owner only (see Git governance).
 2. PR descriptions should cite Change id (`C-xxxx`) when dogfooding Retornatus.
-3. After docs markdown changes, run `python scripts/build_docs_html.py` so Pages stays in sync.
+3. After docs markdown changes, leave HTML generation to the Pages workflow. `python scripts/build_docs_html.py` is a local preview only; do not commit the HTML.
 4. Keep CI green before asking for merge; never `--no-verify` unless the human asks.
 5. Homepage + topics: `gh repo edit --homepage URL` and set topics when metadata drifts.
 6. Badges: Website, PyPI, CI, license — avoid redundant “docs” badges that hide the live site.
@@ -62,4 +62,4 @@ Suggested topics: `python`, `ai`, `governance`, `developer-tools`, `cursor`, `cl
 - [ ] Homepage URL set; Website link above the fold
 - [ ] Docs and Quick start open as HTML on Pages (not raw markdown)
 - [ ] No broken relative links in README table
-- [ ] `build_docs_html.py` run after guide markdown edits
+- [ ] Guide markdown updated; generated HTML left to the Pages workflow

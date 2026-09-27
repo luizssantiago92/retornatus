@@ -15,6 +15,7 @@ from retornatus.cli.groups import app
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
 
+
 def version_callback(value: bool) -> None:
     if value:
         typer.echo(f"retornatus {__version__}")
@@ -141,16 +142,16 @@ def inspect(
         typer.echo(rule.model_dump_json(indent=2))
         return
     if entity_id.startswith("S-"):
-        meta, body, _ = repo.load_skill(entity_id)
-        typer.echo(meta.model_dump_json(indent=2))
+        skill_meta, skill_body, _ = repo.load_skill(entity_id)
+        typer.echo(skill_meta.model_dump_json(indent=2))
         typer.echo("---")
-        typer.echo(body)
+        typer.echo(skill_body)
         return
     if entity_id.startswith("L-"):
-        meta, body, _ = repo.load_learning(entity_id)
-        typer.echo(meta.model_dump_json(indent=2))
+        learning_meta, learning_body, _ = repo.load_learning(entity_id)
+        typer.echo(learning_meta.model_dump_json(indent=2))
         typer.echo("---")
-        typer.echo(body)
+        typer.echo(learning_body)
         return
     typer.echo(f"Unrecognized id: {entity_id}")
     raise typer.Exit(code=1)
@@ -275,10 +276,11 @@ def run(
     from retornatus.application.governance.policy import PolicyVerdict
 
     root = resolve_root(path)
-    if assurance:
-        ctx = assemble_assurance_context(root, action_id)
-    else:
-        ctx = assemble_execution_context(root, action_id)
+    ctx = (
+        assemble_assurance_context(root, action_id)
+        if assurance
+        else assemble_execution_context(root, action_id)
+    )
     typer.echo(ctx.model_dump_json(indent=2))
     if strict_policy and ctx.policy_verdict in {
         PolicyVerdict.DENY.value,

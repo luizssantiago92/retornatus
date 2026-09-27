@@ -6,9 +6,17 @@
 # Requires:
 #   - Python 3.11+
 #   - `.retornatus/` initialized in the repository
-#   - `retornatus` installable from PyPI
+#   - `retornatus` on PyPI at the pin below
 #
-# This template runs Continuity + Brakes checks. It does not push, merge, or deploy.
+# Pin: this repository's current version. `gate scope`, `gate suppressions`,
+# and blocking `verify` are in source after 1.3.0 was published. Bump the pin
+# to the release that contains them before relying on this file in CI.
+#
+# RETORNATUS_OMISSION:
+#   fail (default) — a code diff with no touched Change fails the job
+#   warn — print a warning and continue
+#
+# This template does not push, merge, or deploy.
 
 name: Retornatus
 
@@ -17,11 +25,16 @@ on:
   push:
     branches: [main, master]
 
+env:
+  RETORNATUS_OMISSION: fail
+
 jobs:
   retornatus-gates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -30,7 +43,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Install Retornatus
-        run: uv tool install retornatus
+        run: uv tool install "retornatus==1.3.0"
 
       - name: Doctor (Process vs Brakes)
         run: |
@@ -47,24 +60,67 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           retornatus ops run gate-scan
 
-      - name: Verify Changes when present
+      - name: Resolve diff base
+        id: base
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=origin/${{ github.event.repository.default_branch }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify touched Changes and diff gates
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.base.outputs.sha }}
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          # Soft verify: skip if no changes; fail if an active Change cannot verify
-          mapfile -t CHANGES < <(find .retornatus/changes -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null || true)
-          if [ "${#CHANGES[@]}" -eq 0 ]; then
-            echo "No Changes — skipping verify"
-            exit 0
+          mapfile -t TOUCHED < <(
+            git diff --name-only "${BASE_SHA}...HEAD" -- .retornatus/changes \
+              | sed -n 's|^\.retornatus/changes/\(C-[0-9][0-9]*\)/.*|\1|p' \
+              | sort -u
+          )
+          code_changed=0
+          while IFS= read -r path; do
+            [ -n "$path" ] || continue
+            case "$path" in
+              src/*|tests/*|scripts/*|templates/*|pyproject.toml|uv.lock)
+                code_changed=1
+                ;;
+            esac
+          done < <(git diff --name-only "${BASE_SHA}...HEAD")
+
+          if [ "${#TOUCHED[@]}" -eq 0 ] && [ "$code_changed" -eq 1 ]; then
+            echo "Code changed but no .retornatus Change was touched (skip-by-omission)."
+            if [ "${RETORNATUS_OMISSION}" = "warn" ]; then
+              echo "::warning::Code changed but no Change was touched"
+            else
+              exit 1
+            fi
           fi
+
           status=0
-          for cid in "${CHANGES[@]}"; do
+          echo "Suppression gate against ${BASE_SHA}"
+          if ! retornatus gate suppressions --base "${BASE_SHA}"; then
+            status=1
+          fi
+          if [ "${#TOUCHED[@]}" -eq 0 ]; then
+            echo "No Change paths in the diff — verify and scope skipped"
+            exit "$status"
+          fi
+          for cid in "${TOUCHED[@]}"; do
             echo "::group::verify $cid"
             if ! retornatus verify "$cid"; then
-              echo "verify failed for $cid (INCONCLUSIVE/NOT_SATISFIED is expected until Evidence exists)"
-              # Do not fail the job solely on INCONCLUSIVE in PRs without Evidence yet.
-              # Uncomment the next line for strict Assurance-on-PR:
-              # status=1
+              echo "verify failed for $cid"
+              status=1
+            fi
+            echo "::endgroup::"
+            echo "::group::scope $cid"
+            if ! retornatus gate scope "$cid" --base "${BASE_SHA}"; then
+              echo "scope gate failed for $cid"
+              status=1
             fi
             echo "::endgroup::"
           done
-          exit $status
+          exit "$status"

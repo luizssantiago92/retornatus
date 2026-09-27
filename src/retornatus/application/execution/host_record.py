@@ -6,7 +6,7 @@ so Assurance and continuity can reference an attributable Execution boundary.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from pydantic import Field
@@ -19,7 +19,7 @@ from retornatus.infrastructure.persistence.serializers import dump_json_model
 
 
 def _utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class HostExecutionRecord(DomainModel):

@@ -9,7 +9,6 @@ from retornatus.domain.errors import SearchQueryError
 from retornatus.infrastructure.persistence.paths import RetornatusPaths
 from retornatus.infrastructure.persistence.repository import FileRepository
 
-
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS entities (
     id TEXT PRIMARY KEY,

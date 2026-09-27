@@ -8,6 +8,7 @@ import typer
 
 from retornatus.cli.groups import loop_app
 
+
 @loop_app.command("next")
 def loop_next(
     change_id: str = typer.Argument(...),

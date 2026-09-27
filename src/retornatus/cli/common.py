@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import sys
 from pathlib import Path
 
@@ -16,10 +17,8 @@ def configure_stdio() -> None:
     for stream in (sys.stdout, sys.stderr):
         reconfigure = getattr(stream, "reconfigure", None)
         if callable(reconfigure):
-            try:
+            with contextlib.suppress(Exception):
                 reconfigure(encoding="utf-8", errors="replace")
-            except Exception:  # noqa: BLE001
-                pass
 
 
 def resolve_root(path: Path | None) -> Path:

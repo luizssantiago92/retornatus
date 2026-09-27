@@ -21,6 +21,7 @@ MAX_FOCUSED_QUESTIONS = 5
 
 _KICKOFF_CANDIDATES = (
     "prd.md",
+    "docs/archive/PRD.md",
     "prd/PRD.md",
     "docs/brief.md",
     "kickoff.md",
@@ -269,9 +270,7 @@ def _demand_looks_vague(demand: str, *, what: str | None) -> bool:
         return True
     if _VAGUE_VERBS.search(d) and not _SCOPE_HINTS.search(d) and len(words) < 14:
         return True
-    if len(words) <= 4:
-        return True
-    return False
+    return len(words) <= 4
 
 
 def _topic_covered_in_facts(topic: str, facts: list[str]) -> bool:
@@ -286,10 +285,7 @@ def _topic_covered_in_facts(topic: str, facts: list[str]) -> bool:
         "DONE": ("done", "pytest", "test", "evidence"),
         "constraints": ("constraint", "security", "compliance", "must not"),
     }
-    for marker in markers.get(topic, (topic.lower(),)):
-        if marker in blob:
-            return True
-    return False
+    return any(marker in blob for marker in markers.get(topic, (topic.lower(),)))
 
 
 def _cap_questions(questions: list[FocusedQuestion]) -> list[FocusedQuestion]:
@@ -373,11 +369,12 @@ def assess_situation(
 
     for signal in signals:
         assessment.known_facts.append(f"Repo: {signal}")
-        if "pyproject.toml" in signal or "pytest" in signal.lower():
-            if "Prefer pytest for automated verification" not in assessment.constraints:
-                assessment.constraints.append(
-                    "Prefer pytest for automated verification (inferred from repo)"
-                )
+        inferred = "pyproject.toml" in signal or "pytest" in signal.lower()
+        already = "Prefer pytest for automated verification" in assessment.constraints
+        if inferred and not already:
+            assessment.constraints.append(
+                "Prefer pytest for automated verification (inferred from repo)"
+            )
 
     for fact in kickoff_facts or []:
         if fact and fact not in assessment.known_facts:

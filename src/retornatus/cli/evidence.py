@@ -8,6 +8,7 @@ import typer
 
 from retornatus.cli.groups import evidence_app
 
+
 @evidence_app.command("add")
 def evidence_add(
     change_id: str = typer.Option(..., "--change", "-c"),

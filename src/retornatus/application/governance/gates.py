@@ -37,8 +37,65 @@ class GateResult:
         return 0 if self.passed else 1
 
 
+# Placeholders that cannot be observed, plus angle-bracket tokens such as <...>.
+_PLACEHOLDER_RE = re.compile(
+    r"\bTODO\b|\bTBD\b|\[NEEDS CLARIFICATION\]|<[^>\n]*>",
+    re.IGNORECASE,
+)
+# Words that do not establish a finish line. "etc" / "as needed" hide the rest.
+_VAGUE_RE = re.compile(
+    r"\b(?:works|properly|fast|user-friendly|as needed|etc)\b",
+    re.IGNORECASE,
+)
+# A criterion should name something a reviewer can check. Absence is a warning.
+_OBSERVABLE_RE = re.compile(
+    r"\b(?:test|tests|pytest|assert|return|returns|exit|exits|"
+    r"pass|passes|fail|fails|contain|contains|include|includes|"
+    r"match|matches|equal|equals|file|files|command|output|"
+    r"status|endpoint|response|coverage|documented|record|recorded|"
+    r"verify|verified|review|reviewed|deny|denies|create|creates|"
+    r"created|write|writes|exist|exists|display|show|shows|"
+    r"print|prints|log|logs|section|version|commit|gate|preserved|"
+    r"stored|saved|present|covers|cover|completed|detect|detected|"
+    r"exclude|excludes|excluded)\b|\b\d{2,}\b",
+    re.IGNORECASE,
+)
+_WEAK_EXACT = frozenset({"done", "ok", "works"})
+
+
+def lint_done_criteria(criteria: list[str]) -> tuple[list[str], list[str]]:
+    """Return ``(errors, warnings)`` for Contract DONE lines.
+
+    Errors reject the gate: placeholders, duplicates, vague wording, and
+    criteria too short to mean anything. A criterion with no observable
+    outcome is a warning — the gate still passes.
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+    seen: set[str] = set()
+    for raw in criteria:
+        text = raw.strip()
+        key = text.casefold()
+        if key in seen:
+            errors.append(f"DONE criterion is duplicated: {text}")
+            continue
+        seen.add(key)
+        if len(text) < 8 or key in _WEAK_EXACT:
+            errors.append(f"DONE criterion is too weak to establish satisfaction: {text}")
+            continue
+        if _PLACEHOLDER_RE.search(text):
+            errors.append(f"DONE criterion contains a placeholder: {text}")
+            continue
+        if _VAGUE_RE.search(text):
+            errors.append(f"DONE criterion uses vague language: {text}")
+            continue
+        if not _OBSERVABLE_RE.search(text):
+            warnings.append(f"WARN: DONE criterion has no observable outcome: {text}")
+    return errors, warnings
+
+
 def gate_contract(root: Path, change_id: str) -> GateResult:
-    """Active Contract must exist with WHAT and at least one DONE criterion."""
+    """Active Contract must exist with WHAT and lint-clean DONE criteria."""
     repo = FileRepository(root)
     messages: list[str] = []
     try:
@@ -56,13 +113,12 @@ def gate_contract(root: Path, change_id: str) -> GateResult:
     if not contract.done_criteria:
         messages.append("Contract has no DONE criteria")
     else:
-        weak = [
-            c
-            for c in contract.done_criteria
-            if len(c.strip()) < 8 or c.strip().lower() in {"done", "ok", "works"}
-        ]
-        if weak:
-            messages.append("DONE criteria are too weak to establish satisfaction")
+        errors, warnings = lint_done_criteria(list(contract.done_criteria))
+        messages.extend(errors)
+        if messages:
+            return GateResult(GateName.CONTRACT, False, messages + warnings)
+        if warnings:
+            return GateResult(GateName.CONTRACT, True, warnings)
     return GateResult(GateName.CONTRACT, not messages, messages or ["Contract OK"])
 
 

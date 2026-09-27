@@ -10,6 +10,7 @@ from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import policy_app
 from retornatus.infrastructure.persistence.repository import FileRepository
 
+
 @policy_app.command("check")
 def policy_check(
     effect: str | None = typer.Option(

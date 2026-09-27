@@ -36,9 +36,9 @@ Command 1:1 parity with Spec Guardrails is **not** a goal. Migration map: [From 
 
 Isolation Boundaries are advisory projections toward host worktrees/sandboxes. Retornatus does not enforce OS-level sandboxes in V1.
 
-## How do Rules reach Cursor / Claude / Codex?
+## How do Rules reach Cursor / Claude / Codex / Copilot?
 
-On `rule activate` and `integrate` / bridge refresh, active Rules are upserted into host bridge files. Canonical Rules stay in `.retornatus/`.
+On `rule activate` and `integrate` / bridge refresh, active Rules are upserted into host bridge files. Claude, Codex, and Copilot instruction blocks use begin/end markers and are replaced when the text changes. Canonical Rules stay in `.retornatus/`.
 
 ## Who can activate a Rule?
 
@@ -46,4 +46,4 @@ Only a recorded Human Decision of kind `APPROVE_RULE_ACTIVATION` for that Rule i
 
 ## Where is the product contract?
 
-[`prd/PRD.md`](../../prd/PRD.md). Guides in this folder explain; the PRD decides.
+[`docs/archive/PRD.md`](../archive/PRD.md). Guides in this folder explain; the PRD decides.

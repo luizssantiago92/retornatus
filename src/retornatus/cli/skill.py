@@ -12,6 +12,7 @@ from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import skill_app
 from retornatus.infrastructure.persistence.repository import FileRepository
 
+
 @skill_app.command("create")
 def skill_create(
     specialization: str = typer.Option(

@@ -18,15 +18,15 @@ from retornatus.application.assurance.subject_state import (
     resolve_subject_commit,
 )
 from retornatus.application.change.workflow import ChangeWorkflow
-from retornatus.application.execution.brownfield_fixture import (
-    git_commit_all,
-    seed_brownfield_service,
-)
 from retornatus.application.execution.context import assemble_execution_context
 from retornatus.application.execution.host_record import HostExecutionService
 from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import DemandKind
+from tests.support.brownfield_fixture import (
+    git_commit_all,
+    seed_brownfield_service,
+)
 
 
 def test_path_level_freshness_isolated_from_unrelated_commits(tmp_path: Path) -> None:

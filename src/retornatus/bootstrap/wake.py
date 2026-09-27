@@ -5,12 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from retornatus.application.execution.isolation import enrich_capabilities
 from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.infrastructure.environment.adapters import (
     CapabilityModel,
     detect_environment,
 )
-from retornatus.application.execution.isolation import enrich_capabilities
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
 

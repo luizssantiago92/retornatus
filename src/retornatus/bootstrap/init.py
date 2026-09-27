@@ -5,9 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from retornatus.constants import RETORNATUS_DIR
-
 import tomli_w
+
+from retornatus.constants import RETORNATUS_DIR
 
 SCHEMA_VERSION = 1
 

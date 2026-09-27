@@ -9,7 +9,6 @@ from retornatus.infrastructure.environment.adapters import detect_environment
 from retornatus.infrastructure.persistence.atomic import atomic_write_text
 from retornatus.infrastructure.persistence.paths import RetornatusPaths
 
-
 IMPORTANT_DIRS = (
     "src",
     "lib",

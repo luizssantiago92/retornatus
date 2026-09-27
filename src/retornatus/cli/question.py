@@ -8,6 +8,7 @@ import typer
 
 from retornatus.cli.groups import question_app
 
+
 @question_app.command("open")
 def question_open(
     change_id: str = typer.Option(..., "--change", "-c"),

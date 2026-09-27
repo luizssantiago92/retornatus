@@ -8,6 +8,7 @@ import typer
 
 from retornatus.cli.groups import finding_app
 
+
 @finding_app.command("add")
 def finding_add(
     change_id: str = typer.Option(..., "--change", "-c"),

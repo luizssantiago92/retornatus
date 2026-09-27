@@ -207,9 +207,7 @@ def _evidence_supports_claim(evidence: Evidence, claim: Claim) -> bool:
         r.type is RelationType.CHALLENGES and r.target_id == claim.id
         for r in evidence.relations
     )
-    if challenged:
-        return False
-    return True
+    return not challenged
 
 
 def _normalize_evidence(
@@ -217,13 +215,13 @@ def _normalize_evidence(
 ) -> list[Evidence]:
     if not evidence:
         return []
-    first = evidence[0]
-    if isinstance(first, Evidence):
-        return list(evidence)  # type: ignore[arg-type]
-    # Legacy (id, type) tuples — no claim binding possible
     normalized: list[Evidence] = []
     for item in evidence:
-        eid, etype = item  # type: ignore[misc]
+        if isinstance(item, Evidence):
+            normalized.append(item)
+            continue
+        # Legacy (id, type) tuples — no claim binding possible
+        eid, etype = item
         normalized.append(
             Evidence(
                 id=eid,

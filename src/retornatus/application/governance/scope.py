@@ -72,9 +72,7 @@ class ScopeReport:
     def passed(self) -> bool:
         if self.force_fail or self.denied or self.out_of_scope:
             return False
-        if self.sensitive and not self.sensitive_satisfied:
-            return False
-        return True
+        return not (self.sensitive and not self.sensitive_satisfied)
 
 
 def load_scope_settings(root: Path) -> ScopeSettings:
@@ -111,10 +109,7 @@ def path_in_scope(path: str, resources: list[str]) -> bool:
     norm = normalize_repo_path(path)
     if norm == ".retornatus" or norm.startswith(".retornatus/"):
         return True
-    for resource in resources:
-        if _resource_matches(norm, resource):
-            return True
-    return False
+    return any(_resource_matches(norm, resource) for resource in resources)
 
 
 def evaluate_scope(
@@ -252,9 +247,7 @@ def _resource_matches(path: str, resource: str) -> bool:
         return glob_match(path, resource_norm)
     if path == resource_norm:
         return True
-    if resource_norm.endswith("/") and path.startswith(resource_norm):
-        return True
-    return False
+    return bool(resource_norm.endswith("/") and path.startswith(resource_norm))
 
 
 def _globs(table: dict[str, Any], key: str, default: tuple[str, ...]) -> tuple[str, ...]:

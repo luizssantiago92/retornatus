@@ -21,11 +21,11 @@ from retornatus.application.assurance.independent import (
 from retornatus.application.change.loop import next_work, project_next_work
 from retornatus.application.change.tasks import TaskLifecycleError, TaskService
 from retornatus.application.change.workflow import ChangeWorkflow, TaskSpec
-from retornatus.application.execution.brownfield_fixture import seed_brownfield_service
 from retornatus.application.execution.host_record import HostExecutionService
 from retornatus.bootstrap.init import initialize_project
 from retornatus.domain.enums import DemandKind, TaskLifecycle
 from retornatus.infrastructure.persistence.repository import FileRepository
+from tests.support.brownfield_fixture import seed_brownfield_service
 
 
 def test_task_lifecycle_and_loop_progression(tmp_path: Path) -> None:

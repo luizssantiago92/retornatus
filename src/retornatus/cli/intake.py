@@ -10,6 +10,7 @@ from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import intake_app
 
+
 @intake_app.command("analyze")
 def intake_analyze(
     prompt: str = typer.Option(

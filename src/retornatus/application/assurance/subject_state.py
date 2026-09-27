@@ -13,7 +13,6 @@ from pathlib import Path
 
 from retornatus.domain.models import Evidence
 
-
 COMMIT_PREFIX = "commit:"
 
 
@@ -376,10 +375,7 @@ def capture_subject_state(
     if explicit:
         return explicit
     if use_git:
-        if subject:
-            sha = resolve_subject_commit(root, subject)
-        else:
-            sha = current_git_head(root)
+        sha = resolve_subject_commit(root, subject) if subject else current_git_head(root)
         if sha:
             return format_commit_state(sha)
     return None

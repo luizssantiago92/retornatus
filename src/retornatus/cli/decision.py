@@ -10,6 +10,7 @@ from retornatus.application.adaptation.service import AdaptationService
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import decision_app
 
+
 @decision_app.command("record")
 def decision_record(
     kind: str = typer.Option(

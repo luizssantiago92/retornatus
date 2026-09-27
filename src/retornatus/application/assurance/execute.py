@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import subprocess
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from retornatus.application.assurance.subject_state import (
@@ -39,7 +39,7 @@ class CommandCapture:
 
 
 def _utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _tail(text: str, *, note: str = "") -> str:
@@ -99,7 +99,7 @@ def capture_command(
         output = raw.encode("utf-8", errors="replace") if isinstance(raw, str) else raw
         exit_code = None
     except OSError as exc:
-        output = f"[retornatus] failed to start command: {exc}\n".encode("utf-8")
+        output = f"[retornatus] failed to start command: {exc}\n".encode()
         exit_code = None
     ended = _utc_now()
     duration_ms = max(0, int((ended - started).total_seconds() * 1000))

@@ -40,7 +40,7 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 | [Gates](Gates.md) | Mechanical STOP gates and Assurance verdicts |
 | [CLI](CLI.md) | Intention-oriented commands |
 | [Architecture](Architecture.md) | Layers, persistence, native-first adapters |
-| [Environments](Environments.md) | Cursor, Claude Code, Codex, generic |
+| [Environments](Environments.md) | Cursor, Claude Code, Codex, GitHub Copilot, generic |
 
 ## Advanced / provenance
 
@@ -53,6 +53,6 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 
 | Document | Role |
 | --- | --- |
-| [`prd/PRD.md`](../../prd/PRD.md) | Canonical product requirements |
+| [`docs/archive/PRD.md`](../archive/PRD.md) | Canonical product requirements |
 | [`.specs/parity-matrix.md`](../../.specs/parity-matrix.md) | Maintainer parity notes (not user docs) |
 | [CONTRIBUTING.md](../../CONTRIBUTING.md) | How to contribute |

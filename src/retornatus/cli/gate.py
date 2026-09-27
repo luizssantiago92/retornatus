@@ -9,6 +9,7 @@ import typer
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import gate_app
 
+
 @gate_app.command("policy")
 def gate_policy_cmd(
     action_id: str = typer.Argument(..., help="Action id to evaluate Policy against."),

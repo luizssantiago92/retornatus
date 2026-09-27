@@ -1,3 +1,12 @@
+# Publish retornatus to PyPI with Trusted Publishing.
+#
+# Tag push: the tag must be v<package version> and the tagged commit must be on main.
+# Manual dispatch: must run from main. target=pypi publishes; target=test tries TestPyPI
+# and does not fail the workflow.
+#
+# No PyPI API tokens. The pypi environment and the trusted publisher on pypi.org
+# are owner setup (see CONTRIBUTING.md). Versions already on PyPI are skipped.
+
 name: Publish to PyPI
 
 on:
@@ -7,43 +16,141 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: "Publish target"
+        description: "Publish target (test is optional and non-blocking)"
         required: true
-        default: "test"
+        default: pypi
         type: choice
         options:
-          - test
           - pypi
+          - test
+
+concurrency:
+  group: pypi-publish-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  publish:
+  verify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.11"
 
-      - name: Set up Python
-        run: uv python install 3.11
+      - name: Sync dependencies
+        run: uv sync --group dev --frozen
 
-      - name: Build
+      - name: Lint (ruff)
+        run: uv run ruff check src tests scripts
+
+      - name: Typecheck (mypy)
+        run: uv run mypy
+
+      - name: Docs HTML check
+        run: uv run python scripts/build_docs_html.py --check
+
+      - name: Tests
+        run: uv run pytest -q
+
+  package:
+    needs: verify
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.meta.outputs.skip }}
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require the tag commit to be on main
+        if: github.event_name == 'push'
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "Tag ${GITHUB_REF_NAME} (${GITHUB_SHA}) is not contained in main."
+            exit 1
+          fi
+
+      - name: Require manual dispatch from main
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            echo "Manual publish must run from main (got ${GITHUB_REF})."
+            exit 1
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.11"
+
+      - name: Sync dependencies
+        run: uv sync --group dev --frozen
+
+      - name: Build sdist and wheel
         run: uv build
 
-      - name: Publish to TestPyPI
-        if: >-
-          github.event_name == 'workflow_dispatch' &&
-          github.event.inputs.target == 'test'
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-        run: uv publish --publish-url https://test.pypi.org/legacy/
+      - name: Check distribution contents
+        run: uv run python scripts/check_dist_contents.py dist
+
+      - name: Match tag, changelog, and PyPI
+        id: meta
+        run: uv run python scripts/publish_preflight.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: dist/*
+
+  publish:
+    needs: package
+    if: >-
+      needs.package.outputs.skip != 'true' &&
+      (github.event_name == 'push' || github.event.inputs.target == 'pypi')
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/retornatus/${{ needs.package.outputs.version }}/
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist
 
       - name: Publish to PyPI
-        if: >-
-          github.event_name == 'push' ||
-          (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'pypi')
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN }}
-        run: uv publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: true
+          packages-dir: dist
+
+  publish-testpypi:
+    needs: package
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'test'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/retornatus/${{ needs.package.outputs.version }}/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          attestations: false
+          packages-dir: dist
