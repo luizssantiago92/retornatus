@@ -22,7 +22,7 @@
       "schema_version": 1,
       "id": "C-0003/T-001",
       "description": "Write the guide and wire it into the docs hub, README, changelog, and HTML build",
-      "lifecycle": "ACTIVE",
+      "lifecycle": "COMPLETED",
       "depends_on": [],
       "resources": [
         "docs/**",
