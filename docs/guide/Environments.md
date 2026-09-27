@@ -53,3 +53,7 @@ Canonical Rules remain in `.retornatus/governance/`.
 `integrate` installs progressive disclosure text so the agent learns the construction loop without pasting the entire PRD each turn.
 
 Source template: `src/retornatus/infrastructure/environment/hub/SKILL.md`.
+
+## Remote machines
+
+Detection is the same on a cloud VM. The CLI and git hooks are not in the clone: install them on that machine, leave receipts unsigned, and let the GitHub pull request run `verify` and the diff gates. See [Cloud agents](Cloud-agents.md).

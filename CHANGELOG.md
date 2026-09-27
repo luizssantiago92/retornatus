@@ -11,6 +11,7 @@ Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19,
 
 ### Added
 
+- Guide for cloud and remote agents: install the CLI on the clean VM, run `hooks install` on every fresh clone, leave receipts unsigned there, and treat the GitHub pull-request workflow (`verify`, `gate suppressions`, `gate scope`) as the enforcement.
 - Owner-declared `[assurance] required_checks`. `verify` accepts execution evidence only when the argv matches a check, the exit code is 0, the recorded commit is HEAD, and the worktree is clean. `verify --run-checks` and `checks run` execute those commands (#17, #19).
 - Ed25519 receipts. The private key stays off the git tree; `receipt verify` uses the committed public key (#18).
 - `gate suppressions` and `gate scope` against the real diff, plus optional git hooks (#19).

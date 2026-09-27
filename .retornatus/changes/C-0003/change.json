@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0003",
+  "title": "Document Retornatus on cloud and remote agents",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Document using Retornatus on cloud and remote coding agents",
+    "kind": "OTHER"
+  },
+  "lane": "QUICK",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-27T19:08:09.954449Z"
+}

@@ -60,6 +60,8 @@ The hooks directory is `git rev-parse --git-path hooks`, so `core.hooksPath` and
 
 Existing user hooks are kept outside `# retornatus:begin` / `# retornatus:end` and run after the Retornatus block. `hooks remove` deletes only that block.
 
+Git does not store those scripts. Every fresh clone, including a cloud agent VM, runs `hooks install` again. See [Cloud agents](Cloud-agents.md).
+
 ## Handoff checklist
 
 Before ending a session or asking for review:

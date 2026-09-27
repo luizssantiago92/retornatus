@@ -42,7 +42,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 
 Package **1.3.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
 
-[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Docs](#documentation) · [Credits](#credits)
+[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
 
 ---
 
@@ -107,7 +107,7 @@ One-shot without a global install: `uvx retornatus --help`. Package page: [PyPI]
 
 Day to day you work in **agent chat**; the agent (following the hub skill) calls the CLI when a gate or record is needed.
 
-**Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Environments](https://luizssantiago92.github.io/retornatus/guide/environments.html)
+**Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Environments](https://luizssantiago92.github.io/retornatus/guide/environments.html) · [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html)
 
 ---
 
@@ -313,12 +313,29 @@ CLI mistakes print `error: …` instead of a traceback. An invalid id such as `v
 
 ---
 
+## Cloud and remote agents
+
+A cloud or remote agent (Cursor cloud agent, Codex, Claude Code on a VM, a CI sandbox) starts clean. Install the CLI on that machine. Git does not version hooks, so every fresh clone runs `retornatus hooks install`. Leave receipts unsigned: the private signing key stays off the agent VM. The enforcement is the GitHub pull-request workflow (`verify`, `gate suppressions --base`, `gate scope --base`), wherever the agent ran.
+
+```bash
+uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
+export PATH="$HOME/.local/bin:$PATH"
+retornatus hooks install
+retornatus hooks status
+retornatus doctor
+```
+
+[`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) pins `uv tool install "retornatus==1.3.0"`. Bump that pin to the release that contains `hooks install` and the diff gates before depending on it. Full notes: [Cloud agents](docs/guide/Cloud-agents.md).
+
+---
+
 ## Documentation
 
 | Want… | Go here |
 | --- | --- |
 | Product story (non-jargon) | [Website](https://luizssantiago92.github.io/retornatus/) |
 | First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
+| Cloud / remote agents | [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html) |
 | Full technical guide | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |
 | Concepts | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html) |
 | Coming from Spec Guardrails | [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) |
