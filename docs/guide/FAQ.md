@@ -16,7 +16,9 @@ No. Ceremony scales with complexity. For freeform chat prompts, prefer `intake a
 
 Assurance needs Evidence **bound to Claims** (`--claim`). Unbound `test_result` artifacts do not automatically satisfy DONE Claims.
 
-If the claim result is `UNVERIFIED`, the Evidence was self-reported (`evidence add`). Execution types (`test_result`, `security_test`, `build_result`, `lint_result`) satisfy only when `evidence run` recorded exit code 0. `verify --allow-self-reported` (or `[assurance] allow_self_reported = true` in config) is the migration opt-out. Review notes and file observations can still use `evidence add`; output labels them `self-reported`.
+If the claim result is `UNVERIFIED`, the Evidence was self-reported (`evidence add`) or its argv does not match `[assurance] required_checks`. Execution types (`test_result`, `security_test`, `build_result`, `lint_result`) satisfy only when `evidence run` recorded exit code 0. With required checks configured, the argv must be exactly one of those commands, the recorded commit must still be HEAD, and the worktree must be clean of source edits. `verify --run-checks` runs the checks for you. `verify --allow-self-reported` (or `[assurance] allow_self_reported = true`) is the migration opt-out and does **not** bypass required checks. Review notes and file observations can still use `evidence add`; output labels them `self-reported`.
+
+If the rationale says the evidence is **stale**, either HEAD moved after a required check, the worktree has uncommitted source changes, or a claim subject path was edited and not committed. Commit or revert, then re-run the check.
 
 ## Can I delete the SQLite database?
 

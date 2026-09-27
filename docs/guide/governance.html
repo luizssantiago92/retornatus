@@ -44,7 +44,16 @@ retornatus policy check --action C-0001/A-001
 retornatus gate policy C-0001/A-001
 retornatus run C-0001/A-001 --strict-policy</code></pre>
 <p>Verdicts: <code>ALLOW</code> · <code>DENY</code> · <code>REQUIRE_HUMAN</code>.</p>
-<p>Deny-style Rules typically start with “Do not” / “Must not” and match via applicability.</p>
+<p>Deny-style Rules typically start with “Do not” / “Must not”.</p>
+<p><strong>Substring rules are deprecated.</strong> Matching <code>applicability</code> or the statement as a substring of the objective is easy to dodge by rewording. Active substring rules still run, and <code>policy check</code> / <code>gate policy</code> print a deprecation warning.</p>
+<p><strong>Structured rules</strong> match an effect type, path globs, and optional command patterns against declared <code>Task.resources</code> and the real diff (plus executed Evidence argv when evaluating an Action). File-changing work is effect type <code>write</code>. A single-token effect such as <code>exec</code>, or an explicit <code>--effect-type</code>, is matched as that type.</p>
+<pre class="code"><code class="language-bash">retornatus rule propose \
+  --statement &quot;Do not write private keys&quot; \
+  --applicability &quot;write private keys&quot; \
+  --effect-type write \
+  --path-glob &quot;**/*.pem&quot; \
+  --path-glob &quot;**/*.key&quot;</code></pre>
+<p>Rewriting the Action objective to “tidy the comments” does not hide a <code>*.pem</code> path from that rule.</p>
 <h2>Bypass</h2>
 <p>Skipping a gate without a durable Bypass + authority is rejected. Example: Skill research bypass with <code>--force --reason</code>.</p>
 <h2>Git blast radius</h2>

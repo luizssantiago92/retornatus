@@ -265,12 +265,32 @@ class Rule(DomainModel):
     id: RuleId
     statement: str = Field(min_length=1)
     applicability: str = Field(min_length=1)
+    effect_type: str | None = Field(
+        default=None,
+        description="Structured effect (for example write or exec). Substring rules leave this empty.",
+    )
+    path_globs: list[str] = Field(
+        default_factory=list,
+        description="Repo-relative globs matched against declared resources and the git diff.",
+    )
+    command_patterns: list[str] = Field(
+        default_factory=list,
+        description="Optional patterns matched against command lines (fnmatch or substring).",
+    )
     active: bool = False
     authority: Authority = Field(
         default_factory=lambda: Authority(category=AuthorityCategory.HUMAN)
     )
     modes: list[RuleApplicationMode] = Field(default_factory=list)
     relations: list[Relation] = Field(default_factory=list)
+
+    @field_validator("effect_type")
+    @classmethod
+    def _blank_effect_type(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        text = value.strip()
+        return text or None
 
     @field_validator("authority")
     @classmethod

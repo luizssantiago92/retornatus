@@ -42,6 +42,23 @@ In this repository (and by default for Retornatus-governed work here):
 - Prefer Conventional Commits style when natural (`feat:`, `fix:`, `docs:`, `test:`)
 - Do not bypass hooks (`--no-verify`) unless the owner explicitly requests it
 
+## Hooks
+
+```bash
+retornatus hooks install
+retornatus hooks status
+retornatus hooks remove
+```
+
+The hooks directory is `git rev-parse --git-path hooks`, so `core.hooksPath` and linked worktrees are honored. Scripts are POSIX `sh` and call `python -m retornatus`, which Git for Windows can run.
+
+| Hook | What it does |
+| --- | --- |
+| `pre-commit` | `gate suppressions --staged`, then `hooks scope` (scope gate on the index) when a Contract is active |
+| `commit-msg` | Reads the message file from `$1`. It does not open `.git/COMMIT_EDITMSG` itself |
+
+Existing user hooks are kept outside `# retornatus:begin` / `# retornatus:end` and run after the Retornatus block. `hooks remove` deletes only that block.
+
 ## Handoff checklist
 
 Before ending a session or asking for review:

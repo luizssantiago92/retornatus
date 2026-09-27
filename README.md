@@ -202,7 +202,13 @@ Changes, Contracts, Evidence, and Learnings live under `.retornatus/` in git. `w
 
 A Contract states WHAT and DONE. Evidence binds to those claims. `verify` returns SATISFIED / NOT_SATISFIED / INCONCLUSIVE. Gates return non-zero = **STOP**.
 
-Test, security-test, build, and lint results only count when Retornatus ran the command (`evidence run … -- <command>`). The record stores argv, exit code, timing, a SHA-256 of combined stdout/stderr, and the git HEAD (when the directory is a repository). `evidence add` is self-reported: for those types `verify` marks the evidence **UNVERIFIED** and does not exit 0. Narrative notes (`review_result`, `repository_observation`) can still be recorded with `evidence add` and are labeled self-reported. While migrating, `verify --allow-self-reported` or `[assurance] allow_self_reported = true` in `.retornatus/config.toml` restores the old acceptance. A recorded commit that no longer matches HEAD is a warning, not a failure.
+Test, security-test, build, and lint results only count when Retornatus ran the command (`evidence run … -- <command>`). The record stores argv, exit code, timing, a SHA-256 of combined stdout/stderr, and the git HEAD (when the directory is a repository). `evidence add` is self-reported: for those types `verify` marks the evidence **UNVERIFIED** and does not exit 0. Narrative notes (`review_result`, `repository_observation`) can still be recorded with `evidence add` and are labeled self-reported. While migrating, `verify --allow-self-reported` or `[assurance] allow_self_reported = true` in `.retornatus/config.toml` restores the old acceptance. A recorded commit that no longer matches HEAD is a warning, not a failure — unless the owner named the commands that count.
+
+**Required checks.** Put the real commands in `[assurance] required_checks` (`name` + `run` argv, optional `types`). `verify` then accepts execution evidence only when the argv matches one of those checks exactly, the exit code is 0, the recorded commit is the current HEAD, and the worktree has no uncommitted source changes. `evidence run -- true` does not pass. `verify --run-checks` and `checks run` execute the declared commands through the same capture path. `allow_self_reported` does not bypass a configured check.
+
+**Freshness.** Uncommitted or untracked edits to a claim subject path make that evidence stale. Execution types fail by default; narrative types warn. Set `[assurance] uncommitted_changes` to `"fail"` or `"warn"` to override.
+
+**Diff gates and hooks.** `gate suppressions` stops newly added skip and ignore markers. `gate scope` compares the git diff with the change’s Task resources (denied paths always fail; sensitive paths need a satisfied `review_result` or `security_test` claim). `hooks install` wires both into pre-commit, and a commit-msg hook that reads the message from `$1`.
 
 ### Ceremony matches risk
 
@@ -235,7 +241,8 @@ Two Skill worlds:
 | Dashboard | `change overview` |
 | Next work | `loop next` · `task start` / `complete` / `fail` / `reopen` |
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
-| Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `gate *`, `verify` / `verify --allow-self-reported` / `verify --receipt`, `receipt keygen` / `sign` / `verify` |
+| Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `checks run`, `gate *` (including `suppressions` and `scope`), `verify` / `verify --run-checks` / `verify --allow-self-reported` / `verify --receipt`, `receipt keygen` / `sign` / `verify` |
+| Hooks | `hooks install` / `remove` / `status` (pre-commit + commit-msg) |
 | Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
 | Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |

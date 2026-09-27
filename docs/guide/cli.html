@@ -81,10 +81,15 @@ retornatus skill --help</code></pre>
 <tbody>
 <tr><td><code>evidence add --claim</code></td><td>Self-reported Evidence (<code>provenance=self_reported</code>). Fine for narrative types</td></tr>
 <tr><td><code>evidence run [options] -- &lt;command…&gt;</code></td><td>Run a command (no shell, cwd = project root) and record <code>provenance=executed</code></td></tr>
+<tr><td><code>checks run -c &lt;C-id&gt;</code></td><td>Execute <code>[assurance] required_checks</code> and record Evidence</td></tr>
 <tr><td><code>gate contract</code> / <code>evidence</code> / <code>skill-research</code> / <code>assurance</code> / <code>policy</code> / <code>budget</code></td><td>STOP gates</td></tr>
-<tr><td><code>policy check --effect</code> / <code>--action</code></td><td>ALLOW / DENY / REQUIRE_HUMAN</td></tr>
+<tr><td><code>gate suppressions</code></td><td>STOP when added lines contain suppression or skip markers (<code>--staged</code>, <code>--base</code>)</td></tr>
+<tr><td><code>gate scope &lt;C-id&gt;</code></td><td>STOP when the diff leaves Task resources or hits denied/sensitive paths (<code>--base</code>, <code>--staged</code>)</td></tr>
+<tr><td><code>policy check --effect</code> / <code>--action</code></td><td>ALLOW / DENY / REQUIRE_HUMAN. Optional <code>--effect-type</code>, <code>--resource</code>, <code>--command</code></td></tr>
+<tr><td><code>hooks install</code> / <code>remove</code> / <code>status</code></td><td>pre-commit (suppressions + scope) and commit-msg (reads <code>$1</code>)</td></tr>
 <tr><td><code>verify</code> / <code>verify --receipt</code></td><td>Assurance over Contract DONE (+ optional Ed25519 receipt)</td></tr>
-<tr><td><code>verify --allow-self-reported</code></td><td>Migration opt-out: accept self-reported test/build/lint evidence</td></tr>
+<tr><td><code>verify --run-checks</code></td><td>Run required checks, record Evidence, then verify</td></tr>
+<tr><td><code>verify --allow-self-reported</code></td><td>Migration opt-out: accept self-reported test/build/lint evidence. Does not bypass required checks</td></tr>
 <tr><td><code>receipt keygen</code> / <code>receipt keygen --print</code></td><td>Write the public key into <code>.retornatus/keys/</code>. Private key goes to the user config dir, or stdout for a CI secret</td></tr>
 <tr><td><code>receipt sign --change &lt;C-id&gt;</code></td><td>Sign the current Assurance result</td></tr>
 <tr><td><code>receipt verify &lt;path&gt;</code></td><td>Check a receipt with the committed public key</td></tr>

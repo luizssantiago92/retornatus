@@ -40,7 +40,22 @@ retornatus run C-0001/A-001 --strict-policy
 
 Verdicts: `ALLOW` · `DENY` · `REQUIRE_HUMAN`.
 
-Deny-style Rules typically start with “Do not” / “Must not” and match via applicability.
+Deny-style Rules typically start with “Do not” / “Must not”.
+
+**Substring rules are deprecated.** Matching `applicability` or the statement as a substring of the objective is easy to dodge by rewording. Active substring rules still run, and `policy check` / `gate policy` print a deprecation warning.
+
+**Structured rules** match an effect type, path globs, and optional command patterns against declared `Task.resources` and the real diff (plus executed Evidence argv when evaluating an Action). File-changing work is effect type `write`. A single-token effect such as `exec`, or an explicit `--effect-type`, is matched as that type.
+
+```bash
+retornatus rule propose \
+  --statement "Do not write private keys" \
+  --applicability "write private keys" \
+  --effect-type write \
+  --path-glob "**/*.pem" \
+  --path-glob "**/*.key"
+```
+
+Rewriting the Action objective to “tidy the comments” does not hide a `*.pem` path from that rule.
 
 ## Bypass
 

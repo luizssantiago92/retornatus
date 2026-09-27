@@ -191,8 +191,21 @@ def verify(
         help=(
             "Count self-reported test/build/lint evidence as satisfying. "
             "Migration opt-out; also enabled by [assurance] allow_self_reported "
-            "in config.toml."
+            "in config.toml. Does not bypass [assurance] required_checks."
         ),
+    ),
+    run_checks: bool = typer.Option(
+        False,
+        "--run-checks",
+        help=(
+            "Execute [assurance] required_checks and record Evidence before "
+            "evaluating. Same capture path as evidence run."
+        ),
+    ),
+    check_timeout: float = typer.Option(
+        120.0,
+        "--check-timeout",
+        help="Seconds before each required check is killed when --run-checks is set.",
     ),
 ) -> None:
     """Run Assurance against a Change's contract DONE Claims (bound Evidence)."""
@@ -208,6 +221,19 @@ def verify(
         # Fail before evaluation so a bad key is a usage error, not a traceback.
         # The key is not written to disk here.
         load_signing_key(root)
+    if run_checks:
+        from retornatus.application.assurance.checks import run_required_checks
+
+        outcome = run_required_checks(
+            root, change_id, timeout_seconds=check_timeout
+        )
+        for note in outcome.notes:
+            typer.echo(f"WARN {note}")
+        for evidence in outcome.evidence:
+            typer.echo(
+                f"Recorded {evidence.id} argv={' '.join(evidence.command or [])} "
+                f"exit_code={evidence.exit_code}"
+            )
     allowed = allow_self_reported or allow_self_reported_enabled(root)
     result = evaluate_change_assurance(
         root,

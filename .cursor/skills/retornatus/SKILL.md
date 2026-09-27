@@ -56,7 +56,7 @@ Retornatus compresses the software lifecycle into five durable steps — do not 
     - Optional STOP: `run --strict-policy` or `gate policy <A-id>`
 13. Implement **ready** work: `retornatus loop next <C-id>` (use `--all-ready` for parallelizable tasks)
 14. Advance Tasks: `task start|complete|fail|reopen`
-15. Record proof bound to Claims: `retornatus evidence run ... --type test_result --claim <claim-id> -- <command>` (self-reported `evidence add` does not satisfy test/build/lint types)
+15. Record proof bound to Claims: `retornatus evidence run ... --type test_result --claim <claim-id> -- <command>` (self-reported `evidence add` does not satisfy test/build/lint types). When `[assurance] required_checks` is set, only those argv lists count — use `verify --run-checks` or `checks run`
 16. If blocked by discovery: `finding add` → `question open` (IDs auto-number) → resolve with Evidence
 17. Reopen Questions when the condition reappears: `question reopen <Q-id>`
 18. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0)
@@ -103,7 +103,7 @@ When a release is ready: summarize, confirm CI, stop — owner merges / tags / p
 | Situation / lane | `change classify`, `change elicit` (`--answer`, `--write`), `change create`, `change activate`, `change reopen` |
 | Dashboard | `change overview` |
 | Skill | `skill create/list/need/activate/evolve/export` |
-| Proof | `evidence run --claim -- <command>`, `evidence add --claim` (narrative), `verify`, `gate *` |
+| Proof | `evidence run --claim -- <command>`, `checks run`, `evidence add --claim` (narrative), `verify` / `verify --run-checks`, `gate *` (suppressions, scope), `hooks install` |
 | Policy | `policy check`, `gate policy`, `run --strict-policy` |
 | Problems | `finding add`, `question open/resolve/reopen` |
 | Tasks | `task start/complete/fail/reopen` |
