@@ -32,6 +32,7 @@ from retornatus.bootstrap.init import initialize_project
 from retornatus.bootstrap.wake import wake_up
 from retornatus.domain.enums import (
     AuthorityCategory,
+    DecisionKind,
     DemandKind,
 )
 from retornatus.domain.models import (
@@ -162,6 +163,23 @@ def test_question_resolved_without_proof_blocked(tmp_path: Path) -> None:
     )
     with pytest.raises(ResolutionIncompleteError):
         loop.resolve_question(q.id, summary="fixed")
+
+
+def test_wrong_decision_kind_keeps_historical_label(tmp_path: Path) -> None:
+    initialize_project(tmp_path)
+    adapt = AdaptationService(tmp_path)
+    candidate = adapt.propose_rule_candidate(
+        statement="Do not skip Assurance",
+        applicability="assurance",
+    )
+    decision = adapt.record_human_decision(
+        kind=DecisionKind.OTHER,
+        subject_id=candidate.id,
+        summary="not an activation",
+        confirmation_token=candidate.id,
+    )
+    with pytest.raises(HumanAuthorityError, match=r"got DecisionKind\.OTHER"):
+        adapt.activate_rule(candidate.id, human_decision_id=decision.id)
 
 
 def test_rule_candidate_activated_without_human_decision_blocked(tmp_path: Path) -> None:

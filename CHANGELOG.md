@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19, and the release-hardening follow-up. The package version stays 1.3.0 until a maintainer cuts the next release (move these notes under a new `## [x.y.z]` heading).
 
+### Security
+
+- GitHub Actions in `.github/workflows` and the consumer PR template are pinned to full commit SHAs. Workflows grant `contents: read` at the top level and add write permissions only on the job that needs them. Checkout does not persist credentials. The publish workflow does not restore the uv cache.
+- The Ed25519 private key file is created with mode `0600` (POSIX) instead of being written and then chmod'd.
+- `SECURITY.md` asks for private reports via GitHub Security Advisories. CodeQL analyzes Python on pull requests and on `main`.
+
 ### Added
 
 - Owner-declared `[assurance] required_checks`. `verify` accepts execution evidence only when the argv matches a check, the exit code is 0, the recorded commit is HEAD, and the worktree is clean. `verify --run-checks` and `checks run` execute those commands (#17, #19).
@@ -24,6 +30,7 @@ Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19,
 
 ### Changed
 
+- Ruff is 0.16.8. `(str, Enum)` types are `enum.StrEnum` (Python 3.11+). JSON, receipts, and evidence still store the enum value. The rule-activation error still prints `DecisionKind.<NAME>`, which is what `str()` used to produce.
 - Test-only modules `host_boundary.py` and `brownfield_fixture.py` live under `tests/support/` and are not installed.
 - Docs HTML is generated in the GitHub Pages workflow. Markdown stays in git; generated HTML does not.
 - Product requirements moved from `prd/PRD.md` to `docs/archive/PRD.md`.

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 from retornatus.application.assurance.evaluate import (
@@ -15,7 +15,7 @@ from retornatus.application.assurance.evaluate import (
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 
-class GateName(str, Enum):
+class GateName(StrEnum):
     CONTRACT = "contract"
     EVIDENCE = "evidence"
     SKILL_RESEARCH = "skill-research"

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import Field
 
@@ -15,7 +15,7 @@ from retornatus.domain.models import Contract, Evidence
 from retornatus.domain.relations import Relation, RelationType
 
 
-class AssuranceVerdict(str, Enum):
+class AssuranceVerdict(StrEnum):
     SATISFIED = "SATISFIED"
     NOT_SATISFIED = "NOT_SATISFIED"
     INCONCLUSIVE = "INCONCLUSIVE"

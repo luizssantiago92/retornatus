@@ -22,11 +22,14 @@ are not portable. That path is deprecated and does not copy the key to disk.
 from __future__ import annotations
 
 import base64
+import contextlib
 import hashlib
 import hmac
 import json
 import os
 import re
+import secrets
+import stat
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
@@ -98,11 +101,52 @@ def fingerprint_public_key(public_key: Ed25519PublicKey) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
-def _restrict_private_file(path: Path) -> None:
+def _open_private_file(path: Path) -> int:
+    """Create a new file that is mode 0o600 on POSIX from the first inode.
+
+    ``O_CREAT | O_EXCL`` will not follow or clobber an existing path. Windows
+    ignores the mode argument; callers chmod before writing secret bytes.
+    """
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if os.name != "nt":
+        nofollow = getattr(os, "O_NOFOLLOW", 0)
+        if nofollow:
+            flags |= nofollow
+    return os.open(path, flags, 0o600)
+
+
+def _write_private_key_file(path: Path, text: str) -> None:
+    """Write ``text`` to ``path`` without a world-readable window.
+
+    The bytes go to an exclusive temporary file in the same directory, created
+    at mode 0o600, then ``os.replace`` publishes that inode. A later chmod only
+    restores owner read/write if the umask stripped them; it is not what makes
+    the file private.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f".{path.name}.{secrets.token_hex(8)}.tmp")
+    fd = _open_private_file(tmp)
+    opened = False
     try:
-        path.chmod(0o600)
-    except OSError:
-        return
+        if os.name == "nt":
+            with contextlib.suppress(OSError):
+                os.chmod(tmp, stat.S_IREAD | stat.S_IWRITE)
+        handle = os.fdopen(fd, "w", encoding="utf-8", newline="\n")
+        opened = True
+        with handle:
+            handle.write(text)
+            handle.flush()
+            with contextlib.suppress(OSError):
+                os.fsync(handle.fileno())
+        os.replace(tmp, path)
+    except Exception:
+        if not opened:
+            os.close(fd)
+        tmp.unlink(missing_ok=True)
+        raise
+    if os.name != "nt":
+        with contextlib.suppress(OSError):
+            os.chmod(path, 0o600)
 
 
 def _normalize_key_material(material: str) -> str:
@@ -217,9 +261,7 @@ def write_private_key(root: Path, private_key: Ed25519PrivateKey) -> Path:
     key_id = fingerprint_public_key(private_key.public_key())
     dest = private_key_path(key_id)
     assert_outside_project(root, dest)
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(private_key_pem(private_key), encoding="utf-8")
-    _restrict_private_file(dest)
+    _write_private_key_file(dest, private_key_pem(private_key))
     return dest
 
 

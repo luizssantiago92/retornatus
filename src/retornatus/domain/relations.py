@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class RelationType(str, Enum):
+class RelationType(StrEnum):
     """Small canonical relation set — no graph database required."""
 
     DERIVED_FROM = "DERIVED_FROM"

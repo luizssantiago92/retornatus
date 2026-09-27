@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0003",
+  "version": 1,
+  "what": "Pin every GitHub Action in .github/workflows and templates/ci/retornatus-pr.yml to the current main commit SHA with a version comment, set top-level permissions contents read, disable uv cache on publish jobs, create the Ed25519 private key at mode 0600, add SECURITY.md and a least-privilege CodeQL workflow, keep Dependabot on github-actions, and bump ruff to 0.16.8 using StrEnum without changing serialized enum values.",
+  "constraints": [],
+  "done_criteria": [
+    "Workflows and the consumer template use full commit SHAs, contents read, and persist-credentials false except where a job must push",
+    "Publish jobs do not enable the uv cache; pytest shows the private key file is mode 0600 from creation on POSIX",
+    "ruff 0.16.8, mypy, pytest, docs check, and retornatus verify pass, and JSON enum values match the pre-migration output"
+  ],
+  "active": true,
+  "activated_at": "2026-09-27T19:21:46.016934Z"
+}
