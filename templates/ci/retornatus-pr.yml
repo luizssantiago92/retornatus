@@ -8,9 +8,8 @@
 #   - `.retornatus/` initialized in the repository
 #   - `retornatus` on PyPI at the pin below
 #
-# Pin: this repository's current version. `gate scope`, `gate suppressions`,
-# and blocking `verify` are in source after 1.3.0 was published. Bump the pin
-# to the release that contains them before relying on this file in CI.
+# Pin: release 1.4.0. It includes `gate scope`, `gate suppressions`,
+# blocking `verify`, and `hooks install`.
 #
 # RETORNATUS_OMISSION:
 #   fail (default) — a code diff with no touched Change fails the job
@@ -49,7 +48,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Install Retornatus
-        run: uv tool install "retornatus==1.3.0"
+        run: uv tool install "retornatus==1.4.0"
 
       - name: Doctor (Process vs Brakes)
         run: |

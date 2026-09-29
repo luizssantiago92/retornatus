@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0005/E-001",
+  "type": "test_result",
+  "subject": "/retornatus/__init__.py",
+  "source": "uv run python -c 'from pathlib import Path\nneedles = {\n  \"pyproject.toml\": \"version = \\\"1.4.0\\\"\",\n  \"src/retornatus/__init__.py\": \"__version__ = \\\"1.4.0\\\"\",\n  \"uv.lock\": \"name = \\\"retornatus\\\"\",\n}\nlock = Path(\"uv.lock\").read_text()\nstart = lock.index(\"name = \\\"retornatus\\\"\")\nblock = lock[start:start+80]\nassert \"version = \\\"1.4.0\\\"\" in block, block\nfor path, needle in ((\"pyproject.toml\", \"version = \\\"1.4.0\\\"\"), (\"src/retornatus/__init__.py\", \"__version__ = \\\"1.4.0\\\"\")):\n    text = Path(path).read_text()\n    assert needle in text, path\nprint(\"version 1.4.0 present\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T20:46:15.957273Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\nneedles = {\n  \"pyproject.toml\": \"version = \\\"1.4.0\\\"\",\n  \"src/retornatus/__init__.py\": \"__version__ = \\\"1.4.0\\\"\",\n  \"uv.lock\": \"name = \\\"retornatus\\\"\",\n}\nlock = Path(\"uv.lock\").read_text()\nstart = lock.index(\"name = \\\"retornatus\\\"\")\nblock = lock[start:start+80]\nassert \"version = \\\"1.4.0\\\"\" in block, block\nfor path, needle in ((\"pyproject.toml\", \"version = \\\"1.4.0\\\"\"), (\"src/retornatus/__init__.py\", \"__version__ = \\\"1.4.0\\\"\")):\n    text = Path(path).read_text()\n    assert needle in text, path\nprint(\"version 1.4.0 present\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T20:46:15.917722Z",
+  "ended_at": "2026-09-29T20:46:15.951199Z",
+  "duration_ms": 33,
+  "output_sha256": "62dbf07720a3d321535ff5ea4db1c643c046e51300a57a354c88b51d3a159686",
+  "output_tail": "version 1.4.0 present\n",
+  "output_artifact": ".retornatus/changes/C-0005/evidence/E-001.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0005/claim-done-1",
+      "note": null
+    }
+  ]
+}
