@@ -144,3 +144,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 Audit found tag-pinned actions including pypa/gh-action-pypi-publish@release/v1 on the id-token write job, missing least-privilege permissions, uv cache in publish, a chmod-after-write private key, no SECURITY.md or CodeQL, and ruff 0.16.8 UP042 on twenty str Enum classes. Dependabot already lists github-actions. Constraint: do not merge, tag, or publish to PyPI. Serialized JSON and receipt enum values must stay identical.
+
+## Reopened Situation
+
+Appended a security-test DONE line so gate scope accepts the workflow files this Change already touched. Prior DONE lines are unchanged.

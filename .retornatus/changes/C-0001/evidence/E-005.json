@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-005",
+  "type": "test_result",
+  "subject": "pytest shows the CI template file exists under the templates directory",
+  "source": "uv run pytest -q --no-cov tests/test_dx_parity.py::test_ci_template_exists",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:20:57.820988Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_dx_parity.py::test_ci_template_exists"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:20:57.480848Z",
+  "ended_at": "2026-09-29T21:20:57.817584Z",
+  "duration_ms": 336,
+  "output_sha256": "76af71df60bb5f93ea635e8763126ecf98e837672c9980e80aefde989b203765",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.16s\n",
+  "output_artifact": ".retornatus/changes/C-0001/evidence/E-005.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0001/claim-done-4",
+      "note": null
+    }
+  ]
+}

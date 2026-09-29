@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0003",
+  "version": 1,
+  "what": "A concise guide covers clean-VM CLI install, hook reinstall, unsigned receipts, and GitHub CI enforcement, and is linked from the docs hub, README, and changelog",
+  "constraints": [],
+  "done_criteria": [
+    "docs/guide/Cloud-agents.md names uv tool install of a pinned version, hooks install, hooks status, and doctor",
+    "The guide states the private signing key stays off the agent VM and cloud agents leave receipts unsigned",
+    "The guide points at templates/ci/retornatus-pr.yml running verify, gate suppressions --base, and gate scope --base on pull requests",
+    "docs/guide/README.md, docs/guide/index.html, the HTML build page list, README.md, and CHANGELOG Unreleased reference the new page"
+  ],
+  "active": true,
+  "activated_at": "2026-09-27T19:08:09.962892Z"
+}

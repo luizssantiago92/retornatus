@@ -18,7 +18,7 @@ Retornatus continuity map for `retornatus`.
 - `docs`
 - `.github`
 - `.cursor`
-- `prd`
+- `docs/archive`
 
 ## Tests
 

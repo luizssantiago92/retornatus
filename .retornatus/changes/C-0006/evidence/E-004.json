@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/E-004",
+  "type": "test_result",
+  "subject": "The CI workflow file contains doctor, gate-scan, and suppressions steps",
+  "source": "uv run pytest -q --no-cov tests/test_workflow_hardening.py::test_ci_governance_job_runs_local_gates",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:21:00.649918Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_workflow_hardening.py::test_ci_governance_job_runs_local_gates"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:21:00.476665Z",
+  "ended_at": "2026-09-29T21:21:00.644192Z",
+  "duration_ms": 167,
+  "output_sha256": "4bcefcc9f6c645923b9993ccf73ad92e6b400ca25458ea14e095857fc2131342",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.01s\n",
+  "output_artifact": ".retornatus/changes/C-0006/evidence/E-004.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0006/claim-done-9",
+      "note": null
+    }
+  ]
+}

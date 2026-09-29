@@ -132,3 +132,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 Prior analysis selected overview, classify, doctor scores, CI template, lessons, hub token efficiency, and basic operational loops as Retornatus-shaped imports from Spec Guardrails.
+
+## Reopened Situation
+
+Reopened because the active DONE line used vague wording (works) and verify had no evidence. Criteria now name pytest, the README, and a security test required when gate scope includes workflow files.

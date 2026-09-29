@@ -7,6 +7,7 @@ from pathlib import Path
 
 import tomli_w
 
+from retornatus import __version__
 from retornatus.constants import RETORNATUS_DIR
 
 SCHEMA_VERSION = 1
@@ -27,7 +28,7 @@ DIRECTORY_TREE: tuple[str, ...] = (
 DEFAULT_CONFIG: dict[str, object] = {
     "schema_version": SCHEMA_VERSION,
     "retornatus": {
-        "version": "0.8.0",
+        "version": __version__,
     },
     "project": {
         "initialized": True,

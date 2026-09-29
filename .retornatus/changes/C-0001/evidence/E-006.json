@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-006",
+  "type": "test_result",
+  "subject": "pytest shows lesson from-gate records a learning id",
+  "source": "uv run pytest -q --no-cov tests/test_dx_parity.py::test_lesson_from_gate",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:20:58.431962Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_dx_parity.py::test_lesson_from_gate"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:20:58.045101Z",
+  "ended_at": "2026-09-29T21:20:58.427974Z",
+  "duration_ms": 382,
+  "output_sha256": "8989a153a4f265bdf8bf8abfcbf7ce96cf91c69ee66d543244ebf0fc2c9d041d",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.21s\n",
+  "output_artifact": ".retornatus/changes/C-0001/evidence/E-006.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0001/claim-done-5",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-002",
+  "type": "test_result",
+  "subject": "pytest shows change overview output contains Claims and Next",
+  "source": "uv run pytest -q --no-cov tests/test_dx_parity.py::test_change_overview_cli",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:20:55.971756Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_dx_parity.py::test_change_overview_cli"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:20:55.566872Z",
+  "ended_at": "2026-09-29T21:20:55.965519Z",
+  "duration_ms": 398,
+  "output_sha256": "016a4093788648644b08006f7d1d171ca7639313677f5aa929f004d4a3e52465",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.22s\n",
+  "output_artifact": ".retornatus/changes/C-0001/evidence/E-002.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0001/claim-done-1",
+      "note": null
+    }
+  ]
+}

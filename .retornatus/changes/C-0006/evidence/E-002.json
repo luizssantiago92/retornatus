@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/E-002",
+  "type": "test_result",
+  "subject": "pytest shows markdown code spans are not suppression hits",
+  "source": "uv run pytest -q --no-cov tests/test_scope_and_suppressions.py::test_suppressions_skip_markdown_code_and_flag_prose tests/test_scope_and_suppressions.py::test_markdown_span_helpers_ignore_unclosed_and_missing_files",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:20:59.874208Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_scope_and_suppressions.py::test_suppressions_skip_markdown_code_and_flag_prose",
+    "tests/test_scope_and_suppressions.py::test_markdown_span_helpers_ignore_unclosed_and_missing_files"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:20:59.485108Z",
+  "ended_at": "2026-09-29T21:20:59.868694Z",
+  "duration_ms": 383,
+  "output_sha256": "686b4ed9a084cc13a88ea4749c9895e659d7faa3540b7c04eedf6fa858d9cc2c",
+  "output_tail": "..                                                                       [100%]\n2 passed in 0.21s\n",
+  "output_artifact": ".retornatus/changes/C-0006/evidence/E-002.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0006/claim-done-4",
+      "note": null
+    }
+  ]
+}

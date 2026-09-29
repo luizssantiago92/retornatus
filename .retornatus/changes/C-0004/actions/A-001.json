@@ -23,7 +23,16 @@
       "description": "Pin workflows, template, permissions, publish cache, SECURITY.md, CodeQL, and Dependabot note",
       "lifecycle": "COMPLETED",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        ".github/dependabot.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/codeql.yml",
+        ".github/workflows/pages.yml",
+        ".github/workflows/publish.yml",
+        "SECURITY.md",
+        "templates/ci/retornatus-pr.yml",
+        "tests/test_workflow_hardening.py"
+      ]
     },
     {
       "schema_version": 1,
@@ -31,7 +40,10 @@
       "description": "Create the Ed25519 private key at mode 0600 and cover it with pytest",
       "lifecycle": "COMPLETED",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        "src/retornatus/application/assurance/receipt.py",
+        "tests/test_receipt_and_budget.py"
+      ]
     },
     {
       "schema_version": 1,
@@ -39,7 +51,25 @@
       "description": "Bump ruff to 0.16.8, migrate str Enums to StrEnum, and lock JSON output",
       "lifecycle": "COMPLETED",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        "pyproject.toml",
+        "uv.lock",
+        "src/retornatus/application/adaptation/intake.py",
+        "src/retornatus/application/adaptation/service.py",
+        "src/retornatus/application/assurance/evaluate.py",
+        "src/retornatus/application/governance/gates.py",
+        "src/retornatus/application/governance/policy.py",
+        "src/retornatus/domain/enums.py",
+        "src/retornatus/domain/relations.py",
+        "src/retornatus/infrastructure/environment/adapters.py",
+        "tests/test_adversarial_governance.py",
+        "tests/test_strenum_serialization.py",
+        "src/retornatus/application/governance/diff_scan.py",
+        "src/retornatus/bootstrap/init.py",
+        "tests/test_scope_and_suppressions.py",
+        "tests/test_init.py",
+        "tests/test_dx_parity.py"
+      ]
     },
     {
       "schema_version": 1,
@@ -51,7 +81,11 @@
         "C-0004/T-002",
         "C-0004/T-003"
       ],
-      "resources": []
+      "resources": [
+        "CHANGELOG.md",
+        "docs/guide/Gates.md",
+        "docs/README.md"
+      ]
     }
   ],
   "relations": [],

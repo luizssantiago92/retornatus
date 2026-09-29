@@ -126,6 +126,22 @@ def test_ops_list_show_run(tmp_path: Path) -> None:
     assert "Draft" in ran.stdout or "none" in ran.stdout.lower()
 
 
+def test_ci_template_exists() -> None:
+    root = Path(__file__).resolve().parents[1]
+    assert (root / "templates" / "ci" / "retornatus-pr.yml").is_file()
+
+
+def test_project_map_and_credits_link() -> None:
+    root = Path(__file__).resolve().parents[1]
+    project = (root / ".retornatus" / "project" / "project.md").read_text(encoding="utf-8")
+    assert "`prd`" not in project
+    assert "`docs/archive`" in project
+    readme = (root / "docs" / "README.md").read_text(encoding="utf-8")
+    assert "https://luizssantiago92.github.io/retornatus/credits.html" in readme
+    assert "credits-and-lineage.md" in readme
+    assert "](credits.html)" not in readme
+
+
 def test_create_stores_lane(tmp_path: Path) -> None:
     initialize_project(tmp_path)
     result = runner.invoke(

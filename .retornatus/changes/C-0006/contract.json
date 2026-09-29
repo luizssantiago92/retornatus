@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0006",
+  "version": 1,
+  "what": "Repair C-0001 done criteria and evidence, backfill C-0003 and C-0004 task resources, skip markdown code spans in gate suppressions, stamp init with the package version, fix the project map and credits link, and run the harness gates in CI.",
+  "constraints": [],
+  "done_criteria": [
+    "retornatus doctor and retornatus ops run gate-scan exit 0",
+    "retornatus gate scope for C-0004 against its parent commit exits 0",
+    "retornatus gate scope for C-0003 against its parent commit exits 0",
+    "pytest shows markdown code spans are not suppression hits",
+    "pytest shows initialize_project writes the package version into config.toml",
+    "project.md contains the docs archive path and does not name a prd directory",
+    "docs README links credits to the Pages site and the source markdown file",
+    "security test shows workflow permission contents read",
+    "The CI workflow file contains doctor, gate-scan, and suppressions steps"
+  ],
+  "active": true,
+  "activated_at": "2026-09-29T21:19:04.561701Z"
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/E-007",
+  "type": "test_result",
+  "subject": "retornatus doctor and retornatus ops run gate-scan exit 0",
+  "source": "uv run python -c 'import subprocess,sys; cmds=[[\"uv\",\"run\",\"retornatus\",\"doctor\"],[\"uv\",\"run\",\"retornatus\",\"ops\",\"run\",\"gate-scan\"]];\n[sys.exit(r.returncode) for c in cmds if (r:=subprocess.run(c)).returncode]'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:21:20.612384Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import subprocess,sys; cmds=[[\"uv\",\"run\",\"retornatus\",\"doctor\"],[\"uv\",\"run\",\"retornatus\",\"ops\",\"run\",\"gate-scan\"]];\n[sys.exit(r.returncode) for c in cmds if (r:=subprocess.run(c)).returncode]"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:21:20.086814Z",
+  "ended_at": "2026-09-29T21:21:20.607157Z",
+  "duration_ms": 520,
+  "output_sha256": "bba59086b767baf3d5038dbfed9d8264b704e2026f8df455f2a04782e1b08fad",
+  "output_tail": "Retornatus wake @ /workspace\ninitialized: True\nenvironment: cursor\ncapabilities: native_rules=True native_skills=True native_sandbox=True native_worktrees=true native_subagents=true\nchanges: 5 ['C-0001', 'C-0002', 'C-0003', 'C-0004', 'C-0006']\nrules: 2\nlearnings: 0\nindex_entities: 17\nproject_context:\n  # Project\n  Retornatus continuity map for `retornatus`.\n  ## Identity\n  - Path: repository root (clone path varies by machine)\n  - README signal: # Retornatus\n  ## Language / stack\n  - `pyproject.toml`\n  ## Important directories\n  - `src`\n  - `tests`\n  - `docs`\n  - `.github`\n  - `.cursor`\n  - `docs/archive`\n  ## Tests\n  - tests/\n\nprocess: 4/4 - workflow continuity\n  - ok: .retornatus/ present\n  - ok: config.toml\n  - ok: hub skill or host bridge\n  - ok: project.md (optional for greenfield)\nbrakes: 4/4 - mechanical gates\n  - ok: gate module importable\n  - ok: assurance/verify path importable\n  - ok: active contract gate pass\n  - ok: wake/index path available\nmode: Brakes-ready\n  Process = hub/workflow can run; Brakes = gates + verify paths are usable\nwarnings:\n  - R-0001: Rule Candidate inactive — needs HUMAN Decision to activate\n  - R-0002: Rule Candidate inactive — needs HUMAN Decision to activate\n# Active contract gate scan\n\nC-0001: PASS - Contract OK\nC-0002: PASS - WARN: DONE criterion has no observable outcome: A fresh clone verifies with only the committed public key\nC-0003: PASS - WARN: DONE criterion has no observable outcome: The guide states the private signing key stays off the agent VM and cloud agents leave receipts unsigned; WARN: DONE criterion has no observable outcome: docs/guide/README.md, docs/guide/index.html, the HTML build page list, README.md, and CHANGELOG Unreleased reference the new page\nC-0004: PASS - Contract OK\nC-0006: PASS - Contract OK\n",
+  "output_artifact": ".retornatus/changes/C-0006/evidence/E-007.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0006/claim-done-1",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-007",
+  "type": "test_result",
+  "subject": "pytest shows ops list, ops show, and ops run exit 0",
+  "source": "uv run pytest -q --no-cov tests/test_dx_parity.py::test_ops_list_show_run",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:20:59.035140Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_dx_parity.py::test_ops_list_show_run"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:20:58.652821Z",
+  "ended_at": "2026-09-29T21:20:59.028814Z",
+  "duration_ms": 375,
+  "output_sha256": "93c97c10af4fc8b54296201243c032c5e8295479ca6b4adc06019033d6f9e282",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.20s\n",
+  "output_artifact": ".retornatus/changes/C-0001/evidence/E-007.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0001/claim-done-6",
+      "note": null
+    }
+  ]
+}

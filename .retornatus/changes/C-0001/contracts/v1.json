@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0001",
+  "version": 1,
+  "what": "change overview, complexity classify, doctor Process vs Brakes, CI template, lesson-from-gate-failure, hub token rules, operational loops CLI exist and are tested",
+  "constraints": [],
+  "done_criteria": [
+    "change overview renders Claims Evidence Tasks Questions next",
+    "change classify and create --lane work",
+    "doctor reports Process and Brakes scores",
+    "CI template under templates/ci/",
+    "lesson record from gate failure path works",
+    "ops loop list show run work",
+    "README documents new capabilities"
+  ],
+  "active": true,
+  "activated_at": "2026-09-22T03:21:37.359831Z"
+}

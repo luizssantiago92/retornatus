@@ -1,0 +1,48 @@
+Retornatus wake @ /workspace
+initialized: True
+environment: cursor
+capabilities: native_rules=True native_skills=True native_sandbox=True native_worktrees=true native_subagents=true
+changes: 5 ['C-0001', 'C-0002', 'C-0003', 'C-0004', 'C-0006']
+rules: 2
+learnings: 0
+index_entities: 17
+project_context:
+  # Project
+  Retornatus continuity map for `retornatus`.
+  ## Identity
+  - Path: repository root (clone path varies by machine)
+  - README signal: # Retornatus
+  ## Language / stack
+  - `pyproject.toml`
+  ## Important directories
+  - `src`
+  - `tests`
+  - `docs`
+  - `.github`
+  - `.cursor`
+  - `docs/archive`
+  ## Tests
+  - tests/
+
+process: 4/4 - workflow continuity
+  - ok: .retornatus/ present
+  - ok: config.toml
+  - ok: hub skill or host bridge
+  - ok: project.md (optional for greenfield)
+brakes: 4/4 - mechanical gates
+  - ok: gate module importable
+  - ok: assurance/verify path importable
+  - ok: active contract gate pass
+  - ok: wake/index path available
+mode: Brakes-ready
+  Process = hub/workflow can run; Brakes = gates + verify paths are usable
+warnings:
+  - R-0001: Rule Candidate inactive — needs HUMAN Decision to activate
+  - R-0002: Rule Candidate inactive — needs HUMAN Decision to activate
+# Active contract gate scan
+
+C-0001: PASS - Contract OK
+C-0002: PASS - WARN: DONE criterion has no observable outcome: A fresh clone verifies with only the committed public key
+C-0003: PASS - WARN: DONE criterion has no observable outcome: The guide states the private signing key stays off the agent VM and cloud agents leave receipts unsigned; WARN: DONE criterion has no observable outcome: docs/guide/README.md, docs/guide/index.html, the HTML build page list, README.md, and CHANGELOG Unreleased reference the new page
+C-0004: PASS - Contract OK
+C-0006: PASS - Contract OK
