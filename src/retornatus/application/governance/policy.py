@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import fnmatch
 import shlex
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 from pydantic import Field
@@ -22,7 +22,7 @@ from retornatus.domain.models import Authority, Boundaries, Rule
 from retornatus.infrastructure.persistence.repository import FileRepository
 
 
-class PolicyVerdict(str, Enum):
+class PolicyVerdict(StrEnum):
     ALLOW = "ALLOW"
     DENY = "DENY"
     REQUIRE_HUMAN = "REQUIRE_HUMAN"

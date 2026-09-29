@@ -161,8 +161,10 @@ class AdaptationService:
         if decision.authority.category != AuthorityCategory.HUMAN:
             raise HumanAuthorityError("Decision must carry HUMAN authority")
         if decision.kind is not DecisionKind.APPROVE_RULE_ACTIVATION:
+            # str(StrEnum) is the value. Keep the historical Class.MEMBER label.
+            label = f"{type(decision.kind).__name__}.{decision.kind.name}"
             raise HumanAuthorityError(
-                f"Decision kind must be APPROVE_RULE_ACTIVATION, got {decision.kind}"
+                f"Decision kind must be APPROVE_RULE_ACTIVATION, got {label}"
             )
         if decision.subject_id != rule_id:
             raise HumanAuthorityError(

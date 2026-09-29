@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class AuthorityCategory(str, Enum):
+class AuthorityCategory(StrEnum):
     """Which decisions require human judgment (PRD §32)."""
 
     RULED = "RULED"
@@ -13,7 +13,7 @@ class AuthorityCategory(str, Enum):
     HUMAN = "HUMAN"
 
 
-class BoundaryRealization(str, Enum):
+class BoundaryRealization(StrEnum):
     """How a boundary is realized (PRD §33)."""
 
     ENFORCED = "ENFORCED"
@@ -21,7 +21,7 @@ class BoundaryRealization(str, Enum):
     UNAVAILABLE = "UNAVAILABLE"
 
 
-class TaskLifecycle(str, Enum):
+class TaskLifecycle(StrEnum):
     """Minimal Task lifecycle (PRD §14)."""
 
     PENDING = "PENDING"
@@ -30,14 +30,14 @@ class TaskLifecycle(str, Enum):
     FAILED = "FAILED"
 
 
-class QuestionLifecycle(str, Enum):
+class QuestionLifecycle(StrEnum):
     """Minimal Question lifecycle (PRD §21)."""
 
     OPEN = "OPEN"
     RESOLVED = "RESOLVED"
 
 
-class QuestionDisposition(str, Enum):
+class QuestionDisposition(StrEnum):
     """Non-lifecycle dispositions for Questions (PRD §21)."""
 
     NONE = "NONE"
@@ -46,14 +46,14 @@ class QuestionDisposition(str, Enum):
     NOT_ACTIONABLE = "NOT_ACTIONABLE"
 
 
-class ActionOriginKind(str, Enum):
+class ActionOriginKind(StrEnum):
     """Where an Action originates (PRD §13)."""
 
     CONTRACT = "CONTRACT"
     QUESTION = "QUESTION"
 
 
-class RuleApplicationMode(str, Enum):
+class RuleApplicationMode(StrEnum):
     """How a Rule may apply (PRD §34)."""
 
     INSTRUCTIONAL = "INSTRUCTIONAL"
@@ -61,7 +61,7 @@ class RuleApplicationMode(str, Enum):
     ENFORCEABLE = "ENFORCEABLE"
 
 
-class DemandKind(str, Enum):
+class DemandKind(StrEnum):
     """Kinds of expressed need (PRD §10)."""
 
     CAPABILITY = "CAPABILITY"
@@ -74,7 +74,7 @@ class DemandKind(str, Enum):
     OTHER = "OTHER"
 
 
-class ComplexityLane(str, Enum):
+class ComplexityLane(StrEnum):
     """Ceremony lane — complexity must be earned (not a Spec Guardrails clone)."""
 
     QUICK = "QUICK"
@@ -82,7 +82,7 @@ class ComplexityLane(str, Enum):
     COMPLEX = "COMPLEX"
 
 
-class SkillStatus(str, Enum):
+class SkillStatus(StrEnum):
     """Skill lifecycle (PRD §39 — evolution belongs to Adaptation)."""
 
     DRAFT = "DRAFT"
@@ -90,7 +90,7 @@ class SkillStatus(str, Enum):
     SUPERSEDED = "SUPERSEDED"
 
 
-class SkillSource(str, Enum):
+class SkillSource(StrEnum):
     """Where a Skill came from."""
 
     RESEARCHED = "RESEARCHED"
@@ -99,7 +99,7 @@ class SkillSource(str, Enum):
     IMPORTED = "IMPORTED"
 
 
-class EvidenceProvenance(str, Enum):
+class EvidenceProvenance(StrEnum):
     """How an Evidence record was produced.
 
     ``self_reported`` is whatever an agent or human typed into ``evidence add``.
@@ -110,7 +110,7 @@ class EvidenceProvenance(str, Enum):
     EXECUTED = "executed"
 
 
-class DecisionKind(str, Enum):
+class DecisionKind(StrEnum):
     """Kinds of durable human decisions (local harness boundary)."""
 
     APPROVE_RULE_ACTIVATION = "APPROVE_RULE_ACTIVATION"
@@ -119,7 +119,7 @@ class DecisionKind(str, Enum):
     OTHER = "OTHER"
 
 
-class DerivedTaskState(str, Enum):
+class DerivedTaskState(StrEnum):
     """Derived readiness projection — not durable truth (PRD §16)."""
 
     READY = "READY"

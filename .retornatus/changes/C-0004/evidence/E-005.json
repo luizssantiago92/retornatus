@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "C-0004/E-005",
+  "type": "test_result",
+  "subject": "Publish jobs do not enable the uv cache; pytest shows the private key file is mo",
+  "source": "uv run pytest -q --cov-fail-under=0 tests/test_receipt_and_budget.py::test_private_key_file_is_created_at_mode_0600 tests/test_receipt_and_budget.py::test_private_key_write_on_windows_mode_and_failed_replace tests/test_receipt_and_budget.py::test_private_key_write_closes_fd_when_open_fails tests/test_strenum_serialization.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-27T19:33:46.414681Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--cov-fail-under=0",
+    "tests/test_receipt_and_budget.py::test_private_key_file_is_created_at_mode_0600",
+    "tests/test_receipt_and_budget.py::test_private_key_write_on_windows_mode_and_failed_replace",
+    "tests/test_receipt_and_budget.py::test_private_key_write_closes_fd_when_open_fails",
+    "tests/test_strenum_serialization.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-27T19:33:45.178579Z",
+  "ended_at": "2026-09-27T19:33:46.404916Z",
+  "duration_ms": 1226,
+  "output_sha256": "d2be208ebb64fe28469545e4c04e862aae76f5b1815697ecb2053e44f5a7638f",
+  "output_tail": "     23     0%   3-57\nsrc/retornatus/cli/finding.py                                      9      9     0%   3-33\nsrc/retornatus/cli/gate.py                                        61     61     0%   3-141\nsrc/retornatus/cli/groups.py                                      46     46     0%   3-76\nsrc/retornatus/cli/hooks.py                                       47     47     0%   3-90\nsrc/retornatus/cli/intake.py                                      41     41     0%   3-90\nsrc/retornatus/cli/lesson.py                                      22     22     0%   3-64\nsrc/retornatus/cli/loop.py                                        21     21     0%   3-41\nsrc/retornatus/cli/main.py                                        28     28     0%   3-62\nsrc/retornatus/cli/ops.py                                         34     34     0%   3-56\nsrc/retornatus/cli/policy.py                                      26     26     0%   3-82\nsrc/retornatus/cli/question.py                                    23     23     0%   3-70\nsrc/retornatus/cli/receipt.py                                     41     41     0%   3-120\nsrc/retornatus/cli/root.py                                       159    159     0%   3-329\nsrc/retornatus/cli/rule.py                                        21     21     0%   3-71\nsrc/retornatus/cli/skill.py                                       64     64     0%   3-177\nsrc/retornatus/cli/task.py                                        40     40     0%   3-73\nsrc/retornatus/constants.py                                        1      0   100%\nsrc/retornatus/domain/__init__.py                                  6      0   100%\nsrc/retornatus/domain/base.py                                      6      0   100%\nsrc/retornatus/domain/enums.py                                    66      0   100%\nsrc/retornatus/domain/errors.py                                    7      0   100%\nsrc/retornatus/domain/ids.py                                      80     38    52%   27-30, 34-36, 42, 47, 51, 55, 59, 63, 67, 71, 75, 79, 87-89, 106-109, 113-117, 121-123, 127-132\nsrc/retornatus/domain/models.py                                  210     46    78%   91-99, 118-122, 153-168, 202-212, 290-293, 299, 303-307, 373-382\nsrc/retornatus/domain/relations.py                                19      0   100%\nsrc/retornatus/infrastructure/environment/adapters.py            107     54    50%   28-41, 46-54, 75, 78, 82, 93, 96, 105-122, 129, 132, 140-149, 156, 159, 168-177, 186-187, 190, 198-208, 221-227\nsrc/retornatus/infrastructure/environment/hub_skill.py            13     13     0%   3-25\nsrc/retornatus/infrastructure/environment/rule_projection.py      39     39     0%   3-67\nsrc/retornatus/infrastructure/index/sqlite_index.py               77     77     0%   3-210\nsrc/retornatus/infrastructure/persistence/__init__.py              4      0   100%\nsrc/retornatus/infrastructure/persistence/atomic.py               21     15    29%   17-35, 39\nsrc/retornatus/infrastructure/persistence/concurrency.py          24     10    58%   23, 27, 31-34, 39-42\nsrc/retornatus/infrastructure/persistence/migrations.py           29     17    41%   24-26, 34-51\nsrc/retornatus/infrastructure/persistence/paths.py                99     51    48%   28-29, 33, 37, 41, 45, 49, 53, 57, 61, 65, 69, 74, 78-82, 85-86, 89, 92, 95, 98-99, 102-104, 107-108, 111-112, 115-116, 119-120, 124, 127-128, 131-132, 135-136, 139-140, 143-144, 147, 150-152\nsrc/retornatus/infrastructure/persistence/repository.py          176    126    28%   57-58, 63-72, 81-90, 95-98, 106-110, 120-131, 134-138, 148-152, 155, 158-160, 173, 181, 189, 196, 201, 204, 209, 214, 219, 224, 229, 234, 239, 242, 245-251, 256-257, 262, 265-271, 276-277, 282, 285-291, 300-302, 307-310, 313-320, 329-332, 335-338, 341-351\nsrc/retornatus/infrastructure/persistence/serializers.py          30     17    43%   16, 22, 26, 30, 39-42, 46-54\n--------------------------------------------------------------------------------------------\nTOTAL                                                           6378   5467    14%\n\n11 empty files skipped.\n4 passed in 0.99s\n",
+  "output_artifact": ".retornatus/changes/C-0004/evidence/E-005.output.txt",
+  "git_commit": "67d792f586ae652f246d3250953a8cb4f2e5d635",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0004/claim-done-2",
+      "note": null
+    }
+  ]
+}

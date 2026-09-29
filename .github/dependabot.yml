@@ -4,6 +4,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+  # Updates SHA-pinned uses: in .github/workflows when the comment names
+  # the version (for example `# v7.0.1`).
   - package-ecosystem: github-actions
     directory: /
     schedule:

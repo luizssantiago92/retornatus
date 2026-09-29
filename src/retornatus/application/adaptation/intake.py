@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 from retornatus.application.adaptation.skill_need import assess_skill_need
@@ -25,7 +25,7 @@ from retornatus.infrastructure.persistence.repository import FileRepository
 MAX_INTAKE_QUESTIONS = 4
 
 
-class IntakeVerdict(str, Enum):
+class IntakeVerdict(StrEnum):
     """Outcome of prompt intake (Skill path)."""
 
     ROUTINE = "ROUTINE"

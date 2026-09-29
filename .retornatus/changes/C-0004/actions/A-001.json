@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "C-0004/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Implement the security hardening and the ruff 0.16.8 StrEnum migration without changing serialized enum output.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "Workflows and the consumer template use full commit SHAs, contents read, and persist-credentials false except where a job must push",
+    "Publish jobs do not enable the uv cache; pytest shows the private key file is mode 0600 from creation on POSIX",
+    "ruff 0.16.8, mypy, pytest, docs check, and retornatus verify pass, and JSON enum values match the pre-migration output"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0004/T-001",
+      "description": "Pin workflows, template, permissions, publish cache, SECURITY.md, CodeQL, and Dependabot note",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0004/T-002",
+      "description": "Create the Ed25519 private key at mode 0600 and cover it with pytest",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0004/T-003",
+      "description": "Bump ruff to 0.16.8, migrate str Enums to StrEnum, and lock JSON output",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": []
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0004/T-004",
+      "description": "Record changelog and run the verification stack",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0004/T-001",
+        "C-0004/T-002",
+        "C-0004/T-003"
+      ],
+      "resources": []
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

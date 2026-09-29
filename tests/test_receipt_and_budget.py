@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
 import shutil
 import warnings
 from pathlib import Path
@@ -19,11 +20,13 @@ from retornatus.application.assurance.receipt import (
     ALG_HMAC,
     RECEIPT_SCHEMA_V1,
     canonical_bytes,
+    generate_keypair,
     keygen,
     load_and_verify_receipt,
     parse_private_key,
     private_key_pem,
     verify_receipt_dict,
+    write_private_key,
     write_verify_receipt,
 )
 from retornatus.application.change.tasks import TaskService
@@ -154,6 +157,95 @@ def test_bad_signing_key_input(monkeypatch: pytest.MonkeyPatch) -> None:
         parse_private_key("!!!")
     with pytest.raises(SigningKeyError, match="32 bytes"):
         parse_private_key("aa")
+
+
+def test_private_key_file_is_created_at_mode_0600(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Mode 0600 comes from os.open, not from a later chmod.
+
+    umask 0 would make a normal write world-readable. chmod is forced to fail
+    so a write-then-chmod implementation cannot hide that window.
+    """
+    _use_config(monkeypatch, tmp_path)
+    root = _project(tmp_path / "proj")
+
+    def _chmod_fails(*_args: object, **_kwargs: object) -> None:
+        raise OSError("chmod disabled")
+
+    monkeypatch.setattr(os, "chmod", _chmod_fails)
+    private_key = generate_keypair()
+    if os.name == "nt":
+        path = write_private_key(root, private_key)
+        again = write_private_key(root, private_key)
+        assert again == path
+        assert path.is_file()
+        assert "BEGIN PRIVATE KEY" in path.read_text(encoding="utf-8")
+        return
+
+    previous = os.umask(0)
+    try:
+        path = write_private_key(root, private_key)
+        again = write_private_key(root, private_key)
+    finally:
+        os.umask(previous)
+    assert again == path
+    assert path.stat().st_mode & 0o777 == 0o600
+    pem = path.read_text(encoding="utf-8")
+    assert pem.startswith("-----BEGIN PRIVATE KEY-----")
+    assert pem.endswith("\n")
+    leftovers = [
+        child
+        for child in path.parent.iterdir()
+        if child.name.startswith(f".{path.name}.") and child.suffix == ".tmp"
+    ]
+    assert leftovers == []
+
+
+def test_private_key_write_on_windows_mode_and_failed_replace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Windows ignores POSIX mode; a failed replace must not leave the temp file."""
+    from retornatus.application.assurance import receipt as receipt_mod
+
+    _use_config(monkeypatch, tmp_path)
+    root = _project(tmp_path / "proj")
+    path = write_private_key(root, generate_keypair())
+    real_name = os.name
+    # Path objects already exist. Only the writer consults os.name after this.
+    monkeypatch.setattr(receipt_mod.os, "name", "nt")
+    receipt_mod._write_private_key_file(path, path.read_text(encoding="utf-8"))
+    assert "BEGIN PRIVATE KEY" in path.read_text(encoding="utf-8")
+    if real_name != "nt":
+        assert path.stat().st_mode & 0o777 == 0o600
+
+    def _replace_fails(src: str, dst: str) -> None:
+        raise OSError(f"replace failed {src} -> {dst}")
+
+    monkeypatch.setattr(receipt_mod.os, "replace", _replace_fails)
+    with pytest.raises(OSError, match="replace failed"):
+        receipt_mod._write_private_key_file(path, "secret\n")
+    leftovers = list(path.parent.glob(f".{path.name}.*.tmp"))
+    assert leftovers == []
+    assert "BEGIN PRIVATE KEY" in path.read_text(encoding="utf-8")
+
+
+def test_private_key_write_closes_fd_when_open_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from retornatus.application.assurance import receipt as receipt_mod
+
+    _use_config(monkeypatch, tmp_path)
+    root = _project(tmp_path / "proj")
+    path = write_private_key(root, generate_keypair())
+
+    def _fdopen_fails(*_args: object, **_kwargs: object) -> None:
+        raise OSError("fdopen failed")
+
+    monkeypatch.setattr(os, "fdopen", _fdopen_fails)
+    with pytest.raises(OSError, match="fdopen failed"):
+        receipt_mod._write_private_key_file(path, "secret\n")
+    assert list(path.parent.glob(f".{path.name}.*.tmp")) == []
 
 
 def test_keygen_refuses_private_key_inside_project(
