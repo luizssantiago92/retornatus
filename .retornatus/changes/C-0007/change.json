@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0007",
+  "title": "Record 1.4.0 follow-ups and align setup-uv pins",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Maintainers must record the merged 1.4.0 follow-ups in CHANGELOG.md. Scope is the existing 1.4.0 section, the leftover setup-uv pin in CI and the consumer template, and Change C-0007 task resources. Out of scope is merging, tagging v1.4.0, and publishing to PyPI. The heading ## [1.4.0] - 2026-09-29 must stay unchanged and Unreleased must stay empty.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-29T22:20:12.402071Z"
+}

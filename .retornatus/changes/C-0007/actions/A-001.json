@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Correct the 1.4.0 changelog so Ruff reads 0.16.9, Dependabot action bumps are listed, and pull request 36 behavior sits under the matching subsections, and switch leftover astral-sh/setup-uv pins from v7.6.0 to commit c18668ad3cf93ea998bef934396af7bb5c839dc7.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "CHANGELOG.md contains the text Ruff is 0.16.9 and the heading ## [1.4.0] - 2026-09-29",
+    "CHANGELOG.md contains setup-uv 10.2.0, configure-pages 6, upload-pages-artifact 5.0.0, and upload-artifact 7.0.1",
+    "CHANGELOG.md contains fenced code blocks, inline code spans, config.toml, and Retornatus gates",
+    "A permission check shows .github/workflows/ci.yml and templates/ci/retornatus-pr.yml pin setup-uv to SHA c18668ad3cf93ea998bef934396af7bb5c839dc7 and no workflow file contains SHA 37802adc94f370d6bfd71619e3f0bf239e1f3b78",
+    "scripts/publish_preflight.py exits 0 for tag v1.4.0 and prints version 1.4.0 with skip false",
+    "retornatus doctor and retornatus ops run gate-scan exit 0",
+    "retornatus gate suppressions exits 0 against origin/main"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0007/T-001",
+      "description": "Record changelog follow-ups and align leftover setup-uv pins",
+      "lifecycle": "ACTIVE",
+      "depends_on": [],
+      "resources": [
+        "CHANGELOG.md",
+        ".github/workflows/ci.yml",
+        "templates/ci/retornatus-pr.yml"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
