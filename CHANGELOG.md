@@ -35,7 +35,7 @@ Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19,
 ### Changed
 
 - Ruff is 0.16.9 (#31). `(str, Enum)` types are `enum.StrEnum` (Python 3.11+). JSON, receipts, and evidence still store the enum value. The rule-activation error still prints `DecisionKind.<NAME>`, which is what `str()` used to produce.
-- Dependabot bumped pinned GitHub Actions: `astral-sh/setup-uv` 10.2.0 (#30), `actions/configure-pages` 6 (#32), `actions/upload-pages-artifact` 5.0.0 (#33), and `actions/upload-artifact` 7.0.1 (#34).
+- Dependabot bumped pinned GitHub Actions: setup-uv 10.2.0 (#30), configure-pages 6 (#32), upload-pages-artifact 5.0.0 (#33), and upload-artifact 7.0.1 (#34).
 - `gate suppressions` ignores markers inside Markdown fenced code blocks and inline code spans (`.md`, `.markdown`, `.mdx`, `.mdc`) (#36).
 - C-0001 DONE criteria were rewritten. C-0003 and C-0004 task resources were backfilled (#36).
 - Test-only modules `host_boundary.py` and `brownfield_fixture.py` live under `tests/support/` and are not installed.

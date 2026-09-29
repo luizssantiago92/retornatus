@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/E-001",
+  "type": "test_result",
+  "subject": "CHANGELOG.md contains the text Ruff is 0.16.9 and the heading ## [1.4.0] - 2026-",
+  "source": "uv run python /tmp/c0007/check_ruff.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T22:21:49.223711Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0007/check_ruff.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T22:21:49.183987Z",
+  "ended_at": "2026-09-29T22:21:49.216871Z",
+  "duration_ms": 32,
+  "output_sha256": "4cad166a9589723cf035f37d22d3b4e104c18368f0843435a5fa0401c7f75042",
+  "output_tail": "changelog ruff and heading ok\n",
+  "output_artifact": ".retornatus/changes/C-0007/evidence/E-001.output.txt",
+  "git_commit": "62eac316129ec1119ab31e8ff9cd146782c4be46",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0007/claim-done-1",
+      "note": null
+    }
+  ]
+}

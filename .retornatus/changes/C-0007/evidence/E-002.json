@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/E-002",
+  "type": "test_result",
+  "subject": "CHANGELOG.md contains setup-uv 10.2.0, configure-pages 6, upload-pages-artifact ",
+  "source": "uv run python /tmp/c0007/check_actions.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T22:22:25.592713Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0007/check_actions.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T22:22:25.556098Z",
+  "ended_at": "2026-09-29T22:22:25.587793Z",
+  "duration_ms": 31,
+  "output_sha256": "d2db7afc1d1b0aa643f987cd3fa6347bff6793d659780d1fa0a7aaed5763e2a4",
+  "output_tail": "dependabot notes ok\n",
+  "output_artifact": ".retornatus/changes/C-0007/evidence/E-002.output.txt",
+  "git_commit": "62eac316129ec1119ab31e8ff9cd146782c4be46",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0007/claim-done-2",
+      "note": null
+    }
+  ]
+}

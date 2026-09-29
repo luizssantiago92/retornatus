@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/E-004",
+  "type": "security_test",
+  "subject": "/workflows/ci.yml",
+  "source": "uv run python /tmp/c0007/check_pins.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T22:22:26.182030Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0007/check_pins.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T22:22:26.143672Z",
+  "ended_at": "2026-09-29T22:22:26.177886Z",
+  "duration_ms": 34,
+  "output_sha256": "c26722d5f0f11477c1b0b68c1f8c696d67edf0f41d551a6a804d102ec061fa61",
+  "output_tail": "setup-uv pins ok\n",
+  "output_artifact": ".retornatus/changes/C-0007/evidence/E-004.output.txt",
+  "git_commit": "62eac316129ec1119ab31e8ff9cd146782c4be46",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0007/claim-done-4",
+      "note": null
+    }
+  ]
+}
