@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/E-007",
+  "type": "test_result",
+  "subject": "/main",
+  "source": "uv run retornatus gate suppressions --base origin/main",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T22:22:27.838901Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "retornatus",
+    "gate",
+    "suppressions",
+    "--base",
+    "origin/main"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T22:22:27.604368Z",
+  "ended_at": "2026-09-29T22:22:27.835285Z",
+  "duration_ms": 230,
+  "output_sha256": "25e489e43fc192022c03d8f16782d7a81dc361875fe5c95dfc6aac312a9899bc",
+  "output_tail": "No suppression markers in added lines\n",
+  "output_artifact": ".retornatus/changes/C-0007/evidence/E-007.output.txt",
+  "git_commit": "62eac316129ec1119ab31e8ff9cd146782c4be46",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0007/claim-done-7",
+      "note": null
+    }
+  ]
+}

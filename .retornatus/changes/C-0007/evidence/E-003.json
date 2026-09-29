@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0007/E-003",
+  "type": "test_result",
+  "subject": "CHANGELOG.md contains fenced code blocks, inline code spans, config.toml, and Re",
+  "source": "uv run python /tmp/c0007/check_pr36.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T22:22:25.908302Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0007/check_pr36.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T22:22:25.870051Z",
+  "ended_at": "2026-09-29T22:22:25.904653Z",
+  "duration_ms": 34,
+  "output_sha256": "ecc806c5eabeeab1f0e3ed92c1bd8c93dbd2768ded21e469ec2e67acc1ea4a90",
+  "output_tail": "pr 36 notes ok\n",
+  "output_artifact": ".retornatus/changes/C-0007/evidence/E-003.output.txt",
+  "git_commit": "62eac316129ec1119ab31e8ff9cd146782c4be46",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0007/claim-done-3",
+      "note": null
+    }
+  ]
+}
