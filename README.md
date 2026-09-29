@@ -40,7 +40,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-Package **1.3.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
+Package **1.4.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
 
 [What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
 
@@ -285,6 +285,14 @@ CLI mistakes print `error: …` instead of a traceback. An invalid id such as `v
 
 ---
 
+## What’s new (1.4.0)
+
+- **Required checks** — when `[assurance] required_checks` is set, `verify` accepts execution evidence only for those commands (`verify --run-checks`, `checks run`)
+- **Cloud and remote agents** — install the CLI on the clean VM, run `hooks install` on every fresh clone, and leave receipts unsigned
+- **PR gates** — the consumer workflow pins `retornatus==1.4.0` and runs blocking `verify`, `gate suppressions`, and `gate scope`
+- **Trusted Publishing** — tag `v*` on `main` publishes after tests, a distribution contents check, and a matching changelog section
+- **Supply chain** — GitHub Actions are pinned to commit SHAs; `SECURITY.md` and CodeQL cover private reports and Python analysis
+
 ## What’s new (1.3.0)
 
 - **Verify receipts** — Ed25519 signature checked with the committed public key; private key stays outside the repo (`verify --receipt`, `receipt verify`). Legacy HMAC receipts are `legacy_hmac` and not portable  
@@ -325,7 +333,7 @@ retornatus hooks status
 retornatus doctor
 ```
 
-[`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) pins `uv tool install "retornatus==1.3.0"`. Bump that pin to the release that contains `hooks install` and the diff gates before depending on it. Full notes: [Cloud agents](docs/guide/Cloud-agents.md).
+[`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) pins `uv tool install "retornatus==1.4.0"`. That release includes `hooks install` and the diff gates. Full notes: [Cloud agents](docs/guide/Cloud-agents.md).
 
 ---
 
