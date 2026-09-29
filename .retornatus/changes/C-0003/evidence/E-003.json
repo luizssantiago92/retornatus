@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0003/E-003",
+  "type": "test_result",
+  "subject": "The guide states the private signing key stays off the agent VM and cloud agents",
+  "source": "python -c 'from pathlib import Path; t=Path('\"'\"'docs/guide/Cloud-agents.md'\"'\"').read_text(); assert '\"'\"'RETORNATUS_SIGNING_KEY'\"'\"' in t and '\"'\"'Leave them unsigned'\"'\"' in t and '\"'\"'receipt verify'\"'\"' in t'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-27T19:14:03.442246Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python",
+    "-c",
+    "from pathlib import Path; t=Path('docs/guide/Cloud-agents.md').read_text(); assert 'RETORNATUS_SIGNING_KEY' in t and 'Leave them unsigned' in t and 'receipt verify' in t"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-27T19:14:03.420464Z",
+  "ended_at": "2026-09-27T19:14:03.438596Z",
+  "duration_ms": 18,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
+  "output_artifact": ".retornatus/changes/C-0003/evidence/E-003.output.txt",
+  "git_commit": "2f1513a21ac827f6e48ec82ac91af4eb8b79dcfa",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0003/claim-done-2",
+      "note": null
+    }
+  ]
+}

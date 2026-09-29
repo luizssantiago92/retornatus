@@ -44,5 +44,6 @@ uv run pytest -q
 | SG migration | `docs/guide/From-spec-guardrails.md` |
 | Landscape | `docs/guide/Landscape.md` |
 | Git tiers | `docs/guide/Git-governance.md` |
+| Cloud / remote agents | `docs/guide/Cloud-agents.md` |
 
 Do **not** claim DONE without Assurance `SATISFIED`. Do **not** invent Skills without human confirmation.

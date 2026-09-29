@@ -32,6 +32,7 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 | [Memory](Memory.md) | Learnings, index, wake continuity |
 | [Governance](Governance.md) | Authority, Rules, Policy, Human Decisions, bypass |
 | [Git governance](Git-governance.md) | Commit / PR / merge / publish blast-radius tiers |
+| [Cloud agents](Cloud-agents.md) | Clean VMs: install the CLI, reinstall hooks, leave receipts unsigned, enforce on the PR |
 
 ## Reference
 

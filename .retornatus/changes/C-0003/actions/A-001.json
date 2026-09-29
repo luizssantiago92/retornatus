@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "C-0003/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Write the cloud-agents guide and link it from the docs hub, README, and changelog",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "docs/guide/Cloud-agents.md names uv tool install of a pinned version, hooks install, hooks status, and doctor",
+    "The guide states the private signing key stays off the agent VM and cloud agents leave receipts unsigned",
+    "The guide points at templates/ci/retornatus-pr.yml running verify, gate suppressions --base, and gate scope --base on pull requests",
+    "docs/guide/README.md, docs/guide/index.html, the HTML build page list, README.md, and CHANGELOG Unreleased reference the new page"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0003/T-001",
+      "description": "Write the guide and wire it into the docs hub, README, changelog, and HTML build",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "docs/**",
+        "README.md",
+        "CHANGELOG.md",
+        "AGENTS.md",
+        "scripts/build_docs_html.py",
+        ".gitignore"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

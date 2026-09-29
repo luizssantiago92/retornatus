@@ -93,7 +93,7 @@ retornatus skill --help
 
 Ed25519. Public key: `.retornatus/keys/<key-id>.pub` (committed). Private key: `RETORNATUS_SIGNING_KEY` or the user config directory — never inside the project, and never copied from the environment onto disk.
 
-An agent that can read the private key can still sign. Keep the key out of the agent's environment. In CI, put the PEM in a GitHub Actions secret and run `retornatus verify <C-id> --receipt` with `RETORNATUS_SIGNING_KEY` set. Clones verify with only the public key.
+An agent that can read the private key can still sign. Keep the key out of the agent's environment. Cloud and remote agents leave receipts unsigned. In CI, put the PEM in a GitHub Actions secret and run `retornatus verify <C-id> --receipt` with `RETORNATUS_SIGNING_KEY` set. Clones verify with only the public key. Setup for a clean VM: [Cloud agents](Cloud-agents.md).
 
 Legacy HMAC receipts verify only where the old local key exists. The result is `legacy_hmac`, `portable: false`, plus a deprecation warning.
 
