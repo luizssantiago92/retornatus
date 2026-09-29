@@ -8,6 +8,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from retornatus.application.change.workflow import ChangeWorkflow, TaskSpec
+from retornatus.application.governance import diff_scan as diff_scan_mod
 from retornatus.bootstrap.init import initialize_project
 from retornatus.cli.main import app
 from retornatus.infrastructure.persistence.repository import FileRepository
@@ -125,6 +126,57 @@ def test_suppressions_base_ref_sees_only_that_range(tmp_path: Path) -> None:
     )
     assert result.exit_code == 1, result.stdout + result.stderr
     assert "pytest-skip" in result.stdout
+
+
+def test_markdown_span_helpers_ignore_unclosed_and_missing_files(tmp_path: Path) -> None:
+    marker = "--no-" + "verify"
+    assert diff_scan_mod._fenced_line_numbers(tmp_path, "missing.md") == set()
+    assert marker in diff_scan_mod._mask_inline_code(f"see `{marker}")
+
+
+def test_suppressions_skip_markdown_code_and_flag_prose(tmp_path: Path) -> None:
+    """Docs may name a marker inside code. Prose and Python still fail."""
+    _git(tmp_path)
+    initialize_project(tmp_path)
+    hook_flag = "--no-" + "verify"
+    skip_marker = "pytest.mark." + "skip"
+    lint_mark = "no" + "qa"
+    guide = tmp_path / "docs" / "Cloud-agents.md"
+    guide.parent.mkdir()
+    guide.write_text(
+        "Before\n"
+        f"A commit can pass `{hook_flag}`.\n"
+        "```bash\n"
+        f"git commit {hook_flag}\n"
+        "```\n"
+        f"Prose must not pass {hook_flag} bare.\n"
+        f"```\n{skip_marker}\n```\n",
+        encoding="utf-8",
+    )
+    source = tmp_path / "src" / "app.py"
+    source.parent.mkdir()
+    source.write_text(
+        f"def ok() -> None:  # {lint_mark}\n    return None\n",
+        encoding="utf-8",
+    )
+    _commit(tmp_path, "docs and code")
+    result = runner.invoke(
+        app,
+        ["gate", "suppressions", "--base", "HEAD~1", "--path", str(tmp_path)],
+    )
+    assert result.exit_code == 1, result.stdout
+    assert "Cloud-agents.md" in result.stdout
+    assert "prose" in result.stdout.lower() or "Prose" in result.stdout
+    assert "app.py" in result.stdout
+    assert lint_mark in result.stdout
+    # The backtick mention and the fenced lines are not hits.
+    flagged = [
+        line
+        for line in result.stdout.splitlines()
+        if "Cloud-agents.md" in line
+    ]
+    assert len(flagged) == 1
+    assert "Prose must not pass" in flagged[0]
 
 
 def test_scope_resources_denied_and_sensitive(tmp_path: Path) -> None:

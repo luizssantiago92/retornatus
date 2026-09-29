@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/E-003",
+  "type": "test_result",
+  "subject": "pytest shows initialize_project writes the package version into config.toml",
+  "source": "uv run pytest -q --no-cov tests/test_init.py::test_initialize_creates_minimal_tree",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:21:00.265895Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_init.py::test_initialize_creates_minimal_tree"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:21:00.088333Z",
+  "ended_at": "2026-09-29T21:21:00.261367Z",
+  "duration_ms": 173,
+  "output_sha256": "4bcefcc9f6c645923b9993ccf73ad92e6b400ca25458ea14e095857fc2131342",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.01s\n",
+  "output_artifact": ".retornatus/changes/C-0006/evidence/E-003.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0006/claim-done-5",
+      "note": null
+    }
+  ]
+}

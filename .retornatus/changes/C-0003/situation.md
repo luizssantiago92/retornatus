@@ -145,3 +145,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 Cloud and remote agents (Cursor cloud agents, Codex, Claude Code on a remote VM, CI sandboxes) clone the repo onto a clean machine. The retornatus CLI is not in git. Git hooks are not versioned, so hooks install must run on every fresh clone. Receipt signing keys must not be present on that VM. Enforcement that counts is the GitHub Actions workflow copied from templates/ci/retornatus-pr.yml. Out of scope: changing CLI behavior, publishing a release, or putting a signing key in the agent environment.
+
+## Reopened Situation
+
+Appended a security-test DONE line so gate scope can accept workflow paths that later commits added on top of this Change. Prior DONE lines are unchanged.

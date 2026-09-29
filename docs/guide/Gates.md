@@ -96,6 +96,8 @@ retornatus gate suppressions --base main
 
 Added lines (`+`, not file headers) are scanned for markers such as `noqa`, `type: ignore`, `pragma: no cover`, `pytest.mark.skip`, `pytest.mark.xfail`, `unittest.skip`, `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `.only(`, `it.skip`, `describe.skip`, `pylint: disable`, and `--no-verify`.
 
+Markdown (`.md`, `.markdown`, `.mdx`, `.mdc`) skips a match that sits inside a fenced code block or an inline code span. Naming `` `--no-verify` `` in a sentence is documentation of the marker, not a suppression added to executable code. The same marker outside a code span still fails the gate. `allow_paths` and `allow_patterns` still apply to every file.
+
 ```toml
 [governance.suppressions]
 extra_patterns = ["\\bHACK\\b"]

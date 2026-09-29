@@ -20,6 +20,27 @@
     "category": "DELEGATED",
     "rationale": "routine"
   },
-  "tasks": [],
-  "relations": []
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0001/T-001",
+      "description": "Files this repair touches outside .retornatus so gate scope can see the CI workflow",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/governance/diff_scan.py",
+        "src/retornatus/bootstrap/init.py",
+        "tests/test_scope_and_suppressions.py",
+        "tests/test_init.py",
+        "tests/test_workflow_hardening.py",
+        "tests/test_dx_parity.py",
+        "docs/guide/Gates.md",
+        "docs/README.md",
+        ".github/workflows/ci.yml"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
 }

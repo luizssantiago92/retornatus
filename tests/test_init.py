@@ -5,6 +5,7 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
+from retornatus import __version__
 from retornatus.bootstrap.init import (
     DIRECTORY_TREE,
     initialize_project,
@@ -31,6 +32,7 @@ def test_initialize_creates_minimal_tree(tmp_path: Path) -> None:
 
     assert config["schema_version"] == 1
     assert config["project"]["initialized"] is True
+    assert config["retornatus"]["version"] == __version__
 
 
 def test_initialize_is_idempotent_without_force(tmp_path: Path) -> None:

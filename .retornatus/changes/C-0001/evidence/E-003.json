@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0001/E-003",
+  "type": "test_result",
+  "subject": "pytest shows change classify prints QUICK and create stores the lane",
+  "source": "uv run pytest -q --no-cov tests/test_dx_parity.py::test_change_classify_cli tests/test_dx_parity.py::test_create_stores_lane",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:20:56.588987Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_dx_parity.py::test_change_classify_cli",
+    "tests/test_dx_parity.py::test_create_stores_lane"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:20:56.189242Z",
+  "ended_at": "2026-09-29T21:20:56.583168Z",
+  "duration_ms": 393,
+  "output_sha256": "686b4ed9a084cc13a88ea4749c9895e659d7faa3540b7c04eedf6fa858d9cc2c",
+  "output_tail": "..                                                                       [100%]\n2 passed in 0.21s\n",
+  "output_artifact": ".retornatus/changes/C-0001/evidence/E-003.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0001/claim-done-2",
+      "note": null
+    }
+  ]
+}

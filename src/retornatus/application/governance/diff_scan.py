@@ -12,6 +12,10 @@ from retornatus.application.governance.diff import added_lines, git_available
 from retornatus.application.governance.globs import glob_match
 from retornatus.domain.errors import UsageError
 
+# Documentation names markers inside code. Those mentions are not suppressions.
+_MARKDOWN_SUFFIXES = frozenset({".md", ".markdown", ".mdx", ".mdc"})
+_FENCE_OPEN = re.compile(r"^( {0,3})(`{3,}|~{3,})")
+
 # Markers are split in source so this file's own lines do not contain them.
 _DEFAULT_PATTERNS: tuple[tuple[str, str], ...] = (
     ("noqa", r"\bno" + "qa" + r"\b"),
@@ -72,14 +76,22 @@ def scan_suppressions(
     settings = load_suppression_settings(root)
     compiled = _compile_patterns(settings.extra_patterns)
     allow = _compile_allow(settings.allow_patterns)
+    fences_by_path: dict[str, set[int]] = {}
     hits: list[SuppressionHit] = []
     for line in added_lines(root, base=base, staged=staged):
         if _path_allowed(line.path, settings.allow_paths):
             continue
         if any(pattern.search(line.text) for pattern in allow):
             continue
+        searchable = line.text
+        if _is_markdown(line.path):
+            if line.path not in fences_by_path:
+                fences_by_path[line.path] = _fenced_line_numbers(root, line.path)
+            if line.line_number in fences_by_path[line.path]:
+                continue
+            searchable = _mask_inline_code(line.text)
         for name, pattern in compiled:
-            if pattern.search(line.text):
+            if pattern.search(searchable):
                 hits.append(
                     SuppressionHit(
                         path=line.path,
@@ -89,6 +101,78 @@ def scan_suppressions(
                     )
                 )
     return hits
+
+
+def _is_markdown(path: str) -> bool:
+    return Path(path).suffix.lower() in _MARKDOWN_SUFFIXES
+
+
+def _fenced_line_numbers(root: Path, path: str) -> set[int]:
+    """Line numbers inside a fenced code block of a markdown file.
+
+    Fence delimiter lines themselves are not inside the block. A missing
+    file yields an empty set so the line is still scanned for inline spans.
+    """
+    file_path = root / path
+    try:
+        text = file_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return set()
+    inside: set[int] = set()
+    opener: str | None = None
+    opener_len = 0
+    for number, raw in enumerate(text.splitlines(), start=1):
+        if opener is None:
+            match = _FENCE_OPEN.match(raw)
+            if match:
+                token = match.group(2)
+                opener = token[0]
+                opener_len = len(token)
+            continue
+        stripped = raw.strip()
+        if (
+            stripped
+            and len(stripped) >= opener_len
+            and set(stripped) == {opener}
+        ):
+            opener = None
+            continue
+        inside.add(number)
+    return inside
+
+
+def _mask_inline_code(text: str) -> str:
+    """Replace markdown inline code spans with spaces, preserving indexes."""
+    chars = list(text)
+    index = 0
+    length = len(chars)
+    while index < length:
+        if chars[index] != "`":
+            index += 1
+            continue
+        end = index
+        while end < length and chars[end] == "`":
+            end += 1
+        opener_len = end - index
+        cursor = end
+        closed = False
+        while cursor < length:
+            if chars[cursor] != "`":
+                cursor += 1
+                continue
+            run = cursor
+            while run < length and chars[run] == "`":
+                run += 1
+            if run - cursor == opener_len:
+                for pos in range(index, run):
+                    chars[pos] = " "
+                index = run
+                closed = True
+                break
+            cursor = run
+        if not closed:
+            index = end
+    return "".join(chars)
 
 
 def _compile_patterns(extra: tuple[str, ...]) -> list[tuple[str, re.Pattern[str]]]:

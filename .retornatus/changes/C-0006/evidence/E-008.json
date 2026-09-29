@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/E-008",
+  "type": "test_result",
+  "subject": "retornatus gate scope for C-0004 against its parent commit exits 0",
+  "source": "uv run retornatus gate scope C-0004 --base 5d1a7ca",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:21:21.068364Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "retornatus",
+    "gate",
+    "scope",
+    "C-0004",
+    "--base",
+    "5d1a7ca"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:21:20.827471Z",
+  "ended_at": "2026-09-29T21:21:21.063311Z",
+  "duration_ms": 235,
+  "output_sha256": "6dc46d8a1456839ec3b73a62bdd50fba231d578a35a1e1c4be5b74b319eb7481",
+  "output_tail": "Scope OK (33 path(s))\n",
+  "output_artifact": ".retornatus/changes/C-0006/evidence/E-008.output.txt",
+  "git_commit": "550329012c0f5a3d3ce617c50d8cbaa2d70deb42",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0006/claim-done-2",
+      "note": null
+    }
+  ]
+}

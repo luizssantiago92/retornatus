@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "C-0006/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Land the hygiene fixes under C-0006 with task resources and executed evidence",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "retornatus doctor and retornatus ops run gate-scan exit 0",
+    "retornatus gate scope for C-0004 against its parent commit exits 0",
+    "retornatus gate scope for C-0003 against its parent commit exits 0",
+    "pytest shows markdown code spans are not suppression hits",
+    "pytest shows initialize_project writes the package version into config.toml",
+    "project.md contains the docs archive path and does not name a prd directory",
+    "docs README links credits to the Pages site and the source markdown file",
+    "security test shows workflow permission contents read",
+    "The CI workflow file contains doctor, gate-scan, and suppressions steps"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0006/T-001",
+      "description": "Implement hygiene fixes and record proof",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/governance/diff_scan.py",
+        "src/retornatus/bootstrap/init.py",
+        "tests/test_scope_and_suppressions.py",
+        "tests/test_init.py",
+        "tests/test_workflow_hardening.py",
+        "tests/test_dx_parity.py",
+        "docs/guide/Gates.md",
+        "docs/README.md",
+        ".github/workflows/ci.yml"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

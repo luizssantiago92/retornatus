@@ -39,6 +39,17 @@ def test_checkout_does_not_persist_credentials() -> None:
         assert "persist-credentials: false" in text, path
 
 
+def test_ci_governance_job_runs_local_gates() -> None:
+    text = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "uv run retornatus doctor" in text
+    assert "uv run retornatus ops run gate-scan" in text
+    assert "uv run retornatus gate suppressions --base" in text
+    assert "uv run retornatus verify" in text
+    assert "uv run retornatus gate scope" in text
+    assert "uv tool install" not in text
+    assert "fetch-depth: 0" in text
+
+
 def test_publish_workflow_disables_uv_cache() -> None:
     text = (ROOT / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
     assert "enable-cache: true" not in text
