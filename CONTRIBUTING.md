@@ -46,20 +46,13 @@ Suggested repository topics (set in the GitHub UI or with `gh repo edit --add-to
 
 Publishing is the owner's job. Do not upload from a laptop, do not create `v*` tags that publish, and do not run the Publish workflow for someone else.
 
-PyPI **1.2.1** and **1.3.0** are already published. Git tags for those versions were not created. The workflow that publishes *new* versions is `.github/workflows/publish.yml` (Trusted Publishing, no API token):
+PyPI **1.2.1** and **1.3.0** are already published. Git tags for those versions were backfilled on 2026-09-29: `v1.2.1` points at `f4d96d3`, and `v1.3.0` points at `a540efb`. The workflow that publishes *new* versions is `.github/workflows/publish.yml` (Trusted Publishing, no API token):
 
 1. In a PR, bump `version` in `pyproject.toml` and move `## [Unreleased]` notes in `CHANGELOG.md` under `## [x.y.z]`. This repository does not bump the version inside the publish workflow.
 2. Merge to `main`.
 3. One-time, on [pypi.org](https://pypi.org/manage/project/retornatus/settings/publishing/): add a trusted publisher for owner `luizssantiago92`, repository `retornatus`, workflow `publish.yml`, environment `pypi`. On GitHub, create an environment named `pypi` (optionally require a reviewer). You can then delete the old API token secrets (`UV_PUBLISH_TOKEN`, `TEST_PYPI_TOKEN`).
-4. Tag the merge commit on `main` as `vX.Y.Z` (the tag name must match the package version, and the tagged commit must be on `main`). Pushing the tag runs tests, ruff, mypy, the docs check, a wheel/sdist contents check, and the changelog check. If that version is already on PyPI, publish is skipped.
+4. Tag a commit that is on `main` as `v<pyproject version>` (the tag name must match the `version` in `pyproject.toml`). Pushing the tag runs tests, ruff, mypy, the docs check, a wheel/sdist contents check, and the changelog check. If that version is already on PyPI, publish is skipped.
 5. Optional TestPyPI: Actions → Publish to PyPI → Run workflow, from `main`, target `test`. That job is non-blocking. It expects a GitHub environment named `testpypi` and a TestPyPI trusted publisher. Skip it if you do not want a staging upload.
-
-Tagging the historical 1.2.1 / 1.3.0 commits runs the *old* workflow stored in those commits (token-based). Delete the token secrets before creating those tags so a replay cannot publish. The packages are already on PyPI; the tags are only markers.
-
-Suggested tag commits (the commits that introduced each version in `pyproject.toml`):
-
-- `v1.2.1` → `f4d96d3`
-- `v1.3.0` → `a540efb`
 
 ## License
 

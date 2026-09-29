@@ -48,6 +48,7 @@
       "depends_on": [],
       "resources": [
         "README.md",
+        "CONTRIBUTING.md",
         "docs/**",
         "templates/**"
       ]

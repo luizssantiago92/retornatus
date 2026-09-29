@@ -46,8 +46,8 @@ Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19,
 
 ## [1.3.0]
 
-Already on PyPI. No git tag `v1.3.0` was pushed for that publish. See the version bump commit `a540efb`.
+Already on PyPI. Git tag `v1.3.0` was backfilled on 2026-09-29 and points at `a540efb`.
 
 ## [1.2.1]
 
-Already on PyPI. No git tag `v1.2.1` was pushed for that publish. See the version bump commit `f4d96d3`.
+Already on PyPI. Git tag `v1.2.1` was backfilled on 2026-09-29 and points at `f4d96d3`.

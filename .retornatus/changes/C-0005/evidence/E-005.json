@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0005/E-005",
+  "type": "test_result",
+  "subject": "CHANGELOG.md includes a 1.4.0 section dated 2026-09-29 and keeps an empty Unrele",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\"CHANGELOG.md\").read_text()\n_, _, rest = text.partition(\"## [Unreleased]\")\nbody, sep, _tail = rest.partition(\"## [1.4.0] - 2026-09-29\")\nassert sep and not body.strip()\nassert \"No git tag\" not in text\nassert \"stays 1.3.0\" not in text\nassert text.count(\"backfilled on 2026-09-29 and points at\") == 2\nassert \"a540efb\" in text and \"f4d96d3\" in text\nprint(\"changelog 1.4.0 header and backfilled tags ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-29T21:09:35.463607Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\"CHANGELOG.md\").read_text()\n_, _, rest = text.partition(\"## [Unreleased]\")\nbody, sep, _tail = rest.partition(\"## [1.4.0] - 2026-09-29\")\nassert sep and not body.strip()\nassert \"No git tag\" not in text\nassert \"stays 1.3.0\" not in text\nassert text.count(\"backfilled on 2026-09-29 and points at\") == 2\nassert \"a540efb\" in text and \"f4d96d3\" in text\nprint(\"changelog 1.4.0 header and backfilled tags ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-29T21:09:35.423271Z",
+  "ended_at": "2026-09-29T21:09:35.458690Z",
+  "duration_ms": 35,
+  "output_sha256": "a20d6c12f3b7b1077f853967140daa2e4600e4774d4a15c4064ccf98c5eda0c2",
+  "output_tail": "changelog 1.4.0 header and backfilled tags ok\n",
+  "output_artifact": ".retornatus/changes/C-0005/evidence/E-005.output.txt",
+  "git_commit": "8243dff8fd97c2919ebce0865991aaf3edcc1018",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0005/claim-done-2",
+      "note": null
+    }
+  ]
+}
