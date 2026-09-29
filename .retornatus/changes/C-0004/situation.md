@@ -1,6 +1,6 @@
 <!-- retornatus-meta
 {
-  "change_id": "C-0003",
+  "change_id": "C-0004",
   "schema_version": 1
 }
 -->
@@ -9,7 +9,7 @@
 
 ## Demand
 
-Document using Retornatus on cloud and remote coding agents
+Maintainers must harden GitHub Actions, private-key file creation, and supply-chain config. Scope is workflows, the consumer CI template, the Ed25519 key writer, SECURITY.md, CodeQL, Dependabot, and the ruff 0.16.8 StrEnum migration. Out of scope is publishing to PyPI.
 
 ## Project context
 
@@ -85,7 +85,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 
 ## Known facts
 
-- Demand stated: Document using Retornatus on cloud and remote coding agents
+- Demand stated: Maintainers must harden GitHub Actions, private-key file creation, and supply-chain config. Scope is workflows, the consumer CI template, the Ed25519 key writer, SECURITY.md, CodeQL, Dependabot, and the ruff 0.16.8 StrEnum migration. Out of scope is publishing to PyPI.
 - Repo: stack manifests: `pyproject.toml`
 - Repo: tests: tests/, pytest (pyproject)
 - Repo: ci: `ci.yml`, `pages.yml`, `publish.yml`
@@ -114,11 +114,10 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 - native_skills: True
 - native_sandbox: False
 - Situation narrative provided by agent/human
-- Proposed WHAT: A concise guide covers clean-VM CLI install, hook reinstall, unsigned receipts, and GitHub CI enforcement, and is linked from the docs hub, README, and changelog
-- DONE criterion: docs/guide/Cloud-agents.md names uv tool install of a pinned version, hooks install, hooks status, and doctor
-- DONE criterion: The guide states the private signing key stays off the agent VM and cloud agents leave receipts unsigned
-- DONE criterion: The guide points at templates/ci/retornatus-pr.yml running verify, gate suppressions --base, and gate scope --base on pull requests
-- DONE criterion: docs/guide/README.md, docs/guide/index.html, the HTML build page list, README.md, and CHANGELOG Unreleased reference the new page
+- Proposed WHAT: Pin every GitHub Action in .github/workflows and templates/ci/retornatus-pr.yml to the current main commit SHA with a version comment, set top-level permissions contents read, disable uv cache on publish jobs, create the Ed25519 private key at mode 0600, add SECURITY.md and a least-privilege CodeQL workflow, keep Dependabot on github-actions, and bump ruff to 0.16.8 using StrEnum without changing serialized enum values.
+- DONE criterion: Workflows and the consumer template use full commit SHAs, contents read, and persist-credentials false except where a job must push
+- DONE criterion: Publish jobs do not enable the uv cache; pytest shows the private key file is mode 0600 from creation on POSIX
+- DONE criterion: ruff 0.16.8, mypy, pytest, docs check, and retornatus verify pass, and JSON enum values match the pre-migration output
 
 ## Constraints
 
@@ -144,4 +143,4 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 
 ## Agent narrative
 
-Cloud and remote agents (Cursor cloud agents, Codex, Claude Code on a remote VM, CI sandboxes) clone the repo onto a clean machine. The retornatus CLI is not in git. Git hooks are not versioned, so hooks install must run on every fresh clone. Receipt signing keys must not be present on that VM. Enforcement that counts is the GitHub Actions workflow copied from templates/ci/retornatus-pr.yml. Out of scope: changing CLI behavior, publishing a release, or putting a signing key in the agent environment.
+Audit found tag-pinned actions including pypa/gh-action-pypi-publish@release/v1 on the id-token write job, missing least-privilege permissions, uv cache in publish, a chmod-after-write private key, no SECURITY.md or CodeQL, and ruff 0.16.8 UP042 on twenty str Enum classes. Dependabot already lists github-actions. Constraint: do not merge, tag, or publish to PyPI. Serialized JSON and receipt enum values must stay identical.

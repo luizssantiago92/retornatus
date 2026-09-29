@@ -2,34 +2,31 @@
   "schema_version": 1,
   "id": "C-0003/E-004",
   "type": "test_result",
-  "subject": "Workflows and the consumer template use full commit SHAs, contents read, and per",
-  "source": "uv run pytest -q --cov-fail-under=0 tests/test_workflow_hardening.py",
+  "subject": "templates/ci/retornatus-pr.yml",
+  "source": "python -c 'from pathlib import Path; g=Path('\"'\"'docs/guide/Cloud-agents.md'\"'\"').read_text(); t=Path('\"'\"'templates/ci/retornatus-pr.yml'\"'\"').read_text(); assert '\"'\"'templates/ci/retornatus-pr.yml'\"'\"' in g; assert '\"'\"'gate suppressions'\"'\"' in g and '\"'\"'gate scope'\"'\"' in g and '\"'\"'retornatus verify'\"'\"' in g; assert '\"'\"'gate suppressions'\"'\"' in t and '\"'\"'gate scope'\"'\"' in t'",
   "producer": "retornatus",
-  "observed_at": "2026-09-27T19:33:44.964541Z",
+  "observed_at": "2026-09-27T19:14:03.682681Z",
   "subject_state": null,
   "provenance": "executed",
   "command": [
-    "uv",
-    "run",
-    "pytest",
-    "-q",
-    "--cov-fail-under=0",
-    "tests/test_workflow_hardening.py"
+    "python",
+    "-c",
+    "from pathlib import Path; g=Path('docs/guide/Cloud-agents.md').read_text(); t=Path('templates/ci/retornatus-pr.yml').read_text(); assert 'templates/ci/retornatus-pr.yml' in g; assert 'gate suppressions' in g and 'gate scope' in g and 'retornatus verify' in g; assert 'gate suppressions' in t and 'gate scope' in t"
   ],
   "exit_code": 0,
-  "started_at": "2026-09-27T19:33:44.720266Z",
-  "ended_at": "2026-09-27T19:33:44.958714Z",
-  "duration_ms": 238,
-  "output_sha256": "af87ea82cb922f819212aa164d8c90ed87ca739efdae510bad80402d1d8e2fcf",
-  "output_tail": "..../workspace/.venv/lib/python3.12/site-packages/coverage/inorout.py:558: CoverageWarning: Module retornatus was never imported. (module-not-imported); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-module-not-imported\n  self.warn(f\"Module {pkg} was never imported.\", slug=\"module-not-imported\")\n/workspace/.venv/lib/python3.12/site-packages/coverage/control.py:967: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-no-data-collected\n  self._warn(\"No data was collected.\", slug=\"no-data-collected\")\n/workspace/.venv/lib/python3.12/site-packages/pytest_cov/plugin.py:366: CovReportWarning: Failed to generate report: No data to report.\n\n  warnings.warn(CovReportWarning(message), stacklevel=1)\n\nWARNING: Failed to generate report: No data to report.\n\n                                                                         [100%]\n4 passed in 0.03s\n",
+  "started_at": "2026-09-27T19:14:03.658536Z",
+  "ended_at": "2026-09-27T19:14:03.678011Z",
+  "duration_ms": 19,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
   "output_artifact": ".retornatus/changes/C-0003/evidence/E-004.output.txt",
-  "git_commit": "67d792f586ae652f246d3250953a8cb4f2e5d635",
+  "git_commit": "2f1513a21ac827f6e48ec82ac91af4eb8b79dcfa",
   "worktree_dirty": true,
   "timed_out": false,
   "relations": [
     {
       "type": "SUPPORTS",
-      "target_id": "C-0003/claim-done-1",
+      "target_id": "C-0003/claim-done-3",
       "note": null
     }
   ]

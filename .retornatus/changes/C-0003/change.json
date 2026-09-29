@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "id": "C-0003",
-  "title": "Harden Actions, private keys, and ruff StrEnum",
+  "title": "Document Retornatus on cloud and remote agents",
   "demand": {
     "schema_version": 1,
-    "statement": "Maintainers must harden GitHub Actions, private-key file creation, and supply-chain config. Scope is workflows, the consumer CI template, the Ed25519 key writer, SECURITY.md, CodeQL, Dependabot, and the ruff 0.16.8 StrEnum migration. Out of scope is publishing to PyPI.",
-    "kind": "SECURITY"
+    "statement": "Document using Retornatus on cloud and remote coding agents",
+    "kind": "OTHER"
   },
-  "lane": "STANDARD",
+  "lane": "QUICK",
   "active_contract_version": 1,
   "relations": [],
-  "created_at": "2026-09-27T19:21:46.012371Z"
+  "created_at": "2026-09-27T19:08:09.954449Z"
 }

@@ -8,6 +8,10 @@ No. It is a **governance harness**. The host runs the model; Retornatus structur
 
 No. V1 is local and repository-native. No mandatory SaaS runtime or remote database.
 
+## What about a cloud or remote coding agent?
+
+The VM starts clean. Install the CLI there and run `hooks install` on every fresh clone. Leave receipts unsigned on that machine. GitHub Actions on the pull request (`verify`, `gate suppressions`, `gate scope`) is the enforcement. See [Cloud agents](Cloud-agents.md).
+
 ## Must every Change use Skills and Tasks?
 
 No. Ceremony scales with complexity. For freeform chat prompts, prefer `intake analyze` (propose Skill → human CREATE=yes) or explicit `skill create`. Use `skill need` as a signal only. Agents should **not** invent Skills without confirmation.
