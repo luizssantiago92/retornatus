@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "C-0025/E-006",
+  "type": "repository_observation",
+  "subject": "Question stops are documented in the agent hooks guide",
+  "source": "docs/guide/Agent-hooks.md section Questions to the user",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T22:33:32.104438Z",
+  "subject_state": null,
+  "provenance": "self_reported",
+  "command": null,
+  "exit_code": null,
+  "started_at": null,
+  "ended_at": null,
+  "duration_ms": null,
+  "output_sha256": null,
+  "output_tail": null,
+  "output_artifact": null,
+  "git_commit": null,
+  "worktree_dirty": null,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0025/claim-done-2",
+      "note": null
+    }
+  ]
+}
