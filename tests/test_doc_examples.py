@@ -93,42 +93,34 @@ def _prepare_repo(root: Path) -> None:
     (root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8")
     _git(root, "add", "-A")
     _git(root, "commit", "-m", "Initial example repository")
-    _install_python_shim(root)
 
 
-def _install_python_shim(root: Path) -> None:
-    """Make the docs' ``python`` invoke the interpreter that is running pytest.
+def _example_env() -> dict[str, str]:
+    """Environment for the documented commands.
 
-    On Windows CI, ``python`` on PATH is not the uv venv, so ``python -m pytest``
-    from the published example exits 1. The shim directory is prepended to PATH
-    for the example commands only.
+    Windows CI resolves ``python`` to the base interpreter
+    (``hostedtoolcache\\...\\python.exe``), which does not have pytest.
+    ``subprocess`` does not run a ``python.cmd`` shim. Point ``PYTHONPATH`` at
+    this process's site-packages and put this interpreter's directory first on
+    ``PATH`` so ``python -m pytest`` from the docs can import pytest.
     """
-    bindir = root / ".doc-example-bin"
-    bindir.mkdir(exist_ok=True)
-    executable = sys.executable
-    if os.name == "nt":
-        (bindir / "python.cmd").write_text(
-            f'@echo off\r\n"{executable}" %*\r\n',
-            encoding="utf-8",
-        )
-        return
-    script = bindir / "python"
-    script.write_text(
-        "#!/bin/sh\n" + f"exec {shlex.quote(executable)} \"$@\"\n",
-        encoding="utf-8",
-    )
-    script.chmod(0o755)
+    import pytest
+
+    env = os.environ.copy()
+    env.pop("PYTEST_ADDOPTS", None)
+    site = str(Path(pytest.__file__).resolve().parent.parent)
+    previous = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = site if not previous else site + os.pathsep + previous
+    exe_dir = str(Path(sys.executable).resolve().parent)
+    env["PATH"] = exe_dir + os.pathsep + env.get("PATH", "")
+    return env
 
 
 def _run(root: Path, argv: list[str]) -> subprocess.CompletedProcess[str]:
-    env = os.environ.copy()
-    env.pop("PYTEST_ADDOPTS", None)
-    bindir = root / ".doc-example-bin"
-    env["PATH"] = str(bindir) + os.pathsep + env.get("PATH", "")
     return subprocess.run(
         [sys.executable, "-m", "retornatus", *argv[1:]],
         cwd=root,
-        env=env,
+        env=_example_env(),
         capture_output=True,
         text=True,
         encoding="utf-8",
