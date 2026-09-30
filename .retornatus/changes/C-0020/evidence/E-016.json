@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-016",
+  "type": "test_result",
+  "subject": "pytest confirms config.toml version equals the installed release",
+  "source": "uv run pytest -q tests/test_docs_hygiene.py::test_repo_config_version_matches_installed_release --cov-fail-under=0",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:50:28.294560Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_docs_hygiene.py::test_repo_config_version_matches_installed_release",
+    "--cov-fail-under=0"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:50:26.796554Z",
+  "ended_at": "2026-09-30T16:50:28.288275Z",
+  "duration_ms": 1491,
+  "output_sha256": "db0ba6b1d6905c8dd67a4dcd5745c096017f668519c672af7db5850f9d7d094a",
+  "output_tail": "tornatus/cli/json_output.py                                 21      9    57%   24-25, 38-53\nsrc/retornatus/cli/lesson.py                                      22     15    32%   39-64\nsrc/retornatus/cli/loop.py                                        21     15    29%   23-41\nsrc/retornatus/cli/main.py                                        30      2    93%   62, 66\nsrc/retornatus/cli/ops.py                                         34     23    32%   16-19, 27-38, 47-56\nsrc/retornatus/cli/policy.py                                      26     18    31%   46-82\nsrc/retornatus/cli/preset.py                                      12      4    67%   14-15, 23-24\nsrc/retornatus/cli/question.py                                    23     13    43%   25-33, 44-58, 67-70\nsrc/retornatus/cli/receipt.py                                     44     27    39%   32-35, 65-79, 98-111, 124-126\nsrc/retornatus/cli/root.py                                       193    156    19%   23-25, 71-110, 128-129, 137-147, 155-159, 168-207, 216-222, 264-325, 344-361, 369-372, 380-401\nsrc/retornatus/cli/rule.py                                        21     11    48%   37-46, 61-71\nsrc/retornatus/cli/skill.py                                       64     44    31%   36-50, 56-62, 99-121, 136-148, 160-166, 176-177\nsrc/retornatus/cli/task.py                                        40     28    30%   18-25, 34-41, 50-57, 66-73\nsrc/retornatus/constants.py                                        1      0   100%\nsrc/retornatus/domain/__init__.py                                  6      0   100%\nsrc/retornatus/domain/base.py                                      6      0   100%\nsrc/retornatus/domain/enums.py                                    66      0   100%\nsrc/retornatus/domain/errors.py                                    7      0   100%\nsrc/retornatus/domain/ids.py                                      80     42    48%   27-30, 34-36, 40-43, 47, 51, 55, 59, 63, 67, 71, 75, 79, 83, 87-89, 106-109, 113-117, 121-123, 127-132\nsrc/retornatus/domain/models.py                                  210     47    78%   42, 91-99, 118-122, 153-168, 202-212, 290-293, 299, 303-307, 373-382\nsrc/retornatus/domain/relations.py                                19      0   100%\nsrc/retornatus/infrastructure/environment/adapters.py            107     54    50%   28-41, 46-54, 75, 78, 82, 93, 96, 105-122, 129, 132, 140-149, 156, 159, 168-177, 186-187, 190, 198-208, 221-227\nsrc/retornatus/infrastructure/environment/hub_skill.py            13     13     0%   3-25\nsrc/retornatus/infrastructure/environment/rule_projection.py      39     39     0%   3-67\nsrc/retornatus/infrastructure/index/sqlite_index.py               77     60    22%   36-37, 40-43, 47-135, 147-155, 158-178, 184, 198, 207-210\nsrc/retornatus/infrastructure/persistence/__init__.py              4      0   100%\nsrc/retornatus/infrastructure/persistence/atomic.py               21     15    29%   17-35, 39\nsrc/retornatus/infrastructure/persistence/concurrency.py          24     10    58%   23, 27, 31-34, 39-42\nsrc/retornatus/infrastructure/persistence/migrations.py           29     17    41%   24-26, 34-51\nsrc/retornatus/infrastructure/persistence/paths.py                99     51    48%   28-29, 33, 37, 41, 45, 49, 53, 57, 61, 65, 69, 74, 78-82, 85-86, 89, 92, 95, 98-99, 102-104, 107-108, 111-112, 115-116, 119-120, 124, 127-128, 131-132, 135-136, 139-140, 143-144, 147, 150-152\nsrc/retornatus/infrastructure/persistence/repository.py          176    126    28%   57-58, 63-72, 81-90, 95-98, 106-110, 120-131, 134-138, 148-152, 155, 158-160, 173, 181, 189, 196, 201, 204, 209, 214, 219, 224, 229, 234, 239, 242, 245-251, 256-257, 262, 265-271, 276-277, 282, 285-291, 300-302, 307-310, 313-320, 329-332, 335-338, 341-351\nsrc/retornatus/infrastructure/persistence/serializers.py          31     18    42%   16, 22, 26, 30, 39-42, 52-61\n--------------------------------------------------------------------------------------------\nTOTAL                                                           7476   5988    20%\n\n12 empty files skipped.\n1 passed in 1.21s\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-016.output.txt",
+  "git_commit": "de68f3111d7921eecaaa79739b645b98de54afa7",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-3",
+      "note": null
+    }
+  ]
+}

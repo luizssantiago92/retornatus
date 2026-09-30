@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-008",
+  "type": "test_result",
+  "subject": "uv run ruff check src tests scripts exits 0",
+  "source": "uv run ruff check src tests scripts",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:48:25.992683Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "ruff",
+    "check",
+    "src",
+    "tests",
+    "scripts"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:48:25.966231Z",
+  "ended_at": "2026-09-30T16:48:25.990357Z",
+  "duration_ms": 24,
+  "output_sha256": "5b196eb3a6acb50d3fa398d04ca284985cc1ffec870e940264b00780bfd2c971",
+  "output_tail": "\u001b[1;32mAll checks passed!\u001b[0m\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-008.output.txt",
+  "git_commit": "de68f3111d7921eecaaa79739b645b98de54afa7",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-8",
+      "note": null
+    }
+  ]
+}
