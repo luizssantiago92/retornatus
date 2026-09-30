@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-006",
+  "type": "test_result",
+  "subject": "pytest confirms worker extends python-platform and python",
+  "source": "uv run pytest -q --no-cov tests/test_presets.py::test_worker_extends_python_platform_and_python",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:16.852835Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_presets.py::test_worker_extends_python_platform_and_python"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:16.442772Z",
+  "ended_at": "2026-09-30T16:24:16.850480Z",
+  "duration_ms": 407,
+  "output_sha256": "f69b41b567fe2583118441e8e8390afa756eecb8625fa01f5e10bcff2c1cef10",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.19s\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-006.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-6",
+      "note": null
+    }
+  ]
+}

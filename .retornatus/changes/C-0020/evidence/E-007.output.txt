@@ -1,0 +1,6 @@
+django: Django project. Extends python-platform with layout globs, suggested manage.py commands, and migrations as a ship surface.
+fastapi: FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface.
+python: uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/.
+python-platform: Python backend, DevOps, and AI engineering. Extends python.
+rag: RAG, LLM, and MCP service. Extends python-platform with retrieval layout globs and a stronger AI surface.
+worker: Background job worker (Celery, RQ, Dramatiq, arq, scheduled jobs). Extends python-platform with task and queue globs. Task code is a ship surface that needs a rollback and retry note.

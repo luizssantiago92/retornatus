@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-009",
+  "type": "test_result",
+  "subject": "pytest confirms non-task paths stay not required",
+  "source": "uv run pytest -q --no-cov tests/test_surfaces.py::test_worker_non_task_paths_are_not_required",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:19.133304Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_surfaces.py::test_worker_non_task_paths_are_not_required"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:18.593438Z",
+  "ended_at": "2026-09-30T16:24:19.131309Z",
+  "duration_ms": 537,
+  "output_sha256": "c9bcb144c21494e85f380ae0032b056c0b060b27bbfcfada9bc048d41195af09",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.30s\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-009.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-9",
+      "note": null
+    }
+  ]
+}

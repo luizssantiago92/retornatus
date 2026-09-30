@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-011",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased records the worker preset",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'CHANGELOG.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nhead, _, _rest = text.partition('\"'\"'## [1.4.1]'\"'\"')\nassert '\"'\"'## [Unreleased]'\"'\"' in head\nassert '\"'\"'init --preset worker'\"'\"' in head\nassert '\"'\"'ship rollback and job retry'\"'\"' in head\nassert '\"'\"'six init presets'\"'\"' in head\nprint('\"'\"'ok'\"'\"')\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:19.942204Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('CHANGELOG.md').read_text(encoding='utf-8')\nhead, _, _rest = text.partition('## [1.4.1]')\nassert '## [Unreleased]' in head\nassert 'init --preset worker' in head\nassert 'ship rollback and job retry' in head\nassert 'six init presets' in head\nprint('ok')\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:19.901932Z",
+  "ended_at": "2026-09-30T16:24:19.940011Z",
+  "duration_ms": 38,
+  "output_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+  "output_tail": "ok\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-011.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-11",
+      "note": null
+    }
+  ]
+}
