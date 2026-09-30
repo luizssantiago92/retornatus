@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "C-0020/A-001",
+  "id": "C-0021/A-001",
   "origin_kind": "CONTRACT",
   "origin_ref": "contract@v1",
   "objective": "Update the hub, doctor, config version, and the docs surfaces named in the audit.",
@@ -29,7 +29,7 @@
   "tasks": [
     {
       "schema_version": 1,
-      "id": "C-0020/T-001",
+      "id": "C-0021/T-001",
       "description": "Update hub text, sync the repo copy, warn on config version drift, and correct the docs links",
       "lifecycle": "COMPLETED",
       "depends_on": [],

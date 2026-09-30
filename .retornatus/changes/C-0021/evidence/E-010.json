@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "C-0020/E-010",
+  "id": "C-0021/E-010",
   "type": "repository_observation",
   "subject": "HTML docs check exits 0",
   "source": "uv run python scripts/build_docs_html.py --check",
@@ -21,14 +21,14 @@
   "duration_ms": 60,
   "output_sha256": "09dd9f352358f2b0dbf554a42d5e63dcae9246e5750b6627a93f28ad6157ba1e",
   "output_tail": "ok guide/overview.html\nok guide/quick-start.html\nok guide/how-it-works.html\nok guide/concepts.html\nok guide/glossary.html\nok guide/faq.html\nok guide/skills.html\nok guide/memory.html\nok guide/governance.html\nok guide/git-governance.html\nok guide/cloud-agents.html\nok guide/gates.html\nok guide/json-output.html\nok guide/github-action.html\nok guide/cli.html\nok guide/presets.html\nok guide/architecture.html\nok guide/environments.html\nok guide/non-goals.html\nok guide/from-spec-guardrails.html\nok guide/landscape.html\nok guide/tutorials/index.html\nok guide/tutorials/01-first-change.html\nok guide/tutorials/02-brownfield-wake.html\nok credits.html\nDocs sources render. Commit the markdown; Pages generates the HTML.\n",
-  "output_artifact": ".retornatus/changes/C-0020/evidence/E-010.output.txt",
+  "output_artifact": ".retornatus/changes/C-0021/evidence/E-010.output.txt",
   "git_commit": "de68f3111d7921eecaaa79739b645b98de54afa7",
   "worktree_dirty": false,
   "timed_out": false,
   "relations": [
     {
       "type": "SUPPORTS",
-      "target_id": "C-0020/claim-done-11",
+      "target_id": "C-0021/claim-done-11",
       "note": null
     }
   ]

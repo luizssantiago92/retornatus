@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "change_id": "C-0020",
+  "change_id": "C-0021",
   "version": 1,
   "what": "Correct the packaged hub receipt wording, sync the repo hub copy, warn on config version drift, and fix the README anchor, credits links, landing og:image, and version-pinned whats-new line.",
   "constraints": [],
