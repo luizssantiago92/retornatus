@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/E-002",
+  "type": "test_result",
+  "subject": "git check-ignore exits 1 for a pub file and exits 0 for pem",
+  "source": "uv run pytest -q --no-cov tests/test_init.py::test_check_ignore_keeps_public_keys_and_ignores_secrets",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:42:35.449457Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_init.py::test_check_ignore_keeps_public_keys_and_ignores_secrets"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:42:35.034562Z",
+  "ended_at": "2026-09-30T05:42:35.444086Z",
+  "duration_ms": 409,
+  "output_sha256": "93c97c10af4fc8b54296201243c032c5e8295479ca6b4adc06019033d6f9e282",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.20s\n",
+  "output_artifact": ".retornatus/changes/C-0012/evidence/E-002.output.txt",
+  "git_commit": "dd8ef8761a4f473119f47d40339e4e0346011a66",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0012/claim-done-2",
+      "note": null
+    }
+  ]
+}
