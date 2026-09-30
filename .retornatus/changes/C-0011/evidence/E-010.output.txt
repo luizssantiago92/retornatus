@@ -1,0 +1,4 @@
+docs/assets/retornatus-mascot.webp holes 0 interior 0 highlight 3164
+docs/assets/retornatus-mascot-neon.webp holes 0 interior 0 highlight 3292
+docs/assets/retornatus-mascot-square.webp holes 0 interior 0 highlight 2846
+head and hand silhouette opaque
