@@ -1,0 +1,4 @@
+django: Django project. Extends python-platform with layout globs, suggested manage.py commands, and migrations as a ship surface.
+fastapi: FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface.
+python: uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/.
+python-platform: Python backend, DevOps, and AI engineering. Extends python.

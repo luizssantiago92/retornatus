@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "C-0017/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "The django preset extends python-platform, renders a valid config, is listed by init --list-presets, and makes migration paths trigger the ship surface rollback note.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0",
+    "ruff check of src tests and scripts exits 0",
+    "mypy exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "pytest confirms django extends python-platform and python",
+    "init --list-presets prints django",
+    "pytest confirms migration paths trigger the ship surface",
+    "CHANGELOG Unreleased records the django preset"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0017/T-001",
+      "description": "Add the django preset and cover it with tests",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/**",
+        "tests/**",
+        "pyproject.toml"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0017/T-002",
+      "description": "Document the django preset and record the changelog note",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "docs/**",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

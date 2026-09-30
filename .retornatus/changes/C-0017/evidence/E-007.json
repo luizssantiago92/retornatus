@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0017/E-007",
+  "type": "test_result",
+  "subject": "init --list-presets prints django",
+  "source": "uv run python -c 'import subprocess, sys\nproc = subprocess.run(['\"'\"'retornatus'\"'\"', '\"'\"'init'\"'\"', '\"'\"'--list-presets'\"'\"'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or '\"'\"'django:'\"'\"' not in proc.stdout:\n    raise SystemExit(1)\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:01:07.521681Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import subprocess, sys\nproc = subprocess.run(['retornatus', 'init', '--list-presets'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or 'django:' not in proc.stdout:\n    raise SystemExit(1)\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:01:06.699598Z",
+  "ended_at": "2026-09-30T15:01:06.957069Z",
+  "duration_ms": 257,
+  "output_sha256": "0242d6e33cd89ac5d28752e66b5273ecb91bb543309c259adfc0038f6037817b",
+  "output_tail": "django: Django project. Extends python-platform with layout globs, suggested manage.py commands, and migrations as a ship surface.\nfastapi: FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface.\npython: uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/.\npython-platform: Python backend, DevOps, and AI engineering. Extends python.\n",
+  "output_artifact": ".retornatus/changes/C-0017/evidence/E-007.output.txt",
+  "git_commit": "0d6c471d06af21e0baa677da69ff2ae0c7d53b7a",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0017/claim-done-7",
+      "note": null
+    }
+  ]
+}

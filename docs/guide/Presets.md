@@ -13,9 +13,11 @@ retornatus init --list-presets
 retornatus preset show python
 retornatus preset show python-platform
 retornatus preset show fastapi
+retornatus preset show django
 retornatus init --preset python
 retornatus init --preset python-platform
 retornatus init --preset fastapi
+retornatus init --preset django
 retornatus init --preset python-platform --force-config
 ```
 
@@ -141,6 +143,56 @@ run = ["uv", "run", "alembic", "check"]
 
 Docker, Compose, Terraform, Helm, and workflow paths still require their executed checks. A `[[surfaces.ship.checks]]` table you write still replaces the whole packaged list, including this optional Alembic check, so copy every check you still want.
 
+## django
+
+For a Django project. It **extends** `python-platform`, so the pytest, ruff, and mypy checks, the `src/**`, `app/**`, and `tests/**` code globs, and the ship and AI surfaces above are included. `src/**` already covers `src/<package>/`.
+
+Extra `[governance.scope] code_globs`:
+
+| Glob | Layout it names |
+| --- | --- |
+| `manage.py` | The Django entry script at the repository root |
+| `*/settings*.py` | Settings modules one directory down (`config/settings.py`, `myproject/settings_local.py`) |
+| `*/urls.py` | URLConf modules one directory down (`myproject/urls.py`) |
+| `apps/**` | An `apps/` package |
+| `*/migrations/**` | Migrations one directory down (`polls/migrations/`) |
+| `templates/**` | Project templates |
+| `static/**` | Project static files |
+
+Those globs describe roots. They do not change `gate scope`. Nested modules under `app/` or `src/` are already covered by the inherited globs. `*/migrations/**` is only a scope glob. The ship surface uses the wider `**/migrations/**`.
+
+### Suggested evidence
+
+These commands are **comments** in the generated config. They are not `[assurance] required_checks`. Django, pytest-django, and a project-specific settings module may be absent, so `verify` does not demand them.
+
+| Suggestion | Command | Why it stays a comment |
+| --- | --- | --- |
+| `check --deploy` | `python manage.py check --deploy` | Deployment system checks. Django may be absent |
+| pytest-django | `uv run pytest -q` | Same argv as the inherited pytest check. Install pytest-django and set `DJANGO_SETTINGS_MODULE` (or pass `--ds`). The plugin may be absent |
+| `manage.py test` | `python manage.py test` | Django's test runner when pytest-django is not the suite. Django may be absent |
+
+`python manage.py makemigrations --check --dry-run` is also commented. It is the optional ship check below, not a second required check. It reports models that lack a migration and does not write files.
+
+### Migrations are a ship surface
+
+`**/migrations/**` is added to the ship globs. A Task resource or a worktree path inside a migrations directory makes the ship rule run. `verify` then requires one narrative note with subject `ship rollback` (the subject inherited from `python-platform`). For a migration, that note has to describe how to reverse it, for example `python manage.py migrate polls 0001_initial` back to the previous applied migration, or restoring that revision. Placeholder text does not count.
+
+Spec Guardrails appendix B calls the same idea a migrate reverse plan, recorded next to the previous image. Retornatus keeps that plan as the rollback note. It does not run `migrate`.
+
+The packaged migration check is optional:
+
+```toml
+[[surfaces.ship.checks]]
+name = "migrations"
+optional = true
+globs = ["**/migrations/**"]
+run = ["python", "manage.py", "makemigrations", "--check", "--dry-run"]
+```
+
+`optional = true` covers those paths so `verify` does not report `no ship check covers`. It does **not** require `makemigrations --check --dry-run` to have been executed. The command needs Django, and Django may not be installed. The command stays in the comment block next to `check --deploy` and the test-runner suggestions.
+
+Docker, Compose, Terraform, Helm, and workflow paths still require their executed checks. A `[[surfaces.ship.checks]]` table you write still replaces the whole packaged list, including this optional migration check, so copy every check you still want.
+
 ## Limitations
 
 | Limitation | What it means |
@@ -149,7 +201,7 @@ Docker, Compose, Terraform, Helm, and workflow paths still require their execute
 | Not AppSec | Secrets, threat models, and authz review stay on `gate scope` sensitive paths and on `review_result` / `security_test` claims |
 | Eval quality is yours | `verify` checks that the configured command was executed and that a fallback note exists. It does not score the golden set |
 | No live traces | Production LLM telemetry is out of scope. The record is git plus Evidence |
-| Framework preset | `fastapi` extends `python-platform` for API layouts and Alembic. Django and workers stay on `python` or `python-platform` |
+| Framework presets | `fastapi` extends `python-platform` for API layouts and Alembic. `django` extends it for Django layouts and migrations. Workers stay on `python` or `python-platform` |
 | Notes are declarations | The rollback and fallback subjects must be non-empty and specific. Retornatus does not judge whether the plan would work |
 
 ## What did not come over from Spec Guardrails

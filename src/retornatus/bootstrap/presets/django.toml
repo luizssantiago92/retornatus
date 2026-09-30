@@ -1,0 +1,39 @@
+name = "django"
+summary = "Django project. Extends python-platform with layout globs, suggested manage.py commands, and migrations as a ship surface."
+extends = "python-platform"
+
+[governance.scope]
+code_globs = [
+  "manage.py",
+  "*/settings*.py",
+  "*/urls.py",
+  "apps/**",
+  "*/migrations/**",
+  "templates/**",
+  "static/**",
+]
+
+[surfaces.ship]
+globs = ["**/migrations/**"]
+
+[[surfaces.ship.checks]]
+name = "migrations"
+suggested = true
+optional = true
+globs = ["**/migrations/**"]
+run = ["python", "manage.py", "makemigrations", "--check", "--dry-run"]
+
+[[suggestions]]
+name = "check-deploy"
+note = "Deployment system checks. Django may be absent, so this stays a comment and is not a required check."
+run = ["python", "manage.py", "check", "--deploy"]
+
+[[suggestions]]
+name = "pytest-django"
+note = "pytest-django when the plugin is installed. Set DJANGO_SETTINGS_MODULE or pass --ds. pytest-django may be absent. This is the inherited pytest command, not an extra required check."
+run = ["uv", "run", "pytest", "-q"]
+
+[[suggestions]]
+name = "manage-test"
+note = "Django test runner when pytest-django is not the suite. Django may be absent."
+run = ["python", "manage.py", "test"]
