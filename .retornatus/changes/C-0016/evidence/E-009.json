@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0016/E-009",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased records the fastapi preset",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'CHANGELOG.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nhead, _, _rest = text.partition('\"'\"'## [1.4.1]'\"'\"')\nassert '\"'\"'## [Unreleased]'\"'\"' in head\nassert '\"'\"'init --preset fastapi'\"'\"' in head\nassert '\"'\"'alembic'\"'\"' in head.lower()\nprint('\"'\"'ok'\"'\"')\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T14:33:29.380392Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('CHANGELOG.md').read_text(encoding='utf-8')\nhead, _, _rest = text.partition('## [1.4.1]')\nassert '## [Unreleased]' in head\nassert 'init --preset fastapi' in head\nassert 'alembic' in head.lower()\nprint('ok')\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T14:33:29.324857Z",
+  "ended_at": "2026-09-30T14:33:29.355829Z",
+  "duration_ms": 30,
+  "output_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+  "output_tail": "ok\n",
+  "output_artifact": ".retornatus/changes/C-0016/evidence/E-009.output.txt",
+  "git_commit": "e8d851edf7dbf0c76e5014ea59b643eb3c31cfbb",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0016/claim-done-9",
+      "note": null
+    }
+  ]
+}

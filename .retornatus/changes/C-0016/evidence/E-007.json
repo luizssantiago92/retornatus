@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0016/E-007",
+  "type": "test_result",
+  "subject": "init --list-presets prints fastapi",
+  "source": "uv run python -c 'import subprocess, sys\nproc = subprocess.run(['\"'\"'retornatus'\"'\"', '\"'\"'init'\"'\"', '\"'\"'--list-presets'\"'\"'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or '\"'\"'fastapi:'\"'\"' not in proc.stdout:\n    raise SystemExit(1)\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T14:33:29.376398Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import subprocess, sys\nproc = subprocess.run(['retornatus', 'init', '--list-presets'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or 'fastapi:' not in proc.stdout:\n    raise SystemExit(1)\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T14:33:28.591898Z",
+  "ended_at": "2026-09-30T14:33:28.833372Z",
+  "duration_ms": 241,
+  "output_sha256": "ba69761ae4e068d5b44002b1c6d1a73aba579e59a0769f98f1f72c765f3e610b",
+  "output_tail": "fastapi: FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface.\npython: uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/.\npython-platform: Python backend, DevOps, and AI engineering. Extends python.\n",
+  "output_artifact": ".retornatus/changes/C-0016/evidence/E-007.output.txt",
+  "git_commit": "e8d851edf7dbf0c76e5014ea59b643eb3c31cfbb",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0016/claim-done-7",
+      "note": null
+    }
+  ]
+}

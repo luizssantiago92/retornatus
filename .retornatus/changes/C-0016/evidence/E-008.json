@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0016/E-008",
+  "type": "test_result",
+  "subject": "pytest confirms alembic paths trigger the ship surface",
+  "source": "uv run pytest -q --no-cov tests/test_surfaces.py::test_fastapi_migration_paths_trigger_ship_surface",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T14:33:29.378311Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_surfaces.py::test_fastapi_migration_paths_trigger_ship_surface"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T14:33:28.838725Z",
+  "ended_at": "2026-09-30T14:33:29.319327Z",
+  "duration_ms": 480,
+  "output_sha256": "a132c74d7b7c74739e7571fb00cd0a8be848d9686b936586ce31a93451c151b2",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.29s\n",
+  "output_artifact": ".retornatus/changes/C-0016/evidence/E-008.output.txt",
+  "git_commit": "e8d851edf7dbf0c76e5014ea59b643eb3c31cfbb",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0016/claim-done-8",
+      "note": null
+    }
+  ]
+}
