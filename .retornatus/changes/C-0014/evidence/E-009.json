@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-009",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased section records config presets",
+  "source": "uv run python -c 'from pathlib import Path; text = Path('\"'\"'CHANGELOG.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"'); head, _, _rest = text.partition('\"'\"'## [1.4.1]'\"'\"'); assert '\"'\"'## [Unreleased]'\"'\"' in head and '\"'\"'init --preset'\"'\"' in head and '\"'\"'python-platform'\"'\"' in head'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:35:07.117977Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; text = Path('CHANGELOG.md').read_text(encoding='utf-8'); head, _, _rest = text.partition('## [1.4.1]'); assert '## [Unreleased]' in head and 'init --preset' in head and 'python-platform' in head"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:35:06.511355Z",
+  "ended_at": "2026-09-30T13:35:06.539623Z",
+  "duration_ms": 28,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-009.output.txt",
+  "git_commit": "68372d3275734637d4c984825b1d74975824faaa",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0014/claim-done-9",
+      "note": null
+    }
+  ]
+}
