@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0010",
+  "version": 1,
+  "what": "Add a stable schema_version 1 JSON envelope to retornatus verify, every gate subcommand, and change overview, with stdout limited to that document when --json is set.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0 for the JSON verdict command tests",
+    "ruff check of src tests and scripts exits 0",
+    "mypy on the retornatus package exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "CHANGELOG Unreleased section records the JSON verdict envelope",
+    "The CLI reference contains a link to the JSON output page"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T04:56:34.985947Z"
+}

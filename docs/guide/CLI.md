@@ -27,7 +27,7 @@ retornatus skill --help
 | `change classify` | Ceremony lane QUICK / STANDARD / COMPLEX. `--from-diff <base>` adds file count, lines changed, and scope-gate sensitive paths |
 | `change elicit` | Requirements analysis / Situation readiness (`--answer`, `--write`; exit 1 if insufficient) |
 | `change create` | Demand → Situation → Contract → optional Action/Tasks |
-| `change overview` | Claims ↔ Evidence dashboard. `--format pr` prints a markdown pull-request body (executed vs self-reported, exit code, commit, stale/unverified, required checks, gates) |
+| `change overview` | Claims ↔ Evidence dashboard. `--format pr` prints a markdown pull-request body. `--json` or `--format json` prints the [verdict envelope](JSON-output.md) |
 | `change activate` | Activate draft Contract |
 | `change reopen` | Material Contract version (archive prior) |
 | `change learn` | Record Learning |
@@ -63,12 +63,12 @@ retornatus skill --help
 | `evidence add --claim` | Self-reported Evidence (`provenance=self_reported`). Fine for narrative types |
 | `evidence run [options] -- <command…>` | Run a command (no shell, cwd = project root) and record `provenance=executed` |
 | `checks run -c <C-id>` | Execute `[assurance] required_checks` and record Evidence |
-| `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates |
-| `gate suppressions` | STOP when added lines contain suppression or skip markers (`--staged`, `--base`) |
-| `gate scope <C-id>` | STOP when the diff leaves Task resources or hits denied/sensitive paths (`--base`, `--staged`) |
+| `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates. `--json` prints the [verdict envelope](JSON-output.md) |
+| `gate suppressions` | STOP when added lines contain suppression or skip markers (`--staged`, `--base`, `--json`) |
+| `gate scope <C-id>` | STOP when the diff leaves Task resources or hits denied/sensitive paths (`--base`, `--staged`, `--json`) |
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
 | `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |
-| `verify` / `verify --receipt` | Assurance over Contract DONE (+ optional Ed25519 receipt) |
+| `verify` / `verify --receipt` / `verify --json` | Assurance over Contract DONE. `--json` prints the [verdict envelope](JSON-output.md) |
 | `verify --run-checks` | Run required checks, record Evidence, then verify |
 | `verify --allow-self-reported` | Migration opt-out: accept self-reported test/build/lint evidence. Does not bypass required checks |
 | `receipt keygen` / `receipt keygen --print` | Write the public key into `.retornatus/keys/`. Private key goes to the user config dir, or stdout for a CI secret |
@@ -87,7 +87,11 @@ retornatus skill --help
 | `1` | Gate STOP. `verify` is not `SATISFIED`. Signature failed. Known id or file missing |
 | `2` | Usage: invalid id, path outside `.retornatus`, empty or unusable search text, malformed signing key, invalid receipt JSON |
 
-`gate` and `verify` keep those meanings for real checks. A bad id is usage (`2`), not a traceback. Search treats your text as literal tokens (hyphens and quotes are not FTS operators).
+`gate` and `verify` keep those meanings for real checks, including when `--json` is set. A bad id is usage (`2`), not a traceback. Search treats your text as literal tokens (hyphens and quotes are not FTS operators).
+
+## JSON output
+
+`verify --json`, every `gate` subcommand `--json`, and `change overview --json` (or `--format json`) write one versioned document to stdout. Labels, warnings, gate findings, and other diagnostics go to stderr. The shape, a worked example, and the schema file are in [JSON output](JSON-output.md).
 
 ## Receipts
 

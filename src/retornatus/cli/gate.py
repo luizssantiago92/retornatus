@@ -8,90 +8,91 @@ import typer
 
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import gate_app
+from retornatus.cli.json_output import JSON_OUTPUT_HELP, finish_gate
 
 
 @gate_app.command("policy")
 def gate_policy_cmd(
     action_id: str = typer.Argument(..., help="Action id to evaluate Policy against."),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: Policy ALLOW for Action objective (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_policy
 
-    result = gate_policy(path or Path.cwd(), action_id)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = path or Path.cwd()
+    result = gate_policy(root, action_id)
+    finish_gate(result, root=root, as_json=as_json, action_id=action_id)
 
 
 @gate_app.command("contract")
 def gate_contract_cmd(
     change_id: str = typer.Argument(...),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: active Contract with WHAT + DONE (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_contract
 
-    result = gate_contract(path or Path.cwd(), change_id)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = path or Path.cwd()
+    result = gate_contract(root, change_id)
+    finish_gate(result, root=root, as_json=as_json, change_id=change_id)
 
 
 @gate_app.command("evidence")
 def gate_evidence_cmd(
     change_id: str = typer.Argument(...),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: Evidence artifacts exist (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_evidence
 
-    result = gate_evidence(path or Path.cwd(), change_id)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = path or Path.cwd()
+    result = gate_evidence(root, change_id)
+    finish_gate(result, root=root, as_json=as_json, change_id=change_id)
 
 
 @gate_app.command("skill-research")
 def gate_skill_research_cmd(
     skill_id: str = typer.Argument(...),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: Skill RESEARCH filled with sources (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_skill_research
 
-    result = gate_skill_research(path or Path.cwd(), skill_id)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = path or Path.cwd()
+    result = gate_skill_research(root, skill_id)
+    finish_gate(result, root=root, as_json=as_json, skill_id=skill_id)
 
 
 @gate_app.command("assurance")
 def gate_assurance_cmd(
     change_id: str = typer.Argument(...),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: Assurance SATISFIED (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_assurance
 
-    result = gate_assurance(path or Path.cwd(), change_id)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = path or Path.cwd()
+    result = gate_assurance(root, change_id)
+    finish_gate(result, root=root, as_json=as_json, change_id=change_id)
 
 
 @gate_app.command("budget")
 def gate_budget_cmd(
     action_id: str = typer.Argument(...),
     path: Path | None = typer.Option(None, "--path", "-p"),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: Action attempt budget not exhausted (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_budget
 
-    result = gate_budget(path or Path.cwd(), action_id)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = path or Path.cwd()
+    result = gate_budget(root, action_id)
+    finish_gate(result, root=root, as_json=as_json, action_id=action_id)
 
 
 @gate_app.command("suppressions")
@@ -107,14 +108,14 @@ def gate_suppressions_cmd(
         "--base",
         help="Scan added lines in git diff base...HEAD.",
     ),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: added diff lines must not introduce suppression markers (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_suppressions
 
-    result = gate_suppressions(resolve_root(path), base=base, staged=staged)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = resolve_root(path)
+    result = gate_suppressions(root, base=base, staged=staged)
+    finish_gate(result, root=root, as_json=as_json)
 
 
 @gate_app.command("scope")
@@ -131,11 +132,11 @@ def gate_scope_cmd(
         "--staged",
         help="Compare the index only. Without --base or --staged, staged and unstaged changes are used.",
     ),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Gate: diff stays inside Task.resources and .retornatus (exit 1 = STOP)."""
     from retornatus.application.governance.gates import gate_scope
 
-    result = gate_scope(resolve_root(path), change_id, base=base, staged=staged)
-    for msg in result.messages:
-        typer.echo(msg)
-    raise typer.Exit(result.exit_code)
+    root = resolve_root(path)
+    result = gate_scope(root, change_id, base=base, staged=staged)
+    finish_gate(result, root=root, as_json=as_json, change_id=change_id)

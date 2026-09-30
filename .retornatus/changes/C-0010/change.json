@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0010",
+  "title": "JSON verdict envelope",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Machine-readable CLI consumers such as hooks, CI comments, and dashboards must read verify, gate, and change overview verdicts as one versioned JSON document on stdout. Scope is the --json flag, the verdict schema, tests, and the docs page. Out of scope is a GitHub Action, an MCP server, a package version bump, and merging the pull request.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T04:56:34.980670Z"
+}

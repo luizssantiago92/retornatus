@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0010/E-006",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased section records the JSON verdict envelope",
+  "source": "uv run python -c 'from pathlib import Path; text = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\"); assert \"## [Unreleased]\" in text; assert \"verdict envelope\" in text; print(\"changelog ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:06:25.753995Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; text = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\"); assert \"## [Unreleased]\" in text; assert \"verdict envelope\" in text; print(\"changelog ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:06:25.722510Z",
+  "ended_at": "2026-09-30T05:06:25.749262Z",
+  "duration_ms": 26,
+  "output_sha256": "44a0b09485c8ddccf2059b31b1e493ed850a2a1e3f996f42022f89d6fceaf057",
+  "output_tail": "changelog ok\n",
+  "output_artifact": ".retornatus/changes/C-0010/evidence/E-006.output.txt",
+  "git_commit": "0a2da9ff1cf5419a487e16c5c48f2a16e516f5f9",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0010/claim-done-6",
+      "note": null
+    }
+  ]
+}

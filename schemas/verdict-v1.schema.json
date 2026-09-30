@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/luizssantiago92/retornatus/blob/main/schemas/verdict-v1.schema.json",
+  "title": "Retornatus verdict envelope",
+  "description": "Machine-readable output for retornatus verify, retornatus gate, and retornatus change overview when --json is set (schema_version 1). stdout is this document only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "command",
+    "exit_code",
+    "verdict",
+    "claims",
+    "warnings",
+    "errors",
+    "head",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "command": {
+      "enum": ["verify", "gate", "change overview"]
+    },
+    "exit_code": { "type": "integer" },
+    "verdict": { "type": ["string", "null"] },
+    "change_id": { "type": ["string", "null"] },
+    "action_id": { "type": ["string", "null"] },
+    "skill_id": { "type": ["string", "null"] },
+    "gate": {
+      "enum": [
+        "contract",
+        "evidence",
+        "skill-research",
+        "assurance",
+        "policy",
+        "budget",
+        "suppressions",
+        "scope"
+      ]
+    },
+    "passed": { "type": "boolean" },
+    "findings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "rationale": { "type": "string" },
+    "evidence_labels": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "unverified_evidence_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "receipt": { "type": ["string", "null"] },
+    "title": { "type": ["string", "null"] },
+    "lane": { "type": ["string", "null"] },
+    "contract_version": { "type": ["integer", "null"] },
+    "contract_active": { "type": "boolean" },
+    "what": { "type": "string" },
+    "evidence_lines": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tasks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "questions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next": { "type": ["string", "null"] },
+    "parallelizable": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "claims": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/claim" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "head": {
+      "type": ["string", "null"],
+      "description": "git HEAD sha when the project is a work tree; null otherwise."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp when the envelope was built."
+    }
+  },
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "subject",
+        "statement",
+        "status",
+        "required_evidence_types",
+        "evidence"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "subject": { "type": ["string", "null"] },
+        "statement": { "type": "string" },
+        "status": { "type": "string" },
+        "required_evidence_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence" }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "subject", "provenance", "exit_code", "git_commit"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "subject": { "type": "string" },
+        "provenance": { "type": "string" },
+        "exit_code": { "type": ["integer", "null"] },
+        "git_commit": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "command": { "const": "verify" } },
+        "required": ["command"]
+      },
+      "then": {
+        "required": [
+          "change_id",
+          "rationale",
+          "evidence_labels",
+          "unverified_evidence_ids",
+          "receipt"
+        ],
+        "properties": {
+          "verdict": {
+            "enum": ["SATISFIED", "NOT_SATISFIED", "INCONCLUSIVE"]
+          },
+          "change_id": { "type": "string" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "command": { "const": "gate" } },
+        "required": ["command"]
+      },
+      "then": {
+        "required": ["gate", "passed", "findings", "change_id", "action_id", "skill_id"],
+        "properties": {
+          "verdict": { "enum": ["PASS", "FAIL"] }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "command": { "const": "change overview" } },
+        "required": ["command"]
+      },
+      "then": {
+        "required": ["change_id"],
+        "properties": {
+          "verdict": {
+            "anyOf": [
+              { "type": "null" },
+              { "enum": ["SATISFIED", "NOT_SATISFIED", "INCONCLUSIVE"] }
+            ]
+          },
+          "change_id": { "type": "string" }
+        }
+      }
+    }
+  ]
+}

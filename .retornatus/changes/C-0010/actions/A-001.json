@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "C-0010/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Add a stable schema_version 1 JSON envelope to retornatus verify, every gate subcommand, and change overview, with stdout limited to that document when --json is set.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0 for the JSON verdict command tests",
+    "ruff check of src tests and scripts exits 0",
+    "mypy on the retornatus package exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "CHANGELOG Unreleased section records the JSON verdict envelope",
+    "The CLI reference contains a link to the JSON output page"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0010/T-001",
+      "description": "Add the versioned JSON verdict envelope, schema, tests, and docs",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/**",
+        "tests/**",
+        "docs/**",
+        "schemas/**",
+        "scripts/build_docs_html.py",
+        "CHANGELOG.md",
+        "pyproject.toml",
+        "uv.lock",
+        ".gitignore"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

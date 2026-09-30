@@ -11,6 +11,7 @@ from retornatus.application.change.workflow import ChangeWorkflow
 from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.cli.common import parse_task_specs, resolve_root
 from retornatus.cli.groups import change_app
+from retornatus.cli.json_output import JSON_OUTPUT_HELP
 from retornatus.domain.enums import ComplexityLane, DemandKind
 
 
@@ -184,26 +185,43 @@ def change_overview_cmd(
     output_format: str = typer.Option(
         "text",
         "--format",
-        help="text (dashboard) or pr (markdown pull-request body).",
+        help="text (dashboard), pr (markdown pull-request body), or json (verdict envelope).",
     ),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Dashboard: Claims ↔ Evidence, Tasks, Questions, next work."""
     from retornatus.application.change.overview import (
         build_change_overview,
         render_pull_request,
     )
+    from retornatus.application.report.envelope import (
+        overview_document,
+        overview_missing_document,
+    )
+    from retornatus.cli.json_output import write_json
     from retornatus.domain.errors import UsageError
 
-    if output_format not in {"text", "pr"}:
-        raise UsageError("--format must be text or pr")
+    if output_format not in {"text", "pr", "json"}:
+        raise UsageError("--format must be text, pr, or json")
+    if as_json and output_format == "pr":
+        raise UsageError("--json cannot be combined with --format pr")
+    use_json = as_json or output_format == "json"
     root = resolve_root(path)
     try:
+        if use_json:
+            write_json(overview_document(root, change_id))
+            return
         if output_format == "pr":
             typer.echo(render_pull_request(root, change_id))
             return
         overview = build_change_overview(root, change_id)
     except FileNotFoundError:
-        typer.echo(f"Change not found: {change_id}")
+        message = f"Change not found: {change_id}"
+        if use_json:
+            typer.echo(message, err=True)
+            write_json(overview_missing_document(root, change_id))
+        else:
+            typer.echo(message)
         raise typer.Exit(code=1) from None
     typer.echo(overview.render())
 

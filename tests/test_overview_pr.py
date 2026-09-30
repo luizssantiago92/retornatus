@@ -83,7 +83,7 @@ def test_overview_format_rejects_unknown_value(tmp_path: Path) -> None:
     initialize_project(tmp_path)
     result = runner.invoke(
         app,
-        ["change", "overview", "C-0001", "--path", str(tmp_path), "--format", "json"],
+        ["change", "overview", "C-0001", "--path", str(tmp_path), "--format", "yaml"],
     )
     assert result.exit_code == 2
-    assert "text or pr" in (result.stderr + result.stdout)
+    assert "text, pr, or json" in (result.stderr + result.stdout)

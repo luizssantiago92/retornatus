@@ -4,6 +4,8 @@ Gates are mechanical brakes. **Non-zero exit = STOP.**
 
 They do not replace judgment; they prevent pretending success when structure or proof is missing.
 
+`--json` on `verify` and on every `gate` subcommand prints the same pass or fail as text mode, as a versioned document on stdout. See [JSON output](JSON-output.md).
+
 ## Gate catalog
 
 | Command | Stops when |
