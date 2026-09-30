@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `retornatus hook stop` and `retornatus integrate --hooks` install an opt-in Stop hook for Claude Code, Cursor, and Codex. The hook runs the same check as `verify --json` in-process. A `SATISFIED` Change, or no active Change, allows the turn to end. Otherwise the host is asked to continue, with the unproven claim ids and an `evidence run` command. `stop_hook_active` (Claude and Codex) and Cursor `loop_limit` 1 keep that continuation from looping. Internal errors fail open. `integrate --remove-hooks` deletes only the Retornatus entry. `doctor` reports whether each host hook is installed. CI stays the source of truth. See `docs/guide/Agent-hooks.md`.
+
 ## [1.5.0] - 2026-09-30
 
 ### Added

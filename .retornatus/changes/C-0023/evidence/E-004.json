@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0023/E-004",
+  "type": "repository_observation",
+  "subject": "./README.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"README.md\").read_text(); assert \"agent-hooks.html\" in t; print(\"readme link ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T19:05:01.952117Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"README.md\").read_text(); assert \"agent-hooks.html\" in t; print(\"readme link ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T19:05:01.929606Z",
+  "ended_at": "2026-09-30T19:05:01.948023Z",
+  "duration_ms": 18,
+  "output_sha256": "2376317b9f0593f1b123a1dff5a8858c8c4dd1cb4a3ec9d9868ccdea1520a412",
+  "output_tail": "readme link ok\n",
+  "output_artifact": ".retornatus/changes/C-0023/evidence/E-004.output.txt",
+  "git_commit": "aa25ce42ec0e5323946016f70cf863eb44358665",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0023/claim-done-4",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0023",
+  "version": 1,
+  "what": "Add retornatus hook stop and retornatus integrate --hooks for Claude, Cursor, and Codex turn-end hooks, report them from doctor, and document the guardrail.",
+  "constraints": [],
+  "done_criteria": [
+    "tests/test_agent_hooks.py exits 0",
+    "src/retornatus/cli/hook.py contains hook stop for claude, cursor, and codex",
+    "The file /guide/Agent-hooks.md contains loop guard, fail-open, and CI as the source of truth",
+    "The file /README.md contains a link to Agent-hooks",
+    "The file /guide/README.md contains a link to Agent-hooks",
+    "The file /index.html contains a link to Agent-hooks",
+    "The file /CHANGELOG.md contains an Unreleased agent hooks entry",
+    "The file /Cloud-agents.md contains that Cursor cloud agents run project hooks",
+    "The file /CLI.md contains hook stop and integrate --hooks",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T18:49:24.477880Z"
+}

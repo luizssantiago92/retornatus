@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0023/E-003",
+  "type": "test_result",
+  "subject": "docs/guide/Agent-hooks.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"docs/guide/Agent-hooks.md\").read_text(); assert \"Loop guard\" in t and \"Fail-open\" in t and \"source of truth\" in t; print(\"agent hooks guide ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T19:05:01.654185Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"docs/guide/Agent-hooks.md\").read_text(); assert \"Loop guard\" in t and \"Fail-open\" in t and \"source of truth\" in t; print(\"agent hooks guide ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T19:05:01.633414Z",
+  "ended_at": "2026-09-30T19:05:01.651304Z",
+  "duration_ms": 17,
+  "output_sha256": "1a8c5517a99967a8e20e8e4299faff89a74b4b707479a003a4e72051138ef755",
+  "output_tail": "agent hooks guide ok\n",
+  "output_artifact": ".retornatus/changes/C-0023/evidence/E-003.output.txt",
+  "git_commit": "aa25ce42ec0e5323946016f70cf863eb44358665",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0023/claim-done-3",
+      "note": null
+    }
+  ]
+}

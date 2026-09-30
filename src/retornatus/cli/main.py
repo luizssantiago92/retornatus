@@ -14,6 +14,7 @@ from retornatus.cli import evidence as _evidence
 from retornatus.cli import execution as _execution
 from retornatus.cli import finding as _finding
 from retornatus.cli import gate as _gate
+from retornatus.cli import hook as _hook
 from retornatus.cli import hooks as _hooks
 from retornatus.cli import intake as _intake
 from retornatus.cli import lesson as _lesson
@@ -38,6 +39,7 @@ _REGISTERED = (
     _checks,
     _ci,
     _hooks,
+    _hook,
     _evidence,
     _finding,
     _question,

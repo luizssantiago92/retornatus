@@ -57,3 +57,5 @@ Source template: `src/retornatus/infrastructure/environment/hub/SKILL.md`.
 ## Remote machines
 
 Detection is the same on a cloud VM. The CLI and git hooks are not in the clone: install them on that machine, leave receipts unsigned, and let the GitHub pull request run `verify` and the diff gates. See [Cloud agents](Cloud-agents.md).
+
+`integrate --hooks` is separate from that bridge. It writes an opt-in Stop hook for Claude, Cursor, and Codex. The hook does not replace CI. See [Agent hooks](Agent-hooks.md).
