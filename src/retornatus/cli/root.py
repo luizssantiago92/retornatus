@@ -12,6 +12,7 @@ from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.bootstrap.wake import wake_up
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import app
+from retornatus.cli.json_output import JSON_OUTPUT_HELP
 from retornatus.infrastructure.index.sqlite_index import RetornatusIndex
 from retornatus.infrastructure.persistence.repository import FileRepository
 
@@ -208,6 +209,7 @@ def verify(
         "--check-timeout",
         help="Seconds before each required check is killed when --run-checks is set.",
     ),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
 ) -> None:
     """Run Assurance against a Change's contract DONE Claims (bound Evidence)."""
     from retornatus.application.assurance.independent import evaluate_change_assurance
@@ -216,6 +218,8 @@ def verify(
         write_verify_receipt,
     )
     from retornatus.application.assurance.settings import allow_self_reported_enabled
+    from retornatus.application.report.envelope import verify_document
+    from retornatus.cli.json_output import write_json
 
     root = resolve_root(path)
     if receipt:
@@ -229,11 +233,12 @@ def verify(
             root, change_id, timeout_seconds=check_timeout
         )
         for note in outcome.notes:
-            typer.echo(f"WARN {note}")
+            typer.echo(f"WARN {note}", err=as_json)
         for evidence in outcome.evidence:
             typer.echo(
                 f"Recorded {evidence.id} argv={' '.join(evidence.command or [])} "
-                f"exit_code={evidence.exit_code}"
+                f"exit_code={evidence.exit_code}",
+                err=as_json,
             )
     allowed = allow_self_reported or allow_self_reported_enabled(root)
     result = evaluate_change_assurance(
@@ -242,14 +247,25 @@ def verify(
         use_git_state=not no_git,
         allow_self_reported=allowed,
     )
-    for label in result.evidence_labels:
-        typer.echo(label)
-    for warning in result.warnings:
-        typer.echo(f"WARN {warning}")
-    typer.echo(result.model_dump_json(indent=2))
+    receipt_path: str | None = None
     if receipt:
-        out = write_verify_receipt(root, change_id, result)
-        typer.echo(f"receipt: {out}")
+        receipt_path = str(write_verify_receipt(root, change_id, result))
+    if as_json:
+        for label in result.evidence_labels:
+            typer.echo(label, err=True)
+        for warning in result.warnings:
+            typer.echo(f"WARN {warning}", err=True)
+        if receipt_path:
+            typer.echo(f"receipt: {receipt_path}", err=True)
+        write_json(verify_document(root, change_id, result, receipt_path=receipt_path))
+    else:
+        for label in result.evidence_labels:
+            typer.echo(label)
+        for warning in result.warnings:
+            typer.echo(f"WARN {warning}")
+        typer.echo(result.model_dump_json(indent=2))
+        if receipt_path:
+            typer.echo(f"receipt: {receipt_path}")
     raise typer.Exit(code=0 if result.verdict.value == "SATISFIED" else 1)
 
 
