@@ -44,6 +44,9 @@ action_app = typer.Typer(help="Action utilities (budget / attempt ceiling).")
 checks_app = typer.Typer(
     help="Run owner-declared required checks and record Evidence."
 )
+ci_app = typer.Typer(
+    help="CI helpers. Render a pull-request comment from verify and gate JSON."
+)
 hooks_app = typer.Typer(
     help="Git hooks: suppression scan, scope gate, commit message path."
 )
@@ -72,5 +75,6 @@ app.add_typer(ops_app, name="ops")
 app.add_typer(intake_app, name="intake")
 app.add_typer(action_app, name="action")
 app.add_typer(checks_app, name="checks")
+app.add_typer(ci_app, name="ci")
 app.add_typer(hooks_app, name="hooks")
 app.add_typer(receipt_app, name="receipt")

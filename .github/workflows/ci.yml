@@ -45,6 +45,9 @@ jobs:
   governance:
     name: Retornatus gates
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -69,70 +72,12 @@ jobs:
       - name: Gate scan (active Contracts)
         run: uv run retornatus ops run gate-scan
 
-      - name: Resolve diff base
-        id: base
-        shell: bash
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "sha=origin/${{ github.event.repository.default_branch }}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Verify touched Changes and diff gates
-        shell: bash
-        env:
-          BASE_SHA: ${{ steps.base.outputs.sha }}
-          RETORNATUS_OMISSION: fail
-        run: |
-          mapfile -t TOUCHED < <(
-            git diff --name-only "${BASE_SHA}...HEAD" -- .retornatus/changes \
-              | sed -n 's|^\.retornatus/changes/\(C-[0-9][0-9]*\)/.*|\1|p' \
-              | sort -u
-          )
-          code_changed=0
-          while IFS= read -r path; do
-            [ -n "$path" ] || continue
-            case "$path" in
-              src/*|tests/*|scripts/*|templates/*|pyproject.toml|uv.lock)
-                code_changed=1
-                ;;
-            esac
-          done < <(git diff --name-only "${BASE_SHA}...HEAD")
-
-          if [ "${#TOUCHED[@]}" -eq 0 ] && [ "$code_changed" -eq 1 ]; then
-            echo "Code changed but no .retornatus Change was touched (skip-by-omission)."
-            if [ "${RETORNATUS_OMISSION}" = "warn" ]; then
-              echo "::warning::Code changed but no Change was touched"
-            else
-              exit 1
-            fi
-          fi
-
-          status=0
-          echo "Suppression gate against ${BASE_SHA}"
-          if ! uv run retornatus gate suppressions --base "${BASE_SHA}"; then
-            status=1
-          fi
-          if [ "${#TOUCHED[@]}" -eq 0 ]; then
-            echo "No Change paths in the diff — verify and scope skipped"
-            exit "$status"
-          fi
-          for cid in "${TOUCHED[@]}"; do
-            echo "::group::verify $cid"
-            if ! uv run retornatus verify "$cid"; then
-              echo "verify failed for $cid"
-              status=1
-            fi
-            echo "::endgroup::"
-            echo "::group::scope $cid"
-            if ! uv run retornatus gate scope "$cid" --base "${BASE_SHA}"; then
-              echo "scope gate failed for $cid"
-              status=1
-            fi
-            echo "::endgroup::"
-          done
-          exit "$status"
+      - name: Verify, diff gates, and sticky comment
+        uses: ./
+        with:
+          version: local
+          comment: "true"
+          fail-on: not_satisfied
 
   lowest-direct:
     name: Lowest direct dependencies

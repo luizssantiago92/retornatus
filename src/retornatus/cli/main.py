@@ -8,6 +8,7 @@ from retornatus.cli import action as _action
 from retornatus.cli import assurance as _assurance
 from retornatus.cli import change as _change
 from retornatus.cli import checks as _checks
+from retornatus.cli import ci as _ci
 from retornatus.cli import decision as _decision
 from retornatus.cli import evidence as _evidence
 from retornatus.cli import execution as _execution
@@ -34,6 +35,7 @@ _REGISTERED = (
     _skill,
     _gate,
     _checks,
+    _ci,
     _hooks,
     _evidence,
     _finding,

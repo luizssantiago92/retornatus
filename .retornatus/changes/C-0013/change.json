@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0013",
+  "title": "GitHub Action sticky verdict comment",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Reviewers on a pull request must see one sticky comment that states the Retornatus CLI verdict, which claims have evidence, and which gates passed or failed. The comment is rendered from verify and gate JSON. Out of scope: a package version bump, a release tag, and merging the pull request.",
+    "kind": "CAPABILITY"
+  },
+  "lane": "QUICK",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T06:00:44.954467Z"
+}

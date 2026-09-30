@@ -11,13 +11,13 @@ Canonical files under `.retornatus/` (Changes, Contracts, Evidence, the public r
 
 ## Session setup
 
-[`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml) pins the published package:
+Install the CLI on the agent machine. Release 1.4.1 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, and the Ed25519 `receipt` commands:
 
 ```bash
 uv tool install "retornatus==1.4.1"
 ```
 
-Release 1.4.1 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, and the Ed25519 `receipt` commands.
+The pull-request check is the [GitHub Action](GitHub-Action.md). Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml). It uses `luizssantiago92/retornatus@v1` (the tag the owner publishes) and does not pin the old inline `uv tool install` steps.
 
 To install this git tree instead of the PyPI pin (for example while developing the harness), use the same command as [Quick start](Quick-start.md):
 
@@ -126,22 +126,22 @@ When you do want a signature, sign in CI or on the owner's machine, with the sec
 
 A session can skip `hooks install`, and a commit can pass `--no-verify`. The check that runs for every pull request is GitHub Actions. It is the same check whether the agent was a laptop, a Cursor cloud agent, Codex, Claude Code, or a CI sandbox.
 
-Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml) to `.github/workflows/retornatus.yml`. On `pull_request`, and on pushes to `main` or `master`, the job:
+Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml) to `.github/workflows/retornatus.yml`. On `pull_request`, and on pushes to `main` or `master`, the job checks out the repository with full history and runs the [GitHub Action](GitHub-Action.md):
 
-1. Installs with `uv tool install "retornatus==1.4.1"`.
-2. Runs `retornatus doctor`.
-3. Runs `retornatus wake`.
-4. Runs `retornatus ops run gate-scan`.
-5. Runs `retornatus gate suppressions --base <base-sha>`.
-6. For each Change touched under `.retornatus/changes/`, runs `retornatus verify <C-id>` and `retornatus gate scope <C-id> --base <base-sha>`.
+1. Installs Retornatus (`version` defaults to the latest PyPI release that includes `retornatus ci comment`).
+2. Runs `retornatus gate suppressions --base <base> --json`.
+3. For each Change touched under `.retornatus/changes/`, runs `retornatus verify <C-id> --json` and `retornatus gate scope <C-id> --base <base> --json`.
+4. Renders one markdown comment with `retornatus ci comment` (overview plus claim and gate tables) and writes it to the job summary.
+5. On a same-repository pull request, creates or updates the comment whose body contains `<!-- retornatus-verdict -->`.
 
-`RETORNATUS_OMISSION` defaults to `fail`: a code diff that touches no Change fails the job. Set it to `warn` to print a warning and continue. The workflow does not push, merge, deploy, or sign receipts.
+`RETORNATUS_OMISSION` defaults to `fail`: a code diff that touches no Change fails the job. Set it to `warn` to print a warning and continue. Fork pull requests skip the comment because the token is read-only. The workflow does not push, merge, deploy, or sign receipts.
 
-This repository's [CI workflow](../../.github/workflows/ci.yml) is the harness suite (ruff, mypy, the docs HTML check, pytest). The template above is the Retornatus gate for an application repository.
+This repository's [CI workflow](../../.github/workflows/ci.yml) keeps the required check named **Retornatus gates**. That job still runs `doctor`, `wake`, and `gate-scan` from the checkout, then calls the action with `version: local` so the pull request exercises the branch, not an older PyPI release. The template above is the Retornatus gate for an application repository.
 
 ## Related
 
 - [Environments](Environments.md) — host detection and bridges
 - [Git governance](Git-governance.md) — hooks and git tiers
 - [Gates](Gates.md) — STOP checks and Assurance
+- [GitHub Action](GitHub-Action.md) — sticky pull-request comment
 - [CLI](CLI.md) — command reference

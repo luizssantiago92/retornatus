@@ -1,0 +1,80 @@
+name: Retornatus
+description: >-
+  Run Retornatus verify and diff gates on a pull request and post one sticky
+  comment with the verdict. Workflow permissions: contents read, pull-requests
+  write. Fork pull requests skip the comment and still write the job summary.
+author: Luiz Santiago
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  version:
+    description: >-
+      Retornatus release to install from PyPI (for example 1.4.1), latest, or
+      local to install the checked-out package. The release must include
+      retornatus ci comment.
+    required: false
+    default: latest
+  change:
+    description: >-
+      Change id to verify. Empty detects Change ids touched under
+      .retornatus/changes in the diff.
+    required: false
+    default: ""
+  base:
+    description: >-
+      Git base revision for the diff gates. Empty uses the pull request base
+      SHA, or origin/<default branch> on other events.
+    required: false
+    default: ""
+  comment:
+    description: Create or update the sticky pull request comment (true or false).
+    required: false
+    default: "true"
+  fail-on:
+    description: >-
+      not_satisfied fails the step unless the folded verdict is SATISFIED.
+      never always exits 0 after the comment is written.
+    required: false
+    default: not_satisfied
+  github-token:
+    description: Token used to read and write the sticky comment. Not printed.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  verdict:
+    description: SATISFIED, NOT_SATISFIED, or INCONCLUSIVE.
+    value: ${{ steps.verdict.outputs.verdict }}
+  json:
+    description: Path to the JSON bundle of verify and gate documents plus the folded verdict.
+    value: ${{ steps.verdict.outputs.json }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up uv
+      uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      with:
+        enable-cache: false
+        python-version: "3.12"
+
+    - name: Verify and comment
+      id: verdict
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        RETORNATUS_VERSION: ${{ inputs.version }}
+        RETORNATUS_CHANGE: ${{ inputs.change }}
+        RETORNATUS_BASE: ${{ inputs.base }}
+        RETORNATUS_COMMENT: ${{ inputs.comment }}
+        RETORNATUS_FAIL_ON: ${{ inputs.fail-on }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        EVENT_NAME: ${{ github.event_name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        PR_FORK: ${{ github.event.pull_request.head.repo.fork }}
+        REPO: ${{ github.repository }}
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      run: bash "$ACTION_PATH/scripts/github_action.sh"

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Composite GitHub Action (`action.yml`) runs `verify` and the diff gates with `--json` and posts or updates one sticky pull-request comment (`<!-- retornatus-verdict -->`). `retornatus ci comment` renders that markdown from the JSON envelopes, including `change overview --format pr`. Fork pull requests with a read-only token skip the comment and still write the job summary. See `docs/guide/GitHub-Action.md`.
 - `retornatus verify --json`, every `retornatus gate` subcommand `--json`, and `retornatus change overview --json` (also `--format json`) print a versioned verdict envelope and nothing else on stdout. Diagnostics go to stderr. Exit codes match text mode. The contract is `schemas/verdict-v1.schema.json`. See `docs/guide/JSON-output.md`.
 
 ### Changed

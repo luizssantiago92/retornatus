@@ -333,7 +333,7 @@ retornatus hooks status
 retornatus doctor
 ```
 
-[`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) pins `uv tool install "retornatus==1.4.1"`. That release includes `hooks install` and the diff gates. Full notes: [Cloud agents](docs/guide/Cloud-agents.md).
+[`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) runs the [GitHub Action](docs/guide/GitHub-Action.md) (`uses: luizssantiago92/retornatus@v1`). The action installs Retornatus, runs `verify` and the diff gates, and posts one sticky comment. Full notes: [Cloud agents](docs/guide/Cloud-agents.md).
 
 ---
 
@@ -344,6 +344,7 @@ retornatus doctor
 | Product story (non-jargon) | [Website](https://luizssantiago92.github.io/retornatus/) |
 | First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
 | Cloud / remote agents | [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html) |
+| Pull-request verdict comment | [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) |
 | Full technical guide | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |
 | Concepts | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html) |
 | Coming from Spec Guardrails | [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) |
