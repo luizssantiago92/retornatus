@@ -35,8 +35,8 @@ def _lines(text: str) -> list[str]:
 def _load(stdout: str) -> dict[str, object]:
     """Parse stdout as one JSON document with nothing after it."""
     stripped = stdout.strip()
-    assert stripped.startswith("{")
-    assert stripped.endswith("}")
+    assert stripped.startswith("{"), repr(stdout)
+    assert stripped.endswith("}"), repr(stdout)
     decoder = json.JSONDecoder()
     document, offset = decoder.raw_decode(stdout)
     assert stdout[offset:].strip() == ""
@@ -268,17 +268,42 @@ def test_gate_skill_research_pass_and_fail(tmp_path: Path) -> None:
     assert failed["verdict"] == "FAIL"
 
     skill_md = skill_dir / "SKILL.md"
+    # Canonical skill files are LF. Path.write_text translates ``\n`` to
+    # os.linesep unless newline is set, which rewrites the file as CRLF
+    # on Windows.
     body = skill_md.read_text(encoding="utf-8")
+    needle = "1.\n2.\n3.\n"
+    assert needle in body
     body = body.replace(
-        "1.\n2.\n3.\n",
+        needle,
         "1. Read the schema.\n2. Call the command.\n3. Parse stdout.\n",
         1,
     )
     body += "\nSource: https://json-schema.org/draft/2020-12/schema\n"
-    skill_md.write_text(body, encoding="utf-8")
+    skill_md.write_text(body, encoding="utf-8", newline="\n")
     plain, document = _pair(["gate", "skill-research", skill_id, "--path", str(tmp_path)])
     assert plain.exit_code == 0
     assert document["passed"] is True
+
+
+def test_gate_skill_research_json_accepts_crlf_skill(tmp_path: Path) -> None:
+    """A Windows editor may save SKILL.md with CRLF. The gate still emits JSON."""
+    initialize_project(tmp_path)
+    created = runner.invoke(
+        app,
+        ["skill", "create", "--need", "JSON consumers", "--path", str(tmp_path)],
+    )
+    assert created.exit_code == 0, created.stdout
+    skill_dir = next((tmp_path / ".retornatus" / "adaptation" / "skills").glob("S-*"))
+    skill_md = skill_dir / "SKILL.md"
+    skill_md.write_bytes(skill_md.read_bytes().replace(b"\n", b"\r\n"))
+    plain, document = _pair(
+        ["gate", "skill-research", skill_dir.name, "--path", str(tmp_path)]
+    )
+    assert plain.exit_code == 1
+    assert document["verdict"] == "FAIL"
+    assert document["skill_id"] == skill_dir.name
+    assert any("PROCEDURE" in str(item) for item in document["findings"])
 
 
 def test_gate_policy_pass_and_fail(tmp_path: Path) -> None:

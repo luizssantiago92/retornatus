@@ -43,6 +43,13 @@ def dump_markdown(
 
 
 def load_markdown(text: str) -> tuple[dict[str, Any] | None, str]:
+    """Load Markdown with optional JSON metadata in an HTML comment.
+
+    ``dump_markdown`` writes LF. Editors and ``Path.write_text`` on Windows
+    may persist CRLF. Normalize before matching the marker so a CRLF file
+    still loads instead of looking like it has no metadata.
+    """
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
     marker = "<!-- retornatus-meta\n"
     if not text.startswith(marker):
         return None, text
