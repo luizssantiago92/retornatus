@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0010/E-007",
+  "type": "test_result",
+  "subject": "The CLI reference contains a link to the JSON output page",
+  "source": "uv run python -c 'from pathlib import Path; text = Path(\"docs/guide/CLI.md\").read_text(encoding=\"utf-8\"); assert \"JSON-output.md\" in text; assert \"--json\" in text; print(\"cli link ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:06:46.368032Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; text = Path(\"docs/guide/CLI.md\").read_text(encoding=\"utf-8\"); assert \"JSON-output.md\" in text; assert \"--json\" in text; print(\"cli link ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:06:46.335954Z",
+  "ended_at": "2026-09-30T05:06:46.365381Z",
+  "duration_ms": 29,
+  "output_sha256": "6bd3e267f64451ed2b3a05dd84927adabec054aa7faedce54bb660c6592d6b64",
+  "output_tail": "cli link ok\n",
+  "output_artifact": ".retornatus/changes/C-0010/evidence/E-007.output.txt",
+  "git_commit": "9be8514a70aa6a9208e8124d0e53c2ce00c199aa",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0010/claim-done-7",
+      "note": null
+    }
+  ]
+}
