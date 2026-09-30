@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0017/E-009",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased records the django preset",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'CHANGELOG.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nhead, _, _rest = text.partition('\"'\"'## [1.4.1]'\"'\"')\nassert '\"'\"'## [Unreleased]'\"'\"' in head\nassert '\"'\"'init --preset django'\"'\"' in head\nassert '\"'\"'migrations'\"'\"' in head.lower()\nprint('\"'\"'ok'\"'\"')\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:01:07.526504Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('CHANGELOG.md').read_text(encoding='utf-8')\nhead, _, _rest = text.partition('## [1.4.1]')\nassert '## [Unreleased]' in head\nassert 'init --preset django' in head\nassert 'migrations' in head.lower()\nprint('ok')\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:01:07.470821Z",
+  "ended_at": "2026-09-30T15:01:07.504617Z",
+  "duration_ms": 33,
+  "output_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+  "output_tail": "ok\n",
+  "output_artifact": ".retornatus/changes/C-0017/evidence/E-009.output.txt",
+  "git_commit": "0d6c471d06af21e0baa677da69ff2ae0c7d53b7a",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0017/claim-done-9",
+      "note": null
+    }
+  ]
+}
