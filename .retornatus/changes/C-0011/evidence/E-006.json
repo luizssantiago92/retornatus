@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-006",
+  "type": "test_result",
+  "subject": "pytest confirms CHANGELOG.md contains an Unreleased note for the approved mascot",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\")\nunreleased, _, _ = text.partition(\"## [Unreleased]\")\nrest = _.split(\"## [\", 1)[0]\nassert \"approved mascot\" in rest\nprint(\"unreleased mascot note present\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:40:41.287165Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\")\nunreleased, _, _ = text.partition(\"## [Unreleased]\")\nrest = _.split(\"## [\", 1)[0]\nassert \"approved mascot\" in rest\nprint(\"unreleased mascot note present\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:40:41.253937Z",
+  "ended_at": "2026-09-30T05:40:41.282453Z",
+  "duration_ms": 28,
+  "output_sha256": "243cc7d2fb5e0b89b437dab8494a5206e603bafe854089e9c930ab5711b626f2",
+  "output_tail": "unreleased mascot note present\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-006.output.txt",
+  "git_commit": "8aef6cd512bf5c55606e9c80bc420122ab613e00",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-6",
+      "note": null
+    }
+  ]
+}
