@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0015/E-008",
+  "type": "test_result",
+  "subject": "docs/assets/retornatus-mascot-readme.webp",
+  "source": "uv run python -c 'from pathlib import Path\nlog = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\")\nunreleased = log.split(\"## [1.4.1]\", 1)[0]\nassert \"## [Unreleased]\" in unreleased\nassert \"retornatus init --preset\" in unreleased\nassert \"docs/assets/retornatus-mascot-readme.webp\" in unreleased\nassert \"The README mascot looks the same on GitHub dark and light themes.\" in unreleased\nassert \"retornatus-mascot.webp\" not in unreleased\nprint(\"changelog keeps both entries\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:51:26.287045Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\nlog = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\")\nunreleased = log.split(\"## [1.4.1]\", 1)[0]\nassert \"## [Unreleased]\" in unreleased\nassert \"retornatus init --preset\" in unreleased\nassert \"docs/assets/retornatus-mascot-readme.webp\" in unreleased\nassert \"The README mascot looks the same on GitHub dark and light themes.\" in unreleased\nassert \"retornatus-mascot.webp\" not in unreleased\nprint(\"changelog keeps both entries\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:51:26.252143Z",
+  "ended_at": "2026-09-30T13:51:26.281947Z",
+  "duration_ms": 29,
+  "output_sha256": "accc7ae83349e5b9aceb59e895408d85ae18640369edc0f643e197eec4e64b9f",
+  "output_tail": "changelog keeps both entries\n",
+  "output_artifact": ".retornatus/changes/C-0015/evidence/E-008.output.txt",
+  "git_commit": "c85cf4b868914361f335f46c44fcc24cdbf20acd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0015/claim-done-8",
+      "note": null
+    }
+  ]
+}
