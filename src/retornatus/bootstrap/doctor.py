@@ -7,7 +7,10 @@ from pathlib import Path
 
 from retornatus import __version__
 from retornatus.application.agent_hooks.config import agent_hook_status
-from retornatus.application.assurance.settings import load_project_config
+from retornatus.application.assurance.settings import (
+    allow_question_stops,
+    load_project_config,
+)
 from retornatus.application.governance.gates import gate_contract, gate_skill_research
 from retornatus.bootstrap.wake import WakeReport, wake_up
 from retornatus.domain.enums import SkillStatus
@@ -38,6 +41,7 @@ class DoctorReport:
     process: ReadinessScore | None = None
     brakes: ReadinessScore | None = None
     agent_hooks: dict[str, str] = field(default_factory=dict)
+    allow_questions: bool | None = None
 
     @property
     def ok(self) -> bool:
@@ -69,6 +73,9 @@ class DoctorReport:
         if self.agent_hooks:
             lines.append("agent hooks:")
             lines.extend(f"  {name}: {state}" for name, state in self.agent_hooks.items())
+        if self.allow_questions is not None:
+            shown = "true" if self.allow_questions else "false"
+            lines.append(f"hooks allow_questions: {shown}")
         if self.warnings:
             lines.append("warnings:")
             lines.extend(f"  - {w}" for w in self.warnings)
@@ -210,6 +217,7 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
     diagnostics = list(wake.diagnostics)
     warnings: list[str] = []
     hook_status = agent_hook_status(project_root)
+    questions_allowed = allow_question_stops(project_root) if wake.initialized else None
 
     process = _score_process(project_root, wake)
     brakes = _score_brakes(project_root, wake)
@@ -222,6 +230,7 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
             process=process,
             brakes=brakes,
             agent_hooks=hook_status,
+            allow_questions=questions_allowed,
         )
 
     repo = FileRepository(project_root)
@@ -281,4 +290,5 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
         process=process,
         brakes=brakes,
         agent_hooks=hook_status,
+        allow_questions=questions_allowed,
     )

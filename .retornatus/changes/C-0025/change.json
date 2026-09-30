@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0025",
+  "title": "Allow Stop when the agent asks a question",
+  "demand": {
+    "schema_version": 1,
+    "statement": "The Stop hook blocks once when the agent stops to ask the user a question. Allow that stop for Claude Code, Cursor, and Codex without weakening the unsatisfied-Change block.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T22:26:57.798524Z"
+}

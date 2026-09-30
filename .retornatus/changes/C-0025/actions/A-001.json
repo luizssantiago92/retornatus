@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "C-0025/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "hook stop allows a question to the user, keeps stop_hook_active and Cursor aborted or error, and reads allow_questions from config.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0 for the stop question tests",
+    "Question stops are documented in the agent hooks guide",
+    "The question-stop fix is documented in the Unreleased changelog",
+    "ruff check exits 0",
+    "mypy exits 0",
+    "html check exits 0",
+    "uv lock check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0025/T-001",
+      "description": "Allow a question stop in hook stop, document it, and test each host payload",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/",
+        "tests/",
+        "docs/",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
