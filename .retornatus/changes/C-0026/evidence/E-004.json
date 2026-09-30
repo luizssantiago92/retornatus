@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0026/E-004",
+  "type": "test_result",
+  "subject": "docs/guide/CLI.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"docs/guide/CLI.md\").read_text(); assert \"hook session-start\" in t; print(\"cli guide ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:04:59.118572Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"docs/guide/CLI.md\").read_text(); assert \"hook session-start\" in t; print(\"cli guide ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:04:59.093986Z",
+  "ended_at": "2026-09-30T23:04:59.116004Z",
+  "duration_ms": 22,
+  "output_sha256": "d3c17c9ba54e16ae29bdd7c8ca1e9acf0029dbbc15c212fd4ccbfd8e9ae11444",
+  "output_tail": "cli guide ok\n",
+  "output_artifact": ".retornatus/changes/C-0026/evidence/E-004.output.txt",
+  "git_commit": "306a36191d6a6e86c0cb33513fb5782fec7cdc58",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0026/claim-done-4",
+      "note": null
+    }
+  ]
+}

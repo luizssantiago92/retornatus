@@ -11,8 +11,10 @@ from typer.testing import CliRunner
 from retornatus.application.agent_hooks.config import (
     CURSOR_LOOP_LIMIT,
     hook_config_path,
+    session_start_command,
     stop_command,
 )
+from retornatus.application.agent_hooks.session import CONTEXT_BYTE_CAP
 from retornatus.application.assurance.evaluate import infer_claim_subject
 from retornatus.application.assurance.evidence import EvidenceService
 from retornatus.bootstrap.doctor import run_doctor
@@ -344,6 +346,12 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
     ]
     assert commands.count(stop_command("claude")) == 1
     assert "echo user-stop" in commands
+    session_commands_claude = [
+        item["command"]
+        for group in claude_body["hooks"]["SessionStart"]
+        for item in group["hooks"]
+    ]
+    assert session_commands_claude == [session_start_command("claude")]
     assert "echo user-pre" in json.dumps(claude_body["hooks"]["PreToolUse"])
     ours = [
         item
@@ -360,7 +368,10 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
 
     cursor_body = json.loads(hook_config_path(tmp_path, "cursor").read_text(encoding="utf-8"))
     assert cursor_body["version"] == 2
-    assert cursor_body["hooks"]["sessionStart"] == [{"command": "./session-init.sh"}]
+    session_commands = [item["command"] for item in cursor_body["hooks"]["sessionStart"]]
+    assert session_commands == ["./session-init.sh", session_start_command("cursor")]
+    assert cursor_body["hooks"]["sessionStart"][1]["timeout"] == 30
+    assert "loop_limit" not in cursor_body["hooks"]["sessionStart"][1]
     stop_commands = [item["command"] for item in cursor_body["hooks"]["stop"]]
     assert stop_commands == ["./audit.sh", stop_command("cursor")]
     retornatus_stop = cursor_body["hooks"]["stop"][1]
@@ -375,6 +386,12 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
     ]
     assert "echo codex-user" in codex_commands
     assert codex_commands.count(stop_command("codex")) == 1
+    codex_session = [
+        item["command"]
+        for group in codex_body["hooks"]["SessionStart"]
+        for item in group["hooks"]
+    ]
+    assert codex_session == [session_start_command("codex")]
 
 
 def test_remove_hooks_keeps_user_entries_and_deletes_ours_only(tmp_path: Path) -> None:
@@ -400,7 +417,15 @@ def test_remove_hooks_keeps_user_entries_and_deletes_ours_only(tmp_path: Path) -
                             "hooks": [{"type": "command", "command": stop_command("claude")}],
                         },
                         {"hooks": [{"type": "command", "command": "echo stay"}]},
-                    ]
+                    ],
+                    "SessionStart": [
+                        {
+                            "hooks": [
+                                {"type": "command", "command": session_start_command("claude")},
+                                {"type": "command", "command": "echo session-stay"},
+                            ]
+                        }
+                    ],
                 },
             }
         ),
@@ -413,6 +438,9 @@ def test_remove_hooks_keeps_user_entries_and_deletes_ours_only(tmp_path: Path) -
     assert claude_body["permissions"] == {"deny": ["Read"]}
     assert claude_body["hooks"]["Stop"] == [
         {"hooks": [{"type": "command", "command": "echo stay"}]}
+    ]
+    assert claude_body["hooks"]["SessionStart"] == [
+        {"hooks": [{"type": "command", "command": "echo session-stay"}]}
     ]
     assert "removed" in removed.stdout
     again = runner.invoke(app, ["integrate", "--remove-hooks", "--host", "claude", "--path", str(tmp_path)])
@@ -460,11 +488,291 @@ def test_doctor_reports_agent_hook_installation(tmp_path: Path) -> None:
     assert installed.exit_code == 0, installed.stdout
     after = runner.invoke(app, ["doctor", "--path", str(tmp_path)])
     assert after.exit_code == 0, after.stdout
-    assert "claude: installed" in after.stdout
-    assert "cursor: installed" in after.stdout
-    assert "codex: installed" in after.stdout
+    assert "claude: stop=installed session-start=installed" in after.stdout
+    assert "cursor: stop=installed session-start=installed" in after.stdout
+    assert "codex: stop=installed session-start=installed" in after.stdout
 
     hook_config_path(tmp_path, "claude").write_text("{", encoding="utf-8")
     broken = run_doctor(tmp_path)
     assert broken.agent_hooks["claude"] == "unreadable"
     assert "claude: unreadable" in broken.render()
+
+
+def _start(root: Path, host: str, payload: object, *, path: Path | None = None) -> object:
+    args = ["hook", "session-start", "--host", host]
+    if path is not None:
+        args.extend(["--path", str(path)])
+    raw = payload if isinstance(payload, str) else json.dumps(payload)
+    return runner.invoke(app, args, input=raw)
+
+
+_CLAUDE_PAYLOAD = {
+    "session_id": "abc123",
+    "transcript_path": "/tmp/session.jsonl",
+    "cwd": "/tmp/proj",
+    "hook_event_name": "SessionStart",
+    "source": "startup",
+    "model": "claude-sonnet-5",
+    "unused": True,
+}
+_CURSOR_PAYLOAD = {
+    "session_id": "conv-1",
+    "is_background_agent": False,
+    "composer_mode": "agent",
+}
+_CODEX_PAYLOAD = {
+    "session_id": "abc123",
+    "cwd": "/tmp/proj",
+    "hook_event_name": "SessionStart",
+    "source": "resume",
+}
+
+
+def _context(stdout: str, host: str) -> str:
+    body = _load(stdout)
+    if host == "cursor":
+        assert set(body) == {"additional_context"}
+        text = body["additional_context"]
+    else:
+        assert set(body) == {"hookSpecificOutput"}
+        inner = body["hookSpecificOutput"]
+        assert isinstance(inner, dict)
+        assert set(inner) == {"hookEventName", "additionalContext"}
+        assert inner["hookEventName"] == "SessionStart"
+        text = inner["additionalContext"]
+    assert isinstance(text, str)
+    return text
+
+
+def test_session_start_shapes_name_the_finish_line(tmp_path: Path) -> None:
+    _create(
+        tmp_path,
+        title="Health command",
+    )
+    created = runner.invoke(
+        app,
+        [
+            "change",
+            "create",
+            "--path",
+            str(tmp_path),
+            "--title",
+            "Ignored draft",
+            "--demand",
+            "Operators need a second command that stays a draft",
+            "--what",
+            "The second command stays a draft",
+            "--done",
+            _DONE,
+            "--situation",
+            "Operators run one health command and read its exit code.",
+            "--draft-contract",
+        ],
+    )
+    assert created.exit_code == 0, created.stdout + created.stderr
+    payloads = {
+        "claude": _CLAUDE_PAYLOAD,
+        "cursor": _CURSOR_PAYLOAD,
+        "codex": _CODEX_PAYLOAD,
+    }
+    for host, payload in payloads.items():
+        result = _start(tmp_path, host, payload, path=tmp_path)
+        assert result.exit_code == 0, result.output
+        assert result.stderr == ""
+        text = _context(result.stdout, host)
+        assert len(text.encode("utf-8")) <= CONTEXT_BYTE_CAP
+        assert "C-0001 Health command — INCONCLUSIVE" in text
+        assert "goal: The health command exits 0" in text
+        assert "scope: (none declared)" in text
+        assert "C-0001/claim-done-1 (INCONCLUSIVE)" in text
+        assert "retornatus evidence run" in text
+        assert "pytest -q" in text
+        assert "C-0002" not in text
+
+
+def test_session_start_includes_declared_scope_and_satisfied_changes(tmp_path: Path) -> None:
+    initialize_project(tmp_path)
+    created = runner.invoke(
+        app,
+        [
+            "change",
+            "create",
+            "--path",
+            str(tmp_path),
+            "--title",
+            "Scoped",
+            "--demand",
+            "Operators need a health command with a clear exit code",
+            "--what",
+            "The health command exits 0",
+            "--done",
+            _DONE,
+            "--situation",
+            "Operators run one health command and read its exit code.",
+            "--task",
+            "Implement the health command",
+            "--resource",
+            "0:src/retornatus/",
+            "--resource",
+            "0:tests/",
+        ],
+    )
+    assert created.exit_code == 0, created.stdout + created.stderr
+    _satisfy(tmp_path)
+    result = _start(tmp_path, "cursor", _CURSOR_PAYLOAD, path=tmp_path)
+    text = _context(result.stdout, "cursor")
+    assert "C-0001 Scoped — SATISFIED" in text
+    assert "scope: src/retornatus/, tests/" in text
+    assert "unproven: none" in text
+
+
+def test_session_start_empty_without_an_active_change(tmp_path: Path) -> None:
+    missing = _start(tmp_path, "claude", _CLAUDE_PAYLOAD, path=tmp_path)
+    assert missing.exit_code == 0
+    assert missing.stdout == ""
+    assert missing.stderr == ""
+
+    _create(tmp_path, draft=True)
+    draft = _start(tmp_path, "codex", "", path=tmp_path)
+    assert draft.exit_code == 0, draft.output
+    assert draft.stdout == ""
+
+    listed = _start(tmp_path, "cursor", "[]", path=tmp_path)
+    assert listed.exit_code == 0
+    assert listed.stdout == ""
+
+
+def test_session_start_respects_session_context_flag(tmp_path: Path) -> None:
+    _create(tmp_path)
+    config = tmp_path / ".retornatus" / "config.toml"
+    original = config.read_text(encoding="utf-8")
+    config.write_text(original + "\n[hooks]\nsession_context = false\n", encoding="utf-8")
+    disabled = _start(tmp_path, "claude", _CLAUDE_PAYLOAD, path=tmp_path)
+    assert disabled.exit_code == 0
+    assert disabled.stdout == ""
+    assert disabled.stderr == ""
+
+    config.write_text(original + "\n[hooks]\nsession_context = true\n", encoding="utf-8")
+    enabled = _start(tmp_path, "codex", _CODEX_PAYLOAD, path=tmp_path)
+    assert "C-0001" in _context(enabled.stdout, "codex")
+
+    config.write_text(original + '\n[hooks]\nsession_context = "yes"\n', encoding="utf-8")
+    invalid = _start(tmp_path, "cursor", _CURSOR_PAYLOAD, path=tmp_path)
+    assert invalid.exit_code == 0
+    assert invalid.stdout == ""
+    assert "fail-open" in invalid.stderr
+    assert "session_context" in invalid.stderr
+
+
+def test_session_start_fails_open(tmp_path: Path, monkeypatch) -> None:
+    _create(tmp_path)
+    broken = _start(tmp_path, "claude", "{", path=tmp_path)
+    assert broken.exit_code == 0
+    assert broken.stdout == ""
+    assert "fail-open" in broken.stderr
+    assert "invalid JSON" in broken.stderr
+
+    unknown = _start(tmp_path, "copilot", _CLAUDE_PAYLOAD, path=tmp_path)
+    assert unknown.exit_code == 0
+    assert unknown.stdout == ""
+    assert "unknown host" in unknown.stderr
+
+    def boom(*_args: object, **_kwargs: object) -> None:
+        raise RuntimeError("disk failed")
+
+    monkeypatch.setattr(
+        "retornatus.application.agent_hooks.session.evaluate_change_assurance",
+        boom,
+    )
+    crashed = _start(tmp_path, "cursor", _CURSOR_PAYLOAD, path=tmp_path)
+    assert crashed.exit_code == 0
+    assert crashed.stdout == ""
+    assert "disk failed" in crashed.stderr
+    assert "fail-open" in crashed.stderr
+
+
+def test_session_start_caps_context(tmp_path: Path) -> None:
+    _create(tmp_path)
+    contract_path = tmp_path / ".retornatus" / "changes" / "C-0001" / "contract.json"
+    document = json.loads(contract_path.read_text(encoding="utf-8"))
+    document["what"] = "goal " * 4000
+    contract_path.write_text(json.dumps(document), encoding="utf-8")
+    result = _start(tmp_path, "claude", _CLAUDE_PAYLOAD, path=tmp_path)
+    assert result.exit_code == 0, result.output
+    text = _context(result.stdout, "claude")
+    assert len(text.encode("utf-8")) <= CONTEXT_BYTE_CAP
+    assert text.endswith("…(truncated)\n")
+    assert "C-0001" in text
+
+
+def test_session_start_edges(tmp_path: Path, monkeypatch) -> None:
+    from retornatus.application.agent_hooks.session import cap_utf8
+
+    assert cap_utf8("abcdef", limit=4) == "\n…"
+
+    initialize_project(tmp_path)
+    config = tmp_path / ".retornatus" / "config.toml"
+    _create_resources = runner.invoke(
+        app,
+        [
+            "change",
+            "create",
+            "--path",
+            str(tmp_path),
+            "--title",
+            "Edges",
+            "--demand",
+            "Operators need a health command with a clear exit code",
+            "--what",
+            "The health command exits 0",
+            "--done",
+            _DONE,
+            "--situation",
+            "Operators run one health command and read its exit code.",
+            "--task",
+            "Implement the health command",
+            *[
+                item
+                for index in range(13)
+                for item in ("--resource", f"0:pkg{index}/")
+            ],
+        ],
+    )
+    assert _create_resources.exit_code == 0, _create_resources.stdout
+    original = config.read_text(encoding="utf-8")
+    config.write_text('hooks = "nope"\n\n' + original, encoding="utf-8")
+    broken_table = _start(tmp_path, "claude", _CLAUDE_PAYLOAD, path=tmp_path)
+    assert broken_table.exit_code == 0
+    assert broken_table.stdout == ""
+    assert "expected a table" in broken_table.stderr
+
+    config.write_text(original + '\n[hooks]\nnote = "keep"\n', encoding="utf-8")
+    kept = _start(tmp_path, "claude", _CLAUDE_PAYLOAD, path=tmp_path)
+    text = _context(kept.stdout, "claude")
+    assert "pkg0/" in text
+    assert "+1 more" in text
+
+    nested = tmp_path / "src" / "pkg"
+    nested.mkdir(parents=True)
+    monkeypatch.chdir(nested)
+    walked = runner.invoke(app, ["hook", "session-start", "--host", "codex"], input="{}")
+    assert walked.exit_code == 0, walked.output
+    assert "C-0001" in _context(walked.stdout, "codex")
+
+
+def test_doctor_reports_a_stop_only_install(tmp_path: Path) -> None:
+    initialize_project(tmp_path)
+    path = hook_config_path(tmp_path, "cursor")
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "hooks": {"stop": [{"command": stop_command("cursor"), "loop_limit": 1}]},
+            }
+        ),
+        encoding="utf-8",
+    )
+    report = run_doctor(tmp_path)
+    assert report.agent_hooks["cursor"] == "stop=installed session-start=absent"
+    assert "cursor: stop=installed session-start=absent" in report.render()

@@ -105,13 +105,13 @@ retornatus gate scope C-0001 --base main
 
 After `hooks install`, pre-commit runs `gate suppressions --staged` and `hooks scope`. commit-msg runs `hooks commit-msg --message-file "$1"`. Details: [Git governance](Git-governance.md), [Gates](Gates.md).
 
-## Agent Stop hooks
+## Agent hooks
 
-Git hooks are not in the clone. Agent Stop hooks are. `retornatus integrate --hooks` writes `.cursor/hooks.json`, `.claude/settings.json`, and `.codex/hooks.json`. Those files are project config. Commit them in the application repository when you want the guardrail. This harness repository does not enable them on itself.
+Git hooks are not in the clone. Agent hooks are. `retornatus integrate --hooks` writes `.cursor/hooks.json`, `.claude/settings.json`, and `.codex/hooks.json`. Those files are project config. Commit them in the application repository when you want the guardrail. This harness repository does not enable them on itself.
 
-Cursor cloud agents run command hooks from `.cursor/hooks.json` at the repo root, including `stop`, once the VM is writable. They do not run hooks during an early read-only turn. `sessionStart` does not run in the cloud, and `~/.cursor/hooks.json` is not on the VM. The Stop hook calls `retornatus hook stop`, so the CLI still has to be on `PATH` in `start` (the same install as the git hooks above).
+Cursor cloud agents run command hooks from `.cursor/hooks.json` at the repo root, including `stop`, once the VM is writable. They do not run hooks during an early read-only turn. `sessionStart` is deferred there: it would fire after the first write rather than at true session start, so cloud agents do not run it. Self-hosted pool workers do run `sessionStart` when a session claims the worker. `~/.cursor/hooks.json` is not on the cloud VM. The installed commands are `retornatus hook session-start` and `retornatus hook stop`, so the CLI still has to be on `PATH` in `start` (the same install as the git hooks above). See [Cursor hooks](https://cursor.com/docs/hooks).
 
-The hook is a guardrail. A crash fails open, Cursor's `loop_limit` caps follow-ups, and Claude and Codex will not block twice in a row. **CI remains the source of truth.** Full page: [Agent hooks](Agent-hooks.md).
+The hooks are a guardrail. A crash fails open, Cursor's `loop_limit` caps Stop follow-ups, and Claude and Codex will not block twice in a row. **CI remains the source of truth.** Full page: [Agent hooks](Agent-hooks.md).
 
 ## Receipts
 

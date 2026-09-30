@@ -39,3 +39,34 @@ def hook_stop(
     if response.stdout:
         sys.stdout.write(response.stdout)
     raise typer.Exit(code=response.exit_code)
+
+
+@hook_app.command("session-start")
+def hook_session_start(
+    host: str = typer.Option(
+        ...,
+        "--host",
+        help="Agent host: claude, cursor, or codex.",
+    ),
+    path: Path | None = typer.Option(
+        None,
+        "--path",
+        "-p",
+        help="Project root. Omit to walk up from the working directory.",
+    ),
+) -> None:
+    """Inject active Change context from the host's session-start JSON on stdin.
+
+    Exit 0 always. Context is host JSON on stdout. No active Change prints
+    nothing. Failures print one diagnostic on stderr and inject nothing.
+    """
+    from retornatus.application.agent_hooks.session import handle_session_start
+
+    raw = sys.stdin.read()
+    start = path if path is not None else Path.cwd()
+    response = handle_session_start(host, raw, start=start, walk=path is None)
+    if response.stderr:
+        sys.stderr.write(response.stderr)
+    if response.stdout:
+        sys.stdout.write(response.stdout)
+    raise typer.Exit(code=response.exit_code)

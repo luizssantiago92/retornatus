@@ -166,14 +166,14 @@ def _reason_for(root: Path, document: dict[str, Any]) -> str:
     shown = unproven[:8]
     parts = [f"{claim.get('id')} ({claim.get('status')})" for claim in shown]
     more = f" +{len(unproven) - len(shown)} more" if len(unproven) > len(shown) else ""
-    nxt = _next_command(root, change_id, shown[0])
+    nxt = evidence_command_for_claim(root, change_id, shown[0])
     return (
         f"{change_id} is {verdict}. "
         f"Unproven claims: {', '.join(parts)}{more}. Next: {nxt}"
     )
 
 
-def _next_command(root: Path, change_id: str, claim: dict[str, Any]) -> str:
+def evidence_command_for_claim(root: Path, change_id: str, claim: dict[str, Any]) -> str:
     evidence_type = "test_result"
     types = claim.get("required_evidence_types")
     if isinstance(types, list) and types and isinstance(types[0], str) and types[0].strip():

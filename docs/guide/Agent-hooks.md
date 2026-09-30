@@ -1,12 +1,12 @@
 # Agent hooks
 
-An opt-in Stop hook asks the coding agent to keep going when an active Change is not `SATISFIED`. Git hooks (`hooks install`) still run at commit time. This page is the agent turn-end hook.
+Two opt-in hooks sit in the agent loop. A session-start hook injects the active Change so the agent begins with the finish line. A Stop hook asks the agent to keep going when that Change is not `SATISFIED`. Git hooks (`hooks install`) still run at commit time.
 
-The hook is a guardrail inside the agent loop. It can be skipped, it can fail open, and a host can cap how many times it continues the turn. **CI remains the source of truth.** The pull-request check (`verify`, `gate suppressions`, `gate scope`) is the result that counts. See [Cloud agents](Cloud-agents.md) and [GitHub Action](GitHub-Action.md).
+Both can be skipped, both fail open, and a host can cap how many times Stop continues the turn. **CI remains the source of truth.** The pull-request check (`verify`, `gate suppressions`, `gate scope`) is the result that counts. See [Cloud agents](Cloud-agents.md) and [GitHub Action](GitHub-Action.md).
 
-Phase 1 is the turn-end hook only. Session start, tool gates, subagent hooks, and MCP are not installed.
+Tool gates, subagent hooks, and MCP are not installed.
 
-This repository does not write the hook into its own `.claude/`, `.cursor/hooks.json`, or `.codex/`. Run the command in the project you want to guard.
+This repository does not write the hooks into its own `.claude/`, `.cursor/hooks.json`, or `.codex/`. Run the command in the project you want to guard.
 
 ## Install
 
@@ -19,9 +19,9 @@ retornatus integrate --remove-hooks
 retornatus doctor
 ```
 
-`--host` is repeatable. Omit it to update Claude, Cursor, and Codex. `--remove-hooks` deletes only the Retornatus command. Other hooks and keys stay. A second `--hooks` updates the Retornatus entry in place and does not add a duplicate.
+`--host` is repeatable. Omit it to update Claude, Cursor, and Codex. `--remove-hooks` deletes only the Retornatus Stop and session-start commands. Other hooks and keys stay. A second `--hooks` updates those entries in place and does not add a duplicate.
 
-`doctor` prints `agent hooks:` with `installed`, `absent`, or `unreadable` for each host. Absent is normal. The hook is opt-in, and a missing hook does not fail `doctor`.
+`doctor` prints `agent hooks:` for each host. `absent` means the file is missing, unreadable as JSON is `unreadable`, and a file with no Retornatus command is `absent`. When a Retornatus command is present the line names both hooks, for example `stop=installed session-start=installed` or `stop=installed session-start=absent`. Absent is normal. The hooks are opt-in, and a missing hook does not fail `doctor`.
 
 ## What the hook runs
 
@@ -100,6 +100,60 @@ Heuristic, applied to that text:
 
 A `?` only inside a code fence, an inline span, or a URL does not allow the stop. A question in an earlier paragraph does not count when the final paragraph is a statement. `stop_hook_active` and Cursor `status` `aborted` or `error` are decided before this heuristic. They still allow the stop when `allow_questions` is `false`.
 
+## Session start
+
+Each host also runs:
+
+```bash
+retornatus hook session-start --host claude
+retornatus hook session-start --host cursor
+retornatus hook session-start --host codex
+```
+
+The command reads the host JSON object from stdin and ignores extra fields. A non-object is treated as an empty object. It finds `.retornatus/` from the working directory (parents included) and loads every Change whose Contract is active. Evaluation is the same in-process check as `verify --json`. There is no subprocess back into the CLI.
+
+The injected text names, for each active Change:
+
+- id and title
+- goal (the Contract WHAT)
+- verify status (`SATISFIED`, `NOT_SATISFIED`, or `INCONCLUSIVE`)
+- scope summary (the declared Task resources, or `(none declared)`)
+- each unproven claim id, its status, and the `retornatus evidence run …` command that would prove it
+
+A satisfied Change still appears, with `unproven: none`, so the session starts on the finish line. The text is capped at 2048 UTF-8 bytes. A longer note ends with `…(truncated)`.
+
+| Situation | Result |
+| --- | --- |
+| No `.retornatus/`, or no active Change | Exit 0, no stdout |
+| `[hooks] session_context = false` | Exit 0, no stdout. The default is true, including when the key is absent |
+| One or more active Changes | Exit 0 and the host JSON below |
+| Invalid JSON, unknown host, a non-boolean `session_context`, or any internal error | Exit 0, no context. One `fail-open` line goes to stderr |
+
+Claude and Codex receive:
+
+```json
+{"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "Retornatus active Change context:\nC-0001 Health command — INCONCLUSIVE\ngoal: The health command exits 0\nscope: src/retornatus/\nunproven: C-0001/claim-done-1 (INCONCLUSIVE). Next: retornatus evidence run …"}}
+```
+
+Cursor receives:
+
+```json
+{"additional_context": "Retornatus active Change context:\nC-0001 Health command — INCONCLUSIVE\ngoal: The health command exits 0\nscope: src/retornatus/\nunproven: C-0001/claim-done-1 (INCONCLUSIVE). Next: retornatus evidence run …"}
+```
+
+Checked against the host docs on 2026-09-30. All three hosts document this event, so all three are installed:
+
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks). `SessionStart` runs from `.claude/settings.json`. Stdin adds `source` (`startup`, `resume`, `clear`, `compact`, or `fork`) to the common fields. Omitting `matcher` runs on every source. Context comes back as `hookSpecificOutput.hookEventName` = `SessionStart` and `hookSpecificOutput.additionalContext`. Plain stdout would also be added as context; this hook uses the JSON form.
+- [Cursor hooks](https://cursor.com/docs/hooks). `sessionStart` lives in `.cursor/hooks.json`. Stdin carries `session_id`, `is_background_agent`, and optional `composer_mode`. The output field is `additional_context`. The hook is fire-and-forget. Cloud agents defer `sessionStart` (it would run after the first write, not at true session start). Self-hosted pool workers do run it when a session claims the worker.
+- [Codex hooks](https://developers.openai.com/codex/hooks). `SessionStart` lives in `.codex/hooks.json`. That page currently redirects to `https://learn.chatgpt.com/docs/hooks`. Stdin adds `source` (`startup`, `resume`, `clear`, or `compact`). Omitting `matcher` matches every source. JSON on stdout uses the same `hookSpecificOutput.additionalContext` shape as Claude. Plain text on stdout is also extra developer context; invalid JSON is not.
+
+`[hooks] session_context` is Retornatus project config in `.retornatus/config.toml`, the same table as `allow_questions`, not the host's `[hooks]` table. Codex can also read inline `[hooks]` from its own `config.toml`. `integrate --hooks` still writes `.codex/hooks.json` only.
+
+```toml
+[hooks]
+session_context = false
+```
+
 ## Files
 
 Fresh install, with no other keys in the file:
@@ -119,6 +173,17 @@ Fresh install, with no other keys in the file:
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "retornatus hook session-start --host claude",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }
@@ -134,6 +199,12 @@ Fresh install, with no other keys in the file:
       {
         "command": "retornatus hook stop --host cursor",
         "loop_limit": 1
+      }
+    ],
+    "sessionStart": [
+      {
+        "command": "retornatus hook session-start --host cursor",
+        "timeout": 30
       }
     ]
   }
@@ -155,6 +226,17 @@ Fresh install, with no other keys in the file:
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "retornatus hook session-start --host codex",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }
@@ -170,7 +252,7 @@ Cursor has no `stop_hook_active` field. The generated `stop` entry sets `loop_li
 
 ## Fail-open
 
-A policy hook that crashes should not freeze the session. Invalid stdin, an unknown `--host`, a raised exception, and a missing project all exit 0 with no block JSON. The diagnostic is a single stderr line that starts with `retornatus hook stop: fail-open`. The command timeout in the Claude and Codex files is 30 seconds (the host default is 600).
+A policy hook that crashes should not freeze the session. Invalid stdin, an unknown `--host`, a raised exception, and a missing project all exit 0 with no block JSON. The diagnostic is a single stderr line that starts with `retornatus hook stop: fail-open` or `retornatus hook session-start: fail-open`. The command timeout in the Claude and Codex files is 30 seconds (the host default is 600). Cursor's session-start entry uses the same 30 second timeout. `failClosed` stays at its default, false.
 
 ## Codex trust
 
@@ -182,13 +264,13 @@ Codex can also read inline `[hooks]` from `config.toml`. If one layer contains b
 
 Checked against the host docs on 2026-09-30:
 
-- [Claude Code hooks](https://code.claude.com/docs/en/hooks). Stop still lives in `.claude/settings.json`. Exit 2 still blocks, and so does exit 0 with `decision: "block"` and `reason`. This hook uses the JSON decision and exit 0. `hookSpecificOutput.additionalContext` can continue the turn as feedback instead of a block; this hook uses `decision`. An `if` filter does not run on Stop, so the generated entry has none. The 8-continuation cap is in addition to `stop_hook_active`. Stop input includes `last_assistant_message`; the hook prefers that field over `transcript_path` because the transcript file can lag the turn.
-- [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` answers with `followup_message`, not `decision`. Cloud agents run command hooks from that file, including `stop`, once the machine is writable. They do not run hooks during an early read-only turn, and they do not run `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
-- [Codex hooks](https://developers.openai.com/codex/hooks). The project file is `.codex/hooks.json`. Stop uses `decision: "block"` and `reason`, and it expects JSON on stdout when the process exits 0. Empty stdout allows the stop. Plain text on stdout is invalid for this event.
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks). Stop still lives in `.claude/settings.json`. Exit 2 still blocks, and so does exit 0 with `decision: "block"` and `reason`. The Stop hook uses the JSON decision and exit 0. `hookSpecificOutput.additionalContext` on Stop can continue the turn as feedback instead of a block; Stop uses `decision`. Session start uses `additionalContext` inside `hookSpecificOutput`, with `hookEventName` set to `SessionStart`. An `if` filter does not run on Stop, so the generated Stop entry has none. The 8-continuation cap is in addition to `stop_hook_active`. Stop input includes `last_assistant_message`; the hook prefers that field over `transcript_path` because the transcript file can lag the turn.
+- [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` answers with `followup_message`, not `decision`. `sessionStart` answers with `additional_context`. Cloud agents run command hooks from that file, including `stop`, once the machine is writable. They do not run hooks during an early read-only turn, and they defer `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
+- [Codex hooks](https://developers.openai.com/codex/hooks). The project file is `.codex/hooks.json`. Stop uses `decision: "block"` and `reason`, and it expects JSON on stdout when the process exits 0. Empty stdout allows the stop. Plain text on stdout is invalid for Stop. Session start accepts `hookSpecificOutput.additionalContext` and also treats plain stdout as developer context.
 
 ## Related
 
-- [CLI](CLI.md) for `hook stop` and `integrate --hooks`
+- [CLI](CLI.md) for `hook session-start`, `hook stop`, and `integrate --hooks`
 - [Gates](Gates.md) for what `SATISFIED` means
 - [JSON output](JSON-output.md) for the verdict the hook evaluates
 - [Cloud agents](Cloud-agents.md) for a clean VM

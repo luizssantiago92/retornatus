@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0026/E-002",
+  "type": "test_result",
+  "subject": "src/retornatus/cli/hook.py",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"src/retornatus/cli/hook.py\").read_text(); assert \"session-start\" in t and \"claude\" in t and \"cursor\" in t and \"codex\" in t; print(\"hook cli ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:04:58.498037Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"src/retornatus/cli/hook.py\").read_text(); assert \"session-start\" in t and \"claude\" in t and \"cursor\" in t and \"codex\" in t; print(\"hook cli ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:04:58.473456Z",
+  "ended_at": "2026-09-30T23:04:58.495599Z",
+  "duration_ms": 22,
+  "output_sha256": "3d5ecb6c0c63191cef66dccb63abb330d2824d3cf3db8cdccf755cf8f338ee46",
+  "output_tail": "hook cli ok\n",
+  "output_artifact": ".retornatus/changes/C-0026/evidence/E-002.output.txt",
+  "git_commit": "306a36191d6a6e86c0cb33513fb5782fec7cdc58",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0026/claim-done-2",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0026",
+  "version": 1,
+  "what": "Add retornatus hook session-start for Claude, Cursor, and Codex, install it with integrate --hooks beside the Stop hook, honor [hooks] session_context, and document the injected context.",
+  "constraints": [],
+  "done_criteria": [
+    "tests/test_agent_hooks.py exits 0",
+    "src/retornatus/cli/hook.py contains session-start for claude, cursor, and codex",
+    "The file /guide/Agent-hooks.md contains SessionStart, additionalContext, additional_context, and session_context",
+    "The file /CLI.md contains hook session-start",
+    "The file /guide/README.md contains session-start",
+    "The file /README.md contains session-start",
+    "The file /CHANGELOG.md contains an Unreleased session-start entry",
+    "The file /Cloud-agents.md contains sessionStart",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T22:50:57.114505Z"
+}

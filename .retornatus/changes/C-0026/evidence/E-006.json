@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0026/E-006",
+  "type": "repository_observation",
+  "subject": "./README.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"README.md\").read_text(); assert \"session-start\" in t; print(\"readme ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:04:59.692446Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"README.md\").read_text(); assert \"session-start\" in t; print(\"readme ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:04:59.668394Z",
+  "ended_at": "2026-09-30T23:04:59.690306Z",
+  "duration_ms": 21,
+  "output_sha256": "28a1352d445eb7e74d2aaf3f5295ad2f59f8ff0b05bfba91b9cb7b51da2f38b6",
+  "output_tail": "readme ok\n",
+  "output_artifact": ".retornatus/changes/C-0026/evidence/E-006.output.txt",
+  "git_commit": "306a36191d6a6e86c0cb33513fb5782fec7cdc58",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0026/claim-done-6",
+      "note": null
+    }
+  ]
+}

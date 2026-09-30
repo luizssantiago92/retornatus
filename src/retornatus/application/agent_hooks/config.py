@@ -1,7 +1,8 @@
-"""Write and remove project Stop-hook config for Claude, Cursor, and Codex.
+"""Write and remove project agent-hook config for Claude, Cursor, and Codex.
 
-Entries are identified by the command ``retornatus hook stop --host <name>``.
-A second install updates that entry. User hooks and unrelated keys stay.
+Stop entries are identified by ``retornatus hook stop --host <name>``.
+Session-start entries use ``retornatus hook session-start --host <name>``.
+A second install updates those entries. User hooks and unrelated keys stay.
 """
 
 from __future__ import annotations
@@ -26,6 +27,11 @@ _RELATIVE: dict[str, Path] = {
 def stop_command(host: str) -> str:
     """Shell command the host runs at turn end."""
     return f"retornatus hook stop --host {host}"
+
+
+def session_start_command(host: str) -> str:
+    """Shell command the host runs when a session starts."""
+    return f"retornatus hook session-start --host {host}"
 
 
 def parse_hosts(raw: list[str] | None) -> tuple[str, ...]:
@@ -60,21 +66,33 @@ def is_retornatus_stop_command(command: object, host: str) -> bool:
 
     A prefix such as ``uv run`` still matches. A different host does not.
     """
+    return _command_has(command, ["retornatus", "hook", "stop", "--host", host])
+
+
+def is_retornatus_session_command(command: object, host: str) -> bool:
+    """True when ``command`` invokes this host's session-start hook."""
+    return _command_has(command, ["retornatus", "hook", "session-start", "--host", host])
+
+
+def _command_has(command: object, needle: list[str]) -> bool:
     if not isinstance(command, str):
         return False
     parts = command.split()
-    needle = ["retornatus", "hook", "stop", "--host", host]
     width = len(needle)
     return any(parts[index : index + width] == needle for index in range(len(parts) - width + 1))
 
 
 def agent_hook_status(root: Path) -> dict[str, str]:
-    """``installed``, ``absent``, or ``unreadable`` for each host."""
+    """Stop and session-start state for each host.
+
+    ``absent`` means neither Retornatus hook is present. ``unreadable`` means
+    the file is not a JSON object. Otherwise the value names each hook.
+    """
     return {host: _status_one(root, host) for host in HOSTS}
 
 
 def install_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
-    """Merge Retornatus Stop hooks into the selected host files."""
+    """Merge Retornatus Stop and session-start hooks into the selected files."""
     states: dict[str, str] = {}
     for host in hosts:
         _install_one(root, host)
@@ -83,7 +101,7 @@ def install_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
 
 
 def remove_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
-    """Drop Retornatus Stop hooks. Other hooks and keys stay."""
+    """Drop Retornatus Stop and session-start hooks. Other hooks and keys stay."""
     return {host: _remove_one(root, host) for host in hosts}
 
 
@@ -95,13 +113,49 @@ def _status_one(root: Path, host: str) -> str:
         data = _read_json_object(path)
     except UsageError:
         return "unreadable"
-    return "installed" if _contains(data, host) else "absent"
+    stop = _contains(data, host, kind="stop")
+    session = _contains(data, host, kind="session")
+    if not stop and not session:
+        return "absent"
+    stop_state = "installed" if stop else "absent"
+    session_state = "installed" if session else "absent"
+    return f"stop={stop_state} session-start={session_state}"
 
 
 def _install_one(root: Path, host: str) -> None:
     path = hook_config_path(root, host)
     data = _read_json_object(path) if path.is_file() else {}
-    updated = _upsert_cursor(data) if host == "cursor" else _upsert_grouped(data, host)
+    if host == "cursor":
+        updated = _upsert_cursor_list(
+            data,
+            "stop",
+            {"command": stop_command("cursor"), "loop_limit": CURSOR_LOOP_LIMIT},
+            is_retornatus_stop_command,
+        )
+        updated = _upsert_cursor_list(
+            updated,
+            "sessionStart",
+            {
+                "command": session_start_command("cursor"),
+                "timeout": COMMAND_TIMEOUT_SECONDS,
+            },
+            is_retornatus_session_command,
+        )
+    else:
+        updated = _upsert_grouped(
+            data,
+            host,
+            "Stop",
+            _grouped_handler(host, kind="stop"),
+            is_retornatus_stop_command,
+        )
+        updated = _upsert_grouped(
+            updated,
+            host,
+            "SessionStart",
+            _grouped_handler(host, kind="session"),
+            is_retornatus_session_command,
+        )
     _write_json(path, updated)
 
 
@@ -111,7 +165,13 @@ def _remove_one(root: Path, host: str) -> str:
         return "absent"
     data = _read_json_object(path)
     before = json.dumps(data, sort_keys=True)
-    updated = _strip_cursor(data) if host == "cursor" else _strip_grouped(data, host)
+    if host == "cursor":
+        updated = _strip_cursor_list(data, "stop", is_retornatus_stop_command)
+        updated = _strip_cursor_list(updated, "sessionStart", is_retornatus_session_command)
+        updated = _drop_cursor_scaffold(updated)
+    else:
+        updated = _strip_grouped(data, host, "Stop", is_retornatus_stop_command)
+        updated = _strip_grouped(updated, host, "SessionStart", is_retornatus_session_command)
     if json.dumps(updated, sort_keys=True) == before:
         return "absent"
     if updated:
@@ -121,19 +181,21 @@ def _remove_one(root: Path, host: str) -> str:
     return "removed"
 
 
-def _contains(data: dict[str, Any], host: str) -> bool:
+def _contains(data: dict[str, Any], host: str, *, kind: str) -> bool:
     hooks = data.get("hooks")
     if not isinstance(hooks, dict):
         return False
+    predicate = is_retornatus_stop_command if kind == "stop" else is_retornatus_session_command
     if host == "cursor":
-        stop = hooks.get("stop")
-        if not isinstance(stop, list):
+        key = "stop" if kind == "stop" else "sessionStart"
+        entries = hooks.get(key)
+        if not isinstance(entries, list):
             return False
         return any(
-            isinstance(item, dict) and is_retornatus_stop_command(item.get("command"), host)
-            for item in stop
+            isinstance(item, dict) and predicate(item.get("command"), host) for item in entries
         )
-    groups = hooks.get("Stop")
+    key = "Stop" if kind == "stop" else "SessionStart"
+    groups = hooks.get(key)
     if not isinstance(groups, list):
         return False
     for group in groups:
@@ -142,31 +204,35 @@ def _contains(data: dict[str, Any], host: str) -> bool:
         inner = group.get("hooks")
         if not isinstance(inner, list):
             continue
-        if any(
-            isinstance(item, dict) and is_retornatus_stop_command(item.get("command"), host)
-            for item in inner
-        ):
+        if any(isinstance(item, dict) and predicate(item.get("command"), host) for item in inner):
             return True
     return False
 
 
-def _handler(host: str) -> dict[str, Any]:
+def _grouped_handler(host: str, *, kind: str) -> dict[str, Any]:
+    command = stop_command(host) if kind == "stop" else session_start_command(host)
     return {
         "type": "command",
-        "command": stop_command(host),
+        "command": command,
         "timeout": COMMAND_TIMEOUT_SECONDS,
     }
 
 
-def _upsert_grouped(data: dict[str, Any], host: str) -> dict[str, Any]:
-    hooks = _object_key(data, "hooks", label=hook_config_path(Path(), host).name)
-    groups = hooks.get("Stop")
+def _upsert_grouped(
+    data: dict[str, Any],
+    host: str,
+    event: str,
+    handler: dict[str, Any],
+    predicate: Any,
+) -> dict[str, Any]:
+    label = hook_config_path(Path(), host).name
+    hooks = _object_key(data, "hooks", label=label)
+    groups = hooks.get(event)
     if groups is None:
         groups = []
-        hooks["Stop"] = groups
+        hooks[event] = groups
     if not isinstance(groups, list):
-        raise UsageError(f"{hook_config_path(Path(), host).name} hooks.Stop must be a list")
-    handler = _handler(host)
+        raise UsageError(f"{label} hooks.{event} must be a list")
     updated = False
     rewritten: list[Any] = []
     for group in groups:
@@ -176,7 +242,7 @@ def _upsert_grouped(data: dict[str, Any], host: str) -> dict[str, Any]:
         inner = group["hooks"]
         kept: list[Any] = []
         for item in inner:
-            if isinstance(item, dict) and is_retornatus_stop_command(item.get("command"), host):
+            if isinstance(item, dict) and predicate(item.get("command"), host):
                 if not updated:
                     kept.append(handler)
                     updated = True
@@ -187,15 +253,20 @@ def _upsert_grouped(data: dict[str, Any], host: str) -> dict[str, Any]:
         rewritten.append(cloned)
     if not updated:
         rewritten.append({"hooks": [handler]})
-    hooks["Stop"] = rewritten
+    hooks[event] = rewritten
     return data
 
 
-def _strip_grouped(data: dict[str, Any], host: str) -> dict[str, Any]:
+def _strip_grouped(
+    data: dict[str, Any],
+    host: str,
+    event: str,
+    predicate: Any,
+) -> dict[str, Any]:
     hooks = data.get("hooks")
     if not isinstance(hooks, dict):
         return data
-    groups = hooks.get("Stop")
+    groups = hooks.get(event)
     if not isinstance(groups, list):
         return data
     rewritten: list[Any] = []
@@ -208,9 +279,7 @@ def _strip_grouped(data: dict[str, Any], host: str) -> dict[str, Any]:
         kept = [
             item
             for item in inner
-            if not (
-                isinstance(item, dict) and is_retornatus_stop_command(item.get("command"), host)
-            )
+            if not (isinstance(item, dict) and predicate(item.get("command"), host))
         ]
         if len(kept) != len(inner):
             changed = True
@@ -222,29 +291,33 @@ def _strip_grouped(data: dict[str, Any], host: str) -> dict[str, Any]:
     if not changed:
         return data
     if rewritten:
-        hooks["Stop"] = rewritten
+        hooks[event] = rewritten
     else:
-        hooks.pop("Stop", None)
+        hooks.pop(event, None)
     if not hooks:
         data.pop("hooks", None)
     return data
 
 
-def _upsert_cursor(data: dict[str, Any]) -> dict[str, Any]:
+def _upsert_cursor_list(
+    data: dict[str, Any],
+    event: str,
+    handler: dict[str, Any],
+    predicate: Any,
+) -> dict[str, Any]:
     if "version" not in data:
         data = {"version": 1, **data}
     hooks = _object_key(data, "hooks", label="hooks.json")
-    stop = hooks.get("stop")
-    if stop is None:
-        stop = []
-        hooks["stop"] = stop
-    if not isinstance(stop, list):
-        raise UsageError("hooks.json hooks.stop must be a list")
-    handler = {"command": stop_command("cursor"), "loop_limit": CURSOR_LOOP_LIMIT}
+    entries = hooks.get(event)
+    if entries is None:
+        entries = []
+        hooks[event] = entries
+    if not isinstance(entries, list):
+        raise UsageError(f"hooks.json hooks.{event} must be a list")
     updated = False
     rewritten: list[Any] = []
-    for item in stop:
-        if isinstance(item, dict) and is_retornatus_stop_command(item.get("command"), "cursor"):
+    for item in entries:
+        if isinstance(item, dict) and predicate(item.get("command"), "cursor"):
             if not updated:
                 rewritten.append(handler)
                 updated = True
@@ -252,32 +325,39 @@ def _upsert_cursor(data: dict[str, Any]) -> dict[str, Any]:
         rewritten.append(item)
     if not updated:
         rewritten.append(handler)
-    hooks["stop"] = rewritten
+    hooks[event] = rewritten
     return data
 
 
-def _strip_cursor(data: dict[str, Any]) -> dict[str, Any]:
+def _strip_cursor_list(
+    data: dict[str, Any],
+    event: str,
+    predicate: Any,
+) -> dict[str, Any]:
     hooks = data.get("hooks")
     if not isinstance(hooks, dict):
         return data
-    stop = hooks.get("stop")
-    if not isinstance(stop, list):
+    entries = hooks.get(event)
+    if not isinstance(entries, list):
         return data
     kept = [
         item
-        for item in stop
-        if not (isinstance(item, dict) and is_retornatus_stop_command(item.get("command"), "cursor"))
+        for item in entries
+        if not (isinstance(item, dict) and predicate(item.get("command"), "cursor"))
     ]
-    if len(kept) == len(stop):
+    if len(kept) == len(entries):
         return data
     if kept:
-        hooks["stop"] = kept
+        hooks[event] = kept
     else:
-        hooks.pop("stop", None)
+        hooks.pop(event, None)
     if not hooks:
         data.pop("hooks", None)
-    # A file that is only the version scaffold we add on a fresh install
-    # goes away with the hook. A different version, or any other key, stays.
+    return data
+
+
+def _drop_cursor_scaffold(data: dict[str, Any]) -> dict[str, Any]:
+    """Drop the version-only file a fresh install would leave behind."""
     if list(data) == ["version"] and data.get("version") == 1:
         return {}
     return data
