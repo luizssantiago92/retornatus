@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/E-005",
+  "type": "security_test",
+  "subject": ".github/workflows/ci.yml",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\".github/workflows/ci.yml\").read_text()\nstart = text.index(\"  lowest-direct:\")\njob = text[start:]\nassert \"--resolution lowest-direct\" in job\nassert \"runs-on: ubuntu-latest\" in job\nassert \"python-version: \\\"3.11\\\"\" in job\nassert \"uv run pytest -q\" in job\nassert \"astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0\" in job\nassert \"permissions:\\n  contents: read\\n\" in text\nprint(\"lowest-direct ci job ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T01:08:38.050413Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\".github/workflows/ci.yml\").read_text()\nstart = text.index(\"  lowest-direct:\")\njob = text[start:]\nassert \"--resolution lowest-direct\" in job\nassert \"runs-on: ubuntu-latest\" in job\nassert \"python-version: \\\"3.11\\\"\" in job\nassert \"uv run pytest -q\" in job\nassert \"astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0\" in job\nassert \"permissions:\\n  contents: read\\n\" in text\nprint(\"lowest-direct ci job ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T01:08:38.016774Z",
+  "ended_at": "2026-09-30T01:08:38.044216Z",
+  "duration_ms": 27,
+  "output_sha256": "b0009755a6c4cea82c196d17c5ed35d98de1ce1d416a87572ff722514c93cc90",
+  "output_tail": "lowest-direct ci job ok\n",
+  "output_artifact": ".retornatus/changes/C-0008/evidence/E-005.output.txt",
+  "git_commit": "90ff3b4dbf931198e33d22375909d616076b5fa1",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0008/claim-done-5",
+      "note": null
+    }
+  ]
+}

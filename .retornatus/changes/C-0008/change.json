@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0008",
+  "title": "Patch 1.4.1 dependency floors",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Published retornatus 1.4.0 fails to import on a CLI that already has Typer older than 0.27.2. Scope is the runtime dependency floors, a lowest-direct CI job, a CLI version smoke test, and the 1.4.1 version bump. Out of scope is merging the pull request, creating a git tag, and publishing to PyPI.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T01:03:46.789076Z"
+}

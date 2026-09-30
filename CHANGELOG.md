@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-09-30
+
+### Fixed
+
+- Runtime dependency floors now match imports that 1.4.0 already used. `typer>=0.27.2` covers `typer.exceptions` (absent before 0.27.2). `pydantic>=2.1` covers `StringConstraints` (absent in 2.0). `cryptography>=42` and `tomli-w>=1.0` stay, because a lowest-direct resolution on Python 3.11 still passes the suite. A `pip` install into an environment that already had Typer 0.12–0.27.1 no longer produces `ModuleNotFoundError: No module named 'typer.exceptions'`.
+- CI job `Lowest direct dependencies` installs with `uv sync --resolution lowest-direct --group dev` on ubuntu-latest and Python 3.11, then runs pytest.
+- A CLI smoke test imports `retornatus.cli.main` and checks that `retornatus --version` prints `__version__`.
+
 ## [1.4.0] - 2026-09-29
 
 Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19, #28, #29, and the release-hardening follow-up.

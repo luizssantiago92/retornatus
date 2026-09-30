@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/E-004",
+  "type": "repository_observation",
+  "subject": "docs/guide/Cloud-agents.md",
+  "source": "uv run python -c 'from pathlib import Path\nfor path in (\"templates/ci/retornatus-pr.yml\", \"README.md\", \"docs/guide/Cloud-agents.md\"):\n    text = Path(path).read_text()\n    assert \"retornatus==1.4.1\" in text, path\n    assert \"retornatus==1.4.0\" not in text, path\nassert \"# 1.4.1\" in Path(\"docs/guide/Quick-start.md\").read_text()\nassert \"Retornatus 1.4.1\" in Path(\"docs/guide/README.md\").read_text()\ntpl = Path(\"templates/ci/retornatus-pr.yml\").read_text()\nassert \"Pin: release 1.4.1\" in tpl\nprint(\"pins and docs 1.4.1 ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T01:08:37.828606Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\nfor path in (\"templates/ci/retornatus-pr.yml\", \"README.md\", \"docs/guide/Cloud-agents.md\"):\n    text = Path(path).read_text()\n    assert \"retornatus==1.4.1\" in text, path\n    assert \"retornatus==1.4.0\" not in text, path\nassert \"# 1.4.1\" in Path(\"docs/guide/Quick-start.md\").read_text()\nassert \"Retornatus 1.4.1\" in Path(\"docs/guide/README.md\").read_text()\ntpl = Path(\"templates/ci/retornatus-pr.yml\").read_text()\nassert \"Pin: release 1.4.1\" in tpl\nprint(\"pins and docs 1.4.1 ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T01:08:37.797815Z",
+  "ended_at": "2026-09-30T01:08:37.824505Z",
+  "duration_ms": 26,
+  "output_sha256": "108c006272c9898779166380b5aa4dac6717eb932570fada577223aea1f81280",
+  "output_tail": "pins and docs 1.4.1 ok\n",
+  "output_artifact": ".retornatus/changes/C-0008/evidence/E-004.output.txt",
+  "git_commit": "90ff3b4dbf931198e33d22375909d616076b5fa1",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0008/claim-done-4",
+      "note": null
+    }
+  ]
+}

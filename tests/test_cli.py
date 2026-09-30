@@ -25,6 +25,18 @@ def test_version() -> None:
     assert "retornatus" in result.stdout
 
 
+def test_cli_import_prints_package_version() -> None:
+    """Importing the CLI must succeed and --version must print __version__."""
+    import retornatus.cli.main as cli_main
+    from retornatus import __version__
+
+    assert cli_main.app is app
+    result = runner.invoke(cli_main.app, ["--version"])
+    assert result.exit_code == 0
+    assert __version__ in result.stdout
+    assert result.stdout.strip() == f"retornatus {__version__}"
+
+
 def test_init_command(tmp_path: Path) -> None:
     result = runner.invoke(app, ["init", str(tmp_path)])
     assert result.exit_code == 0

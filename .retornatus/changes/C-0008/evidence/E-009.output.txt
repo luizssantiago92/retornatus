@@ -1,0 +1,10 @@
+# Active contract gate scan
+
+C-0001: PASS - Contract OK
+C-0002: PASS - WARN: DONE criterion has no observable outcome: A fresh clone verifies with only the committed public key
+C-0003: PASS - WARN: DONE criterion has no observable outcome: The guide states the private signing key stays off the agent VM and cloud agents leave receipts unsigned; WARN: DONE criterion has no observable outcome: docs/guide/README.md, docs/guide/index.html, the HTML build page list, README.md, and CHANGELOG Unreleased reference the new page
+C-0004: PASS - Contract OK
+C-0005: PASS - Contract OK
+C-0006: PASS - Contract OK
+C-0007: PASS - Contract OK
+C-0008: PASS - Contract OK

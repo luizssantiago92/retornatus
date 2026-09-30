@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/E-003",
+  "type": "test_result",
+  "subject": "CHANGELOG.md contains the heading ## [1.4.1] - 2026-09-30 and keeps an empty Unr",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\"CHANGELOG.md\").read_text()\n_, _, rest = text.partition(\"## [Unreleased]\")\nassert rest\nbody, sep, _tail = rest.partition(\"## [1.4.1] - 2026-09-30\")\nassert sep, \"missing 1.4.1 section\"\nassert not body.strip(), repr(body)\nassert \"### Fixed\" in text.split(\"## [1.4.0]\", 1)[0]\nassert \"typer>=0.27.2\" in text\nassert \"lowest-direct\" in text\nassert \"__version__\" in text\nprint(\"changelog 1.4.1 ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T01:08:37.609147Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\"CHANGELOG.md\").read_text()\n_, _, rest = text.partition(\"## [Unreleased]\")\nassert rest\nbody, sep, _tail = rest.partition(\"## [1.4.1] - 2026-09-30\")\nassert sep, \"missing 1.4.1 section\"\nassert not body.strip(), repr(body)\nassert \"### Fixed\" in text.split(\"## [1.4.0]\", 1)[0]\nassert \"typer>=0.27.2\" in text\nassert \"lowest-direct\" in text\nassert \"__version__\" in text\nprint(\"changelog 1.4.1 ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T01:08:37.576772Z",
+  "ended_at": "2026-09-30T01:08:37.604883Z",
+  "duration_ms": 28,
+  "output_sha256": "b8887266abd7a4248d69e7eaa8f60360c321e7eed488720886e46f1637792b6c",
+  "output_tail": "changelog 1.4.1 ok\n",
+  "output_artifact": ".retornatus/changes/C-0008/evidence/E-003.output.txt",
+  "git_commit": "90ff3b4dbf931198e33d22375909d616076b5fa1",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0008/claim-done-3",
+      "note": null
+    }
+  ]
+}

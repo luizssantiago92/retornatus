@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/E-007",
+  "type": "test_result",
+  "subject": "tests/test_cli.py",
+  "source": "uv run pytest -q tests/test_cli.py::test_cli_import_prints_package_version --no-cov",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T01:08:53.541810Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_cli.py::test_cli_import_prints_package_version",
+    "--no-cov"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T01:08:53.235255Z",
+  "ended_at": "2026-09-30T01:08:53.536302Z",
+  "duration_ms": 301,
+  "output_sha256": "09229b326b028651d725fa47cd1bae9fd8e0145ff8779bdb84ae2762c00ab737",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.14s\n",
+  "output_artifact": ".retornatus/changes/C-0008/evidence/E-007.output.txt",
+  "git_commit": "90ff3b4dbf931198e33d22375909d616076b5fa1",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0008/claim-done-7",
+      "note": null
+    }
+  ]
+}

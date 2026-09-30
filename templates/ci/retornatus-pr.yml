@@ -8,7 +8,7 @@
 #   - `.retornatus/` initialized in the repository
 #   - `retornatus` on PyPI at the pin below
 #
-# Pin: release 1.4.0. It includes `gate scope`, `gate suppressions`,
+# Pin: release 1.4.1. It includes `gate scope`, `gate suppressions`,
 # blocking `verify`, and `hooks install`.
 #
 # RETORNATUS_OMISSION:
@@ -48,7 +48,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Install Retornatus
-        run: uv tool install "retornatus==1.4.0"
+        run: uv tool install "retornatus==1.4.1"
 
       - name: Doctor (Process vs Brakes)
         run: |
