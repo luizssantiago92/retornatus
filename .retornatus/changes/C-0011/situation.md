@@ -149,3 +149,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 The approved artwork is a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros and an orange comet flame. Three source PNGs exist: a sharp 1280x720 plate for the README, a neon 1280x720 plate for the site hero, and an 830x830 crop for social and favicon use. The plates have a white background that must become transparency so the dark site atmosphere shows through. The current public file is docs/assets/retornatus-mascot.webp, referenced by README.md, docs/index.html, docs/guide/index.html, and scripts/build_docs_html.py. Change id C-0011 is the next free id: C-0009 is on main and C-0010 belongs to the in-flight JSON-output pull request.
+
+## Reopened Situation
+
+Enclosed near-white background inside the ouroboros was still opaque. Contract v2 requires that background to be transparent while the shirt stays opaque.

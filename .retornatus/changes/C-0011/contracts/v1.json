@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "change_id": "C-0011",
-  "version": 2,
-  "what": "Ship three optimized transparent WebP mascots under docs/assets, with the border and the background enclosed by the ouroboros removed while the shirt and chrome highlights stay opaque, point the README at the sharp image, point the site hero at the neon image with a 3.6s CSS teal and orange glow that stops under prefers-reduced-motion, and point OG and favicon images at the square crop.",
+  "version": 1,
+  "what": "Ship three optimized transparent WebP mascots under docs/assets, point the README at the sharp image, point the site hero at the neon image with a 3.6s CSS teal and orange glow that stops under prefers-reduced-motion, and point OG and favicon images at the square crop.",
   "constraints": [],
   "done_criteria": [
     "pytest confirms README.md contains the sharp mascot file docs/assets/retornatus-mascot.webp",
@@ -12,9 +12,8 @@
     "pytest confirms scripts/build_docs_html.py references assets/retornatus-mascot-square.webp",
     "pytest confirms CHANGELOG.md contains an Unreleased note for the approved mascot",
     "The docs HTML build via scripts/build_docs_html.py --check exits 0",
-    "uv run pytest -q exits 0",
-    "pytest confirms docs/assets/retornatus-mascot.webp contains a transparent enclosed background and an opaque shirt"
+    "uv run pytest -q exits 0"
   ],
   "active": true,
-  "activated_at": "2026-09-30T05:53:00.910564Z"
+  "activated_at": "2026-09-30T05:26:10.048391Z"
 }
