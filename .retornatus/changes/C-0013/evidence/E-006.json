@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0013/E-006",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased section records the GitHub Action",
+  "source": "uv run python -c 'from pathlib import Path; text = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\"); assert \"## [Unreleased]\" in text; assert \"GitHub Action\" in text'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T06:10:13.691322Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; text = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\"); assert \"## [Unreleased]\" in text; assert \"GitHub Action\" in text"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T06:10:13.658676Z",
+  "ended_at": "2026-09-30T06:10:13.684732Z",
+  "duration_ms": 26,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
+  "output_artifact": ".retornatus/changes/C-0013/evidence/E-006.output.txt",
+  "git_commit": "f319862b5ea1bbbeff90a65a6ebe5b22e1401d8a",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0013/claim-done-6",
+      "note": null
+    }
+  ]
+}
