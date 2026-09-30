@@ -102,4 +102,4 @@ src/retornatus/infrastructure/persistence/serializers.py          31     18    4
 TOTAL                                                           7476   5988    20%
 
 12 empty files skipped.
-1 passed in 1.50s
+1 passed in 1.38s

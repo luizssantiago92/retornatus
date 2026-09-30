@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "id": "C-0021/E-009",
+  "id": "C-0021/E-030",
   "type": "test_result",
   "subject": "uv run mypy exits 0",
   "source": "uv run mypy",
   "producer": "retornatus",
-  "observed_at": "2026-09-30T16:48:26.548514Z",
+  "observed_at": "2026-09-30T16:56:01.411368Z",
   "subject_state": null,
   "provenance": "executed",
   "command": [
@@ -14,13 +14,13 @@
     "mypy"
   ],
   "exit_code": 0,
-  "started_at": "2026-09-30T16:48:26.286408Z",
-  "ended_at": "2026-09-30T16:48:26.545598Z",
-  "duration_ms": 259,
+  "started_at": "2026-09-30T16:56:01.212926Z",
+  "ended_at": "2026-09-30T16:56:01.407247Z",
+  "duration_ms": 194,
   "output_sha256": "ff08737d2dbdc175d8d227bea7c88e0687bf85b2e035433b3ef511b998c4a56c",
   "output_tail": "Success: no issues found in 107 source files\n",
-  "output_artifact": ".retornatus/changes/C-0021/evidence/E-009.output.txt",
-  "git_commit": "de68f3111d7921eecaaa79739b645b98de54afa7",
+  "output_artifact": ".retornatus/changes/C-0021/evidence/E-030.output.txt",
+  "git_commit": "ce41c81398273d48cb3c9ddaed4cec44bbd0ce89",
   "worktree_dirty": false,
   "timed_out": false,
   "relations": [
