@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0015/E-007",
+  "type": "test_result",
+  "subject": "docs/assets/retornatus-mascot.webp",
+  "source": "uv run python -c 'from pathlib import Path\nroot = Path(\".\")\nassert not (root / \"docs/assets/retornatus-mascot.webp\").exists()\ntargets = [Path(\"README.md\"), Path(\"CHANGELOG.md\"), Path(\"pyproject.toml\")]\nmanifest = Path(\"MANIFEST.in\")\nif manifest.exists():\n    targets.append(manifest)\nfor folder in (Path(\"docs\"), Path(\"scripts\"), Path(\"tests\")):\n    targets.extend(p for p in folder.rglob(\"*\") if p.is_file())\ntargets.extend(Path(\".\").glob(\"*.html\"))\nhits = []\nfor path in targets:\n    if path.name == \"retornatus-mascot.webp\":\n        hits.append(str(path))\n        continue\n    if path.suffix.lower() in {\".webp\", \".png\", \".jpg\", \".jpeg\", \".gif\"}:\n        continue\n    try:\n        body = path.read_text(encoding=\"utf-8\")\n    except (UnicodeDecodeError, OSError):\n        continue\n    if \"retornatus-mascot.webp\" in body:\n        hits.append(str(path))\nassert hits == [], hits\nprint(\"old mascot absent\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:51:26.000779Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\nroot = Path(\".\")\nassert not (root / \"docs/assets/retornatus-mascot.webp\").exists()\ntargets = [Path(\"README.md\"), Path(\"CHANGELOG.md\"), Path(\"pyproject.toml\")]\nmanifest = Path(\"MANIFEST.in\")\nif manifest.exists():\n    targets.append(manifest)\nfor folder in (Path(\"docs\"), Path(\"scripts\"), Path(\"tests\")):\n    targets.extend(p for p in folder.rglob(\"*\") if p.is_file())\ntargets.extend(Path(\".\").glob(\"*.html\"))\nhits = []\nfor path in targets:\n    if path.name == \"retornatus-mascot.webp\":\n        hits.append(str(path))\n        continue\n    if path.suffix.lower() in {\".webp\", \".png\", \".jpg\", \".jpeg\", \".gif\"}:\n        continue\n    try:\n        body = path.read_text(encoding=\"utf-8\")\n    except (UnicodeDecodeError, OSError):\n        continue\n    if \"retornatus-mascot.webp\" in body:\n        hits.append(str(path))\nassert hits == [], hits\nprint(\"old mascot absent\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:51:25.961793Z",
+  "ended_at": "2026-09-30T13:51:25.995313Z",
+  "duration_ms": 33,
+  "output_sha256": "2ccee9ce35d2947ca81a8abe9d1286ccfb5e781d0517c393979d2eceb8dd435e",
+  "output_tail": "old mascot absent\n",
+  "output_artifact": ".retornatus/changes/C-0015/evidence/E-007.output.txt",
+  "git_commit": "496450368d13c8edaa2050ffd6c52ae55cc3d88c",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0015/claim-done-7",
+      "note": null
+    }
+  ]
+}
