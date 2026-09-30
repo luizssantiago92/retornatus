@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PRESETS = ("python", "python-platform", "fastapi", "django", "rag")
+PRESETS = ("python", "python-platform", "fastapi", "django", "rag", "worker")
 # Bytes of the two mascot WebPs that remain after the neon cutout was removed.
 _ASSET_BUDGET = 49_268 + 63_046
 

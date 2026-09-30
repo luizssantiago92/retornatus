@@ -266,11 +266,6 @@ nav a:focus-visible,
   background: rgba(13, 18, 25, 0.55);
 }
 
-.preset-card:nth-child(4),
-.preset-card:nth-child(5) {
-  grid-column: span 3;
-}
-
 .preset-card h3 {
   margin: 0 0 0.4rem;
   font-family: var(--font-mono);
@@ -576,9 +571,7 @@ body.doc-page main {
     grid-template-columns: 1fr;
   }
 
-  .preset-card,
-  .preset-card:nth-child(4),
-  .preset-card:nth-child(5) {
+  .preset-card {
     grid-column: auto;
   }
 

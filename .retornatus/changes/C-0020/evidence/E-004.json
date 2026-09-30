@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-004",
+  "type": "test_result",
+  "subject": "The HTML documentation check exits 0",
+  "source": "uv run python scripts/build_docs_html.py --check",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:15.864912Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "scripts/build_docs_html.py",
+    "--check"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:15.794041Z",
+  "ended_at": "2026-09-30T16:24:15.862950Z",
+  "duration_ms": 68,
+  "output_sha256": "09dd9f352358f2b0dbf554a42d5e63dcae9246e5750b6627a93f28ad6157ba1e",
+  "output_tail": "ok guide/overview.html\nok guide/quick-start.html\nok guide/how-it-works.html\nok guide/concepts.html\nok guide/glossary.html\nok guide/faq.html\nok guide/skills.html\nok guide/memory.html\nok guide/governance.html\nok guide/git-governance.html\nok guide/cloud-agents.html\nok guide/gates.html\nok guide/json-output.html\nok guide/github-action.html\nok guide/cli.html\nok guide/presets.html\nok guide/architecture.html\nok guide/environments.html\nok guide/non-goals.html\nok guide/from-spec-guardrails.html\nok guide/landscape.html\nok guide/tutorials/index.html\nok guide/tutorials/01-first-change.html\nok guide/tutorials/02-brownfield-wake.html\nok credits.html\nDocs sources render. Commit the markdown; Pages generates the HTML.\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-004.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-4",
+      "note": null
+    }
+  ]
+}

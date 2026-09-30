@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-008",
+  "type": "test_result",
+  "subject": "pytest confirms task paths require the retry note",
+  "source": "uv run pytest -q --no-cov tests/test_surfaces.py::test_worker_task_paths_require_retry_note",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:18.307644Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_surfaces.py::test_worker_task_paths_require_retry_note"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:17.695029Z",
+  "ended_at": "2026-09-30T16:24:18.305296Z",
+  "duration_ms": 610,
+  "output_sha256": "b6533422d1630740f5655134f45127452989eca69913155ff0cdf6331ecfe21d",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.37s\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-008.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-8",
+      "note": null
+    }
+  ]
+}

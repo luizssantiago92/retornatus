@@ -1,0 +1,69 @@
+name = "worker"
+summary = "Background job worker (Celery, RQ, Dramatiq, arq, scheduled jobs). Extends python-platform with task and queue globs. Task code is a ship surface that needs a rollback and retry note."
+extends = "python-platform"
+
+[governance.scope]
+code_globs = [
+  "tasks/**",
+  "workers/**",
+  "jobs/**",
+  "schedules/**",
+  "celery_app.py",
+  "celery.py",
+  "celeryconfig.py",
+  "worker.py",
+]
+
+[surfaces.ship]
+note_subject = "ship rollback and job retry"
+globs = [
+  "**/tasks/**",
+  "**/tasks.py",
+  "**/workers/**",
+  "**/worker.py",
+  "**/jobs/**",
+  "**/celery_app.py",
+  "**/celery.py",
+  "**/celeryconfig.py",
+  "**/beat*",
+  "**/schedules/**",
+  "**/queues.py",
+  "**/queues.toml",
+  "**/queues.y*ml",
+]
+
+[[surfaces.ship.checks]]
+name = "worker"
+suggested = true
+optional = true
+globs = [
+  "**/tasks/**",
+  "**/tasks.py",
+  "**/workers/**",
+  "**/worker.py",
+  "**/jobs/**",
+  "**/celery_app.py",
+  "**/celery.py",
+  "**/celeryconfig.py",
+  "**/beat*",
+  "**/schedules/**",
+  "**/queues.py",
+  "**/queues.toml",
+  "**/queues.y*ml",
+]
+run = ["uv", "run", "celery", "-A", "app", "inspect", "ping"]
+
+[[suggestions]]
+name = "eager-tasks"
+note = "pytest with tasks run in-process (Celery task_always_eager, RQ is_async=False, or the Dramatiq StubBroker). This is the inherited pytest command, not an extra required check."
+run = ["uv", "run", "pytest", "-q"]
+
+[[suggestions]]
+name = "rq-burst"
+note = "RQ worker smoke test. Drains the queues once and exits. Needs a reachable Redis, and RQ may be absent. Not a required check."
+run = ["uv", "run", "rq", "worker", "--burst"]
+
+[[suggestions]]
+name = "arq-check"
+note = "arq health check for a running worker. The settings path is project-specific (app.worker.WorkerSettings here), and arq may be absent. Not a required check."
+run = ["uv", "run", "arq", "app.worker.WorkerSettings", "--check"]

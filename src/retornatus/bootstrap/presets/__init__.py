@@ -1,8 +1,8 @@
 """Packaged config presets shipped as TOML data files.
 
 Presets are not branches in ``init``. ``python-platform`` extends ``python``
-by naming that file. ``fastapi``, ``django``, and ``rag`` extend
-``python-platform`` the same way.
+by naming that file. ``fastapi``, ``django``, ``rag``, and ``worker``
+extend ``python-platform`` the same way.
 Child ``code_globs``, ``surfaces.ship.globs``, ``surfaces.ship.checks``,
 and ``surfaces.ai.globs`` are appended to the parent. A child ship check
 with the same name replaces that parent check. ``required_checks`` still

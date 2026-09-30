@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0020",
+  "version": 1,
+  "what": "The worker preset extends python-platform, renders a valid config, is listed by init --list-presets, and makes task paths trigger the ship surface with a retry note while non-task paths stay not required.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "ruff check of src tests and scripts exits 0",
+    "mypy exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "pytest confirms worker extends python-platform and python",
+    "init --list-presets prints worker",
+    "pytest confirms task paths require the retry note",
+    "pytest confirms non-task paths stay not required",
+    "pytest confirms README guide and site list six presets",
+    "CHANGELOG Unreleased records the worker preset"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T16:21:45.707265Z"
+}

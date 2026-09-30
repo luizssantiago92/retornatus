@@ -15,11 +15,13 @@ retornatus preset show python-platform
 retornatus preset show fastapi
 retornatus preset show django
 retornatus preset show rag
+retornatus preset show worker
 retornatus init --preset python
 retornatus init --preset python-platform
 retornatus init --preset fastapi
 retornatus init --preset django
 retornatus init --preset rag
+retornatus init --preset worker
 retornatus init --preset python-platform --force-config
 ```
 
@@ -253,6 +255,73 @@ These commands are **comments** in the generated config. They are not `[assuranc
 
 Spec Guardrails appendix D records the same pair in `design.md`: an offline eval harness (`pytest tests/eval/ -m "not live"`) and a fallback/degrade note. Retornatus keeps that pair as executed Evidence plus the `ai fallback` subject. It still does not call a live model.
 
+## worker
+
+For a background job service: Celery, RQ, Dramatiq, arq, or scheduled jobs (Celery beat, APScheduler, cron-style schedules). It **extends** `python-platform`, so the pytest, ruff, and mypy checks, the `src/**`, `app/**`, and `tests/**` code globs, and the ship and AI surfaces above are included. `src/**` already covers `src/<package>/`.
+
+Extra `[governance.scope] code_globs`:
+
+| Glob | Layout it names |
+| --- | --- |
+| `tasks/**` | A `tasks/` package at the repository root |
+| `workers/**` | Worker processes at the repository root |
+| `jobs/**` | Job modules at the repository root |
+| `schedules/**` | Schedule definitions at the repository root |
+| `celery_app.py`, `celery.py`, `celeryconfig.py` | The Celery app and its config at the repository root |
+| `worker.py` | An RQ, Dramatiq, or arq entry module at the repository root |
+
+Those globs describe roots. They do not change `gate scope`. Nested modules under `app/` or `src/` are already covered by the inherited globs.
+
+### Task code is a ship surface
+
+A job that runs twice, or a retry that fires after a deploy, is a production change even when no deploy file moved. The preset appends these ship globs:
+
+| Glob | What it matches |
+| --- | --- |
+| `**/tasks/**`, `**/tasks.py` | Celery, Dramatiq, or RQ task modules (`app/tasks.py`, `src/myapp/tasks/email.py`) |
+| `**/workers/**`, `**/worker.py` | Worker packages and entry modules (arq `WorkerSettings`, RQ or Dramatiq workers) |
+| `**/jobs/**` | Job modules |
+| `**/celery_app.py`, `**/celery.py`, `**/celeryconfig.py` | The Celery app, routing, and queue settings |
+| `**/beat*`, `**/schedules/**` | Periodic schedules (`beat_schedule.py`, `schedules/cron.yaml`) |
+| `**/queues.py`, `**/queues.toml`, `**/queues.y*ml` | Queue declarations and routing config |
+
+`tests/test_tasks.py` and `docs/jobs.md` do not match. A Task resource or a worktree path that matches makes the ship rule run.
+
+Retornatus has two surface kinds, ship and AI. There is no third kind for jobs. The preset reuses the ship surface and sets its note subject to `ship rollback and job retry`. For task code, the note has to say how the job retries (attempts, backoff, dead-letter queue) and why running it again is safe (an idempotency key, an upsert, or a check before the side effect). If the Change also touches a Dockerfile or a workflow, the same note covers the rollback. Placeholder text does not count, and a note with the plain `ship rollback` subject does not satisfy this preset.
+
+```bash
+retornatus evidence add -c C-0001 -t repository_observation \
+  -s "ship rollback and job retry" \
+  --source "Redeploy the previous tag. send_invoice retries 3 times with backoff and skips invoices already sent, so a re-run is safe." \
+  --producer owner
+```
+
+The packaged worker check is optional:
+
+```toml
+[[surfaces.ship.checks]]
+name = "worker"
+optional = true
+globs = ["**/tasks/**", "**/tasks.py", "**/workers/**", "**/worker.py", "**/jobs/**", "**/celery_app.py", "**/celery.py", "**/celeryconfig.py", "**/beat*", "**/schedules/**", "**/queues.py", "**/queues.toml", "**/queues.y*ml"]
+run = ["uv", "run", "celery", "-A", "app", "inspect", "ping"]
+```
+
+`optional = true` covers those paths so `verify` does not report `no ship check covers`. It does **not** require `celery inspect ping` to have been executed. The command needs a running broker and worker, the app path (`app` here) is yours, and Celery may be absent.
+
+Docker, Compose, Terraform, Helm, and workflow paths still require their executed checks. A `[[surfaces.ship.checks]]` table you write still replaces the whole packaged list, including this optional worker check, so copy every check you still want.
+
+### Suggested evidence
+
+These commands are **comments** in the generated config. They are not `[assurance] required_checks`. Celery, RQ, arq, a broker, and the import path may be absent, so `verify` does not demand them.
+
+| Suggestion | Command | Why it stays a comment |
+| --- | --- | --- |
+| Eager tasks | `uv run pytest -q` | Same argv as the inherited pytest check. Run tasks in-process with Celery `task_always_eager`, RQ `is_async=False`, or the Dramatiq `StubBroker` |
+| RQ burst | `uv run rq worker --burst` | Worker smoke test. Drains the queues once and exits. Needs a reachable Redis |
+| arq check | `uv run arq app.worker.WorkerSettings --check` | Health check for a running arq worker. The settings path is yours |
+
+`verify` checks that the note exists. It does not run the job twice, and it does not judge whether the retry policy is correct.
+
 ## Limitations
 
 | Limitation | What it means |
@@ -261,8 +330,8 @@ Spec Guardrails appendix D records the same pair in `design.md`: an offline eval
 | Not AppSec | Secrets, threat models, and authz review stay on `gate scope` sensitive paths and on `review_result` / `security_test` claims |
 | Eval quality is yours | `verify` checks that the configured command was executed and that a fallback note exists. It does not score the golden set |
 | No live traces | Production LLM telemetry is out of scope. The record is git plus Evidence |
-| Framework presets | `fastapi` extends `python-platform` for API layouts and Alembic. `django` extends it for Django layouts and migrations. `rag` extends it for retrieval, prompt, eval, and MCP layouts. Workers stay on `python` or `python-platform` |
-| Notes are declarations | The rollback and fallback subjects must be non-empty and specific. Retornatus does not judge whether the plan would work |
+| Framework presets | `fastapi` extends `python-platform` for API layouts and Alembic. `django` extends it for Django layouts and migrations. `rag` extends it for retrieval, prompt, eval, and MCP layouts. `worker` extends it for task, job, schedule, and queue layouts |
+| Notes are declarations | The rollback, retry, and fallback subjects must be non-empty and specific. Retornatus does not judge whether the plan would work or whether a job is really idempotent |
 
 ## What did not come over from Spec Guardrails
 

@@ -36,6 +36,7 @@ packages = ["src/retornatus"]
 "src/retornatus/bootstrap/presets/fastapi.toml" = "retornatus/bootstrap/presets/fastapi.toml"
 "src/retornatus/bootstrap/presets/django.toml" = "retornatus/bootstrap/presets/django.toml"
 "src/retornatus/bootstrap/presets/rag.toml" = "retornatus/bootstrap/presets/rag.toml"
+"src/retornatus/bootstrap/presets/worker.toml" = "retornatus/bootstrap/presets/worker.toml"
 
 [tool.hatch.build.targets.sdist]
 exclude = [

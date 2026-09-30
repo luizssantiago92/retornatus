@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-007",
+  "type": "test_result",
+  "subject": "init --list-presets prints worker",
+  "source": "uv run python -c 'import subprocess, sys\nproc = subprocess.run(['\"'\"'retornatus'\"'\"', '\"'\"'init'\"'\"', '\"'\"'--list-presets'\"'\"'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or '\"'\"'worker:'\"'\"' not in proc.stdout:\n    raise SystemExit(1)\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:17.423815Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import subprocess, sys\nproc = subprocess.run(['retornatus', 'init', '--list-presets'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or 'worker:' not in proc.stdout:\n    raise SystemExit(1)\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:17.124845Z",
+  "ended_at": "2026-09-30T16:24:17.421826Z",
+  "duration_ms": 296,
+  "output_sha256": "493275da2675e44506ef4d891e8936dbe2bd5cf848dea803288548b26853cb26",
+  "output_tail": "django: Django project. Extends python-platform with layout globs, suggested manage.py commands, and migrations as a ship surface.\nfastapi: FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface.\npython: uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/.\npython-platform: Python backend, DevOps, and AI engineering. Extends python.\nrag: RAG, LLM, and MCP service. Extends python-platform with retrieval layout globs and a stronger AI surface.\nworker: Background job worker (Celery, RQ, Dramatiq, arq, scheduled jobs). Extends python-platform with task and queue globs. Task code is a ship surface that needs a rollback and retry note.\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-007.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-7",
+      "note": null
+    }
+  ]
+}
