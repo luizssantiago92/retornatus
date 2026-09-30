@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0020/E-010",
+  "type": "test_result",
+  "subject": "pytest confirms README guide and site list six presets",
+  "source": "uv run pytest -q --no-cov tests/test_public_preset_docs.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T16:24:19.625373Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_public_preset_docs.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T16:24:19.413694Z",
+  "ended_at": "2026-09-30T16:24:19.622497Z",
+  "duration_ms": 208,
+  "output_sha256": "99cef98de12a8b8a90abbcb2033d076bfc563ea7951d4da90263da27288d16f6",
+  "output_tail": "....                                                                     [100%]\n4 passed in 0.02s\n",
+  "output_artifact": ".retornatus/changes/C-0020/evidence/E-010.output.txt",
+  "git_commit": "1aef25460ef90eaee428e8e7439dcc918aa493f8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0020/claim-done-10",
+      "note": null
+    }
+  ]
+}

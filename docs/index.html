@@ -139,11 +139,16 @@
           <h3>rag</h3>
           <p>Extends python-platform. Retrieval and prompt globs, with a stronger AI surface.</p>
         </article>
+        <article class="preset-card">
+          <h3>worker</h3>
+          <p>Extends python-platform. Task and queue globs. Task code counts as ship and needs a retry note.</p>
+        </article>
       </div>
       <pre class="code"><code>retornatus init --list-presets
 retornatus init --preset fastapi</code></pre>
       <p class="note">
         Ship means Docker, Compose, Terraform, Helm, or a workflow file.
+        With worker, task, schedule, and queue files count as ship too.
         AI means prompts, evals, MCP, or retrieval code.
         If those paths are not in the Change, the extra rule is not required.
         An existing config stays put unless you pass <code>--force-config</code>.
@@ -174,7 +179,7 @@ retornatus doctor</code></pre>
     <section class="band" id="news">
       <h2>What’s new</h2>
       <ul class="news">
-        <li><strong>Init presets</strong> — <code>python</code>, <code>python-platform</code>, <code>fastapi</code>, <code>django</code>, and <code>rag</code>. Ship and AI rules run only when those paths change, and they check that the command ran.</li>
+        <li><strong>Init presets</strong> — <code>python</code>, <code>python-platform</code>, <code>fastapi</code>, <code>django</code>, <code>rag</code>, and <code>worker</code>. Ship and AI rules run only when those paths change, and they check that the command ran.</li>
         <li><strong>Verify receipts</strong> — Ed25519 signature from <code>verify --receipt</code>; anyone can check it with the committed public key (<code>receipt verify</code>). The private key stays outside the repo.</li>
         <li><strong>Attempt budgets</strong> — cap Action retries with <code>action budget</code> / <code>gate budget</code>.</li>
         <li><strong>Prompt intake</strong> — stage a freeform ask; Skills only after you confirm <code>CREATE=yes</code>.</li>

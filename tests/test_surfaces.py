@@ -511,3 +511,99 @@ def test_rag_non_ai_paths_are_not_required(tmp_path: Path) -> None:
     assert _surface(document, "ai")["status"] == "not required"
     assert _surface(document, "ai")["matched_paths"] == []
     assert _surface(document, "ship")["status"] == "not required"
+
+
+_WORKER_SHIP_PATHS = (
+    "tasks/email.py",
+    "app/tasks.py",
+    "src/myapp/workers/billing.py",
+    "app/worker.py",
+    "jobs/nightly.py",
+    "celery_app.py",
+    "src/myapp/celery.py",
+    "celeryconfig.py",
+    "app/beat_schedule.py",
+    "schedules/cron.yaml",
+    "config/queues.yaml",
+)
+
+
+def test_worker_task_paths_require_retry_note(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="worker")
+    _change(tmp_path, *_WORKER_SHIP_PATHS)
+    _satisfy_claim(tmp_path)
+    failed, failed_doc = _verify(tmp_path)
+
+    assert failed.exit_code == 1
+    ship = _surface(failed_doc, "ship")
+    assert ship["status"] == "unsatisfied"
+    assert ship["matched_paths"] == list(_WORKER_SHIP_PATHS)
+    assert ship["required_checks"] == []
+    missing = " ".join(ship["missing"]) if isinstance(ship["missing"], list) else ""
+    assert "ship rollback and job retry" in missing
+    assert "inspect ping" not in missing
+    assert "no ship check covers" not in missing
+    assert _surface(failed_doc, "ai")["status"] == "not required"
+
+    EvidenceService(tmp_path).add(
+        change_id="C-0001",
+        evidence_type="repository_observation",
+        subject="ship rollback",
+        source="Redeploy the previous image tag.",
+        producer="owner",
+    )
+    still, still_doc = _verify(tmp_path)
+    assert still.exit_code == 1
+    assert _surface(still_doc, "ship")["status"] == "unsatisfied"
+
+    EvidenceService(tmp_path).add(
+        change_id="C-0001",
+        evidence_type="repository_observation",
+        subject="ship rollback and job retry",
+        source=(
+            "Redeploy the previous image tag. send_invoice retries three times with "
+            "backoff and checks the invoice id first, so a re-run does not send twice."
+        ),
+        producer="owner",
+    )
+    passed, passed_doc = _verify(tmp_path)
+    assert passed.exit_code == 0, _combined(passed)
+    assert passed_doc["verdict"] == "SATISFIED"
+    assert _surface(passed_doc, "ship")["status"] == "satisfied"
+    assert _surface(passed_doc, "ship")["missing"] == []
+
+
+def test_worker_non_task_paths_are_not_required(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="worker")
+    _change(
+        tmp_path,
+        "src/myapp/api.py",
+        "tests/test_tasks.py",
+        "docs/jobs.md",
+        "README.md",
+    )
+    _satisfy_claim(tmp_path)
+    result, document = _verify(tmp_path)
+
+    assert result.exit_code == 0, _combined(result)
+    assert document["verdict"] == "SATISFIED"
+    assert _surface(document, "ship")["status"] == "not required"
+    assert _surface(document, "ship")["matched_paths"] == []
+    assert _surface(document, "ai")["status"] == "not required"
+
+
+def test_worker_keeps_platform_docker_check(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="worker")
+    settings = load_surface_settings(tmp_path)
+    assert settings is not None
+    assert settings.ship_note_subject == "ship rollback and job retry"
+    rules = evaluate_surface_rules(
+        paths=["deploy/Dockerfile"],
+        evidence=[],
+        settings=settings,
+    )
+    ship = next(item for item in rules if item["name"] == "ship")
+    assert ship["matched_paths"] == ["deploy/Dockerfile"]
+    blob = " ".join(ship["missing"])
+    assert "docker build ." in blob
+    assert "ship rollback and job retry" in blob

@@ -122,12 +122,13 @@ Day to day you work in **agent chat**; the agent (following the hub skill) calls
 | `fastapi` | FastAPI service | Extends `python-platform`. API layout globs; Alembic paths count as ship |
 | `django` | Django project | Extends `python-platform`. Django layout globs; migration paths count as ship |
 | `rag` | RAG, LLM, or MCP service | Extends `python-platform`. Retrieval and prompt globs; a stronger AI surface |
+| `worker` | Background jobs and queues (Celery, RQ, Dramatiq, arq, scheduled jobs) | Extends `python-platform`. Task and queue globs; task code counts as ship and needs a retry note |
 
 ```bash
 retornatus init --preset fastapi
 ```
 
-**Ship** means deploy files: a Dockerfile, Compose, Terraform, Helm, or GitHub Actions workflows. When one of those paths is part of the Change, `verify` expects the matching command to have been executed, plus a short note on how you roll back. **AI** means prompts, evals, MCP, or retrieval code. When one of those paths is part of the Change, `verify` expects the eval command to have run, plus a note on what happens when the model is down. If those paths are not in the Change, the rule is not required.
+**Ship** means deploy files: a Dockerfile, Compose, Terraform, Helm, or GitHub Actions workflows. When one of those paths is part of the Change, `verify` expects the matching command to have been executed, plus a short note on how you roll back. With `worker`, task, job, schedule, and queue files count as ship too, and the note must also say how the job retries and why running it again is safe. **AI** means prompts, evals, MCP, or retrieval code. When one of those paths is part of the Change, `verify` expects the eval command to have run, plus a note on what happens when the model is down. If those paths are not in the Change, the rule is not required.
 
 These checks record that a command ran and exited 0. They do not review a Terraform plan, audit security, or score retrieval quality.
 
