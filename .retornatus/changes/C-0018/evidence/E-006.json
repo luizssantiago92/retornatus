@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0018/E-006",
+  "type": "test_result",
+  "subject": "pytest confirms rag extends python-platform and python",
+  "source": "uv run pytest -q --no-cov tests/test_presets.py::test_rag_extends_python_platform_and_python",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:26:47.257654Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_presets.py::test_rag_extends_python_platform_and_python"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:26:45.657919Z",
+  "ended_at": "2026-09-30T15:26:45.955666Z",
+  "duration_ms": 297,
+  "output_sha256": "e596cce97643441f2f2c7ef01ee068b6705ce1e028a07a32ba3bd3b3d35d7353",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.13s\n",
+  "output_artifact": ".retornatus/changes/C-0018/evidence/E-006.output.txt",
+  "git_commit": "002b870722ad4d4e3efbb3c43d9c22e9b878633e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0018/claim-done-6",
+      "note": null
+    }
+  ]
+}

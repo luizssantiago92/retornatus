@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0018/E-003",
+  "type": "test_result",
+  "subject": "mypy exits 0",
+  "source": "uv run mypy",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:26:47.252072Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "mypy"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:26:45.451385Z",
+  "ended_at": "2026-09-30T15:26:45.589025Z",
+  "duration_ms": 137,
+  "output_sha256": "ff08737d2dbdc175d8d227bea7c88e0687bf85b2e035433b3ef511b998c4a56c",
+  "output_tail": "Success: no issues found in 107 source files\n",
+  "output_artifact": ".retornatus/changes/C-0018/evidence/E-003.output.txt",
+  "git_commit": "002b870722ad4d4e3efbb3c43d9c22e9b878633e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0018/claim-done-3",
+      "note": null
+    }
+  ]
+}

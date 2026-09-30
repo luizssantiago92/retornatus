@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0018",
+  "version": 1,
+  "what": "The rag preset extends python-platform, renders a valid config, is listed by init --list-presets, and makes AI paths trigger the AI surface while non-AI paths stay not required.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0",
+    "ruff check of src tests and scripts exits 0",
+    "mypy exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "pytest confirms rag extends python-platform and python",
+    "init --list-presets prints rag",
+    "pytest confirms AI paths trigger the AI surface",
+    "pytest confirms non-AI paths stay not required",
+    "CHANGELOG Unreleased records the rag preset"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T15:20:39.547660Z"
+}
