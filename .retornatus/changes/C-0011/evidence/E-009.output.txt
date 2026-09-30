@@ -1,0 +1,4 @@
+docs/assets/retornatus-mascot.webp shirt 3182 biggest_outside 1617
+docs/assets/retornatus-mascot-neon.webp shirt 6077 biggest_outside 1665
+docs/assets/retornatus-mascot-square.webp shirt 1735 biggest_outside 1641
+enclosed background transparent

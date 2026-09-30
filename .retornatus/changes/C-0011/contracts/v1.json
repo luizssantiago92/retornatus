@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0011",
+  "version": 1,
+  "what": "Ship three optimized transparent WebP mascots under docs/assets, point the README at the sharp image, point the site hero at the neon image with a 3.6s CSS teal and orange glow that stops under prefers-reduced-motion, and point OG and favicon images at the square crop.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest confirms README.md contains the sharp mascot file docs/assets/retornatus-mascot.webp",
+    "pytest confirms docs/index.html contains the neon hero assets/retornatus-mascot-neon.webp",
+    "pytest confirms docs/index.html og:image and favicon point at assets/retornatus-mascot-square.webp",
+    "pytest confirms docs/site.css contains prefers-reduced-motion: reduce and animation-duration 3.6s",
+    "pytest confirms scripts/build_docs_html.py references assets/retornatus-mascot-square.webp",
+    "pytest confirms CHANGELOG.md contains an Unreleased note for the approved mascot",
+    "The docs HTML build via scripts/build_docs_html.py --check exits 0",
+    "uv run pytest -q exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T05:26:10.048391Z"
+}

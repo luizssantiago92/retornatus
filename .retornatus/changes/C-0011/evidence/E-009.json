@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-009",
+  "type": "test_result",
+  "subject": "docs/assets/retornatus-mascot.webp",
+  "source": "uv run --with pillow python -c 'from collections import deque\nfrom PIL import Image\n\ndef paper(r, g, b, a):\n    return a > 200 and min(r, g, b) >= 242 and max(r, g, b) - min(r, g, b) <= 16\n\ndef check(path):\n    im = Image.open(path).convert(\"RGBA\")\n    w, h = im.size\n    px = im.load()\n    cminx, cminy, cmaxx, cmaxy = w, h, 0, 0\n    for y in range(h):\n        for x in range(w):\n            r, g, b, a = px[x, y]\n            if a > 200 and not paper(r, g, b, a):\n                cminx = min(cminx, x)\n                cminy = min(cminy, y)\n                cmaxx = max(cmaxx, x)\n                cmaxy = max(cmaxy, y)\n    cw = cmaxx - cminx\n    ch = cmaxy - cminy\n    sx0 = cminx + 0.36 * cw\n    sx1 = cminx + 0.64 * cw\n    sy0 = cminy + 0.58 * ch\n    seen = bytearray(w * h)\n    shirt = 0\n    biggest = 0\n\n    def idx(x, y):\n        return y * w + x\n\n    def in_shirt(x, y):\n        return sx0 <= x <= sx1 and y >= sy0\n\n    for y in range(h):\n        for x in range(w):\n            r, g, b, a = px[x, y]\n            if paper(r, g, b, a) and in_shirt(x, y):\n                shirt += 1\n            i = idx(x, y)\n            if seen[i] or not paper(r, g, b, a) or in_shirt(x, y):\n                continue\n            q = deque([(x, y)])\n            seen[i] = 1\n            n = 0\n            while q:\n                cx, cy = q.popleft()\n                n += 1\n                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):\n                    if 0 <= nx < w and 0 <= ny < h and not seen[idx(nx, ny)]:\n                        rr, gg, bb, aa = px[nx, ny]\n                        if paper(rr, gg, bb, aa) and not in_shirt(nx, ny):\n                            seen[idx(nx, ny)] = 1\n                            q.append((nx, ny))\n            biggest = max(biggest, n)\n    print(path, \"shirt\", shirt, \"biggest_outside\", biggest)\n    assert shirt >= 800, path\n    assert biggest < 8000, path\n\nfor name in (\n    \"docs/assets/retornatus-mascot.webp\",\n    \"docs/assets/retornatus-mascot-neon.webp\",\n    \"docs/assets/retornatus-mascot-square.webp\",\n):\n    check(name)\nprint(\"enclosed background transparent\")\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:55:14.095641Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "--with",
+    "pillow",
+    "python",
+    "-c",
+    "from collections import deque\nfrom PIL import Image\n\ndef paper(r, g, b, a):\n    return a > 200 and min(r, g, b) >= 242 and max(r, g, b) - min(r, g, b) <= 16\n\ndef check(path):\n    im = Image.open(path).convert(\"RGBA\")\n    w, h = im.size\n    px = im.load()\n    cminx, cminy, cmaxx, cmaxy = w, h, 0, 0\n    for y in range(h):\n        for x in range(w):\n            r, g, b, a = px[x, y]\n            if a > 200 and not paper(r, g, b, a):\n                cminx = min(cminx, x)\n                cminy = min(cminy, y)\n                cmaxx = max(cmaxx, x)\n                cmaxy = max(cmaxy, y)\n    cw = cmaxx - cminx\n    ch = cmaxy - cminy\n    sx0 = cminx + 0.36 * cw\n    sx1 = cminx + 0.64 * cw\n    sy0 = cminy + 0.58 * ch\n    seen = bytearray(w * h)\n    shirt = 0\n    biggest = 0\n\n    def idx(x, y):\n        return y * w + x\n\n    def in_shirt(x, y):\n        return sx0 <= x <= sx1 and y >= sy0\n\n    for y in range(h):\n        for x in range(w):\n            r, g, b, a = px[x, y]\n            if paper(r, g, b, a) and in_shirt(x, y):\n                shirt += 1\n            i = idx(x, y)\n            if seen[i] or not paper(r, g, b, a) or in_shirt(x, y):\n                continue\n            q = deque([(x, y)])\n            seen[i] = 1\n            n = 0\n            while q:\n                cx, cy = q.popleft()\n                n += 1\n                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):\n                    if 0 <= nx < w and 0 <= ny < h and not seen[idx(nx, ny)]:\n                        rr, gg, bb, aa = px[nx, ny]\n                        if paper(rr, gg, bb, aa) and not in_shirt(nx, ny):\n                            seen[idx(nx, ny)] = 1\n                            q.append((nx, ny))\n            biggest = max(biggest, n)\n    print(path, \"shirt\", shirt, \"biggest_outside\", biggest)\n    assert shirt >= 800, path\n    assert biggest < 8000, path\n\nfor name in (\n    \"docs/assets/retornatus-mascot.webp\",\n    \"docs/assets/retornatus-mascot-neon.webp\",\n    \"docs/assets/retornatus-mascot-square.webp\",\n):\n    check(name)\nprint(\"enclosed background transparent\")\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:55:12.801197Z",
+  "ended_at": "2026-09-30T05:55:14.089890Z",
+  "duration_ms": 1288,
+  "output_sha256": "3ae105337a0472f7aad287e85925804c7e68c0f588ad983f5f57f3833546f897",
+  "output_tail": "docs/assets/retornatus-mascot.webp shirt 3182 biggest_outside 1617\ndocs/assets/retornatus-mascot-neon.webp shirt 6077 biggest_outside 1665\ndocs/assets/retornatus-mascot-square.webp shirt 1735 biggest_outside 1641\nenclosed background transparent\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-009.output.txt",
+  "git_commit": "77cd8dc3bb1e7104d5afd7560d2daced53acdb92",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-9",
+      "note": null
+    }
+  ]
+}
