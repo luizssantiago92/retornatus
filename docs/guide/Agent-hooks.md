@@ -41,7 +41,8 @@ It then runs the same in-process evaluation as `verify --json`. There is no netw
 | --- | --- |
 | No `.retornatus/`, or no active Change | Exit 0, no stdout. The turn ends. |
 | Every active Change is `SATISFIED` | Exit 0, no stdout. The turn ends. |
-| Any active Change is not `SATISFIED` | Exit 0 and a host JSON object that continues the turn. The text names the unproven claim ids and a `retornatus evidence run …` command. When `[assurance] required_checks` is set, that command uses the first matching argv. |
+| Any active Change is not `SATISFIED`, and the turn is not a question or an interrupted Cursor run | Exit 0 and a host JSON object that continues the turn. The text names the unproven claim ids and a `retornatus evidence run …` command. When `[assurance] required_checks` is set, that command uses the first matching argv. |
+| The last assistant message is a question to the user, and `[hooks] allow_questions` is not `false` | Exit 0, no stdout. The turn ends so the person can answer. |
 | Invalid JSON, unknown host, or any internal error | Exit 0, no block payload. One `fail-open` line goes to stderr. |
 
 Claude and Codex receive:
@@ -56,7 +57,48 @@ Cursor receives:
 {"followup_message": "C-0001 is NOT_SATISFIED. Unproven claims: C-0001/claim-done-1 (INCONCLUSIVE). Next: retornatus evidence run …"}
 ```
 
-`decision` is omitted when the stop is allowed. Cursor's `followup_message` is omitted in that case too.
+`decision` is omitted when the stop is allowed. Cursor's `followup_message` is omitted in that case too. The block text is the same when the hook does continue the turn.
+
+## Questions to the user
+
+Stopping to ask the person a question is allowed. A previous version blocked that turn once, the same way it blocks an unfinished Change. The check is deterministic and does not call a model.
+
+`[hooks] allow_questions` in `.retornatus/config.toml` defaults to `true`. Only a boolean `false` turns it off. A missing key, a missing file, or any other value keeps the default. `doctor` prints `hooks allow_questions: true` or `false` for an initialized project. This table is Retornatus config. It is not the Codex `[hooks]` table, which lives in Codex's own `config.toml`.
+
+```toml
+[hooks]
+allow_questions = true
+```
+
+The text comes from a documented payload field when the host has one. Otherwise the hook reads the tail of `transcript_path`. If neither is available, the hook behaves as it did before this exception: an unsatisfied Change still blocks.
+
+| Host | Assistant text on Stop | Transcript path |
+| --- | --- | --- |
+| Claude Code | `last_assistant_message` (text of the final response). Prefer this. The transcript can lag the current turn. | Common field `transcript_path` (a `.jsonl` path) |
+| Codex | `last_assistant_message` (`string` or `null`) | Common field `transcript_path` (`string` or `null`). The line format is not a stable interface. |
+| Cursor | No assistant-text field on `stop`. `afterAgentResponse.text` is a different event and is not read. | Common field `transcript_path` (`string` or `null`). The `stop` object itself is `status` and `loop_count`. |
+
+Checked against the host docs on 2026-09-30:
+
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks) — common fields include `transcript_path`; Stop adds `stop_hook_active`, `last_assistant_message`, `background_tasks`, and `session_crons`.
+- [Claude Code sessions](https://code.claude.com/docs/en/sessions) — transcripts are JSONL. Each line is a JSON object. The entry format is internal and can change.
+- [Claude Agent SDK agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop) — an assistant message has `type: "assistant"` and text on `message.content`.
+- [Cursor hooks](https://cursor.com/docs/hooks) — common fields include `transcript_path`. `stop` input is `status` (`completed`, `aborted`, or `error`) and `loop_count`. There is no `last_assistant_message`.
+- [Codex hooks](https://developers.openai.com/codex/hooks) — common fields include `transcript_path`. Stop adds `turn_id`, `stop_hook_active`, and `last_assistant_message`.
+
+Every field is optional. Extra fields are ignored. Cursor does not use `last_assistant_message` even if a caller adds it, because that field is not in the Cursor `stop` schema.
+
+The transcript read is the last 256 KiB. The partial first line after that cut is dropped. Lines are UTF-8 JSON objects. Malformed lines, non-objects, and lines that are not an assistant turn are ignored. An assistant line is one whose `type` or `role` is `assistant` (also accepted on `message`). Text is an optional string at `text` or `content`, or `message.content` when that is a string or a list of text blocks (`type` `text` and string `text`). Tool, result, and thinking blocks are skipped. A missing file, a non-file, or a read error leaves the text unavailable.
+
+Heuristic, applied to that text:
+
+1. Normalize newlines and strip trailing whitespace.
+2. Drop a trailing unclosed fence, then drop trailing closed ` ``` ` blocks.
+3. Take the last paragraph that still has visible prose. Paragraphs are separated by a blank line.
+4. Remove fenced code, inline code spans, and URL tokens (`http://`, `https://`, `www.`) from that paragraph.
+5. It is a question when the remainder ends with `?` or full-width `？` (trailing quotes and brackets do not count), or when it contains one of these phrases at the start or after a sentence boundary: `should i`, `shall i`, `do you want`, `would you like`, `want me to`, `quer que eu`, `posso seguir`, `posso continuar`, `devo seguir`, `devo continuar`, `você quer`, `voce quer`, `prefere que eu`.
+
+A `?` only inside a code fence, an inline span, or a URL does not allow the stop. A question in an earlier paragraph does not count when the final paragraph is a statement. `stop_hook_active` and Cursor `status` `aborted` or `error` are decided before this heuristic. They still allow the stop when `allow_questions` is `false`.
 
 ## Files
 
@@ -140,7 +182,7 @@ Codex can also read inline `[hooks]` from `config.toml`. If one layer contains b
 
 Checked against the host docs on 2026-09-30:
 
-- [Claude Code hooks](https://code.claude.com/docs/en/hooks). Stop still lives in `.claude/settings.json`. Exit 2 still blocks, and so does exit 0 with `decision: "block"` and `reason`. This hook uses the JSON decision and exit 0. `hookSpecificOutput.additionalContext` can continue the turn as feedback instead of a block; this hook uses `decision`. An `if` filter does not run on Stop, so the generated entry has none. The 8-continuation cap is in addition to `stop_hook_active`.
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks). Stop still lives in `.claude/settings.json`. Exit 2 still blocks, and so does exit 0 with `decision: "block"` and `reason`. This hook uses the JSON decision and exit 0. `hookSpecificOutput.additionalContext` can continue the turn as feedback instead of a block; this hook uses `decision`. An `if` filter does not run on Stop, so the generated entry has none. The 8-continuation cap is in addition to `stop_hook_active`. Stop input includes `last_assistant_message`; the hook prefers that field over `transcript_path` because the transcript file can lag the turn.
 - [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` answers with `followup_message`, not `decision`. Cloud agents run command hooks from that file, including `stop`, once the machine is writable. They do not run hooks during an early read-only turn, and they do not run `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
 - [Codex hooks](https://developers.openai.com/codex/hooks). The project file is `.codex/hooks.json`. Stop uses `decision: "block"` and `reason`, and it expects JSON on stdout when the process exits 0. Empty stdout allows the stop. Plain text on stdout is invalid for this event.
 

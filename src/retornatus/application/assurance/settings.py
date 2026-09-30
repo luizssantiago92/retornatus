@@ -33,6 +33,21 @@ def load_project_config(root: Path) -> dict[str, Any]:
     return data
 
 
+def allow_question_stops(root: Path) -> bool:
+    """True unless ``[hooks] allow_questions`` is boolean false.
+
+    Missing config, a missing key, and any non-boolean value keep the default,
+    which lets a question to the user end the turn.
+    """
+    hooks = load_project_config(root).get("hooks")
+    if not isinstance(hooks, dict):
+        return True
+    flag = hooks.get("allow_questions", True)
+    if isinstance(flag, bool):
+        return flag
+    return True
+
+
 def allow_self_reported_enabled(root: Path) -> bool:
     """True only when ``[assurance] allow_self_reported`` is boolean true.
 

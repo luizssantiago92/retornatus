@@ -4,8 +4,9 @@ The decision uses the same Assurance evaluation as ``verify --json``, in this
 process. There is no network call and no subprocess back into the CLI.
 
 SATISFIED, no active Change, and a missing ``.retornatus/`` allow the stop.
-Anything else asks the host to continue, once. Internal failures allow the
-stop and print one line to stderr so a crash cannot trap the agent.
+A question to the user allows the stop when ``[hooks] allow_questions`` is
+not false. Anything else asks the host to continue, once. Internal failures
+allow the stop and print one line to stderr so a crash cannot trap the agent.
 """
 
 from __future__ import annotations
@@ -17,8 +18,15 @@ from pathlib import Path
 from typing import Any
 
 from retornatus.application.agent_hooks.config import HOSTS
+from retornatus.application.agent_hooks.questions import (
+    assistant_message_text,
+    is_question_to_user,
+)
 from retornatus.application.assurance.independent import evaluate_change_assurance
-from retornatus.application.assurance.settings import load_required_checks
+from retornatus.application.assurance.settings import (
+    allow_question_stops,
+    load_required_checks,
+)
 from retornatus.application.report.envelope import verify_document
 from retornatus.bootstrap.hooks import active_change_ids
 
@@ -71,6 +79,8 @@ def _handle_stop(
     change_ids = active_change_ids(root)
     if not change_ids:
         return StopResponse()
+    if allow_question_stops(root) and _message_is_question(name, payload):
+        return StopResponse()
     blocking: list[dict[str, Any]] = []
     for change_id in change_ids:
         result = evaluate_change_assurance(root, change_id)
@@ -103,6 +113,21 @@ def locate_project(start: Path, *, walk: bool) -> Path | None:
         if (candidate / ".retornatus").is_dir():
             return candidate
     return None
+
+
+def _message_is_question(host: str, payload: dict[str, Any]) -> bool:
+    """True when the documented assistant text asks the user something.
+
+    A missing transcript or a read error is not a question, so the caller
+    keeps the Assurance decision.
+    """
+    try:
+        text = assistant_message_text(host, payload)
+    except Exception:
+        return False
+    if not text:
+        return False
+    return is_question_to_user(text)
 
 
 def _parse_payload(raw: str) -> tuple[dict[str, Any], bool]:
