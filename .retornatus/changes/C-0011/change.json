@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0011",
+  "title": "Replace the public mascot artwork",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Replace the public Retornatus mascot with the approved chrome-agent artwork. Scope is optimized WebP files under docs/assets, the README image, the docs website hero plus a CSS glow, Open Graph and favicon references, and an Unreleased changelog note. Out of scope is a package version bump, merging the pull request, and publishing to PyPI.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T05:26:10.041013Z"
+}

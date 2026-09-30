@@ -101,7 +101,7 @@ main {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr 1.15fr;
   gap: 2rem 2.5rem;
   align-items: center;
   min-height: calc(100vh - 5.5rem);
@@ -187,8 +187,8 @@ nav a:focus-visible,
   position: relative;
   margin: 0;
   justify-self: center;
-  width: min(100%, 460px);
-  aspect-ratio: 1 / 1.02;
+  width: min(100%, 560px);
+  aspect-ratio: 16 / 9;
   isolation: isolate;
 }
 
@@ -239,11 +239,44 @@ nav a:focus-visible,
   display: block;
   width: 100%;
   height: auto;
-  /* Transparent PNG — soft aura so it sits on the energy field */
+  /* Transparent WebP — teal/orange aura sits on the page atmosphere */
   filter:
-    drop-shadow(0 0 12px rgba(245, 158, 11, 0.28))
-    drop-shadow(0 0 22px rgba(45, 212, 191, 0.22))
-    drop-shadow(0 22px 40px rgba(13, 18, 25, 0.28));
+    drop-shadow(0 0 10px rgba(45, 212, 191, 0.32))
+    drop-shadow(0 0 16px rgba(245, 158, 11, 0.22))
+    drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
+}
+
+/* mascot aura: animation-duration 3.6s */
+@keyframes mascot-aura {
+  0%,
+  100% {
+    filter:
+      drop-shadow(0 0 8px rgba(45, 212, 191, 0.28))
+      drop-shadow(0 0 14px rgba(245, 158, 11, 0.16))
+      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
+    opacity: 1;
+  }
+  42% {
+    filter:
+      drop-shadow(0 0 22px rgba(45, 212, 191, 0.65))
+      drop-shadow(0 0 28px rgba(245, 158, 11, 0.5))
+      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
+    opacity: 0.97;
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 10px rgba(45, 212, 191, 0.3))
+      drop-shadow(0 0 14px rgba(245, 158, 11, 0.18))
+      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
+    opacity: 0.88;
+  }
+  58% {
+    filter:
+      drop-shadow(0 0 20px rgba(45, 212, 191, 0.55))
+      drop-shadow(0 0 24px rgba(245, 158, 11, 0.46))
+      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
+    opacity: 1;
+  }
 }
 
 @keyframes float-in {
@@ -254,23 +287,6 @@ nav a:focus-visible,
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
-  }
-}
-
-/* Ride the energy — gentle bob + slight sway */
-@keyframes drift-ride {
-  0%,
-  100% {
-    transform: translateY(0) translateX(0) rotate(-1.2deg);
-  }
-  25% {
-    transform: translateY(-10px) translateX(4px) rotate(0.6deg);
-  }
-  50% {
-    transform: translateY(-16px) translateX(0) rotate(1.4deg);
-  }
-  75% {
-    transform: translateY(-8px) translateX(-4px) rotate(-0.4deg);
   }
 }
 
@@ -329,11 +345,14 @@ nav a:focus-visible,
   }
 
   .mascot-sprite {
-    animation: drift-ride 6.5s ease-in-out 0.6s infinite;
+    animation-name: mascot-aura;
+    animation-duration: 3.6s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   .mascot-glow {
-    animation: pulse-glow 4.5s ease-in-out infinite;
+    animation: pulse-glow 3.6s ease-in-out infinite;
   }
 
   .wave-a {
@@ -356,6 +375,7 @@ nav a:focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-mascot,
   .mascot-sprite,
   .mascot-glow,
   .wave-a,
@@ -645,7 +665,7 @@ body.doc-page main {
 
   .hero-mascot {
     order: -1;
-    width: min(100%, 300px);
+    width: min(100%, 520px);
   }
 
   .compare {
