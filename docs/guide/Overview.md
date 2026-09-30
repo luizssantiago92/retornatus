@@ -72,9 +72,20 @@ You approve product intent and Human Decisions (Rules). The agent implements. Gi
 
 ---
 
+## Init presets
+
+`retornatus init` can write a starting `.retornatus/config.toml` from a packaged preset: `python`, `python-platform`, `fastapi`, `django`, or `rag`.
+
+`python` names pytest, ruff, and mypy. `python-platform` extends it with path-triggered ship and AI rules (deploy files, or prompts, evals, and retrieval code). `fastapi`, `django`, and `rag` extend `python-platform` for those layouts. `verify` checks that the named command was executed. It does not grade test quality, a deploy plan, or an eval set. If the matching paths are not part of the Change, the extra rule is not required.
+
+List them with `retornatus init --list-presets`. An existing config stays in place unless you pass `--force-config`. See [Presets](Presets.md).
+
+---
+
 ## Next steps
 
 - [Quick start](Quick-start.md) — install and first Change
+- [Presets](Presets.md) — `init --preset` for Python, FastAPI, Django, and RAG
 - [How it works](How-it-works.md) — narrative walkthrough
 - [Gates](Gates.md) — what actually stops incomplete work
 - [Non-goals](Non-goals.md) — what V1 deliberately does not claim

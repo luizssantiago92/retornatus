@@ -42,7 +42,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 
 Package **1.4.1** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
 
-[What it is](#what-it-is) · [Install](#1-install) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
+[What it is](#what-it-is) · [Install](#1-install) · [Presets](#presets) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
 
 ---
 
@@ -99,7 +99,7 @@ retornatus doctor
 | Command | What it does |
 | --- | --- |
 | **`uv tool install retornatus`** | Puts the `retornatus` CLI on your PATH via uv |
-| **`init`** | Creates `.retornatus/config.toml` and the canonical folders for Changes, Evidence, Learnings |
+| **`init`** | Creates `.retornatus/config.toml` and the canonical folders for Changes, Evidence, Learnings. Optional `--preset` writes a packaged config — see [Presets](#presets) |
 | **`integrate`** | Projects the **hub skill** so your AI agent knows the Retornatus loop |
 | **`doctor`** | Audits readiness — **Process** (healthy workflow) vs **Brakes** (hard STOPs / gates) |
 
@@ -108,6 +108,30 @@ One-shot without a global install: `uvx retornatus --help`. Package page: [PyPI]
 Day to day you work in **agent chat**; the agent (following the hub skill) calls the CLI when a gate or record is needed.
 
 **Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Environments](https://luizssantiago92.github.io/retornatus/guide/environments.html) · [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html)
+
+---
+
+## Presets
+
+`init` without `--preset` writes a minimal config. `--preset` writes a starting `.retornatus/config.toml` from a TOML file shipped in the package. List them with `retornatus init --list-presets`. An existing `config.toml` stays in place unless you pass `--force-config`.
+
+| Preset | Purpose | What it adds |
+| --- | --- | --- |
+| `python` | Python 3.11+ repo whose proof is tests and static checks | pytest, ruff, and mypy as required checks; code roots `src/`, `app/`, and `tests/` |
+| `python-platform` | Python backend plus deploy files or model behavior | Extends `python`. Path-triggered **ship** and **AI** rules |
+| `fastapi` | FastAPI service | Extends `python-platform`. API layout globs; Alembic paths count as ship |
+| `django` | Django project | Extends `python-platform`. Django layout globs; migration paths count as ship |
+| `rag` | RAG, LLM, or MCP service | Extends `python-platform`. Retrieval and prompt globs; a stronger AI surface |
+
+```bash
+retornatus init --preset fastapi
+```
+
+**Ship** means deploy files: a Dockerfile, Compose, Terraform, Helm, or GitHub Actions workflows. When one of those paths is part of the Change, `verify` expects the matching command to have been executed, plus a short note on how you roll back. **AI** means prompts, evals, MCP, or retrieval code. When one of those paths is part of the Change, `verify` expects the eval command to have run, plus a note on what happens when the model is down. If those paths are not in the Change, the rule is not required.
+
+These checks record that a command ran and exited 0. They do not review a Terraform plan, audit security, or score retrieval quality.
+
+Full page: [Presets](docs/guide/Presets.md).
 
 ---
 
@@ -235,7 +259,7 @@ Two Skill worlds:
 
 | Intent | Command |
 | --- | --- |
-| Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate` |
+| Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate`, `init --preset`, `init --list-presets`, `preset show` |
 | Requirements / lane | `change elicit` (`--answer`, `--write`), `change classify`, `change create`, `change activate` |
 | Prompt intake | `intake analyze` (`--answer`, `--create-skill` with human `CREATE=yes`) |
 | Dashboard | `change overview` |
@@ -343,6 +367,7 @@ retornatus doctor
 | --- | --- |
 | Product story (non-jargon) | [Website](https://luizssantiago92.github.io/retornatus/) |
 | First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
+| Init presets | [Presets](docs/guide/Presets.md) |
 | Cloud / remote agents | [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html) |
 | Pull-request verdict comment | [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) |
 | Full technical guide | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |

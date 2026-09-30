@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "C-0019/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Document the five init presets on the README, guide, and landing page, and replace the site hero with the README mascot card.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "README.md contains a Presets section naming python, python-platform, fastapi, django, and rag, the command retornatus init --preset fastapi, and a link to docs/guide/Presets.md",
+    "docs/guide/index.html links presets.html and docs/guide/CLI.md documents init --preset, init --list-presets, --force-config, and preset show",
+    "docs/guide/Overview.md mentions init presets",
+    "docs/index.html hero src is assets/retornatus-mascot-readme.webp and the page contains a presets section",
+    "docs/assets/retornatus-mascot-neon.webp does not exist",
+    "CHANGELOG.md Unreleased records the README, docs, site, and mascot asset updates",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0019/T-001",
+      "description": "Update README, docs guide, landing page, and changelog, and remove the unused neon mascot",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "README.md",
+        "CHANGELOG.md",
+        "docs/**",
+        ".gitignore",
+        "tests/**"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

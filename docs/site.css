@@ -184,98 +184,40 @@ nav a:focus-visible,
 }
 
 .hero-mascot {
+  container-type: inline-size;
   position: relative;
   margin: 0;
   justify-self: center;
-  width: min(100%, 560px);
-  aspect-ratio: 16 / 9;
-  isolation: isolate;
+  width: min(100%, 480px);
 }
 
-/* Local energy field — only behind the mascot, page atmosphere shows through */
-.mascot-stage {
-  position: absolute;
-  inset: 8% 0 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  border-radius: 42% 48% 40% 45% / 38% 42% 48% 44%;
-}
-
-.mascot-glow {
-  position: absolute;
-  inset: 18% 10% 8%;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse 70% 55% at 48% 42%, rgba(245, 158, 11, 0.34), transparent 58%),
-    radial-gradient(ellipse 80% 60% at 55% 68%, rgba(45, 212, 191, 0.28), transparent 62%),
-    radial-gradient(ellipse 50% 40% at 40% 75%, rgba(251, 191, 36, 0.18), transparent 55%);
-  filter: blur(22px);
-  opacity: 0.85;
-}
-
-.mascot-waves {
-  position: absolute;
-  left: -6%;
-  right: -6%;
-  bottom: -4%;
-  width: 112%;
-  height: 68%;
-  opacity: 0.9;
-}
-
-.wave-layer path {
-  stroke-linecap: round;
-  stroke-dasharray: 12 10;
-}
-
-.wave-orbs .orb {
-  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.7));
-}
-
-.mascot-sprite {
-  position: relative;
-  z-index: 1;
+/* The asset is already a rounded card with its own dark plate.
+   Radius tracks the baked corner (about 28px on the 960px source). */
+.mascot-card {
   display: block;
   width: 100%;
   height: auto;
-  /* Transparent WebP — teal/orange aura sits on the page atmosphere */
-  filter:
-    drop-shadow(0 0 10px rgba(45, 212, 191, 0.32))
-    drop-shadow(0 0 16px rgba(245, 158, 11, 0.22))
-    drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
+  border-radius: 12px;
+  border-radius: 2.92cqi;
+  box-shadow:
+    0 0 0 1px rgba(232, 238, 245, 0.14),
+    0 0 28px rgba(45, 212, 191, 0.14),
+    0 18px 40px rgba(0, 0, 0, 0.38);
 }
 
-/* mascot aura: animation-duration 3.6s */
-@keyframes mascot-aura {
+@keyframes card-glow {
   0%,
   100% {
-    filter:
-      drop-shadow(0 0 8px rgba(45, 212, 191, 0.28))
-      drop-shadow(0 0 14px rgba(245, 158, 11, 0.16))
-      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
-    opacity: 1;
-  }
-  42% {
-    filter:
-      drop-shadow(0 0 22px rgba(45, 212, 191, 0.65))
-      drop-shadow(0 0 28px rgba(245, 158, 11, 0.5))
-      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
-    opacity: 0.97;
+    box-shadow:
+      0 0 0 1px rgba(232, 238, 245, 0.14),
+      0 0 22px rgba(45, 212, 191, 0.12),
+      0 18px 40px rgba(0, 0, 0, 0.38);
   }
   50% {
-    filter:
-      drop-shadow(0 0 10px rgba(45, 212, 191, 0.3))
-      drop-shadow(0 0 14px rgba(245, 158, 11, 0.18))
-      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
-    opacity: 0.88;
-  }
-  58% {
-    filter:
-      drop-shadow(0 0 20px rgba(45, 212, 191, 0.55))
-      drop-shadow(0 0 24px rgba(245, 158, 11, 0.46))
-      drop-shadow(0 16px 28px rgba(13, 18, 25, 0.32));
-    opacity: 1;
+    box-shadow:
+      0 0 0 1px rgba(245, 158, 11, 0.28),
+      0 0 36px rgba(45, 212, 191, 0.22),
+      0 18px 40px rgba(0, 0, 0, 0.38);
   }
 }
 
@@ -290,100 +232,57 @@ nav a:focus-visible,
   }
 }
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
-  }
-}
-
-@keyframes wave-flow-a {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-36px);
-  }
-}
-
-@keyframes wave-flow-b {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(28px);
-  }
-}
-
-@keyframes orb-drift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translate(10px, -14px);
-    opacity: 1;
-  }
-}
-
-@keyframes dash-crawl {
-  to {
-    stroke-dashoffset: -88;
-  }
-}
-
-/* Motion is opt-in (modern a11y pattern) */
+/* Motion is opt-in (modern a11y pattern). Glow stays on the card container. */
 @media (prefers-reduced-motion: no-preference) {
   .hero-mascot {
     animation: float-in 0.9s ease-out both;
   }
 
-  .mascot-sprite {
-    animation-name: mascot-aura;
-    animation-duration: 3.6s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+  .mascot-card {
+    animation: card-glow 3.6s ease-in-out infinite;
   }
-
-  .mascot-glow {
-    animation: pulse-glow 3.6s ease-in-out infinite;
-  }
-
-  .wave-a {
-    animation: wave-flow-a 9s linear infinite;
-  }
-
-  .wave-b {
-    animation: wave-flow-b 11s linear infinite;
-  }
-
-  .wave-layer path {
-    animation: dash-crawl 3.8s linear infinite;
-  }
-
-  .orb.o1 { animation: orb-drift 5.2s ease-in-out infinite; }
-  .orb.o2 { animation: orb-drift 6.1s ease-in-out 0.4s infinite; }
-  .orb.o3 { animation: orb-drift 4.7s ease-in-out 0.9s infinite; }
-  .orb.o4 { animation: orb-drift 5.8s ease-in-out 1.2s infinite; }
-  .orb.o5 { animation: orb-drift 6.4s ease-in-out 0.2s infinite; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-mascot,
-  .mascot-sprite,
-  .mascot-glow,
-  .wave-a,
-  .wave-b,
-  .wave-layer path,
-  .orb {
+  .mascot-card {
     animation: none !important;
   }
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.85rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.preset-card {
+  grid-column: span 2;
+  margin: 0;
+  padding: 1rem 1.05rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  background: rgba(13, 18, 25, 0.55);
+}
+
+.preset-card:nth-child(4),
+.preset-card:nth-child(5) {
+  grid-column: span 3;
+}
+
+.preset-card h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--teal);
+}
+
+.preset-card p {
+  margin: 0;
+  color: var(--mist);
+  font-size: 0.95rem;
 }
 
 .band {
@@ -467,6 +366,11 @@ nav a:focus-visible,
   margin: 1rem 0 0;
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.note.preset-lead {
+  margin-top: 0;
+  max-width: 40rem;
 }
 
 footer {
@@ -665,7 +569,17 @@ body.doc-page main {
 
   .hero-mascot {
     order: -1;
-    width: min(100%, 520px);
+    width: min(100%, 420px);
+  }
+
+  .preset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preset-card,
+  .preset-card:nth-child(4),
+  .preset-card:nth-child(5) {
+    grid-column: auto;
   }
 
   .compare {
