@@ -153,3 +153,7 @@ The approved artwork is a chrome AI agent in a black suit adjusting sunglasses, 
 ## Reopened Situation
 
 Enclosed near-white background inside the ouroboros was still opaque. Contract v2 requires that background to be transparent while the shirt stays opaque.
+
+## Reopened Situation
+
+Chrome specular highlights inside the head and hand were transparent. Contract v3 keeps the ring gaps transparent and requires every pixel inside the head and hand silhouette to stay opaque.

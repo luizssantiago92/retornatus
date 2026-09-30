@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). Background inside the serpent ring is transparent, including the gaps by the head, headphones, and shoulders. The white shirt and chrome highlights stay opaque, and glow edges keep a soft alpha. README uses the sharp image `docs/assets/retornatus-mascot.webp`. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
+- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). Background inside the serpent ring is transparent, including the gaps by the head, headphones, and shoulders. The white shirt stays opaque, and every pixel inside the head, hand, and suit silhouette stays opaque, including the specular highlight on the chrome head. Glow edges keep a soft alpha. README uses the sharp image `docs/assets/retornatus-mascot.webp`. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
 
 ### Fixed
 
