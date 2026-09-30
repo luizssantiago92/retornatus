@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0015/E-006",
+  "type": "test_result",
+  "subject": "docs/assets/retornatus-mascot-readme.webp",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\"README.md\").read_text(encoding=\"utf-8\")\nneedle = \"\"\"<p align=\\\"center\\\">\n  <a href=\\\"https://luizssantiago92.github.io/retornatus/\\\"><img src=\\\"docs/assets/retornatus-mascot-readme.webp\\\" alt=\\\"Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame\\\" width=\\\"420\\\" height=\\\"231\\\" /></a>\n</p>\"\"\"\nassert needle in text\nasset = Path(\"docs/assets/retornatus-mascot-readme.webp\")\nassert asset.is_file() and asset.stat().st_size == 49268\nprint(\"readme frame ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:51:25.709058Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\"README.md\").read_text(encoding=\"utf-8\")\nneedle = \"\"\"<p align=\\\"center\\\">\n  <a href=\\\"https://luizssantiago92.github.io/retornatus/\\\"><img src=\\\"docs/assets/retornatus-mascot-readme.webp\\\" alt=\\\"Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame\\\" width=\\\"420\\\" height=\\\"231\\\" /></a>\n</p>\"\"\"\nassert needle in text\nasset = Path(\"docs/assets/retornatus-mascot-readme.webp\")\nassert asset.is_file() and asset.stat().st_size == 49268\nprint(\"readme frame ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:51:25.673872Z",
+  "ended_at": "2026-09-30T13:51:25.703431Z",
+  "duration_ms": 29,
+  "output_sha256": "7ba75b91953649eaf26e35e0626b211baad990be30f9b8798e3959dcb27fd628",
+  "output_tail": "readme frame ok\n",
+  "output_artifact": ".retornatus/changes/C-0015/evidence/E-006.output.txt",
+  "git_commit": "75683caa55c4bc768ec34f68e5a0dca092554cf9",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0015/claim-done-6",
+      "note": null
+    }
+  ]
+}
