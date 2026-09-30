@@ -6,7 +6,9 @@ import json
 import subprocess
 import sys
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import tomli_w
 from jsonschema import Draft202012Validator
@@ -120,7 +122,7 @@ def _surface(document: dict[str, object], name: str) -> dict[str, object]:
     return found[0]
 
 
-def _write(tmp_path: Path, mutate) -> None:  # type: ignore[no-untyped-def]
+def _write(tmp_path: Path, mutate: Callable[[dict[str, Any]], None]) -> None:
     path = tmp_path / ".retornatus" / "config.toml"
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     mutate(data)
