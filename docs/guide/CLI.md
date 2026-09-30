@@ -20,7 +20,7 @@ retornatus skill --help
 | `integrate` | Hub skill + detected Environment bridges |
 | `project-init` | Brownfield map → `project/project.md` |
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
-| `doctor` | Process vs Brakes scores + governance hygiene |
+| `doctor` | Process vs Brakes scores + governance hygiene. Warns when `[retornatus] version` in config.toml differs from the installed package |
 | `status` | Derived Change status |
 | `ops list` / `ops show` / `ops run` | Operational hygiene loops |
 

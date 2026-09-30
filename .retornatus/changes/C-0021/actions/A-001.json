@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "C-0021/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Update the hub, doctor, config version, and the docs surfaces named in the audit.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest confirms hub copies match and name an Ed25519 receipt",
+    "pytest confirms doctor warns when config version differs",
+    "pytest confirms config.toml version equals the installed release",
+    "pytest confirms the README em dash heading anchor",
+    "pytest confirms the credits license target and PRD link text",
+    "pytest confirms the landing og image and 1.4 preset news",
+    "pytest confirms README news does not pin a package version",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run pytest -q exits 0",
+    "HTML docs check exits 0",
+    "uv lock --check exits 0",
+    "CHANGELOG Unreleased contains hub and site hygiene notes"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0021/T-001",
+      "description": "Update hub text, sync the repo copy, warn on config version drift, and correct the docs links",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/bootstrap/doctor.py",
+        "src/retornatus/infrastructure/environment/hub/**",
+        ".cursor/**",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/**",
+        "tests/**"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

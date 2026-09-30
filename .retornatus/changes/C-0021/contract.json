@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0021",
+  "version": 1,
+  "what": "Correct the packaged hub receipt wording, sync the repo hub copy, warn on config version drift, and fix the README anchor, credits links, landing og:image, and version-pinned whats-new line.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest confirms hub copies match and name an Ed25519 receipt",
+    "pytest confirms doctor warns when config version differs",
+    "pytest confirms config.toml version equals the installed release",
+    "pytest confirms the README em dash heading anchor",
+    "pytest confirms the credits license target and PRD link text",
+    "pytest confirms the landing og image and 1.4 preset news",
+    "pytest confirms README news does not pin a package version",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run pytest -q exits 0",
+    "HTML docs check exits 0",
+    "uv lock --check exits 0",
+    "CHANGELOG Unreleased contains hub and site hygiene notes"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T16:43:13.728724Z"
+}

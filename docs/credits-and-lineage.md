@@ -205,7 +205,7 @@ Experience → Learning → Graduation → Rule Candidate → Human Authority �
 | On-demand researched Skills | Create/research/activate one Skill when needed; evolve from Learning |
 | Complexity discipline | A mechanism must save more complexity than it introduces; complexity earned by concrete failure |
 
-Product contract: [`prd/PRD.md`](archive/PRD.md). User-facing concepts: [docs/guide/Concepts.md](guide/Concepts.md).
+Product contract: [`docs/archive/PRD.md`](archive/PRD.md). User-facing concepts: [docs/guide/Concepts.md](guide/Concepts.md).
 
 ---
 
@@ -213,7 +213,7 @@ Product contract: [`prd/PRD.md`](archive/PRD.md). User-facing concepts: [docs/gu
 
 | Artifact | License | Notes |
 | --- | --- | --- |
-| Retornatus (this repository) | MIT | [`LICENSE`](../LICENSE) |
+| Retornatus (this repository) | MIT | [`LICENSE`](https://github.com/luizssantiago92/retornatus/blob/main/LICENSE) |
 | Spec Guardrails (predecessor) | MIT | Conceptual/experiential influence; **no code vendored** |
 | Pydantic, Typer, tomli-w | MIT | Dependencies via packaging |
 | Host products (Cursor / Claude Code / Codex) | Proprietary / host terms | Adapters write local bridge files only |

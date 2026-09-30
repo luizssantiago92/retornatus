@@ -74,7 +74,7 @@ Two worlds, one control point: **analyzed proposal with human answers**, or **ex
 15. Record proof bound to Claims: `retornatus evidence run ... --type test_result --claim <claim-id> -- <command>` (self-reported `evidence add` does not satisfy test/build/lint types). When `[assurance] required_checks` is set, only those argv lists count — use `verify --run-checks` or `checks run`
 16. If blocked by discovery: `finding add` → `question open` (IDs auto-number) → resolve with Evidence
 17. Reopen Questions when the condition reappears: `question reopen <Q-id>`
-18. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0); optional `verify --receipt` for a portable HMAC receipt
+18. `retornatus gate evidence <C-id>` and `retornatus verify <C-id>` / `gate assurance` (exit 0); optional `verify --receipt` for an Ed25519 receipt (public key in `.retornatus/keys/`)
 18b. Optional attempt ceiling: `action budget <A-id> --max N` then `gate budget <A-id>` before retry loops
 19. On gate failure: `lesson from-gate --gate <name> --change <C-id> --title "..." --note "..."` (optional `--propose-rule`)
 20. Independent review when needed: `retornatus run <A-id> --assurance`

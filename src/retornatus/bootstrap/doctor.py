@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from retornatus import __version__
+from retornatus.application.assurance.settings import load_project_config
 from retornatus.application.governance.gates import gate_contract, gate_skill_research
 from retornatus.bootstrap.wake import WakeReport, wake_up
 from retornatus.domain.enums import SkillStatus
@@ -186,6 +188,16 @@ def _score_brakes(root: Path, wake: WakeReport) -> ReadinessScore:
     )
 
 
+def _config_version_warning(root: Path) -> str | None:
+    """Return a warning when config.toml version is not the installed release."""
+    table = load_project_config(root).get("retornatus")
+    configured = table.get("version") if isinstance(table, dict) else None
+    if isinstance(configured, str) and configured.strip() == __version__:
+        return None
+    shown = configured.strip() if isinstance(configured, str) else repr(configured)
+    return f"config.toml version {shown} differs from installed retornatus {__version__}"
+
+
 def run_doctor(root: Path | None = None) -> DoctorReport:
     """Wake continuity plus Process/Brakes scores and governance hygiene."""
     project_root = (root or Path.cwd()).resolve()
@@ -250,6 +262,10 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
         warnings.append(
             "Process ready but Brakes incomplete — gates may not stop incomplete work"
         )
+
+    version_warning = _config_version_warning(project_root)
+    if version_warning:
+        warnings.append(version_warning)
 
     return DoctorReport(
         wake=wake,
