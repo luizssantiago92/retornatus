@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-005",
+  "type": "test_result",
+  "subject": "uv lock check exits 0",
+  "source": "uv lock --check",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:32:55.627016Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "lock",
+    "--check"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:32:53.921100Z",
+  "ended_at": "2026-09-30T13:32:53.929440Z",
+  "duration_ms": 8,
+  "output_sha256": "2156192574662c61216e889e4d3a20d25ee5ab9fc3ea75042f835e8ef9e46bab",
+  "output_tail": "Resolved 36 packages in 0.85ms\n",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-005.output.txt",
+  "git_commit": "a25c65a4c043148e7ddeb935528573c7366688db",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0014/claim-done-5",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-006",
+  "type": "test_result",
+  "subject": "An unknown preset name exits with the available preset list",
+  "source": "uv run pytest -q --no-cov tests/test_presets.py::test_cli_unknown_preset_exits_with_the_list",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:32:55.630499Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_presets.py::test_cli_unknown_preset_exits_with_the_list"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:32:53.934112Z",
+  "ended_at": "2026-09-30T13:32:54.385377Z",
+  "duration_ms": 451,
+  "output_sha256": "f574bf83729b682055fea4742e2eec06cd32be9f8694d8319d5361875228ed00",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.28s\n",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-006.output.txt",
+  "git_commit": "a25c65a4c043148e7ddeb935528573c7366688db",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0014/claim-done-6",
+      "note": null
+    }
+  ]
+}
