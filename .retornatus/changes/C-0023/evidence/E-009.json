@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0023/E-009",
+  "type": "test_result",
+  "subject": "docs/guide/CLI.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"docs/guide/CLI.md\").read_text(); assert \"hook stop\" in t and \"integrate --hooks\" in t; print(\"cli ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T19:05:03.231178Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"docs/guide/CLI.md\").read_text(); assert \"hook stop\" in t and \"integrate --hooks\" in t; print(\"cli ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T19:05:03.207609Z",
+  "ended_at": "2026-09-30T19:05:03.225737Z",
+  "duration_ms": 18,
+  "output_sha256": "538c5200a727b4e11f832eb9bd2a585eb65684121d594e0d826bddad6b1815a1",
+  "output_tail": "cli ok\n",
+  "output_artifact": ".retornatus/changes/C-0023/evidence/E-009.output.txt",
+  "git_commit": "aa25ce42ec0e5323946016f70cf863eb44358665",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0023/claim-done-9",
+      "note": null
+    }
+  ]
+}

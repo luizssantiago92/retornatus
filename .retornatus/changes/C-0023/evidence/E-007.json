@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0023/E-007",
+  "type": "test_result",
+  "subject": "./CHANGELOG.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"CHANGELOG.md\").read_text(); assert \"## [Unreleased]\" in t or \"## Unreleased\" in t; assert \"hook\" in t[t.lower().find(\"unreleased\"):t.lower().find(\"unreleased\")+800].lower(); print(\"changelog ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T19:05:02.723558Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"CHANGELOG.md\").read_text(); assert \"## [Unreleased]\" in t or \"## Unreleased\" in t; assert \"hook\" in t[t.lower().find(\"unreleased\"):t.lower().find(\"unreleased\")+800].lower(); print(\"changelog ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T19:05:02.694345Z",
+  "ended_at": "2026-09-30T19:05:02.718340Z",
+  "duration_ms": 23,
+  "output_sha256": "44a0b09485c8ddccf2059b31b1e493ed850a2a1e3f996f42022f89d6fceaf057",
+  "output_tail": "changelog ok\n",
+  "output_artifact": ".retornatus/changes/C-0023/evidence/E-007.output.txt",
+  "git_commit": "aa25ce42ec0e5323946016f70cf863eb44358665",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0023/claim-done-7",
+      "note": null
+    }
+  ]
+}

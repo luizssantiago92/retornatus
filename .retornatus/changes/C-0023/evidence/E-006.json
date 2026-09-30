@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0023/E-006",
+  "type": "test_result",
+  "subject": "docs/index.html",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"docs/index.html\").read_text(); assert \"agent-hooks.html\" in t; print(\"site link ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T19:05:02.467686Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"docs/index.html\").read_text(); assert \"agent-hooks.html\" in t; print(\"site link ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T19:05:02.439691Z",
+  "ended_at": "2026-09-30T19:05:02.463216Z",
+  "duration_ms": 23,
+  "output_sha256": "ebe011bb0fde1a416542c50f29a0ebb3e3922f5092ae9015439dfeb060a8e213",
+  "output_tail": "site link ok\n",
+  "output_artifact": ".retornatus/changes/C-0023/evidence/E-006.output.txt",
+  "git_commit": "aa25ce42ec0e5323946016f70cf863eb44358665",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0023/claim-done-6",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0023/E-002",
+  "type": "test_result",
+  "subject": "src/retornatus/cli/hook.py",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"src/retornatus/cli/hook.py\").read_text(); assert \"stop\" in t and \"claude\" in t and \"cursor\" in t and \"codex\" in t; print(\"hook stop hosts ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T19:05:01.404883Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"src/retornatus/cli/hook.py\").read_text(); assert \"stop\" in t and \"claude\" in t and \"cursor\" in t and \"codex\" in t; print(\"hook stop hosts ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T19:05:01.384708Z",
+  "ended_at": "2026-09-30T19:05:01.402436Z",
+  "duration_ms": 17,
+  "output_sha256": "fdc604abaa6840a15eaa3c193765995db2f7f32cb94e366ff9a82e395be5a524",
+  "output_tail": "hook stop hosts ok\n",
+  "output_artifact": ".retornatus/changes/C-0023/evidence/E-002.output.txt",
+  "git_commit": "aa25ce42ec0e5323946016f70cf863eb44358665",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0023/claim-done-2",
+      "note": null
+    }
+  ]
+}
