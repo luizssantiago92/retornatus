@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "C-0009/E-003",
+  "type": "test_result",
+  "subject": "tests/test_doc_examples.py",
+  "source": "uv run pytest -q tests/test_doc_examples.py -o addopts= -p no:cov",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T03:32:32.688533Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_doc_examples.py",
+    "-o",
+    "addopts=",
+    "-p",
+    "no:cov"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T03:32:26.313094Z",
+  "ended_at": "2026-09-30T03:32:32.683582Z",
+  "duration_ms": 6370,
+  "output_sha256": "252c32778d76b68db91aa91b6ec5484ab038f5005328b3fefaca61efb66beb2b",
+  "output_tail": "...                                                                      [100%]\n3 passed in 6.22s\n",
+  "output_artifact": ".retornatus/changes/C-0009/evidence/E-003.output.txt",
+  "git_commit": "02356a1e93dd5cbe89ce0b591c6c23ae5580db5f",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0009/claim-done-1",
+      "note": null
+    }
+  ]
+}

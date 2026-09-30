@@ -17,14 +17,14 @@ retornatus change elicit \
   --demand "Expose a liveness check for ops" \
   --what "GET /health returns 200 with status ok" \
   --done "Automated test covers /health" \
-  --done "Endpoint documented"
+  --done "docs/health.md documents GET /health"
 
 retornatus change create \
   --title "Add health endpoint" \
   --demand "Expose a liveness check for ops" \
   --what "GET /health returns 200 with status ok" \
   --done "Automated test covers /health" \
-  --done "Endpoint documented" \
+  --done "docs/health.md documents GET /health" \
   --objective "Implement and verify health endpoint" \
   --task "Implement handler" \
   --task "Add automated test" \
