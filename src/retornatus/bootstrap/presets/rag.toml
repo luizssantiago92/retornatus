@@ -1,0 +1,56 @@
+name = "rag"
+summary = "RAG, LLM, and MCP service. Extends python-platform with retrieval layout globs and a stronger AI surface."
+extends = "python-platform"
+
+[governance.scope]
+code_globs = [
+  "prompts/**",
+  "evals/**",
+  "tests/eval/**",
+  "mcp/**",
+  "retrieval/**",
+  "rag/**",
+  "ingest*/**",
+  "embeddings/**",
+  "vectorstore*/**",
+  "indexes/**",
+  "*_index/**",
+  "vector-index/**",
+  "config/**/*model*",
+  "*models*.toml",
+  "*models*.yaml",
+  "*models*.yml",
+  "*models*.json",
+]
+
+[surfaces.ai]
+globs = [
+  "**/retrieval/**",
+  "**/rag/**",
+  "**/ingest*/**",
+  "**/embeddings/**",
+  "**/vectorstore*/**",
+  "**/indexes/**",
+  "**/*_index/**",
+  "**/vector-index/**",
+  "**/config/**/*model*",
+  "**/*models*.toml",
+  "**/*models*.yaml",
+  "**/*models*.yml",
+  "**/*models*.json",
+]
+
+[[suggestions]]
+name = "golden-set"
+note = "Example golden-set retrieval script. The path is yours and the script may be absent. This is not the required eval command. verify does not score retrieval quality."
+run = ["uv", "run", "python", "scripts/eval_retrieval.py"]
+
+[[suggestions]]
+name = "prompt-snapshots"
+note = "Prompt snapshot tests. The module path is yours and may be absent. Not a required check."
+run = ["uv", "run", "pytest", "-q", "tests/test_prompt_snapshots.py"]
+
+[[suggestions]]
+name = "mcp-smoke"
+note = "MCP server smoke test. The module is yours and the MCP SDK may be absent. Not a required check."
+run = ["uv", "run", "python", "-m", "mcp_server"]

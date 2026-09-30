@@ -433,3 +433,81 @@ def test_fastapi_keeps_platform_docker_check(tmp_path: Path) -> None:
     ship = next(item for item in rules if item["name"] == "ship")
     assert ship["matched_paths"] == ["deploy/Dockerfile"]
     assert "docker build ." in " ".join(ship["missing"])
+
+
+_RAG_AI_PATHS = (
+    "prompts/system.txt",
+    "evals/golden.jsonl",
+    "tests/eval/test_retrieval.py",
+    "mcp/server.py",
+    "retrieval/search.py",
+    "rag/pipeline.py",
+    "src/rag/chain.py",
+    "ingest/load.py",
+    "ingestion/chunk.py",
+    "embeddings/store.py",
+    "vectorstore/client.py",
+    "vectorstores/qdrant.py",
+    "indexes/chunks.bin",
+    "faiss_index/data.bin",
+    "vector-index/meta.json",
+    "config/models.yaml",
+    "service/models.toml",
+)
+
+
+def test_rag_ai_paths_trigger_ai_surface(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="rag")
+    _change(tmp_path, *_RAG_AI_PATHS)
+    _satisfy_claim(tmp_path)
+    failed, failed_doc = _verify(tmp_path)
+
+    assert failed.exit_code == 1
+    ai = _surface(failed_doc, "ai")
+    assert ai["status"] == "unsatisfied"
+    assert ai["matched_paths"] == list(_RAG_AI_PATHS)
+    missing = " ".join(ai["missing"]) if isinstance(ai["missing"], list) else ""
+    assert "uv run pytest tests/eval -m not live" in missing
+    assert "ai fallback" in missing
+    assert _surface(failed_doc, "ship")["status"] == "not required"
+
+    command = [sys.executable, "-c", "raise SystemExit(0)"]
+    _write(tmp_path, lambda data: data["surfaces"]["ai"].__setitem__("run", command))
+    EvidenceService(tmp_path).run(
+        change_id="C-0001",
+        evidence_type="test_result",
+        subject="tests/eval",
+        command=command,
+    )
+    EvidenceService(tmp_path).add(
+        change_id="C-0001",
+        evidence_type="repository_observation",
+        subject="ai fallback",
+        source="Return a cached FAQ when the model times out.",
+        producer="owner",
+    )
+    passed, passed_doc = _verify(tmp_path)
+    assert passed.exit_code == 0, _combined(passed)
+    assert passed_doc["verdict"] == "SATISFIED"
+    assert _surface(passed_doc, "ai")["status"] == "satisfied"
+    assert _surface(passed_doc, "ai")["missing"] == []
+
+
+def test_rag_non_ai_paths_are_not_required(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="rag")
+    _change(
+        tmp_path,
+        "src/app.py",
+        "tests/test_api.py",
+        "docs/index/page.md",
+        "src/domain/models.py",
+        "README.md",
+    )
+    _satisfy_claim(tmp_path)
+    result, document = _verify(tmp_path)
+
+    assert result.exit_code == 0, _combined(result)
+    assert document["verdict"] == "SATISFIED"
+    assert _surface(document, "ai")["status"] == "not required"
+    assert _surface(document, "ai")["matched_paths"] == []
+    assert _surface(document, "ship")["status"] == "not required"

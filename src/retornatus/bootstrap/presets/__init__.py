@@ -1,12 +1,13 @@
 """Packaged config presets shipped as TOML data files.
 
 Presets are not branches in ``init``. ``python-platform`` extends ``python``
-by naming that file. ``fastapi`` and ``django`` extend ``python-platform``
-the same way.
-Child ``code_globs``, ``surfaces.ship.globs``, and ``surfaces.ship.checks``
-are appended to the parent. A child ship check with the same name replaces
-that parent check. ``required_checks`` still replaces the parent list when
-the child declares it.
+by naming that file. ``fastapi``, ``django``, and ``rag`` extend
+``python-platform`` the same way.
+Child ``code_globs``, ``surfaces.ship.globs``, ``surfaces.ship.checks``,
+and ``surfaces.ai.globs`` are appended to the parent. A child ship check
+with the same name replaces that parent check. ``required_checks`` still
+replaces the parent list when the child declares it. ``surfaces.ai.run``
+replaces the parent command when the child declares it.
 
 Suggested ship commands stay comments in the rendered config. ``verify``
 reads the packaged checks until the project writes
@@ -261,7 +262,11 @@ def _overlay(parent: Preset, raw: dict[str, Any], *, filename: str) -> Preset:
     ai_run = parent.ai_run
     if "ai" in surfaces:
         ai = _table(surfaces.get("ai"), label=f"Preset {filename} surfaces.ai")
-        ai_globs = _globs(ai.get("globs"), label=f"Preset {filename} ai globs")
+        if "globs" in ai:
+            ai_globs = _merge_globs(
+                parent.ai_globs,
+                _globs(ai.get("globs"), label=f"Preset {filename} ai globs"),
+            )
         ai_note = _note_subject(ai.get("note_subject"), default=parent.ai_note_subject)
         if "run" in ai:
             ai_run = _argv(ai.get("run"), label=f"Preset {filename} ai run")

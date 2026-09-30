@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0018",
+  "title": "RAG init preset",
+  "demand": {
+    "schema_version": 1,
+    "statement": "CLI users must initialize a RAG, LLM, or MCP repository with retornatus init --preset rag. The preset extends python-platform, adds scope and AI globs for prompts, evals, tests/eval, mcp, retrieval, rag, ingest, embeddings, vectorstore, sensible index directories, and model-name config, requires the inherited offline eval command plus an ai fallback note when those paths change, and comments suggested commands for a golden-set retrieval script, prompt snapshot tests, and an MCP server smoke test. Out of scope: a version bump, merging, and publishing. verify checks that the eval command ran; it does not score eval quality.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T15:20:39.539472Z"
+}

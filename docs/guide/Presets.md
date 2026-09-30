@@ -14,10 +14,12 @@ retornatus preset show python
 retornatus preset show python-platform
 retornatus preset show fastapi
 retornatus preset show django
+retornatus preset show rag
 retornatus init --preset python
 retornatus init --preset python-platform
 retornatus init --preset fastapi
 retornatus init --preset django
+retornatus init --preset rag
 retornatus init --preset python-platform --force-config
 ```
 
@@ -193,6 +195,64 @@ run = ["python", "manage.py", "makemigrations", "--check", "--dry-run"]
 
 Docker, Compose, Terraform, Helm, and workflow paths still require their executed checks. A `[[surfaces.ship.checks]]` table you write still replaces the whole packaged list, including this optional migration check, so copy every check you still want.
 
+## rag
+
+For a RAG, LLM, or MCP service. It **extends** `python-platform`, so the pytest, ruff, and mypy checks, the `src/**`, `app/**`, and `tests/**` code globs, and the ship and AI surfaces above are included. `src/**` already covers `src/<package>/`.
+
+Extra `[governance.scope] code_globs`:
+
+| Glob | Layout it names |
+| --- | --- |
+| `prompts/**` | Prompt files at the repository root |
+| `evals/**` | An eval suite at the repository root |
+| `tests/eval/**` | Offline eval tests under `tests/` (already inside the inherited `tests/**`) |
+| `mcp/**` | An MCP server package at the repository root |
+| `retrieval/**` | Retrievers at the repository root |
+| `rag/**` | A RAG package at the repository root |
+| `ingest*/**` | `ingest/`, `ingestion/`, and similar root directories |
+| `embeddings/**` | Embedding code at the repository root |
+| `vectorstore*/**` | `vectorstore/`, `vectorstores/`, and similar root directories |
+| `indexes/**`, `*_index/**`, `vector-index/**` | Retrieval indexes. A bare `*index*/**` is not used, because it also matches trees such as `docs/index/` |
+| `config/**/*model*`, `*models*.toml`, `*models*.yaml`, `*models*.yml`, `*models*.json` | Config files whose names carry the model. This does not match `src/**/models.py` |
+
+Those globs describe roots. They do not change `gate scope`. Nested modules under `app/` or `src/` are already covered by the inherited globs.
+
+### AI surface
+
+The AI globs from `python-platform` stay (`**/prompts/**`, `**/mcp/**`, `**/evals/**`, `**/tests/eval/**`, `**/*llm*`, `**/*rag*`, `**/*embed*`). The preset appends directory globs the filename patterns miss, plus model-name config:
+
+| Glob | Why it is here |
+| --- | --- |
+| `**/retrieval/**` | Retriever packages anywhere in the tree |
+| `**/rag/**` | A `rag/` package whose files are not themselves named `*rag*` |
+| `**/ingest*/**` | Ingest directories anywhere (`ingest/`, `ingestion/`) |
+| `**/embeddings/**` | An embeddings package. `**/*embed*` already matches a file named `embeddings.py`; it does not match `embeddings/store.py` |
+| `**/vectorstore*/**` | Vector-store packages (`vectorstore/`, `vectorstores/`) |
+| `**/indexes/**`, `**/*_index/**`, `**/vector-index/**` | Retrieval indexes. `docs/index/` does not match |
+| `**/config/**/*model*`, `**/*models*.toml`, `**/*models*.yaml`, `**/*models*.yml`, `**/*models*.json` | Config that names a model. `src/domain/models.py` does not match |
+
+A Task resource or a worktree path that matches makes the AI rule run. `verify` then requires executed evidence of the inherited eval command:
+
+```bash
+uv run pytest tests/eval -m "not live"
+```
+
+Change `surfaces.ai.run` when the suite lives somewhere else. The same Change also needs a narrative note with subject `ai fallback` describing how the feature degrades when the model is down or wrong (for example, return a cached FAQ). Placeholder text does not count.
+
+`verify` checks that this command was executed and that the fallback note exists. It does not score the golden set, the prompt snapshots, or the MCP server. A passing eval command is not a quality grade.
+
+### Suggested evidence
+
+These commands are **comments** in the generated config. They are not `[assurance] required_checks`. The script path, the snapshot module, and the MCP SDK may be absent, so `verify` does not demand them.
+
+| Suggestion | Command | Why it stays a comment |
+| --- | --- | --- |
+| Golden set | `uv run python scripts/eval_retrieval.py` | Example retrieval-quality script. The path is yours. This is not the required eval command, and `verify` does not score it |
+| Prompt snapshots | `uv run pytest -q tests/test_prompt_snapshots.py` | Example snapshot module. The path is yours and may be absent |
+| MCP smoke | `uv run python -m mcp_server` | Example server smoke test. The module is yours and the MCP SDK may be absent |
+
+Spec Guardrails appendix D records the same pair in `design.md`: an offline eval harness (`pytest tests/eval/ -m "not live"`) and a fallback/degrade note. Retornatus keeps that pair as executed Evidence plus the `ai fallback` subject. It still does not call a live model.
+
 ## Limitations
 
 | Limitation | What it means |
@@ -201,9 +261,9 @@ Docker, Compose, Terraform, Helm, and workflow paths still require their execute
 | Not AppSec | Secrets, threat models, and authz review stay on `gate scope` sensitive paths and on `review_result` / `security_test` claims |
 | Eval quality is yours | `verify` checks that the configured command was executed and that a fallback note exists. It does not score the golden set |
 | No live traces | Production LLM telemetry is out of scope. The record is git plus Evidence |
-| Framework presets | `fastapi` extends `python-platform` for API layouts and Alembic. `django` extends it for Django layouts and migrations. Workers stay on `python` or `python-platform` |
+| Framework presets | `fastapi` extends `python-platform` for API layouts and Alembic. `django` extends it for Django layouts and migrations. `rag` extends it for retrieval, prompt, eval, and MCP layouts. Workers stay on `python` or `python-platform` |
 | Notes are declarations | The rollback and fallback subjects must be non-empty and specific. Retornatus does not judge whether the plan would work |
 
 ## What did not come over from Spec Guardrails
 
-Spec Guardrails stored Ship Surface and AI Surface as sections in `design.md` and gated them with `validate_ship_surface.py`. Retornatus keeps the path lists and the honest limits, and turns them into executed Evidence plus a note. There is no `design.md` checklist to satisfy.
+Spec Guardrails stored Ship Surface and AI Surface as sections in `design.md` and gated them with `validate_ship_surface.py`. Appendix D (RAG / MCP / eval) requires an eval harness field and a fallback/degrade field in that file. Retornatus keeps the path lists and the honest limits, and turns them into executed Evidence plus a note. There is no `design.md` checklist to satisfy. `verify` still does not grade the eval.
