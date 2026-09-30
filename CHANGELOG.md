@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `retornatus verify --json`, every `retornatus gate` subcommand `--json`, and `retornatus change overview --json` (also `--format json`) print a versioned verdict envelope and nothing else on stdout. Diagnostics go to stderr. Exit codes match text mode. The contract is `schemas/verdict-v1.schema.json`. See `docs/guide/JSON-output.md`.
 
+### Changed
+
+- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). README uses the sharp image `docs/assets/retornatus-mascot.webp`. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
+
 ### Fixed
 
 - Skill Markdown saved with Windows CRLF line endings still loads. `gate skill-research --json` prints the verdict envelope instead of failing before any stdout.

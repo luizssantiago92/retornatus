@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-003",
+  "type": "test_result",
+  "subject": "docs/index.html",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\"docs/index.html\").read_text(encoding=\"utf-8\")\nassert \"og:image\" in text and \"assets/retornatus-mascot-square.webp\" in text\nassert \"rel=\\\"icon\\\"\" in text\nprint(\"square og and favicon referenced\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:40:40.487375Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\"docs/index.html\").read_text(encoding=\"utf-8\")\nassert \"og:image\" in text and \"assets/retornatus-mascot-square.webp\" in text\nassert \"rel=\\\"icon\\\"\" in text\nprint(\"square og and favicon referenced\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:40:40.451156Z",
+  "ended_at": "2026-09-30T05:40:40.481057Z",
+  "duration_ms": 29,
+  "output_sha256": "939e534ee134ae3a40058e55066a91fc0d0cc77ae88f790b356997a75c16058c",
+  "output_tail": "square og and favicon referenced\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-003.output.txt",
+  "git_commit": "95db6f8bf870e115b018647705c036df67614191",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-3",
+      "note": null
+    }
+  ]
+}

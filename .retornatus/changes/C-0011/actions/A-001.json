@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Ship three optimized transparent WebP mascots under docs/assets, point the README at the sharp image, point the site hero at the neon image with a 3.6s CSS teal and orange glow that stops under prefers-reduced-motion, and point OG and favicon images at the square crop.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest confirms README.md contains the sharp mascot file docs/assets/retornatus-mascot.webp",
+    "pytest confirms docs/index.html contains the neon hero assets/retornatus-mascot-neon.webp",
+    "pytest confirms docs/index.html og:image and favicon point at assets/retornatus-mascot-square.webp",
+    "pytest confirms docs/site.css contains prefers-reduced-motion: reduce and animation-duration 3.6s",
+    "pytest confirms scripts/build_docs_html.py references assets/retornatus-mascot-square.webp",
+    "pytest confirms CHANGELOG.md contains an Unreleased note for the approved mascot",
+    "The docs HTML build via scripts/build_docs_html.py --check exits 0",
+    "uv run pytest -q exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0011/T-001",
+      "description": "Replace mascot WebP assets and update README, site, favicon, and changelog references",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "README.md",
+        "CHANGELOG.md",
+        "docs/index.html",
+        "docs/site.css",
+        "docs/guide/index.html",
+        "docs/assets/retornatus-mascot.webp",
+        "docs/assets/retornatus-mascot-neon.webp",
+        "docs/assets/retornatus-mascot-square.webp",
+        "scripts/build_docs_html.py"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
