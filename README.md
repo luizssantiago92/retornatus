@@ -1,7 +1,7 @@
 # Retornatus
 
 <p align="center">
-  <a href="https://luizssantiago92.github.io/retornatus/"><img src="docs/assets/retornatus-mascot-readme.webp" alt="Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame" width="420" height="231" /></a>
+  <a href="https://luizssantiago92.github.io/retornatus/"><img src="https://raw.githubusercontent.com/luizssantiago92/retornatus/main/docs/assets/retornatus-mascot-readme.webp" alt="Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame" width="420" height="231" /></a>
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/retornatus.svg)](https://pypi.org/project/retornatus/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml/badge.svg)](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml)
-[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/luizssantiago92/retornatus/blob/main/LICENSE)
 
 **Repo-native governance harness** for AI coding agents (Cursor, Claude Code, Codex, and similar).
 
@@ -40,7 +40,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-Package **1.4.1** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
+Package **1.5.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](https://github.com/luizssantiago92/retornatus/blob/main/CONTRIBUTING.md#releases).
 
 [What it is](#what-it-is) · [Install](#1-install) · [Presets](#presets) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
 
@@ -132,7 +132,7 @@ retornatus init --preset fastapi
 
 These checks record that a command ran and exited 0. They do not review a Terraform plan, audit security, or score retrieval quality.
 
-Full page: [Presets](docs/guide/Presets.md).
+Full page: [Presets](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Presets.md).
 
 ---
 
@@ -358,7 +358,7 @@ retornatus hooks status
 retornatus doctor
 ```
 
-[`templates/ci/retornatus-pr.yml`](templates/ci/retornatus-pr.yml) runs the [GitHub Action](docs/guide/GitHub-Action.md) (`uses: luizssantiago92/retornatus@v1`). The action installs Retornatus, runs `verify` and the diff gates, and posts one sticky comment. Full notes: [Cloud agents](docs/guide/Cloud-agents.md).
+[`templates/ci/retornatus-pr.yml`](https://github.com/luizssantiago92/retornatus/blob/main/templates/ci/retornatus-pr.yml) runs the [GitHub Action](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/GitHub-Action.md) (`uses: luizssantiago92/retornatus@v1`). The action installs Retornatus, runs `verify` and the diff gates, and posts one sticky comment. Full notes: [Cloud agents](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Cloud-agents.md).
 
 ---
 
@@ -368,17 +368,17 @@ retornatus doctor
 | --- | --- |
 | Product story (non-jargon) | [Website](https://luizssantiago92.github.io/retornatus/) |
 | First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
-| Init presets | [Presets](docs/guide/Presets.md) |
+| Init presets | [Presets](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Presets.md) |
 | Cloud / remote agents | [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html) |
 | Pull-request verdict comment | [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) |
 | Full technical guide | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |
 | Concepts | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html) |
 | Coming from Spec Guardrails | [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) |
 | Adjacent harnesses | [Landscape](https://luizssantiago92.github.io/retornatus/guide/landscape.html) |
-| Product requirements | [PRD](docs/archive/PRD.md) |
+| Product requirements | [PRD](https://github.com/luizssantiago92/retornatus/blob/main/docs/archive/PRD.md) |
 | Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
 
-Markdown sources for editors: [`docs/guide/`](docs/guide/README.md). GitHub Pages generates the HTML from those files. To preview locally, run `python scripts/build_docs_html.py` (the output is gitignored).
+Markdown sources for editors: [`docs/guide/`](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/README.md). GitHub Pages generates the HTML from those files. To preview locally, run `python scripts/build_docs_html.py` (the output is gitignored).
 
 ---
 
@@ -406,10 +406,10 @@ Retornatus is a **separate successor architecture** informed by building and dog
 
 **Transitive lineage:** Spec Guardrails itself credits upstream open-source work (spec-driven phases, task graphs, loop engineering, harness vocabulary, and related tools). Those influences arrive **through** Spec Guardrails unless Retornatus independently revisited them — see the full provenance write-up.
 
-**Full credits & lineage:** [credits on the website](https://luizssantiago92.github.io/retornatus/credits.html) · [credits-and-lineage.md](docs/credits-and-lineage.md) · Spec Guardrails’ own [credits](https://github.com/luizssantiago92/spec-guardrails/blob/main/docs/guide/credits.md)
+**Full credits & lineage:** [credits on the website](https://luizssantiago92.github.io/retornatus/credits.html) · [credits-and-lineage.md](https://github.com/luizssantiago92/retornatus/blob/main/docs/credits-and-lineage.md) · Spec Guardrails’ own [credits](https://github.com/luizssantiago92/spec-guardrails/blob/main/docs/guide/credits.md)
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/luizssantiago92/retornatus/blob/main/LICENSE).

@@ -11,7 +11,7 @@ branding:
 inputs:
   version:
     description: >-
-      Retornatus release to install from PyPI (for example 1.4.1), latest, or
+      Retornatus release to install from PyPI (for example 1.5.0), latest, or
       local to install the checked-out package. The release must include
       retornatus ci comment.
     required: false

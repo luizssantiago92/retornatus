@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-30
+
 ### Added
 
 - `init --preset worker` extends `python-platform` for background jobs and queues (Celery, RQ, Dramatiq, arq, scheduled jobs). It adds layout globs (`tasks/`, `workers/`, `jobs/`, `schedules/`, `celery_app.py`, `celery.py`, `celeryconfig.py`, `worker.py`, plus the inherited `src/`, `app/`, and `tests/` roots). Task, worker, job, Celery app, beat and schedule, and queue config paths (`**/tasks/**`, `**/tasks.py`, `**/workers/**`, `**/worker.py`, `**/jobs/**`, `**/celery_app.py`, `**/celery.py`, `**/celeryconfig.py`, `**/beat*`, `**/schedules/**`, `**/queues.py`, `**/queues.toml`, `**/queues.y*ml`) trigger the ship surface. The preset sets the ship note subject to `ship rollback and job retry`, so `verify` requires a note that says how the job retries and why running it again is safe. Retornatus has only ship and AI surface kinds, so the preset reuses the ship surface instead of adding a third kind. `celery -A app inspect ping` is an optional check, and eager-task pytest, `rq worker --burst`, and `arq --check` stay comments because a broker or the tool may be absent. `verify` checks that the note exists. It does not judge whether a job is idempotent. See `docs/guide/Presets.md`.
@@ -19,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Package metadata uses the PEP 639 license expression `MIT` with `license-files = ["LICENSE"]`. Trove classifiers name a production console tool for developers, OS-independent Python 3.11, 3.12, and 3.13, and software quality assurance and testing. Project URLs point at the website, the guide, the repository, issues, and this changelog. The build backend requires `hatchling>=1.27` so the wheel metadata includes `License-Expression`. Keywords also include `agents` and `verification`. There is no `License ::` classifier.
+- README file links use `https://github.com/luizssantiago92/retornatus/blob/main/...` and the mascot image uses `https://raw.githubusercontent.com/luizssantiago92/retornatus/main/...`. In-page `#anchors` stay relative. A test fails when README contains a relative non-anchor link.
+- The package version is 1.5.0 in `pyproject.toml`, `__version__`, `uv.lock`, and `.retornatus/config.toml`. Docs that name the current release (Cloud agents, Quick start, the guide index, the GitHub Action version example, and the landing highlights) say 1.5.0.
 - README, the docs guide, and the landing page present the six init presets (`python`, `python-platform`, `fastapi`, `django`, `rag`, `worker`), including `init --preset`, `init --list-presets`, `--force-config`, and `preset show`. Ship and AI surfaces are described as path-triggered checks that the command ran. They do not grade quality. See `docs/guide/Presets.md`.
 - The docs site hero uses the same static card as the README, `docs/assets/retornatus-mascot-readme.webp`. `docs/assets/retornatus-mascot-neon.webp` is removed. Open Graph, Twitter, and favicon stay on `docs/assets/retornatus-mascot-square.webp`. A subtle glow on the hero container does not run when `prefers-reduced-motion: reduce`.
 - The sticky pull-request comment leads with a one-line verdict summary, omits the overview gate list so the JSON gate table is the only gate result, and folds stale-snapshot warnings plus per-evidence labels into a collapsed details block.
@@ -27,9 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The packaged hub describes `verify --receipt` as an Ed25519 receipt (public key in `.retornatus/keys/`). `retornatus integrate` copies that hub to `.cursor/skills/retornatus/SKILL.md`. A test fails when the two copies diverge.
-- `.retornatus/config.toml` records the installed release (`1.4.1`). `retornatus doctor` warns when `[retornatus] version` differs from the installed package.
+- `.retornatus/config.toml` records the installed release. `retornatus doctor` warns when `[retornatus] version` differs from the installed package.
 - The README “What you get” link uses the em dash heading anchor. Credits link to the repository `LICENSE` on GitHub, and the product contract link text is `docs/archive/PRD.md`.
-- The site Open Graph image is an absolute `https://luizssantiago92.github.io/retornatus/...` URL. The What’s new block names the 1.4 line and init presets. The README 1.4.0 note pins the current release instead of `retornatus==1.4.1`.
+- The site Open Graph image is an absolute `https://luizssantiago92.github.io/retornatus/...` URL. The What’s new block names the release and init presets. The README 1.4.0 note pins the current release instead of `retornatus==1.4.1`.
 - The README mascot looks the same on GitHub dark and light themes. It is a static frame of the site hero: the neon artwork with the resting teal/orange glow on the site background, in a rounded 960×528 card shown at 320 px. The artwork was re-cut from the white-background original. The white patch between the index finger and the visor is gone, and the ring and flame edges no longer carry a pale white/pink fringe.
 - Skill Markdown saved with Windows CRLF line endings still loads. `gate skill-research --json` prints the verdict envelope instead of failing before any stdout.
 - Tutorial 01 and How it works section 7 use the DONE criterion `docs/health.md documents GET /health`, so evidence subject `docs/health.md` matches claim subject `/health.md` and `verify` returns SATISFIED. A regression test runs the Tutorial 01 and Quick start command sequences.

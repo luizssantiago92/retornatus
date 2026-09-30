@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0022",
+  "title": "Package metadata and 1.5.0 release prep",
+  "demand": {
+    "schema_version": 1,
+    "statement": "PyPI readers of the retornatus CLI must see an MIT license expression, trove classifiers, and project URLs, and every README link must resolve on PyPI. Scope is package metadata, absolute README links, and release 1.5.0 notes. Out of scope is merging, tagging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T18:12:21.864808Z"
+}

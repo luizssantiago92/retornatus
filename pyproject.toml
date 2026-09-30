@@ -1,12 +1,32 @@
 [project]
 name = "retornatus"
-version = "1.4.1"
+version = "1.5.0"
 description = "Repo-native governance harness for AI-assisted software development."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Luiz Santiago" }]
-keywords = ["governance", "ai", "software-engineering", "harness"]
+keywords = [
+    "governance",
+    "ai",
+    "software-engineering",
+    "harness",
+    "agents",
+    "verification",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
 dependencies = [
     "cryptography>=42",
     "pydantic>=2.1",
@@ -15,15 +35,17 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/luizssantiago92/retornatus"
+Homepage = "https://luizssantiago92.github.io/retornatus/"
+Documentation = "https://luizssantiago92.github.io/retornatus/guide/"
 Repository = "https://github.com/luizssantiago92/retornatus"
 Issues = "https://github.com/luizssantiago92/retornatus/issues"
+Changelog = "https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md"
 
 [project.scripts]
 retornatus = "retornatus.cli.main:entrypoint"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
