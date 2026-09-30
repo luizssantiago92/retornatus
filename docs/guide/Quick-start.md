@@ -61,6 +61,8 @@ You should see:
 - Hub skill (e.g. `.cursor/skills/retornatus/SKILL.md` on Cursor)
 - `doctor` reporting initialized state
 
+To start from a packaged config instead of the minimal file, run `retornatus init --list-presets` and then `retornatus init --preset fastapi` on an empty project. `python` is pytest, ruff, and mypy. `python-platform`, `fastapi`, `django`, and `rag` extend that bar. When deploy files or model paths are part of the Change, `verify` also expects those commands to have run, plus a short rollback or fallback note. It checks that the command ran. It does not grade quality. An existing `config.toml` stays in place unless you pass `--force-config`. That preset init is an alternative to the minimal `init` above, not a second step in this walkthrough. Details: [Presets](Presets.md).
+
 Optional for brownfield repos:
 
 ```bash

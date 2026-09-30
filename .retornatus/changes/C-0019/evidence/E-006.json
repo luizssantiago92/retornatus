@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0019/E-006",
+  "type": "repository_observation",
+  "subject": "CHANGELOG.md Unreleased records the README, docs, site, and mascot asset updates",
+  "source": "uv run python /tmp/site-preview/check_changelog.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:51:52.773438Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/site-preview/check_changelog.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:50:33.016048Z",
+  "ended_at": "2026-09-30T15:50:33.045911Z",
+  "duration_ms": 29,
+  "output_sha256": "04eab7556dee8100649fa04906eb22c667fc34148c36f3113a37fe6564e75d2b",
+  "output_tail": "changelog unreleased ok\n",
+  "output_artifact": ".retornatus/changes/C-0019/evidence/E-006.output.txt",
+  "git_commit": "4c983aee81859467971612e872bdde7fbdb4c42e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0019/claim-done-6",
+      "note": null
+    }
+  ]
+}

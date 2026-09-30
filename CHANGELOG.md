@@ -18,8 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- README, the docs guide, and the landing page present the five init presets (`python`, `python-platform`, `fastapi`, `django`, `rag`), including `init --preset`, `init --list-presets`, `--force-config`, and `preset show`. Ship and AI surfaces are described as path-triggered checks that the command ran. They do not grade quality. See `docs/guide/Presets.md`.
+- The docs site hero uses the same static card as the README, `docs/assets/retornatus-mascot-readme.webp`. `docs/assets/retornatus-mascot-neon.webp` is removed. Open Graph, Twitter, and favicon stay on `docs/assets/retornatus-mascot-square.webp`. A subtle glow on the hero container does not run when `prefers-reduced-motion: reduce`.
 - The sticky pull-request comment leads with a one-line verdict summary, omits the overview gate list so the JSON gate table is the only gate result, and folds stale-snapshot warnings plus per-evidence labels into a collapsed details block.
-- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). Background inside the serpent ring is transparent, including the gaps by the head, headphones, and shoulders. The white shirt stays opaque, and every pixel inside the head, hand, and suit silhouette stays opaque, including the specular highlight on the chrome head. Glow edges keep a soft alpha. README uses `docs/assets/retornatus-mascot-readme.webp`, a static frame of the site hero. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
+- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). Background inside the serpent ring is transparent, including the gaps by the head, headphones, and shoulders. The white shirt stays opaque, and every pixel inside the head, hand, and suit silhouette stays opaque, including the specular highlight on the chrome head. Glow edges keep a soft alpha. README and the docs site hero use `docs/assets/retornatus-mascot-readme.webp`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
 
 ### Fixed
 

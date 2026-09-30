@@ -15,6 +15,7 @@ retornatus skill --help
 | `init` | Create `.retornatus/` and append ignore rules for the local index, cache, private keys, and `.env` files |
 | `init --preset <name>` | Write a packaged config preset. Does not replace an existing `config.toml` unless `--force-config` is set |
 | `init --list-presets` | List packaged presets and exit |
+| `init --preset <name> --force-config` | Replace an existing `config.toml` with that preset. `--force` alone, with no preset, still writes the minimal config |
 | `preset show <name>` / `preset list` | Print one preset's rendered config, or list presets. See [Presets](Presets.md) |
 | `integrate` | Hub skill + detected Environment bridges |
 | `project-init` | Brownfield map → `project/project.md` |
@@ -24,6 +25,8 @@ retornatus skill --help
 | `ops list` / `ops show` / `ops run` | Operational hygiene loops |
 
 `init` appends one delimited block to `.gitignore` (`# retornatus-gitignore:begin` through `# retornatus-gitignore:end`) when that begin marker is missing. The block ignores `.retornatus/index/`, `.retornatus/runtime/` (locks, executions, and cache), `*.pem`, `*.key`, `.env`, and `.env.*`. It keeps `!.env.example` and `!.retornatus/keys/*.pub` committable. A second `init` does not duplicate the block and does not remove lines that were already there. If git already tracks a `*.pem` or `*.key` file, `init` prints a warning on stderr. `--preset` still appends that gitignore block. Without `--preset`, the config stays the minimal file.
+
+`--force-config` is what replaces an existing `config.toml` with the selected preset. `--force` without `--preset` still recreates the minimal config. It does not apply a preset over a file that is already there. An unknown preset name exits 2 and prints the names in this install. `preset show <name>` prints the config `init --preset` would write, including the comment block of suggested commands. The packaged names are `python`, `python-platform`, `fastapi`, `django`, and `rag`. See [Presets](Presets.md).
 
 ## Change workflow
 

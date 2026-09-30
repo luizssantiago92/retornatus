@@ -24,6 +24,7 @@
     <nav>
       <a href="#why">Why</a>
       <a href="#how">How</a>
+      <a href="#presets">Presets</a>
       <a href="#install">Install</a>
       <a href="#news">What’s new</a>
       <a href="guide/">Docs</a>
@@ -46,52 +47,11 @@
         </div>
       </div>
       <figure class="hero-mascot" aria-label="Chrome agent mascot with a teal ouroboros and an orange comet flame">
-        <div class="mascot-stage" aria-hidden="true">
-          <div class="mascot-glow"></div>
-          <svg class="mascot-waves" viewBox="0 0 480 320" preserveAspectRatio="xMidYMid slice" focusable="false">
-            <defs>
-              <linearGradient id="waveGold" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0" />
-                <stop offset="35%" stop-color="#fbbf24" stop-opacity="0.85" />
-                <stop offset="70%" stop-color="#14b8a6" stop-opacity="0.75" />
-                <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0" />
-              </linearGradient>
-              <linearGradient id="waveTeal" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#0f766e" stop-opacity="0" />
-                <stop offset="40%" stop-color="#2dd4bf" stop-opacity="0.7" />
-                <stop offset="75%" stop-color="#f59e0b" stop-opacity="0.55" />
-                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0" />
-              </linearGradient>
-              <filter id="waveSoft" x="-20%" y="-40%" width="140%" height="180%">
-                <feGaussianBlur stdDeviation="2.2" />
-              </filter>
-            </defs>
-            <g class="wave-layer wave-a" filter="url(#waveSoft)">
-              <path fill="none" stroke="url(#waveGold)" stroke-width="3.2"
-                d="M-40 210 C 40 150, 120 270, 200 200 S 360 140, 520 210" />
-              <path fill="none" stroke="url(#waveTeal)" stroke-width="2.4" opacity="0.85"
-                d="M-40 235 C 50 180, 140 290, 230 220 S 380 160, 520 240" />
-            </g>
-            <g class="wave-layer wave-b" filter="url(#waveSoft)">
-              <path fill="none" stroke="url(#waveTeal)" stroke-width="2.8"
-                d="M-40 250 C 60 200, 150 300, 250 240 S 400 190, 520 255" />
-              <path fill="none" stroke="url(#waveGold)" stroke-width="2" opacity="0.7"
-                d="M-40 185 C 70 240, 160 130, 260 190 S 390 250, 520 180" />
-            </g>
-            <g class="wave-orbs">
-              <circle class="orb o1" cx="90" cy="210" r="3.2" fill="#fbbf24" />
-              <circle class="orb o2" cx="170" cy="245" r="2.4" fill="#2dd4bf" />
-              <circle class="orb o3" cx="260" cy="195" r="3" fill="#f59e0b" />
-              <circle class="orb o4" cx="340" cy="230" r="2.2" fill="#5eead4" />
-              <circle class="orb o5" cx="410" cy="205" r="2.8" fill="#fcd34d" />
-            </g>
-          </svg>
-        </div>
         <img
-          class="mascot-sprite"
-          src="assets/retornatus-mascot-neon.webp"
-          width="1280"
-          height="720"
+          class="mascot-card"
+          src="assets/retornatus-mascot-readme.webp"
+          width="960"
+          height="528"
           fetchpriority="high"
           decoding="async"
           alt="Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame"
@@ -152,6 +112,45 @@
       </div>
     </section>
 
+    <section class="band" id="presets">
+      <h2>Presets</h2>
+      <p class="note preset-lead">
+        <code>retornatus init --preset</code> writes a starting config from a file shipped in the package.
+        <code>verify</code> checks that the named commands ran and exited 0. It does not grade the tests, the deploy plan, or the eval set.
+      </p>
+      <div class="preset-grid">
+        <article class="preset-card">
+          <h3>python</h3>
+          <p>Python 3.11+ tests and static checks: pytest, ruff, and mypy.</p>
+        </article>
+        <article class="preset-card">
+          <h3>python-platform</h3>
+          <p>Extends python. Ship and AI rules run when deploy files or model paths change.</p>
+        </article>
+        <article class="preset-card">
+          <h3>fastapi</h3>
+          <p>Extends python-platform. API layout globs. Alembic paths count as ship.</p>
+        </article>
+        <article class="preset-card">
+          <h3>django</h3>
+          <p>Extends python-platform. Django layout globs. Migration paths count as ship.</p>
+        </article>
+        <article class="preset-card">
+          <h3>rag</h3>
+          <p>Extends python-platform. Retrieval and prompt globs, with a stronger AI surface.</p>
+        </article>
+      </div>
+      <pre class="code"><code>retornatus init --list-presets
+retornatus init --preset fastapi</code></pre>
+      <p class="note">
+        Ship means Docker, Compose, Terraform, Helm, or a workflow file.
+        AI means prompts, evals, MCP, or retrieval code.
+        If those paths are not in the Change, the extra rule is not required.
+        An existing config stays put unless you pass <code>--force-config</code>.
+        <a href="guide/presets.html">Presets guide</a>.
+      </p>
+    </section>
+
     <section class="band" id="install">
       <h2>Install</h2>
       <pre class="code"><code>uv tool install retornatus
@@ -175,11 +174,12 @@ retornatus doctor</code></pre>
     <section class="band" id="news">
       <h2>What’s new</h2>
       <ul class="news">
+        <li><strong>Init presets</strong> — <code>python</code>, <code>python-platform</code>, <code>fastapi</code>, <code>django</code>, and <code>rag</code>. Ship and AI rules run only when those paths change, and they check that the command ran.</li>
         <li><strong>Verify receipts</strong> — Ed25519 signature from <code>verify --receipt</code>; anyone can check it with the committed public key (<code>receipt verify</code>). The private key stays outside the repo.</li>
         <li><strong>Attempt budgets</strong> — cap Action retries with <code>action budget</code> / <code>gate budget</code>.</li>
         <li><strong>Prompt intake</strong> — stage a freeform ask; Skills only after you confirm <code>CREATE=yes</code>.</li>
         <li><strong>Situation as requirements</strong> — focused questions before the Contract.</li>
-        <li><strong>Mascot</strong> — chrome agent in a black suit, teal ouroboros, orange comet flame, with a CSS glow on the site.</li>
+        <li><strong>Mascot</strong> — chrome agent in a black suit, teal ouroboros, orange comet flame. The hero uses the same rounded card as the README.</li>
       </ul>
       <p class="note">Release notes and technical depth: <a href="guide/">documentation</a> · <a href="https://github.com/luizssantiago92/retornatus/releases">releases</a>.</p>
     </section>

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0019",
+  "version": 1,
+  "what": "Present the five init presets in README.md, the docs guide index, CLI reference, Overview, and the docs site, swap the site hero to docs/assets/retornatus-mascot-readme.webp, remove the unused neon asset, and record the updates in CHANGELOG Unreleased.",
+  "constraints": [],
+  "done_criteria": [
+    "README.md contains a Presets section naming python, python-platform, fastapi, django, and rag, the command retornatus init --preset fastapi, and a link to docs/guide/Presets.md",
+    "docs/guide/index.html links presets.html and docs/guide/CLI.md documents init --preset, init --list-presets, --force-config, and preset show",
+    "docs/guide/Overview.md mentions init presets",
+    "docs/index.html hero src is assets/retornatus-mascot-readme.webp and the page contains a presets section",
+    "docs/assets/retornatus-mascot-neon.webp does not exist",
+    "CHANGELOG.md Unreleased records the README, docs, site, and mascot asset updates",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv lock --check exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T15:37:27.783749Z"
+}
