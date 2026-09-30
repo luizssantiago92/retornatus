@@ -12,8 +12,10 @@ An existing `config.toml` is left in place unless you pass `--force-config`. `--
 retornatus init --list-presets
 retornatus preset show python
 retornatus preset show python-platform
+retornatus preset show fastapi
 retornatus init --preset python
 retornatus init --preset python-platform
+retornatus init --preset fastapi
 retornatus init --preset python-platform --force-config
 ```
 
@@ -96,6 +98,49 @@ globs = ["prompts/**", "evals/**"]
 
 Narrowing `globs` drops paths that no longer match. A path that matches `globs` but no check is `unsatisfied` until you configure a command for it.
 
+## fastapi
+
+For a FastAPI service. It **extends** `python-platform`, so the pytest, ruff, and mypy checks, the `src/**`, `app/**`, and `tests/**` code globs, and the ship and AI surfaces above are included. `src/**` already covers `src/<package>/`.
+
+Extra `[governance.scope] code_globs`:
+
+| Glob | Layout it names |
+| --- | --- |
+| `routers/**` | Routers at the repository root |
+| `api/**` | An `api/` package at the repository root |
+| `schemas/**` | Pydantic schemas at the repository root |
+| `alembic/**` | Alembic migrations at the repository root |
+
+Those globs describe roots. They do not change `gate scope`. Nested routers under `app/` or `src/` are already covered by the inherited globs.
+
+### Suggested evidence
+
+These commands are **comments** in the generated config. They are not `[assurance] required_checks`. httpx, the application import path, and Alembic may be absent, so `verify` does not demand them.
+
+| Suggestion | Command | Why it stays a comment |
+| --- | --- | --- |
+| httpx | `uv run pytest -q` | Same argv as the inherited pytest check. Write the tests with `fastapi.testclient.TestClient` or `httpx` `ASGITransport`. httpx may be absent |
+| OpenAPI | `uv run python -c "import json; from app.main import app; print(json.dumps(app.openapi()))"` | Example export. The module path is yours (`app.main` here). Write `openapi.json` and diff it in review |
+| Alembic SQL | `uv run alembic upgrade head --sql` | Optional alternative to `alembic check`. Prints SQL and does not apply it. Alembic may be absent |
+
+### Alembic migrations are a ship surface
+
+`alembic/**` and `**/alembic/**` are added to the ship globs. A Task resource or a worktree path under Alembic makes the ship rule run. `verify` then requires one narrative note with subject `ship rollback` (the subject inherited from `python-platform`). For a migration, that note has to describe the downgrade, for example `alembic downgrade -1` or restoring the previous revision. Placeholder text does not count.
+
+The packaged Alembic check is optional:
+
+```toml
+[[surfaces.ship.checks]]
+name = "alembic"
+optional = true
+globs = ["alembic/**", "**/alembic/**"]
+run = ["uv", "run", "alembic", "check"]
+```
+
+`optional = true` covers those paths so `verify` does not report `no ship check covers`. It does **not** require `alembic check` to have been executed. `alembic check` needs a database, and Alembic may not be installed. The command stays in the comment block next to `alembic upgrade head --sql`.
+
+Docker, Compose, Terraform, Helm, and workflow paths still require their executed checks. A `[[surfaces.ship.checks]]` table you write still replaces the whole packaged list, including this optional Alembic check, so copy every check you still want.
+
 ## Limitations
 
 | Limitation | What it means |
@@ -104,7 +149,7 @@ Narrowing `globs` drops paths that no longer match. A path that matches `globs` 
 | Not AppSec | Secrets, threat models, and authz review stay on `gate scope` sensitive paths and on `review_result` / `security_test` claims |
 | Eval quality is yours | `verify` checks that the configured command was executed and that a fallback note exists. It does not score the golden set |
 | No live traces | Production LLM telemetry is out of scope. The record is git plus Evidence |
-| Framework-agnostic | FastAPI, Django, and workers are all just Python here. There is no framework preset |
+| Framework preset | `fastapi` extends `python-platform` for API layouts and Alembic. Django and workers stay on `python` or `python-platform` |
 | Notes are declarations | The rollback and fallback subjects must be non-empty and specific. Retornatus does not judge whether the plan would work |
 
 ## What did not come over from Spec Guardrails

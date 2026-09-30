@@ -1,9 +1,12 @@
 """Path-triggered ship and AI evidence rules for ``verify``.
 
-Rules live in ``[surfaces]`` (written by the ``python-platform`` preset).
-When no changed or Task-scoped path matches, the rule is ``not required``.
-Matching paths require executed evidence of the configured command plus a
-narrative note. This is a structural check, not a plan review or an eval grade.
+Rules live in ``[surfaces]`` (written by the ``python-platform`` preset and
+presets that extend it). When no changed or Task-scoped path matches, the
+rule is ``not required``. Matching paths require executed evidence of the
+configured command plus a narrative note. A packaged check with
+``optional = true`` covers its paths and still requires the note, but it
+does not require the command. This is a structural check, not a plan review
+or an eval grade.
 """
 
 from __future__ import annotations
@@ -180,6 +183,8 @@ def _ship_rule(
         if not hits:
             continue
         covered.update(hits)
+        if check.optional:
+            continue
         label = f"{check.name}: {' '.join(check.run)}"
         required.append(label)
         if not _executed(evidence, check.run):
@@ -322,12 +327,18 @@ def _parse_checks(value: object) -> tuple[SurfaceCheck, ...]:
         if cleaned in seen:
             raise ValueError(f"Invalid surfaces.ship.checks: duplicate name {cleaned!r}")
         seen.add(cleaned)
+        optional = item.get("optional", False)
+        if not isinstance(optional, bool):
+            raise ValueError(
+                f"Invalid surfaces.ship.checks[{index}]: optional must be a boolean"
+            )
         checks.append(
             SurfaceCheck(
                 name=cleaned,
                 globs=_parse_globs(item.get("globs"), label=f"surfaces.ship.checks[{index}].globs"),
                 run=_parse_argv(item.get("run"), label=f"surfaces.ship.checks[{index}].run"),
                 suggested=False,
+                optional=optional,
             )
         )
     return tuple(checks)

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0016/E-006",
+  "type": "test_result",
+  "subject": "pytest confirms fastapi extends python-platform and python",
+  "source": "uv run pytest -q --no-cov tests/test_presets.py::test_fastapi_extends_python_platform_and_python",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T14:33:29.372097Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_presets.py::test_fastapi_extends_python_platform_and_python"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T14:33:28.260427Z",
+  "ended_at": "2026-09-30T14:33:28.586195Z",
+  "duration_ms": 325,
+  "output_sha256": "09229b326b028651d725fa47cd1bae9fd8e0145ff8779bdb84ae2762c00ab737",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.14s\n",
+  "output_artifact": ".retornatus/changes/C-0016/evidence/E-006.output.txt",
+  "git_commit": "e8d851edf7dbf0c76e5014ea59b643eb3c31cfbb",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0016/claim-done-6",
+      "note": null
+    }
+  ]
+}
