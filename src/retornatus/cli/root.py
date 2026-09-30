@@ -8,6 +8,7 @@ import typer
 
 from retornatus import __version__
 from retornatus.application.change.workflow import ChangeWorkflow
+from retornatus.bootstrap.gitignore import tracked_private_key_warnings
 from retornatus.bootstrap.init import initialize_project, is_initialized
 from retornatus.bootstrap.wake import wake_up
 from retornatus.cli.common import resolve_root
@@ -50,8 +51,15 @@ def init(
         help="Recreate canonical files even if already initialized.",
     ),
 ) -> None:
-    """Initialize a minimal `.retornatus/` project in the repository."""
+    """Initialize a minimal `.retornatus/` project and append ignore rules."""
     result = initialize_project(path, force=force)
+    for line in tracked_private_key_warnings(result.tracked_private_keys):
+        typer.echo(line, err=True)
+    if result.gitignore_updated:
+        typer.echo(
+            "Gitignore: appended Retornatus ignore rules to "
+            f"{result.root / '.gitignore'}"
+        )
 
     if result.already_initialized and not force:
         typer.echo(f"Already initialized: {result.retornatus_dir}")

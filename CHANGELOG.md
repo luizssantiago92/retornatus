@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Skill Markdown saved with Windows CRLF line endings still loads. `gate skill-research --json` prints the verdict envelope instead of failing before any stdout.
 - Tutorial 01 and How it works section 7 use the DONE criterion `docs/health.md documents GET /health`, so evidence subject `docs/health.md` matches claim subject `/health.md` and `verify` returns SATISFIED. A regression test runs the Tutorial 01 and Quick start command sequences.
 
+### Security
+
+- `retornatus init` appends a delimited `.gitignore` block for `.retornatus/index/`, `.retornatus/runtime/`, `*.pem`, `*.key`, `.env`, and `.env.*`, and keeps `!.env.example` plus `.retornatus/keys/*.pub` committable. A second run does not duplicate the block or remove existing lines.
+- `retornatus init` and `retornatus receipt keygen` warn when git tracks a `*.pem` or `*.key` file. The signing private key is still written only outside the repository.
+
 ## [1.4.1] - 2026-09-30
 
 ### Fixed
