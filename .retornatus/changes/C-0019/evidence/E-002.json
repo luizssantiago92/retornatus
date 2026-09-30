@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0019/E-002",
+  "type": "repository_observation",
+  "subject": "docs/guide/index.html",
+  "source": "uv run python /tmp/site-preview/check_guide.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:51:52.755703Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/site-preview/check_guide.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:50:32.868557Z",
+  "ended_at": "2026-09-30T15:50:32.899573Z",
+  "duration_ms": 31,
+  "output_sha256": "ba5fc937915437373860c0f640f0f010d6497a3c3ce268a3e94c806e137bc6dd",
+  "output_tail": "guide hub and cli ok\n",
+  "output_artifact": ".retornatus/changes/C-0019/evidence/E-002.output.txt",
+  "git_commit": "4c983aee81859467971612e872bdde7fbdb4c42e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0019/claim-done-2",
+      "note": null
+    }
+  ]
+}

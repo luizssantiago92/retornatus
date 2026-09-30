@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0019/E-003",
+  "type": "repository_observation",
+  "subject": "docs/guide/Overview.md",
+  "source": "uv run python /tmp/site-preview/check_overview.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:51:52.761587Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/site-preview/check_overview.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:50:32.904656Z",
+  "ended_at": "2026-09-30T15:50:32.937624Z",
+  "duration_ms": 32,
+  "output_sha256": "4ee151bb1992d39187a021ab6b5d38dda68332e05204be08d90d3b0779e424ab",
+  "output_tail": "overview presets ok\n",
+  "output_artifact": ".retornatus/changes/C-0019/evidence/E-003.output.txt",
+  "git_commit": "4c983aee81859467971612e872bdde7fbdb4c42e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0019/claim-done-3",
+      "note": null
+    }
+  ]
+}
