@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-004",
+  "type": "test_result",
+  "subject": "docs/site.css",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path(\"docs/site.css\").read_text(encoding=\"utf-8\")\nassert \"prefers-reduced-motion: reduce\" in text\nassert \"animation-duration 3.6s\" in text\nassert \"animation: none\" in text\nprint(\"reduced-motion glow duration present\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:40:40.750505Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path(\"docs/site.css\").read_text(encoding=\"utf-8\")\nassert \"prefers-reduced-motion: reduce\" in text\nassert \"animation-duration 3.6s\" in text\nassert \"animation: none\" in text\nprint(\"reduced-motion glow duration present\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:40:40.716657Z",
+  "ended_at": "2026-09-30T05:40:40.745029Z",
+  "duration_ms": 28,
+  "output_sha256": "b722501125addb788f5fc2d71e834b2f46429449f7c36d8fdc1d2527d0adc631",
+  "output_tail": "reduced-motion glow duration present\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-004.output.txt",
+  "git_commit": "e849c511f40be9b3a19c7a341559a44eab249479",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-4",
+      "note": null
+    }
+  ]
+}

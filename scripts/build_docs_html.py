@@ -251,7 +251,7 @@ def render_page(title: str, body_html: str, out_rel: str) -> str:
     depth = out_rel.count("/")
     prefix = "../" * depth
     css = f"{prefix}site.css"
-    icon = f"{prefix}assets/retornatus-mascot.webp"
+    icon = f"{prefix}assets/retornatus-mascot-square.webp"
     home = prefix if depth else "./"
     if out_rel.startswith("guide/tutorials/"):
         docs, qs = "../", "../quick-start.html"

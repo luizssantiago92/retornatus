@@ -1,7 +1,7 @@
 # Retornatus
 
 <p align="center">
-  <img src="docs/assets/retornatus-mascot.webp" alt="Ember — Retornatus mascot" width="280" />
+  <img src="docs/assets/retornatus-mascot.webp" alt="Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame" width="480" height="270" />
 </p>
 
 <p align="center">

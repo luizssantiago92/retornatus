@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-001",
+  "type": "test_result",
+  "subject": "docs/assets/retornatus-mascot.webp",
+  "source": "uv run python -c 'from pathlib import Path\nreadme = Path(\"README.md\").read_text(encoding=\"utf-8\")\nasset = Path(\"docs/assets/retornatus-mascot.webp\")\nassert \"docs/assets/retornatus-mascot.webp\" in readme\nassert asset.is_file() and asset.stat().st_size > 0\nprint(\"sharp mascot referenced\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:40:32.065506Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\nreadme = Path(\"README.md\").read_text(encoding=\"utf-8\")\nasset = Path(\"docs/assets/retornatus-mascot.webp\")\nassert \"docs/assets/retornatus-mascot.webp\" in readme\nassert asset.is_file() and asset.stat().st_size > 0\nprint(\"sharp mascot referenced\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:40:32.029254Z",
+  "ended_at": "2026-09-30T05:40:32.059690Z",
+  "duration_ms": 30,
+  "output_sha256": "2c96611c05a3045b64c041b101e14d81e6a322691ab6e890f6a41b3fe80b2613",
+  "output_tail": "sharp mascot referenced\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-001.output.txt",
+  "git_commit": "df3a2d3f0fc1f7c083051c3f1c2934e63851ac96",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-1",
+      "note": null
+    }
+  ]
+}
