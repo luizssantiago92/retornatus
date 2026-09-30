@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0010/E-003",
+  "type": "build_result",
+  "subject": "mypy on the retornatus package exits 0",
+  "source": "uv run mypy",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:06:24.886268Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "mypy"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:06:24.743964Z",
+  "ended_at": "2026-09-30T05:06:24.880162Z",
+  "duration_ms": 136,
+  "output_sha256": "48f1ab828deeaeb4ed5982160783dfab96668aba5c46a5a094b6745cbc02a8f2",
+  "output_tail": "Success: no issues found in 101 source files\n",
+  "output_artifact": ".retornatus/changes/C-0010/evidence/E-003.output.txt",
+  "git_commit": "4fc17e326f64864b7aae7a21cea2b5d28f8f4b6c",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0010/claim-done-3",
+      "note": null
+    }
+  ]
+}
