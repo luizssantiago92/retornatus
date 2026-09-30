@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0015",
+  "title": "README mascot matches the site hero on GitHub",
+  "demand": {
+    "schema_version": 1,
+    "statement": "GitHub readers must see the README mascot the same way on dark and light themes. The image must be a static frame of the docs site hero, with resting glow, a dark background, and rounded corners. Out of scope: retornatus-mascot-neon.webp, retornatus-mascot-square.webp, docs/index.html, and site.css.",
+    "kind": "BUG"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T13:45:50.998787Z"
+}

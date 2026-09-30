@@ -1,7 +1,7 @@
 # Retornatus
 
 <p align="center">
-  <img src="docs/assets/retornatus-mascot.webp" alt="Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame" width="480" height="270" />
+  <a href="https://luizssantiago92.github.io/retornatus/"><img src="docs/assets/retornatus-mascot-readme.webp" alt="Retornatus mascot: a chrome AI agent in a black suit adjusting sunglasses, with a teal ouroboros serpent and an orange comet flame" width="420" height="231" /></a>
 </p>
 
 <p align="center">
