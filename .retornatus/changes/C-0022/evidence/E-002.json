@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0022/E-002",
+  "type": "test_result",
+  "subject": "pytest fails when README.md contains a relative non-anchor link",
+  "source": "uv run pytest -q tests/test_readme_absolute_links.py --cov-fail-under=0",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T18:18:03.828632Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_readme_absolute_links.py",
+    "--cov-fail-under=0"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T18:18:03.546222Z",
+  "ended_at": "2026-09-30T18:18:03.824930Z",
+  "duration_ms": 278,
+  "output_sha256": "a13bdd973a0f1a826da4dafd7ba71e552e8c56c0325f11493194b917c2fa16e2",
+  "output_tail": "../workspace/.venv/lib/python3.12/site-packages/coverage/inorout.py:558: CoverageWarning: Module retornatus was never imported. (module-not-imported); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-module-not-imported\n  self.warn(f\"Module {pkg} was never imported.\", slug=\"module-not-imported\")\n/workspace/.venv/lib/python3.12/site-packages/coverage/control.py:967: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-no-data-collected\n  self._warn(\"No data was collected.\", slug=\"no-data-collected\")\n/workspace/.venv/lib/python3.12/site-packages/pytest_cov/plugin.py:366: CovReportWarning: Failed to generate report: No data to report.\n\n  warnings.warn(CovReportWarning(message), stacklevel=1)\n\nWARNING: Failed to generate report: No data to report.\n\n                                                                         [100%]\n2 passed in 0.04s\n",
+  "output_artifact": ".retornatus/changes/C-0022/evidence/E-002.output.txt",
+  "git_commit": "47e26651b042d4433436cb1e5240e2ec5e8b9ec3",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0022/claim-done-2",
+      "note": null
+    }
+  ]
+}

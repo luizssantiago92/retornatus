@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0022/E-004",
+  "type": "build_result",
+  "subject": ".retornatus/config.toml",
+  "source": "uv run python /tmp/c0022-checks/config_version.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T18:18:04.522550Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0022-checks/config_version.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T18:18:04.481037Z",
+  "ended_at": "2026-09-30T18:18:04.520323Z",
+  "duration_ms": 39,
+  "output_sha256": "5b75ef8e4e01ebff6485450561c960fb1ae4876c2fb0e3ab8b35da94beb1e0e9",
+  "output_tail": "config version matches 1.5.0\n",
+  "output_artifact": ".retornatus/changes/C-0022/evidence/E-004.output.txt",
+  "git_commit": "47e26651b042d4433436cb1e5240e2ec5e8b9ec3",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0022/claim-done-4",
+      "note": null
+    }
+  ]
+}

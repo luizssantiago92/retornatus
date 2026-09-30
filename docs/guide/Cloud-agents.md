@@ -11,10 +11,10 @@ Canonical files under `.retornatus/` (Changes, Contracts, Evidence, the public r
 
 ## Session setup
 
-Install the CLI on the agent machine. Release 1.4.1 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, and the Ed25519 `receipt` commands:
+Install the CLI on the agent machine. Release 1.5.0 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, and the Ed25519 `receipt` commands:
 
 ```bash
-uv tool install "retornatus==1.4.1"
+uv tool install "retornatus==1.5.0"
 ```
 
 The pull-request check is the [GitHub Action](GitHub-Action.md). Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml). It uses `luizssantiago92/retornatus@v1` (the tag the owner publishes) and does not pin the old inline `uv tool install` steps.

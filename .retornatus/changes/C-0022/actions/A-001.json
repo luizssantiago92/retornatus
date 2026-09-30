@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "C-0022/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Declare PEP 639 license MIT with license-files, add trove classifiers and project URLs, rewrite README non-anchor links to absolute GitHub URLs, and record release 1.5.0 in the changelog and version pins.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pyproject.toml contains license = \"MIT\", license-files, classifiers, and Documentation and Changelog project URLs",
+    "pytest fails when README.md contains a relative non-anchor link",
+    "pyproject.toml, src/retornatus/__init__.py, and uv.lock contain version 1.5.0",
+    ".retornatus/config.toml version equals installed package version 1.5.0",
+    "CHANGELOG.md contains the heading ## [1.5.0] - 2026-09-30 and an empty Unreleased section above it",
+    "docs/guide/Cloud-agents.md, docs/guide/Quick-start.md, and docs/guide/README.md contain version 1.5.0",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0022/T-001",
+      "description": "Update package metadata, absolute README links, version pins, and the 1.5.0 changelog",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "pyproject.toml",
+        "uv.lock",
+        "src/retornatus/__init__.py",
+        ".retornatus/config.toml",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/**",
+        "tests/**",
+        "action.yml"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
