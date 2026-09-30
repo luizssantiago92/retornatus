@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "retornatus init --preset writes a packaged TOML preset into config.toml, and verify enforces ship and AI surface rules only when changed or scoped paths match.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0 for the preset and surface tests",
+    "ruff check of src tests and scripts exits 0",
+    "mypy on the retornatus package exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "An unknown preset name exits with the available preset list",
+    "init without a preset preserves the gitignore block",
+    "python-platform preset extends the python checks",
+    "CHANGELOG Unreleased section records config presets",
+    "verify reports surface status not required when no infra or AI paths match"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0014/T-001",
+      "description": "Package python and python-platform presets and wire init",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/**",
+        "tests/**",
+        "pyproject.toml"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0014/T-002",
+      "description": "Enforce ship and AI surface rules in verify",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/**",
+        "tests/**",
+        "schemas/**"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0014/T-003",
+      "description": "Document presets and record proof",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "docs/**",
+        "CHANGELOG.md",
+        "schemas/**",
+        "scripts/build_docs_html.py"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

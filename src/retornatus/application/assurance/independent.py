@@ -219,6 +219,9 @@ def evaluate_change_assurance(
         uncommitted_subjects=dirty_subjects or None,
         uncommitted_mode=mode,
     )
+    from retornatus.application.assurance.surfaces import apply_surface_rules
+
+    result = apply_surface_rules(root, change_id, result, evidence)
     extra = commit_mismatch_warnings(root, evidence, strict_execution=bool(checks))
     if extra:
         result = result.model_copy(update={"warnings": [*result.warnings, *extra]})

@@ -95,6 +95,11 @@
       "type": "string",
       "format": "date-time",
       "description": "UTC timestamp when the envelope was built."
+    },
+    "surfaces": {
+      "description": "Path-triggered ship and AI rules. Omitted when [surfaces] is not configured. status is \"not required\" when no changed or scoped path matches.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/surface" }
     }
   },
   "$defs": {
@@ -121,6 +126,27 @@
         "evidence": {
           "type": "array",
           "items": { "$ref": "#/$defs/evidence" }
+        }
+      }
+    },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "matched_paths", "required_checks", "missing"],
+      "properties": {
+        "name": { "enum": ["ship", "ai"] },
+        "status": { "enum": ["not required", "satisfied", "unsatisfied"] },
+        "matched_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "required_checks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "missing": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     },

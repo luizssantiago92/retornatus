@@ -129,6 +129,8 @@ def verify_document(
     document["evidence_labels"] = list(result.evidence_labels)
     document["unverified_evidence_ids"] = list(result.unverified_evidence_ids)
     document["receipt"] = receipt_path
+    if result.surfaces:
+        document["surfaces"] = [dict(item) for item in result.surfaces]
     return document
 
 
