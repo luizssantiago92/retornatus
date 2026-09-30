@@ -1,0 +1,31 @@
+name = "fastapi"
+summary = "FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface."
+extends = "python-platform"
+
+[governance.scope]
+code_globs = ["routers/**", "api/**", "schemas/**", "alembic/**"]
+
+[surfaces.ship]
+globs = ["alembic/**", "**/alembic/**"]
+
+[[surfaces.ship.checks]]
+name = "alembic"
+suggested = true
+optional = true
+globs = ["alembic/**", "**/alembic/**"]
+run = ["uv", "run", "alembic", "check"]
+
+[[suggestions]]
+name = "httpx"
+note = "pytest with httpx TestClient or ASGITransport. httpx may be absent. This is the inherited pytest command, not an extra required check."
+run = ["uv", "run", "pytest", "-q"]
+
+[[suggestions]]
+name = "openapi"
+note = "Example OpenAPI export. The import path is project-specific (app.main here). Write the JSON and diff it in review. Not a required check."
+run = ["uv", "run", "python", "-c", "import json; from app.main import app; print(json.dumps(app.openapi()))"]
+
+[[suggestions]]
+name = "alembic-sql"
+note = "Optional alternative to alembic check. Prints upgrade SQL and does not apply it. alembic may be absent."
+run = ["uv", "run", "alembic", "upgrade", "head", "--sql"]

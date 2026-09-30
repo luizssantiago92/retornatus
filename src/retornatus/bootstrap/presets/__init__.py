@@ -1,9 +1,17 @@
 """Packaged config presets shipped as TOML data files.
 
 Presets are not branches in ``init``. ``python-platform`` extends ``python``
-by naming that file. Suggested ship commands stay comments in the rendered
-config; ``verify`` reads the same packaged defaults until the project writes
-``[[surfaces.ship.checks]]``.
+by naming that file, and ``fastapi`` extends ``python-platform`` the same way.
+Child ``code_globs``, ``surfaces.ship.globs``, and ``surfaces.ship.checks``
+are appended to the parent. A child ship check with the same name replaces
+that parent check. ``required_checks`` still replaces the parent list when
+the child declares it.
+
+Suggested ship commands stay comments in the rendered config. ``verify``
+reads the packaged checks until the project writes
+``[[surfaces.ship.checks]]``. A check with ``optional = true`` covers its
+paths and still requires the rollback note, but it does not require the
+command to have been executed. ``[[suggestions]]`` are comments only.
 """
 
 from __future__ import annotations
@@ -31,6 +39,16 @@ class SurfaceCheck:
     globs: tuple[str, ...]
     run: tuple[str, ...]
     suggested: bool = True
+    optional: bool = False
+
+
+@dataclass(frozen=True)
+class SuggestedCommand:
+    """A commented evidence command that is not a required check."""
+
+    name: str
+    run: tuple[str, ...]
+    note: str
 
 
 @dataclass(frozen=True)
@@ -48,6 +66,7 @@ class Preset:
     ai_globs: tuple[str, ...]
     ai_note_subject: str
     ai_run: tuple[str, ...]
+    suggestions: tuple[SuggestedCommand, ...]
 
 
 _EMPTY = Preset(
@@ -62,6 +81,7 @@ _EMPTY = Preset(
     ai_globs=(),
     ai_note_subject="ai fallback",
     ai_run=(),
+    suggestions=(),
 )
 
 
@@ -130,8 +150,12 @@ def render_config(preset: Preset, *, version: str | None = None) -> str:
     if not text.endswith("\n"):
         text += "\n"
     suggested = [check for check in preset.ship_checks if check.suggested]
-    if suggested or preset.ai_run:
-        text += _suggestion_comments(suggested, ai_run=preset.ai_run)
+    if suggested or preset.ai_run or preset.suggestions:
+        text += _suggestion_comments(
+            suggested,
+            ai_run=preset.ai_run,
+            suggestions=preset.suggestions,
+        )
     return text
 
 
@@ -201,7 +225,10 @@ def _overlay(parent: Preset, raw: dict[str, Any], *, filename: str) -> Preset:
     governance = _table(raw.get("governance"), label=f"Preset {filename} governance")
     scope = _table(governance.get("scope"), label=f"Preset {filename} governance.scope")
     if "code_globs" in scope:
-        code_globs = _globs(scope.get("code_globs"), label=f"Preset {filename} code_globs")
+        code_globs = _merge_globs(
+            parent.code_globs,
+            _globs(scope.get("code_globs"), label=f"Preset {filename} code_globs"),
+        )
     else:
         code_globs = parent.code_globs
     surfaces = _table(raw.get("surfaces"), label=f"Preset {filename} surfaces")
@@ -210,10 +237,24 @@ def _overlay(parent: Preset, raw: dict[str, Any], *, filename: str) -> Preset:
     ship_checks = parent.ship_checks
     if "ship" in surfaces:
         ship = _table(surfaces.get("ship"), label=f"Preset {filename} surfaces.ship")
-        ship_globs = _globs(ship.get("globs"), label=f"Preset {filename} ship globs")
+        if "globs" in ship:
+            ship_globs = _merge_globs(
+                parent.ship_globs,
+                _globs(ship.get("globs"), label=f"Preset {filename} ship globs"),
+            )
         ship_note = _note_subject(ship.get("note_subject"), default=parent.ship_note_subject)
         if "checks" in ship:
-            ship_checks = _surface_checks(ship.get("checks"), filename=filename)
+            ship_checks = _merge_ship_checks(
+                parent.ship_checks,
+                _surface_checks(ship.get("checks"), filename=filename),
+            )
+    suggestions = parent.suggestions
+    if "suggestions" in raw:
+        suggestions = _merge_suggestions(
+            parent.suggestions,
+            _parse_suggestions(raw.get("suggestions"), filename=filename),
+            filename=filename,
+        )
     ai_globs = parent.ai_globs
     ai_note = parent.ai_note_subject
     ai_run = parent.ai_run
@@ -236,6 +277,7 @@ def _overlay(parent: Preset, raw: dict[str, Any], *, filename: str) -> Preset:
         ai_globs=ai_globs,
         ai_note_subject=ai_note,
         ai_run=ai_run,
+        suggestions=suggestions,
     )
 
 
@@ -275,12 +317,18 @@ def _surface_checks(raw: object, *, filename: str) -> tuple[SurfaceCheck, ...]:
             raise UsageError(
                 f"Preset {filename!r} ship check {name.strip()!r} suggested must be a boolean"
             )
+        optional = item.get("optional", False)
+        if not isinstance(optional, bool):
+            raise UsageError(
+                f"Preset {filename!r} ship check {name.strip()!r} optional must be a boolean"
+            )
         checks.append(
             SurfaceCheck(
                 name=name.strip(),
                 globs=_globs(item.get("globs"), label=f"ship check {name.strip()} globs"),
                 run=_argv(item.get("run"), label=f"ship check {name.strip()} run"),
                 suggested=suggested,
+                optional=optional,
             )
         )
     return tuple(checks)
@@ -335,7 +383,75 @@ def _unknown_preset(name: object) -> str:
     return f"Unknown preset {shown!r}. Available presets: {available}"
 
 
-def _suggestion_comments(checks: list[SurfaceCheck], *, ai_run: tuple[str, ...]) -> str:
+def _merge_globs(parent: tuple[str, ...], child: tuple[str, ...]) -> tuple[str, ...]:
+    seen = set(parent)
+    extra = tuple(item for item in child if item not in seen)
+    return parent + extra
+
+
+def _merge_ship_checks(
+    parent: tuple[SurfaceCheck, ...],
+    child: tuple[SurfaceCheck, ...],
+) -> tuple[SurfaceCheck, ...]:
+    order = [check.name for check in parent]
+    by_name = {check.name: check for check in parent}
+    for check in child:
+        if check.name not in by_name:
+            order.append(check.name)
+        by_name[check.name] = check
+    return tuple(by_name[name] for name in order)
+
+
+def _parse_suggestions(raw: object, *, filename: str) -> tuple[SuggestedCommand, ...]:
+    if not isinstance(raw, list):
+        raise UsageError(f"Preset {filename!r} suggestions must be a list")
+    items: list[SuggestedCommand] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw):
+        if not isinstance(item, dict):
+            raise UsageError(f"Preset {filename!r} suggestion {index} must be a table")
+        name = item.get("name")
+        if not isinstance(name, str) or not name.strip():
+            raise UsageError(f"Preset {filename!r} suggestion {index} needs a name")
+        cleaned = name.strip()
+        if cleaned in seen:
+            raise UsageError(f"Preset {filename!r} duplicate suggestion {cleaned!r}")
+        seen.add(cleaned)
+        note = item.get("note")
+        if not isinstance(note, str) or not note.strip():
+            raise UsageError(f"Preset {filename!r} suggestion {cleaned!r} needs a note")
+        items.append(
+            SuggestedCommand(
+                name=cleaned,
+                run=_argv(item.get("run"), label=f"suggestion {cleaned} run"),
+                note=note.strip(),
+            )
+        )
+    return tuple(items)
+
+
+def _merge_suggestions(
+    parent: tuple[SuggestedCommand, ...],
+    child: tuple[SuggestedCommand, ...],
+    *,
+    filename: str,
+) -> tuple[SuggestedCommand, ...]:
+    seen = {item.name for item in parent}
+    merged = list(parent)
+    for item in child:
+        if item.name in seen:
+            raise UsageError(f"Preset {filename!r} duplicate suggestion {item.name!r}")
+        seen.add(item.name)
+        merged.append(item)
+    return tuple(merged)
+
+
+def _suggestion_comments(
+    checks: list[SurfaceCheck],
+    *,
+    ai_run: tuple[str, ...],
+    suggestions: tuple[SuggestedCommand, ...] = (),
+) -> str:
     lines = [
         "# Suggested commands. verify uses these argv values when the matching",
         "# paths are part of the Change and [[surfaces.ship.checks]] is omitted.",
@@ -343,6 +459,9 @@ def _suggestion_comments(checks: list[SurfaceCheck], *, ai_run: tuple[str, ...])
         "# Structural checks only: not a plan review, and not an AppSec audit.",
         "# Eval quality is the team's job; verify only requires the command ran.",
     ]
+    if any(check.optional for check in checks):
+        lines.append("# optional = true covers the path and still requires the rollback note.")
+        lines.append("# verify does not require that command to have been executed.")
     if ai_run:
         rendered = " ".join(ai_run)
         lines.append(f"# AI eval default (also set as surfaces.ai.run): {rendered}")
@@ -350,9 +469,20 @@ def _suggestion_comments(checks: list[SurfaceCheck], *, ai_run: tuple[str, ...])
         lines.append("#")
         lines.append("# [[surfaces.ship.checks]]")
         lines.append(f"# name = {json.dumps(check.name)}")
+        if check.optional:
+            lines.append("# optional = true")
         globs = ", ".join(json.dumps(glob) for glob in check.globs)
         lines.append(f"# globs = [{globs}]")
         run = ", ".join(json.dumps(part) for part in check.run)
         lines.append(f"# run = [{run}]")
+    if suggestions:
+        lines.append("#")
+        lines.append("# Suggested evidence commands. Not required_checks.")
+        lines.append("# Commented because the tool or the import path may be absent.")
+        for item in suggestions:
+            lines.append("#")
+            lines.append(f"# {item.name}: {item.note}")
+            run = ", ".join(json.dumps(part) for part in item.run)
+            lines.append(f"# run = [{run}]")
     lines.append("")
     return "\n".join(lines) + "\n"

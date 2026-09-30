@@ -343,3 +343,55 @@ def test_glob_override_and_placeholder_note(tmp_path: Path) -> None:
     blob = " ".join(missed["missing"])
     assert "executed check docker" in blob
     assert "rollback note" in blob
+
+
+def test_fastapi_migration_paths_trigger_ship_surface(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="fastapi")
+    _change(
+        tmp_path,
+        "alembic/versions/0001_init.py",
+        "src/myapp/alembic/versions/0002_column.py",
+    )
+    _satisfy_claim(tmp_path)
+    failed, failed_doc = _verify(tmp_path)
+
+    assert failed.exit_code == 1
+    ship = _surface(failed_doc, "ship")
+    assert ship["status"] == "unsatisfied"
+    assert ship["matched_paths"] == [
+        "alembic/versions/0001_init.py",
+        "src/myapp/alembic/versions/0002_column.py",
+    ]
+    assert ship["required_checks"] == []
+    missing = " ".join(ship["missing"]) if isinstance(ship["missing"], list) else ""
+    assert "ship rollback" in missing
+    assert "alembic check" not in missing
+    assert "no ship check covers" not in missing
+    assert _surface(failed_doc, "ai")["status"] == "not required"
+
+    EvidenceService(tmp_path).add(
+        change_id="C-0001",
+        evidence_type="repository_observation",
+        subject="ship rollback",
+        source="Run alembic downgrade -1 back to the previous revision.",
+        producer="owner",
+    )
+    passed, passed_doc = _verify(tmp_path)
+    assert passed.exit_code == 0, _combined(passed)
+    assert passed_doc["verdict"] == "SATISFIED"
+    assert _surface(passed_doc, "ship")["status"] == "satisfied"
+    assert _surface(passed_doc, "ship")["missing"] == []
+
+
+def test_fastapi_keeps_platform_docker_check(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="fastapi")
+    settings = load_surface_settings(tmp_path)
+    assert settings is not None
+    rules = evaluate_surface_rules(
+        paths=["deploy/Dockerfile"],
+        evidence=[],
+        settings=settings,
+    )
+    ship = next(item for item in rules if item["name"] == "ship")
+    assert ship["matched_paths"] == ["deploy/Dockerfile"]
+    assert "docker build ." in " ".join(ship["missing"])

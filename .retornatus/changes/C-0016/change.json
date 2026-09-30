@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0016",
+  "title": "FastAPI init preset",
+  "demand": {
+    "schema_version": 1,
+    "statement": "CLI users must initialize a FastAPI repository with retornatus init --preset fastapi. The preset extends python-platform, adds scope globs for app/, src/, routers/, api/, schemas/, and alembic/, comments suggested evidence commands for pytest with httpx TestClient, an OpenAPI JSON export, and optional alembic check or alembic upgrade head --sql, and treats alembic migration paths as a ship surface that requires a rollback note. Out of scope: a version bump, Django presets, merging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T14:25:29.091939Z"
+}

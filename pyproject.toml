@@ -33,6 +33,7 @@ packages = ["src/retornatus"]
 "src/retornatus/infrastructure/environment/hub/SKILL.md" = "retornatus/infrastructure/environment/hub/SKILL.md"
 "src/retornatus/bootstrap/presets/python.toml" = "retornatus/bootstrap/presets/python.toml"
 "src/retornatus/bootstrap/presets/python-platform.toml" = "retornatus/bootstrap/presets/python-platform.toml"
+"src/retornatus/bootstrap/presets/fastapi.toml" = "retornatus/bootstrap/presets/fastapi.toml"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
