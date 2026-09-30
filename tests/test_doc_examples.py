@@ -46,7 +46,8 @@ def _bash_blocks(markdown: str) -> list[list[list[str]]]:
         for line in logical:
             if not line or line.startswith("#"):
                 continue
-            commands.append(shlex.split(line, posix=True))
+            # comments=True drops trailing notes such as "# 1.4.1".
+            commands.append(shlex.split(line, comments=True, posix=True))
         blocks.append(commands)
     return blocks
 
@@ -92,11 +93,38 @@ def _prepare_repo(root: Path) -> None:
     (root / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n", encoding="utf-8")
     _git(root, "add", "-A")
     _git(root, "commit", "-m", "Initial example repository")
+    _install_python_shim(root)
+
+
+def _install_python_shim(root: Path) -> None:
+    """Make the docs' ``python`` invoke the interpreter that is running pytest.
+
+    On Windows CI, ``python`` on PATH is not the uv venv, so ``python -m pytest``
+    from the published example exits 1. The shim directory is prepended to PATH
+    for the example commands only.
+    """
+    bindir = root / ".doc-example-bin"
+    bindir.mkdir(exist_ok=True)
+    executable = sys.executable
+    if os.name == "nt":
+        (bindir / "python.cmd").write_text(
+            f'@echo off\r\n"{executable}" %*\r\n',
+            encoding="utf-8",
+        )
+        return
+    script = bindir / "python"
+    script.write_text(
+        "#!/bin/sh\n" + f"exec {shlex.quote(executable)} \"$@\"\n",
+        encoding="utf-8",
+    )
+    script.chmod(0o755)
 
 
 def _run(root: Path, argv: list[str]) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env.pop("PYTEST_ADDOPTS", None)
+    bindir = root / ".doc-example-bin"
+    env["PATH"] = str(bindir) + os.pathsep + env.get("PATH", "")
     return subprocess.run(
         [sys.executable, "-m", "retornatus", *argv[1:]],
         cwd=root,
@@ -115,10 +143,19 @@ def _run_sequence(root: Path, commands: list[list[str]]) -> str:
     for command in commands:
         result = _run(root, command)
         rendered = " ".join(command)
-        assert result.returncode == 0, (
-            f"{rendered} exited {result.returncode}\n"
-            f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-        )
+        if result.returncode != 0:
+            captured = []
+            evidence = root / ".retornatus" / "changes"
+            if evidence.is_dir():
+                for path in sorted(evidence.glob("*/evidence/*.output.txt")):
+                    text = path.read_text(encoding="utf-8", errors="replace")
+                    captured.append(f"{path.name}:\n{text}")
+            detail = "\n".join(captured)
+            raise AssertionError(
+                f"{rendered} exited {result.returncode}\n"
+                f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}\n"
+                f"evidence output:\n{detail}"
+            )
         if len(command) >= 2 and command[1] == "verify":
             verify_stdout = result.stdout
     assert verify_stdout, "sequence did not run verify"
