@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0009/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Align the health-doc example and prove verify returns SATISFIED",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "tests/test_doc_examples.py exits 0 and the tutorial plus How-it-works contain docs/health.md documents GET /health"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0009/T-001",
+      "description": "Update the tutorial and How it works, and add a doc-examples regression test",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "docs/guide/tutorials/01-first-change.md",
+        "docs/guide/How-it-works.md",
+        "tests/test_doc_examples.py",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

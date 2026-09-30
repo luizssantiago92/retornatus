@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0009",
+  "title": "Fix Tutorial 01 SATISFIED example",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Tutorial 01 and How it works promise SATISFIED, but DONE Endpoint documented does not match evidence subject docs/health.md. Scope is those doc examples plus a regression test. Out of scope is a package version bump, merge, and publish.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 2,
+  "relations": [],
+  "created_at": "2026-09-30T03:16:50.188951Z"
+}
