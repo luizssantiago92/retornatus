@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0013/E-008",
+  "type": "review_result",
+  "subject": "Independent review of the pull request workflow is recorded",
+  "source": "uv run python -c 'from pathlib import Path; text = Path(\".github/workflows/ci.yml\").read_text(encoding=\"utf-8\"); job = text.split(\"name: Retornatus gates\", 1)[1].split(\"\\n  lowest-direct:\", 1)[0]; assert \"contents: read\" in job; assert \"pull-requests: write\" in job; assert \"uses: ./\" in job; assert \"version: local\" in job; assert \"fetch-depth: 0\" in text'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T06:10:27.413821Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; text = Path(\".github/workflows/ci.yml\").read_text(encoding=\"utf-8\"); job = text.split(\"name: Retornatus gates\", 1)[1].split(\"\\n  lowest-direct:\", 1)[0]; assert \"contents: read\" in job; assert \"pull-requests: write\" in job; assert \"uses: ./\" in job; assert \"version: local\" in job; assert \"fetch-depth: 0\" in text"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T06:10:27.381414Z",
+  "ended_at": "2026-09-30T06:10:27.408903Z",
+  "duration_ms": 27,
+  "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "output_tail": "",
+  "output_artifact": ".retornatus/changes/C-0013/evidence/E-008.output.txt",
+  "git_commit": "322f8d40d76e350e46859a47a20b9f5d827d29c6",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0013/claim-done-8",
+      "note": null
+    }
+  ]
+}
