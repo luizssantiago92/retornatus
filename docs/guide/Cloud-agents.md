@@ -7,7 +7,7 @@ Cursor cloud agents, Codex, Claude Code on a remote VM, and CI sandboxes start f
 | `retornatus` CLI | The package is installed on the machine. It is not a file in the tree | `uv tool install …` (below) |
 | Git hooks | Git does not version the hooks directory (`git rev-parse --git-path hooks`, including `core.hooksPath`) | `retornatus hooks install` on every fresh clone |
 
-Canonical files under `.retornatus/` (Changes, Contracts, Evidence, the public receipt key) come with the clone. `.retornatus/index/` and `.retornatus/runtime/` do not. `retornatus wake` rebuilds the index.
+Canonical files under `.retornatus/` (Changes, Contracts, Evidence, the public receipt key) come with the clone. `.retornatus/index/` and `.retornatus/runtime/` do not. `retornatus wake` rebuilds the index. `retornatus init` appends ignore rules for that index and cache, plus `*.pem`, `*.key`, and `.env` files, when the delimited block is missing. `.retornatus/keys/*.pub` stays tracked.
 
 ## Session setup
 

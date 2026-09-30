@@ -55,8 +55,15 @@ docs/guide/tutorials/index.html
 docs/guide/tutorials/01-first-change.html
 docs/guide/tutorials/02-brownfield-wake.html
 
-# Retornatus derived / ephemeral (canonical truth stays under .retornatus/)
-# Ed25519 public keys under .retornatus/keys/*.pub are canonical and must be committed.
-# Never commit a private key. It lives in the user config dir or RETORNATUS_SIGNING_KEY.
+# retornatus-gitignore:begin
+# Local index and cache. Canonical Retornatus artifacts stay tracked.
 .retornatus/index/
 .retornatus/runtime/
+# Private keys and local env files. Public keys stay tracked.
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+!.retornatus/keys/*.pub
+# retornatus-gitignore:end
