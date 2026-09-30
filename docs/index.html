@@ -169,7 +169,7 @@ retornatus doctor</code></pre>
         also on <a href="https://pypi.org/project/retornatus/">PyPI</a>.
         Then open the project in your AI coding agent and start a change.
         On a pull request, the <a href="guide/github-action.html">GitHub Action</a> posts one sticky verdict comment.
-        <code>integrate --hooks</code> can also keep the agent turn open until the active Change is SATISFIED.
+        <code>integrate --hooks</code> can inject the active Change at session start and keep the turn open until that Change is SATISFIED.
         That hook is a guardrail. The pull-request check stays the source of truth.
         <a href="guide/agent-hooks.html">Agent hooks</a>.
       </p>

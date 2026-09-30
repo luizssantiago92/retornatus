@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `retornatus hook session-start` injects the active Change when a Claude Code, Cursor, or Codex session starts. `integrate --hooks` installs it beside the Stop hook and `integrate --remove-hooks` deletes only those Retornatus entries. The text names each active Change id, title, goal, verify status, declared scope, and unproven claim ids with the `evidence run` command that would prove them. Output is capped at 2 KB. No active Change prints nothing. `[hooks] session_context = false` turns the injection off (the default is true). Internal errors fail open. `doctor` reports stop and session-start separately. CI stays the source of truth. See `docs/guide/Agent-hooks.md`.
+
 ### Fixed
 
 - `retornatus hook stop` allows the turn to end when the last assistant message is a question to the user. Claude Code and Codex use `last_assistant_message` when it is a string; otherwise, and for Cursor `stop` (which has no such field), the hook reads the last 256 KiB of `transcript_path` as JSONL and ignores malformed lines. The final visible paragraph must end with `?` or `？`, or contain a documented ask phrase, after trailing code fences, inline code, and URLs are ignored. `[hooks] allow_questions` in `.retornatus/config.toml` defaults to true; only boolean false disables it. `doctor` prints the value. Cursor `status` `aborted` or `error`, `stop_hook_active`, Cursor `loop_limit` 1, fail-open, and the block message are unchanged. See `docs/guide/Agent-hooks.md`.

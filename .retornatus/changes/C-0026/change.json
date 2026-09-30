@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0026",
+  "title": "Session-start context hook for Claude, Cursor, and Codex",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Add an opt-in session-start hook so Claude Code, Cursor, and Codex inject the active Change finish line when a session starts.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T22:50:57.110647Z"
+}

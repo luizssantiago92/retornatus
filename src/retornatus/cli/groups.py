@@ -51,7 +51,10 @@ hooks_app = typer.Typer(
     help="Git hooks: suppression scan, scope gate, commit message path."
 )
 hook_app = typer.Typer(
-    help="Agent Stop hook. Reads host JSON on stdin and allows or blocks the turn."
+    help=(
+        "Agent hooks. stop guards the turn. "
+        "session-start injects the active Change."
+    )
 )
 preset_app = typer.Typer(help="Inspect packaged config presets.")
 receipt_app = typer.Typer(
