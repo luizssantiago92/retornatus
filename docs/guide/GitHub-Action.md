@@ -89,18 +89,31 @@ Pushes that are not pull requests skip the comment and still write the summary.
 
 ## Rendered comment
 
-The hidden marker is how the next run finds the same comment. Overview text comes from `change overview --format pr`. The tables below it are the JSON the action just ran.
+The hidden marker is how the next run finds the same comment. The first line under the heading is the mobile summary: verdict, claims satisfied, gates passed. Overview text comes from `change overview --format pr` with its gate list left out, so `### Gate results` is the only gate table. Stale-snapshot warnings and per-evidence labels from `verify` sit in a collapsed details block. On `pull_request`, `HEAD` is the merge commit, so those warnings are expected.
 
 ```markdown
 <!-- retornatus-verdict -->
 
 ## Retornatus verdict: `NOT_SATISFIED`
 
-One comment for this pull request. Claim and gate tables are the JSON from `verify` and `gate`. Narrative sections are `change overview --format pr`.
+**NOT_SATISFIED** — 1/2 claims satisfied, 1/2 gates passed.
+
+One comment for this pull request. Claim and gate tables are the JSON from `verify` and `gate`. Narrative sections are `change overview --format pr` without that overview's gate list.
 
 ### Verify
 
 - **C-0001** `NOT_SATISFIED` — Unmet claims: C-0001/claim-done-2
+
+<details>
+<summary>1 evidence snapshot predates HEAD (expected in CI merge refs)</summary>
+
+- C-0001/E-001 recorded git_commit abc does not match HEAD def (stale snapshot; not a failure)
+
+Evidence:
+
+- C-0001/E-001 type=test_result provenance=executed exit_code=0 status=executed
+
+</details>
 
 ## C-0001 — Health check
 

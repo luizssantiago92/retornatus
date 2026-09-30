@@ -73,7 +73,9 @@ def ci_comment(
         root = resolve_root(path)
         for change_id in change_ids(verify_docs, gate_docs):
             try:
-                sections.append(render_pull_request(root, change_id))
+                sections.append(
+                    render_pull_request(root, change_id, include_gates=False)
+                )
             except FileNotFoundError:
                 notes.append(f"Change {change_id} has no overview in this checkout.")
     markdown, verdict = render_ci_comment(

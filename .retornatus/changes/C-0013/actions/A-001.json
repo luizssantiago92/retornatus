@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "C-0013/A-001",
   "origin_kind": "CONTRACT",
-  "origin_ref": "contract@v1",
+  "origin_ref": "contract@v2",
   "objective": "Add a composite GitHub Action that runs verify and the diff gates with --json and posts one sticky pull-request comment rendered by retornatus ci comment.",
   "scope": null,
   "constraints": [],
@@ -14,7 +14,7 @@
     "uv lock check exits 0",
     "CHANGELOG Unreleased section records the GitHub Action",
     "CLI reference contains a GitHub Action guide link",
-    "Independent review of the pull request workflow is recorded"
+    "Retornatus gates job contains least-privilege permission and dogfoods uses local"
   ],
   "authority": {
     "schema_version": 1,

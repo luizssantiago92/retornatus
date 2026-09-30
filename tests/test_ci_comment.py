@@ -81,6 +81,7 @@ def test_comment_satisfied_lists_claim_status_and_evidence() -> None:
     )
     assert verdict == "SATISFIED"
     assert body.startswith(MARKER + "\n")
+    assert "**SATISFIED** — 1/1 claim satisfied, 2/2 gates passed." in body
     assert "change overview --format pr" in body
     assert "## C-0001 — Health" in body
     assert "C-0001/claim-done-1" in body
@@ -88,6 +89,82 @@ def test_comment_satisfied_lists_claim_status_and_evidence() -> None:
     assert "`C-0001/E-001`" in body
     assert "| suppressions | — | PASS |" in body
     assert "| scope | C-0001 | PASS |" in body
+
+
+def test_comment_drops_overview_gates_and_collapses_warnings() -> None:
+    document = _verify("SATISFIED", "SATISFIED")
+    document["warnings"] = [
+        "C-0001/E-001 recorded git_commit abc does not match HEAD def (stale snapshot; not a failure)",
+        "C-0001/E-002 recorded git_commit abc does not match HEAD def (stale snapshot; not a failure)",
+    ]
+    document["evidence_labels"] = [
+        "C-0001/E-001 type=test_result provenance=executed exit_code=0 status=executed"
+    ]
+    overview = "\n".join(
+        [
+            "## C-0001 — Health",
+            "",
+            "**Assurance:** SATISFIED",
+            "",
+            "### Gates",
+            "",
+            "- **assurance** — pass — Verdict=SATISFIED: every claim and eight WARN lines",
+            "- **scope** — pass — No changed paths",
+            "",
+            "### Next",
+            "",
+            "`retornatus loop next C-0001`",
+        ]
+    )
+    body, verdict = render_ci_comment(
+        verify_documents=[document],
+        gate_documents=[
+            _gate("scope", passed=True, change_id="C-0001"),
+        ],
+        overview_markdown=[overview],
+    )
+    assert verdict == "SATISFIED"
+    assert "**Assurance:** SATISFIED" in body
+    assert "### Next" in body
+    assert "No changed paths" not in body
+    assert "### Gates" not in body
+    assert "Scope OK (1 path(s))" in body
+    verify = body.split("### Verify", 1)[1].split("<details>", 1)[0]
+    assert "stale snapshot" not in verify
+    assert "every claim and eight WARN" not in body
+    assert "<details>" in body
+    assert "</details>" in body
+    assert "2 evidence snapshots predate HEAD (expected in CI merge refs)" in body
+    details = body.split("<details>", 1)[1]
+    assert "stale snapshot" in details
+    assert "C-0001/E-001 type=test_result" in details
+
+
+def test_comment_collapses_other_warnings_and_labels() -> None:
+    warned = _verify("SATISFIED", "SATISFIED")
+    warned["warnings"] = ["subject state unavailable"]
+    body, _verdict = render_ci_comment(verify_documents=[warned], gate_documents=[])
+    assert "<summary>1 warning</summary>" in body
+    assert "subject state unavailable" in body.split("<details>", 1)[1]
+
+    labeled = _verify("SATISFIED", "SATISFIED")
+    labeled["evidence_labels"] = ["C-0001/E-001 type=test_result status=executed"]
+    labels_body, _verdict = render_ci_comment(verify_documents=[labeled], gate_documents=[])
+    assert "<summary>Evidence details</summary>" in labels_body
+    assert "C-0001/E-001 type=test_result" in labels_body
+
+
+def test_comment_singular_stale_snapshot_summary() -> None:
+    document = _verify("SATISFIED", "SATISFIED")
+    document["warnings"] = [
+        "C-0001/E-001 recorded git_commit abc does not match HEAD def (stale snapshot; not a failure)"
+    ]
+    body, _verdict = render_ci_comment(
+        verify_documents=[document],
+        gate_documents=[],
+    )
+    assert "1 evidence snapshot predates HEAD (expected in CI merge refs)" in body
+    assert "**SATISFIED** — 1/1 claim satisfied, 0 gates passed." in body
 
 
 def test_comment_not_satisfied_names_the_claim() -> None:
@@ -267,6 +344,8 @@ def test_ci_comment_cli_includes_overview(tmp_path: Path) -> None:
     )
     assert result.exit_code == 0, result.stderr
     assert "## C-0001 — Health" in result.stdout
+    assert "### Claims" in result.stdout
+    assert "\n### Gates\n" not in result.stdout
     assert "### Claim results" in result.stdout
     assert "### Gate results" in result.stdout
     assert "NOT_SATISFIED" in result.stdout

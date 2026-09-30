@@ -58,8 +58,11 @@ def render_ci_comment(
         "",
         f"## Retornatus verdict: `{verdict}`",
         "",
+        _summary_line(verdict, verify_documents, gate_documents),
+        "",
         "One comment for this pull request. Claim and gate tables are the JSON "
-        "from `verify` and `gate`. Narrative sections are `change overview --format pr`.",
+        "from `verify` and `gate`. Narrative sections are `change overview --format pr` "
+        "without that overview's gate list.",
     ]
     note_lines = [note.strip() for note in notes if note.strip()]
     if note_lines:
@@ -69,8 +72,9 @@ def render_ci_comment(
     if rationales:
         lines.extend(["", "### Verify", ""])
         lines.extend(rationales)
+    lines.extend(_diagnostics(verify_documents))
     for section in overview_markdown:
-        text = section.strip()
+        text = _without_overview_gates(section)
         if text:
             lines.extend(["", text])
     lines.extend(["", "### Claim results", ""])
@@ -132,6 +136,118 @@ def _verify_state(document: Mapping[str, Any]) -> str:
     if isinstance(verdict, str) and verdict:
         return verdict
     return ""
+
+
+def _summary_line(
+    verdict: str,
+    verify_documents: Sequence[Mapping[str, Any]],
+    gate_documents: Sequence[Mapping[str, Any]],
+) -> str:
+    """One mobile-friendly line: verdict, claims satisfied, gates passed."""
+    satisfied, claims = _claim_counts(verify_documents)
+    passed, gates = _gate_counts(gate_documents)
+    return (
+        f"**{verdict}** — {_count_phrase(satisfied, claims, 'claim', 'satisfied')}, "
+        f"{_count_phrase(passed, gates, 'gate', 'passed')}."
+    )
+
+
+def _claim_counts(documents: Sequence[Mapping[str, Any]]) -> tuple[int, int]:
+    satisfied = 0
+    total = 0
+    for document in documents:
+        claims = document.get("claims")
+        if not isinstance(claims, list):
+            continue
+        for claim in claims:
+            if not isinstance(claim, Mapping):
+                continue
+            total += 1
+            if claim.get("status") == "SATISFIED":
+                satisfied += 1
+    return satisfied, total
+
+
+def _gate_counts(documents: Sequence[Mapping[str, Any]]) -> tuple[int, int]:
+    passed = sum(
+        1
+        for document in documents
+        if document.get("verdict") == "PASS" or document.get("passed") is True
+    )
+    return passed, len(documents)
+
+
+def _count_phrase(done: int, total: int, noun: str, verb: str) -> str:
+    if total == 0:
+        return f"0 {noun}s {verb}"
+    label = noun if total == 1 else f"{noun}s"
+    return f"{done}/{total} {label} {verb}"
+
+
+def _diagnostics(documents: Sequence[Mapping[str, Any]]) -> list[str]:
+    """Collapsed per-evidence labels and warnings. The verify line stays short."""
+    warnings: list[str] = []
+    labels: list[str] = []
+    for document in documents:
+        warnings.extend(_strings(document.get("warnings")))
+        labels.extend(_strings(document.get("evidence_labels")))
+    if not warnings and not labels:
+        return []
+    stale = [item for item in warnings if "stale snapshot" in item]
+    other = [item for item in warnings if "stale snapshot" not in item]
+    summary = _diagnostic_summary(stale, other, labels)
+    lines = ["", "<details>", f"<summary>{summary}</summary>", ""]
+    for item in (*stale, *other):
+        lines.append(f"- {_cell(item)}")
+    if labels:
+        if warnings:
+            lines.append("")
+        lines.extend(["Evidence:", ""])
+        lines.extend(f"- {_cell(label)}" for label in labels)
+    lines.extend(["", "</details>"])
+    return lines
+
+
+def _diagnostic_summary(
+    stale: Sequence[str],
+    other: Sequence[str],
+    labels: Sequence[str],
+) -> str:
+    if stale:
+        count = len(stale)
+        noun = "snapshot predates" if count == 1 else "snapshots predate"
+        return f"{count} evidence {noun} HEAD (expected in CI merge refs)"
+    if other:
+        count = len(other)
+        word = "warning" if count == 1 else "warnings"
+        return f"{count} {word}"
+    if labels:
+        return "Evidence details"
+    return "Details"
+
+
+def _strings(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [item.strip() for item in value if isinstance(item, str) and item.strip()]
+
+
+def _without_overview_gates(markdown: str) -> str:
+    """Drop ``### Gates`` from overview text. JSON ``### Gate results`` remains."""
+    kept: list[str] = []
+    skipping = False
+    for line in markdown.splitlines():
+        heading = line.startswith("### ") or line.startswith("## ")
+        if skipping:
+            if heading:
+                skipping = False
+            else:
+                continue
+        if line.strip() == "### Gates":
+            skipping = True
+            continue
+        kept.append(line)
+    return "\n".join(kept).strip()
 
 
 def _rationales(documents: Sequence[Mapping[str, Any]]) -> list[str]:

@@ -149,3 +149,7 @@ _Fill during Wake / first Change. Prefer facts from the repo over assumptions._
 ## Agent narrative
 
 The sticky comment is a projection of verify and gate JSON. Those commands keep the verdict. The composite action lives at the repository root so it can be published. A fork pull request with a read-only token skips the comment and still writes the job summary.
+
+## Reopened Situation
+
+Reworded claim-done-8 to the check it runs: the Retornatus gates job permission is least-privilege and the job dogfoods the local action. The criterion uses the word permission so the required type is an executed security_test, and it avoids a slash so the subject is the full sentence.

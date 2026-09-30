@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The sticky pull-request comment leads with a one-line verdict summary, omits the overview gate list so the JSON gate table is the only gate result, and folds stale-snapshot warnings plus per-evidence labels into a collapsed details block.
 - The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). README uses the sharp image `docs/assets/retornatus-mascot.webp`. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
 
 ### Fixed
