@@ -383,6 +383,44 @@ def test_fastapi_migration_paths_trigger_ship_surface(tmp_path: Path) -> None:
     assert _surface(passed_doc, "ship")["missing"] == []
 
 
+def test_django_migration_paths_trigger_ship_surface(tmp_path: Path) -> None:
+    initialize_project(tmp_path, preset="django")
+    _change(
+        tmp_path,
+        "polls/migrations/0001_initial.py",
+        "apps/blog/migrations/0002_title.py",
+    )
+    _satisfy_claim(tmp_path)
+    failed, failed_doc = _verify(tmp_path)
+
+    assert failed.exit_code == 1
+    ship = _surface(failed_doc, "ship")
+    assert ship["status"] == "unsatisfied"
+    assert ship["matched_paths"] == [
+        "polls/migrations/0001_initial.py",
+        "apps/blog/migrations/0002_title.py",
+    ]
+    assert ship["required_checks"] == []
+    missing = " ".join(ship["missing"]) if isinstance(ship["missing"], list) else ""
+    assert "ship rollback" in missing
+    assert "makemigrations" not in missing
+    assert "no ship check covers" not in missing
+    assert _surface(failed_doc, "ai")["status"] == "not required"
+
+    EvidenceService(tmp_path).add(
+        change_id="C-0001",
+        evidence_type="repository_observation",
+        subject="ship rollback",
+        source="Reverse polls with python manage.py migrate polls zero.",
+        producer="owner",
+    )
+    passed, passed_doc = _verify(tmp_path)
+    assert passed.exit_code == 0, _combined(passed)
+    assert passed_doc["verdict"] == "SATISFIED"
+    assert _surface(passed_doc, "ship")["status"] == "satisfied"
+    assert _surface(passed_doc, "ship")["missing"] == []
+
+
 def test_fastapi_keeps_platform_docker_check(tmp_path: Path) -> None:
     initialize_project(tmp_path, preset="fastapi")
     settings = load_surface_settings(tmp_path)

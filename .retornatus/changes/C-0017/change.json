@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0017",
+  "title": "Django init preset",
+  "demand": {
+    "schema_version": 1,
+    "statement": "CLI users must initialize a Django repository with retornatus init --preset django. The preset extends python-platform, adds scope globs for manage.py, */settings*.py, */urls.py, apps/**, */migrations/**, templates/**, and static/**, comments suggested evidence commands for python manage.py check --deploy, python manage.py makemigrations --check --dry-run, and pytest-django or manage.py test, and treats **/migrations/** as a ship surface that requires a rollback note describing how to reverse the migration. The migration check is optional. Out of scope: a version bump, merging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T14:54:24.807126Z"
+}
