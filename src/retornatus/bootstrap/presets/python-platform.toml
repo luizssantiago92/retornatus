@@ -1,0 +1,58 @@
+name = "python-platform"
+summary = "Python backend, DevOps, and AI engineering. Extends python."
+extends = "python"
+
+[surfaces.ship]
+note_subject = "ship rollback"
+globs = [
+  "**/Dockerfile",
+  "**/docker-compose*.y*ml",
+  "**/*.tf",
+  "**/terraform/**",
+  "**/charts/**",
+  "**/helm/**",
+  "**/.github/workflows/**",
+]
+
+[[surfaces.ship.checks]]
+name = "docker"
+suggested = true
+globs = ["**/Dockerfile"]
+run = ["docker", "build", "."]
+
+[[surfaces.ship.checks]]
+name = "compose"
+suggested = true
+globs = ["**/docker-compose*.y*ml"]
+run = ["docker", "compose", "config", "--quiet"]
+
+[[surfaces.ship.checks]]
+name = "terraform"
+suggested = true
+globs = ["**/*.tf", "**/terraform/**"]
+run = ["terraform", "validate"]
+
+[[surfaces.ship.checks]]
+name = "helm"
+suggested = true
+globs = ["**/charts/**", "**/helm/**"]
+run = ["helm", "template", "."]
+
+[[surfaces.ship.checks]]
+name = "workflows"
+suggested = true
+globs = ["**/.github/workflows/**"]
+run = ["actionlint"]
+
+[surfaces.ai]
+note_subject = "ai fallback"
+globs = [
+  "**/prompts/**",
+  "**/mcp/**",
+  "**/evals/**",
+  "**/tests/eval/**",
+  "**/*llm*",
+  "**/*rag*",
+  "**/*embed*",
+]
+run = ["uv", "run", "pytest", "tests/eval", "-m", "not live"]

@@ -1,0 +1,20 @@
+name = "python"
+summary = "uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/."
+
+[[assurance.required_checks]]
+name = "pytest"
+run = ["uv", "run", "pytest", "-q"]
+types = ["test_result"]
+
+[[assurance.required_checks]]
+name = "ruff"
+run = ["uv", "run", "ruff", "check", "src", "app", "tests"]
+types = ["lint_result"]
+
+[[assurance.required_checks]]
+name = "mypy"
+run = ["uv", "run", "mypy"]
+types = ["lint_result"]
+
+[governance.scope]
+code_globs = ["src/**", "app/**", "tests/**"]

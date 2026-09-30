@@ -10,6 +10,7 @@ from retornatus import __version__
 from retornatus.application.change.workflow import ChangeWorkflow
 from retornatus.bootstrap.gitignore import tracked_private_key_warnings
 from retornatus.bootstrap.init import initialize_project, is_initialized
+from retornatus.bootstrap.presets import list_presets
 from retornatus.bootstrap.wake import wake_up
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import app
@@ -50,9 +51,34 @@ def init(
         "-f",
         help="Recreate canonical files even if already initialized.",
     ),
+    preset: str | None = typer.Option(
+        None,
+        "--preset",
+        help="Write a packaged config preset into .retornatus/config.toml.",
+    ),
+    list_presets_flag: bool = typer.Option(
+        False,
+        "--list-presets",
+        help="List packaged presets and exit without writing files.",
+    ),
+    force_config: bool = typer.Option(
+        False,
+        "--force-config",
+        help="Overwrite an existing config.toml when --preset is set.",
+    ),
 ) -> None:
     """Initialize a minimal `.retornatus/` project and append ignore rules."""
-    result = initialize_project(path, force=force)
+    if list_presets_flag:
+        for name, summary in list_presets():
+            typer.echo(f"{name}: {summary}")
+        raise typer.Exit()
+
+    result = initialize_project(
+        path,
+        force=force,
+        preset=preset,
+        force_config=force_config,
+    )
     for line in tracked_private_key_warnings(result.tracked_private_keys):
         typer.echo(line, err=True)
     if result.gitignore_updated:
@@ -61,12 +87,27 @@ def init(
             f"{result.root / '.gitignore'}"
         )
 
-    if result.already_initialized and not force:
+    if result.config_preserved:
+        typer.echo(
+            ".retornatus/config.toml already exists. "
+            f"Pass --force-config to overwrite it with preset {result.preset!r}.",
+            err=True,
+        )
+        raise typer.Exit(code=1)
+
+    if result.config_written and result.preset:
+        typer.echo(
+            f"Wrote preset {result.preset!r} to {result.retornatus_dir / 'config.toml'}"
+        )
+
+    if result.created:
+        typer.echo(f"Initialized Retornatus at {result.retornatus_dir}")
+        return
+
+    if not result.config_written:
         typer.echo(f"Already initialized: {result.retornatus_dir}")
         typer.echo("Use --force to recreate canonical files.")
         raise typer.Exit(code=0)
-
-    typer.echo(f"Initialized Retornatus at {result.retornatus_dir}")
 
 
 @app.command()
@@ -261,6 +302,11 @@ def verify(
     if as_json:
         for label in result.evidence_labels:
             typer.echo(label, err=True)
+        for surface in result.surfaces:
+            typer.echo(
+                f"surface {surface.get('name')}: {surface.get('status')}",
+                err=True,
+            )
         for warning in result.warnings:
             typer.echo(f"WARN {warning}", err=True)
         if receipt_path:
@@ -269,6 +315,8 @@ def verify(
     else:
         for label in result.evidence_labels:
             typer.echo(label)
+        for surface in result.surfaces:
+            typer.echo(f"surface {surface.get('name')}: {surface.get('status')}")
         for warning in result.warnings:
             typer.echo(f"WARN {warning}")
         typer.echo(result.model_dump_json(indent=2))
