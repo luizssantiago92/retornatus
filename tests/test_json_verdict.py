@@ -379,6 +379,20 @@ def test_gate_suppressions_pass_and_fail(tmp_path: Path) -> None:
 def test_gate_scope_pass_and_fail(tmp_path: Path) -> None:
     _git(tmp_path)
     _create(tmp_path, task=True)
+    # init writes .gitignore. Commit it so the clean scope check is not an
+    # untracked file outside the task resources.
+    subprocess.run(
+        ["git", "add", "--", ".gitignore"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "commit", "-m", "gitignore"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
     plain, document = _pair(["gate", "scope", "C-0001", "--path", str(tmp_path)])
     assert plain.exit_code == 0
     assert document["gate"] == "scope"

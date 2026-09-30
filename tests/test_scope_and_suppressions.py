@@ -221,7 +221,20 @@ def test_scope_resources_denied_and_sensitive(tmp_path: Path) -> None:
     assert "out of scope: extra.txt" in outside.stdout
 
     (tmp_path / ".env").write_text("TOKEN=1\n", encoding="utf-8")
-    _commit(tmp_path, "secret")
+    # init ignores .env, so a normal add would skip it. Force-add still hits
+    # the scope gate's denied-path rule.
+    subprocess.run(
+        ["git", "add", "-f", "--", ".env"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "commit", "-m", "secret"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
     denied = runner.invoke(
         app,
         ["gate", "scope", created.change.id, "--base", base, "--path", str(tmp_path)],

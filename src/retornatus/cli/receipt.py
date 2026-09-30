@@ -15,6 +15,10 @@ from retornatus.application.assurance.receipt import (
     write_verify_receipt,
 )
 from retornatus.application.assurance.settings import allow_self_reported_enabled
+from retornatus.bootstrap.gitignore import (
+    tracked_private_key_files,
+    tracked_private_key_warnings,
+)
 from retornatus.cli.common import resolve_root
 from retornatus.cli.groups import receipt_app
 
@@ -60,6 +64,8 @@ def receipt_keygen_cmd(
     """Create an Ed25519 key. The private key stays outside the repository."""
     root = resolve_root(path)
     key_id, public_path, private_path, pem = keygen(root, print_private=print_private)
+    for line in tracked_private_key_warnings(tracked_private_key_files(root)):
+        typer.echo(line, err=True)
     typer.echo(f"key_id: {key_id}")
     typer.echo(f"public_key: {public_path}")
     if private_path is None:

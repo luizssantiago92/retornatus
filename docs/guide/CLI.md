@@ -12,13 +12,15 @@ retornatus skill --help
 
 | Command | Purpose |
 | --- | --- |
-| `init` | Create `.retornatus/` |
+| `init` | Create `.retornatus/` and append ignore rules for the local index, cache, private keys, and `.env` files |
 | `integrate` | Hub skill + detected Environment bridges |
 | `project-init` | Brownfield map → `project/project.md` |
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
 | `doctor` | Process vs Brakes scores + governance hygiene |
 | `status` | Derived Change status |
 | `ops list` / `ops show` / `ops run` | Operational hygiene loops |
+
+`init` appends one delimited block to `.gitignore` (`# retornatus-gitignore:begin` through `# retornatus-gitignore:end`) when that begin marker is missing. The block ignores `.retornatus/index/`, `.retornatus/runtime/` (locks, executions, and cache), `*.pem`, `*.key`, `.env`, and `.env.*`. It keeps `!.env.example` and `!.retornatus/keys/*.pub` committable. A second `init` does not duplicate the block and does not remove lines that were already there. If git already tracks a `*.pem` or `*.key` file, `init` prints a warning on stderr.
 
 ## Change workflow
 
@@ -96,6 +98,8 @@ retornatus skill --help
 ## Receipts
 
 Ed25519. Public key: `.retornatus/keys/<key-id>.pub` (committed). Private key: `RETORNATUS_SIGNING_KEY` or the user config directory — never inside the project, and never copied from the environment onto disk.
+
+`receipt keygen` writes that private key only outside the repository. `--print` sends it to stdout for a CI secret and does not write a key file. If git already tracks a `*.pem` or `*.key` file, the command prints a warning on stderr. Untrack the file. The ignore rules from `init` keep a later `git add` from picking up a new one, and they do not ignore `.retornatus/keys/*.pub`.
 
 An agent that can read the private key can still sign. Keep the key out of the agent's environment. Cloud and remote agents leave receipts unsigned. In CI, put the PEM in a GitHub Actions secret and run `retornatus verify <C-id> --receipt` with `RETORNATUS_SIGNING_KEY` set. Clones verify with only the public key. Setup for a clean VM: [Cloud agents](Cloud-agents.md).
 

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0012",
+  "title": "Safer init gitignore defaults",
+  "demand": {
+    "schema_version": 1,
+    "statement": "retornatus init does not add ignore rules for the local index and cache it generates, nor for secret-like files. A private signing key was committed in a sibling project. Make init append an idempotent gitignore block, keep public keys committable, write signing private keys outside the repo, and warn when git tracks a pem or key file. Out of scope: a version bump, merging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T05:29:19.470569Z"
+}

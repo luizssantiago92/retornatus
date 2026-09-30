@@ -222,6 +222,48 @@ def test_receipt_keygen_sign_and_verify(tmp_path: Path) -> None:
     assert "Traceback" not in verified.output
 
 
+def test_keygen_warns_when_pem_is_tracked_and_stays_outside(tmp_path: Path) -> None:
+    root = tmp_path / "proj"
+    root.mkdir()
+    subprocess.run(["git", "init"], cwd=root, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "keygen@retornatus.local"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Keygen Test"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+    )
+    initialize_project(root)
+    leaked = root / "leak.pem"
+    leaked.write_text("not-a-real-key\n", encoding="utf-8")
+    subprocess.run(["git", "add", "-f", "--", "leak.pem"], cwd=root, check=True, capture_output=True)
+    subprocess.run(["git", "commit", "-m", "tracked pem"], cwd=root, check=True, capture_output=True)
+    xdg = tmp_path / "xdg"
+
+    result = runner.invoke(
+        app,
+        ["receipt", "keygen", "--path", str(root)],
+        env={"XDG_CONFIG_HOME": str(xdg)},
+    )
+
+    assert result.exit_code == 0, result.output
+    blob = f"{result.stdout}\n{result.stderr or ''}\n{result.output}"
+    assert "warning: private key file is tracked by git: leak.pem" in blob
+    assert "BEGIN PRIVATE KEY" not in blob
+    assert "The private key is outside the repository." in blob
+    private_files = list((xdg / "retornatus" / "keys").glob("*.pem"))
+    assert len(private_files) == 1
+    private = private_files[0].resolve()
+    assert root.resolve() not in private.parents
+    assert list(root.rglob("*.pem")) == [leaked]
+    assert not list(root.rglob("*.key"))
+
+
 def test_change_dir_rejects_traversal(tmp_path: Path) -> None:
     root = _init(tmp_path)
     paths = RetornatusPaths(root)
