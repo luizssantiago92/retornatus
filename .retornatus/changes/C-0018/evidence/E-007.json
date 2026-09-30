@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0018/E-007",
+  "type": "test_result",
+  "subject": "init --list-presets prints rag",
+  "source": "uv run python -c 'import subprocess, sys\nproc = subprocess.run(['\"'\"'retornatus'\"'\"', '\"'\"'init'\"'\"', '\"'\"'--list-presets'\"'\"'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or '\"'\"'rag:'\"'\"' not in proc.stdout:\n    raise SystemExit(1)\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:26:47.259570Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import subprocess, sys\nproc = subprocess.run(['retornatus', 'init', '--list-presets'], capture_output=True, text=True)\nsys.stdout.write(proc.stdout)\nsys.stderr.write(proc.stderr)\nif proc.returncode != 0 or 'rag:' not in proc.stdout:\n    raise SystemExit(1)\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:26:45.960858Z",
+  "ended_at": "2026-09-30T15:26:46.175049Z",
+  "duration_ms": 214,
+  "output_sha256": "ce36b32bb2a3ac77a50ef16a70bbc7b60628c0a7bfc884ea6a593929bea71c8f",
+  "output_tail": "django: Django project. Extends python-platform with layout globs, suggested manage.py commands, and migrations as a ship surface.\nfastapi: FastAPI service. Extends python-platform with API layout globs, suggested HTTP and OpenAPI commands, and Alembic migrations as a ship surface.\npython: uv + pytest + ruff + mypy, with code roots under src/, app/, and tests/.\npython-platform: Python backend, DevOps, and AI engineering. Extends python.\nrag: RAG, LLM, and MCP service. Extends python-platform with retrieval layout globs and a stronger AI surface.\n",
+  "output_artifact": ".retornatus/changes/C-0018/evidence/E-007.output.txt",
+  "git_commit": "002b870722ad4d4e3efbb3c43d9c22e9b878633e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0018/claim-done-7",
+      "note": null
+    }
+  ]
+}

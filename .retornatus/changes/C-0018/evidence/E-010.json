@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0018/E-010",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased records the rag preset",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'CHANGELOG.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nhead, _, _rest = text.partition('\"'\"'## [1.4.1]'\"'\"')\nassert '\"'\"'## [Unreleased]'\"'\"' in head\nassert '\"'\"'init --preset rag'\"'\"' in head\nassert '\"'\"'does not score'\"'\"' in head.lower()\nprint('\"'\"'ok'\"'\"')\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:26:47.268127Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('CHANGELOG.md').read_text(encoding='utf-8')\nhead, _, _rest = text.partition('## [1.4.1]')\nassert '## [Unreleased]' in head\nassert 'init --preset rag' in head\nassert 'does not score' in head.lower()\nprint('ok')\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:26:47.203210Z",
+  "ended_at": "2026-09-30T15:26:47.231712Z",
+  "duration_ms": 28,
+  "output_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+  "output_tail": "ok\n",
+  "output_artifact": ".retornatus/changes/C-0018/evidence/E-010.output.txt",
+  "git_commit": "002b870722ad4d4e3efbb3c43d9c22e9b878633e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0018/claim-done-10",
+      "note": null
+    }
+  ]
+}

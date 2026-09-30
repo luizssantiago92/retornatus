@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0018/E-009",
+  "type": "test_result",
+  "subject": "pytest confirms non-AI paths stay not required",
+  "source": "uv run pytest -q --no-cov tests/test_surfaces.py::test_rag_non_ai_paths_are_not_required",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T15:26:47.264733Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_surfaces.py::test_rag_non_ai_paths_are_not_required"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T15:26:46.662680Z",
+  "ended_at": "2026-09-30T15:26:47.198166Z",
+  "duration_ms": 535,
+  "output_sha256": "b55e3964fe4f7284de74686d27b00bb12462ea7b499eabe3caf7613fc3e5f418",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.36s\n",
+  "output_artifact": ".retornatus/changes/C-0018/evidence/E-009.output.txt",
+  "git_commit": "002b870722ad4d4e3efbb3c43d9c22e9b878633e",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0018/claim-done-9",
+      "note": null
+    }
+  ]
+}
