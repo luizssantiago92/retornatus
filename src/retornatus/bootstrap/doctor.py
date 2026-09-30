@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from retornatus import __version__
+from retornatus.application.agent_hooks.config import agent_hook_status
 from retornatus.application.assurance.settings import load_project_config
 from retornatus.application.governance.gates import gate_contract, gate_skill_research
 from retornatus.bootstrap.wake import WakeReport, wake_up
@@ -36,6 +37,7 @@ class DoctorReport:
     warnings: list[str] = field(default_factory=list)
     process: ReadinessScore | None = None
     brakes: ReadinessScore | None = None
+    agent_hooks: dict[str, str] = field(default_factory=dict)
 
     @property
     def ok(self) -> bool:
@@ -64,6 +66,9 @@ class DoctorReport:
                 "  Process = hub/workflow can run; "
                 "Brakes = gates + verify paths are usable"
             )
+        if self.agent_hooks:
+            lines.append("agent hooks:")
+            lines.extend(f"  {name}: {state}" for name, state in self.agent_hooks.items())
         if self.warnings:
             lines.append("warnings:")
             lines.extend(f"  - {w}" for w in self.warnings)
@@ -204,6 +209,7 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
     wake = wake_up(project_root, ensure_bridges=False, auto_init=False)
     diagnostics = list(wake.diagnostics)
     warnings: list[str] = []
+    hook_status = agent_hook_status(project_root)
 
     process = _score_process(project_root, wake)
     brakes = _score_brakes(project_root, wake)
@@ -215,6 +221,7 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
             warnings=warnings,
             process=process,
             brakes=brakes,
+            agent_hooks=hook_status,
         )
 
     repo = FileRepository(project_root)
@@ -273,4 +280,5 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
         warnings=warnings,
         process=process,
         brakes=brakes,
+        agent_hooks=hook_status,
     )

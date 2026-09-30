@@ -105,6 +105,14 @@ retornatus gate scope C-0001 --base main
 
 After `hooks install`, pre-commit runs `gate suppressions --staged` and `hooks scope`. commit-msg runs `hooks commit-msg --message-file "$1"`. Details: [Git governance](Git-governance.md), [Gates](Gates.md).
 
+## Agent Stop hooks
+
+Git hooks are not in the clone. Agent Stop hooks are. `retornatus integrate --hooks` writes `.cursor/hooks.json`, `.claude/settings.json`, and `.codex/hooks.json`. Those files are project config. Commit them in the application repository when you want the guardrail. This harness repository does not enable them on itself.
+
+Cursor cloud agents run command hooks from `.cursor/hooks.json` at the repo root, including `stop`, once the VM is writable. They do not run hooks during an early read-only turn. `sessionStart` does not run in the cloud, and `~/.cursor/hooks.json` is not on the VM. The Stop hook calls `retornatus hook stop`, so the CLI still has to be on `PATH` in `start` (the same install as the git hooks above).
+
+The hook is a guardrail. A crash fails open, Cursor's `loop_limit` caps follow-ups, and Claude and Codex will not block twice in a row. **CI remains the source of truth.** Full page: [Agent hooks](Agent-hooks.md).
+
 ## Receipts
 
 Receipts are optional. Leave them unsigned on the agent VM.

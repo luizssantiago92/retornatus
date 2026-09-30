@@ -375,12 +375,48 @@ def project_init_cmd(
 @app.command("integrate")
 def integrate_cmd(
     path: Path | None = typer.Option(None, "--path", "-p"),
+    hooks: bool = typer.Option(
+        False,
+        "--hooks",
+        help="Also install agent Stop hooks for Claude, Cursor, and Codex.",
+    ),
+    remove_hooks: bool = typer.Option(
+        False,
+        "--remove-hooks",
+        help="Remove agent Stop hooks and leave every other hook in place.",
+    ),
+    host: list[str] | None = typer.Option(
+        None,
+        "--host",
+        help="Limit --hooks or --remove-hooks to claude, cursor, or codex. Repeatable.",
+    ),
 ) -> None:
-    """Install Retornatus hub skill + Environment bridge for the detected host."""
+    """Install Retornatus hub skill + Environment bridge for the detected host.
+
+    ``--hooks`` is opt-in and writes the Stop hook after the usual install.
+    Plain ``integrate`` does not touch agent hook files.
+    """
+    from retornatus.application.agent_hooks.config import (
+        hook_config_path,
+        install_agent_hooks,
+        parse_hosts,
+        remove_agent_hooks,
+    )
+    from retornatus.domain.errors import UsageError
     from retornatus.infrastructure.environment.adapters import detect_environment
     from retornatus.infrastructure.environment.hub_skill import install_hub_skill
 
+    if hooks and remove_hooks:
+        raise UsageError("Pass only one of --hooks and --remove-hooks.")
+    if host and not hooks and not remove_hooks:
+        raise UsageError("--host requires --hooks or --remove-hooks.")
+    selected = parse_hosts(host)
     root = resolve_root(path)
+    if remove_hooks:
+        states = remove_agent_hooks(root, selected)
+        for name, state in states.items():
+            typer.echo(f"agent hook {name}: {state} ({hook_config_path(root, name)})")
+        return
     if not is_initialized(root):
         initialize_project(root)
     adapter, caps = detect_environment(root)
@@ -399,3 +435,7 @@ def integrate_cmd(
         seen.add(key)
         label = "Hub skill" if b == hub or "skills/retornatus" in key else "Bridge"
         typer.echo(f"{label}: {b}")
+    if hooks:
+        install_agent_hooks(root, selected)
+        for name in selected:
+            typer.echo(f"agent hook {name}: installed ({hook_config_path(root, name)})")

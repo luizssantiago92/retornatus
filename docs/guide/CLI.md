@@ -18,6 +18,8 @@ retornatus skill --help
 | `init --preset <name> --force-config` | Replace an existing `config.toml` with that preset. `--force` alone, with no preset, still writes the minimal config |
 | `preset show <name>` / `preset list` | Print one preset's rendered config, or list presets. See [Presets](Presets.md) |
 | `integrate` | Hub skill + detected Environment bridges |
+| `integrate --hooks` | Also install the agent Stop hook. `--host` selects claude, cursor, or codex. See [Agent hooks](Agent-hooks.md) |
+| `integrate --remove-hooks` | Remove the Retornatus Stop hook and leave other hooks in place |
 | `project-init` | Brownfield map → `project/project.md` |
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
 | `doctor` | Process vs Brakes scores + governance hygiene. Warns when `[retornatus] version` in config.toml differs from the installed package |
@@ -76,6 +78,7 @@ retornatus skill --help
 | `gate scope <C-id>` | STOP when the diff leaves Task resources or hits denied/sensitive paths (`--base`, `--staged`, `--json`) |
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
 | `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |
+| `hook stop --host HOST` | Agent turn-end hook (`HOST` is claude, cursor, or codex). Reads host JSON on stdin. See [Agent hooks](Agent-hooks.md) |
 | `verify` / `verify --receipt` / `verify --json` | Assurance over Contract DONE. `--json` prints the [verdict envelope](JSON-output.md) |
 | `ci comment` | Sticky pull-request markdown from `verify --json` and `gate --json`, plus `change overview --format pr` when `--path` is set. See [GitHub Action](GitHub-Action.md) |
 | `verify --run-checks` | Run required checks, record Evidence, then verify |

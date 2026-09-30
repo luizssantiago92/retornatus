@@ -235,6 +235,8 @@ Test, security-test, build, and lint results only count when Retornatus ran the 
 
 **Diff gates and hooks.** `gate suppressions` stops newly added skip and ignore markers. `gate scope` compares the git diff with the change’s Task resources (denied paths always fail; sensitive paths need a satisfied `review_result` or `security_test` claim). `hooks install` wires both into pre-commit, and a commit-msg hook that reads the message from `$1`.
 
+**Agent Stop hook.** `retornatus integrate --hooks` writes an opt-in turn-end hook for Claude Code, Cursor, and Codex. If an active Change is not `SATISFIED`, the agent is asked to keep going and record evidence. The hook fails open, and it does not replace the pull-request check. Guide: [Agent hooks](https://luizssantiago92.github.io/retornatus/guide/agent-hooks.html).
+
 ### Ceremony matches risk
 
 QUICK for a typo; STANDARD for a normal feature; COMPLEX when security, payments, or high novelty need more depth.
@@ -268,6 +270,7 @@ Two Skill worlds:
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
 | Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `checks run`, `gate *` (including `suppressions` and `scope`), `verify` / `verify --run-checks` / `verify --allow-self-reported` / `verify --receipt`, `receipt keygen` / `sign` / `verify` |
 | Hooks | `hooks install` / `remove` / `status` (pre-commit + commit-msg) |
+| Agent hooks | `integrate --hooks` / `integrate --remove-hooks` / `hook stop` (opt-in; CI stays the source of truth) |
 | Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
 | Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |

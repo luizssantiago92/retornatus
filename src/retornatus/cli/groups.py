@@ -50,6 +50,9 @@ ci_app = typer.Typer(
 hooks_app = typer.Typer(
     help="Git hooks: suppression scan, scope gate, commit message path."
 )
+hook_app = typer.Typer(
+    help="Agent Stop hook. Reads host JSON on stdin and allows or blocks the turn."
+)
 preset_app = typer.Typer(help="Inspect packaged config presets.")
 receipt_app = typer.Typer(
     help=(
@@ -78,5 +81,6 @@ app.add_typer(action_app, name="action")
 app.add_typer(checks_app, name="checks")
 app.add_typer(ci_app, name="ci")
 app.add_typer(hooks_app, name="hooks")
+app.add_typer(hook_app, name="hook")
 app.add_typer(preset_app, name="preset")
 app.add_typer(receipt_app, name="receipt")
