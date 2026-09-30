@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "id": "C-0024/E-008",
+  "type": "build_result",
+  "subject": "uv build exits 0",
+  "source": "uv build",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T21:00:00.374176Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "build"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T20:58:38.653505Z",
+  "ended_at": "2026-09-30T20:58:39.208447Z",
+  "duration_ms": 554,
+  "output_sha256": "eee36c73c096db73b61667e6781172a1d964e2c6e0c7b9b387b38a1a08cb3bb4",
+  "output_tail": "Building source distribution...\nBuilding wheel from source distribution...\nSuccessfully built dist/retornatus-1.6.0.tar.gz\nSuccessfully built dist/retornatus-1.6.0-py3-none-any.whl\n",
+  "output_artifact": ".retornatus/changes/C-0024/evidence/E-008.output.txt",
+  "git_commit": "7a50dac3bb224c1bef3f6f8ead120ab3a3ae83d7",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0024/claim-done-8",
+      "note": null
+    }
+  ]
+}

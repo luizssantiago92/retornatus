@@ -40,7 +40,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 | Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
 | Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
 
-Package **1.5.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](https://github.com/luizssantiago92/retornatus/blob/main/CONTRIBUTING.md#releases).
+Package **1.6.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](https://github.com/luizssantiago92/retornatus/blob/main/CONTRIBUTING.md#releases).
 
 [What it is](#what-it-is) · [Install](#1-install) · [Presets](#presets) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
 
