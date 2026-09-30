@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Tutorial 01 and How it works section 7 use the DONE criterion `docs/health.md documents GET /health`, so evidence subject `docs/health.md` matches claim subject `/health.md` and `verify` returns SATISFIED. A regression test runs the Tutorial 01 and Quick start command sequences.
+
 ## [1.4.1] - 2026-09-30
 
 ### Fixed

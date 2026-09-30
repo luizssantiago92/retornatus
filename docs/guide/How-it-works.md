@@ -80,6 +80,7 @@ Retornatus assembles Rules, Learnings, Skills, Boundaries, and Policy — it doe
 ```bash
 retornatus evidence run -c C-0001 -t test_result -s "/health" \
   --claim C-0001/claim-done-1 -- python -m pytest -q
+# claim-done-2 DONE: docs/health.md documents GET /health
 retornatus evidence add -c C-0001 -t repository_observation -s "docs/health.md" \
   --source filesystem --claim C-0001/claim-done-2
 retornatus gate evidence C-0001
