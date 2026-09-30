@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0020",
+  "title": "Fix stale hub text and small docs hygiene",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Readers and agents must see an Ed25519 receipt in the packaged hub skill and in the repo hub copy. The CLI doctor must warn when config.toml version differs from the installed release. The README anchor, credits license link, product contract link text, site og:image, and README whats-new pin must be corrected. Out of scope: PyPI metadata, CI workflows, and ruff format.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T16:43:13.705238Z"
+}

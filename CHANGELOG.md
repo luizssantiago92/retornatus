@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The packaged hub describes `verify --receipt` as an Ed25519 receipt (public key in `.retornatus/keys/`). `retornatus integrate` copies that hub to `.cursor/skills/retornatus/SKILL.md`. A test fails when the two copies diverge.
+- `.retornatus/config.toml` records the installed release (`1.4.1`). `retornatus doctor` warns when `[retornatus] version` differs from the installed package.
+- The README “What you get” link uses the em dash heading anchor. Credits link to the repository `LICENSE` on GitHub, and the product contract link text is `docs/archive/PRD.md`.
+- The site Open Graph image is an absolute `https://luizssantiago92.github.io/retornatus/...` URL. The What’s new block names the 1.4 line and init presets. The README 1.4.0 note pins the current release instead of `retornatus==1.4.1`.
 - The README mascot looks the same on GitHub dark and light themes. It is a static frame of the site hero: the neon artwork with the resting teal/orange glow on the site background, in a rounded 960×528 card shown at 320 px. The artwork was re-cut from the white-background original. The white patch between the index finger and the visor is gone, and the ring and flame edges no longer carry a pale white/pink fringe.
 - Skill Markdown saved with Windows CRLF line endings still loads. `gate skill-research --json` prints the verdict envelope instead of failing before any stdout.
 - Tutorial 01 and How it works section 7 use the DONE criterion `docs/health.md documents GET /health`, so evidence subject `docs/health.md` matches claim subject `/health.md` and `verify` returns SATISFIED. A regression test runs the Tutorial 01 and Quick start command sequences.

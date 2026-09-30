@@ -42,7 +42,7 @@ Your coding agent still **writes the code**. Retornatus **governs the loop and k
 
 Package **1.4.1** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](CONTRIBUTING.md#releases).
 
-[What it is](#what-it-is) · [Install](#1-install) · [Presets](#presets) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get-and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
+[What it is](#what-it-is) · [Install](#1-install) · [Presets](#presets) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
 
 ---
 
@@ -313,7 +313,7 @@ CLI mistakes print `error: …` instead of a traceback. An invalid id such as `v
 
 - **Required checks** — when `[assurance] required_checks` is set, `verify` accepts execution evidence only for those commands (`verify --run-checks`, `checks run`)
 - **Cloud and remote agents** — install the CLI on the clean VM, run `hooks install` on every fresh clone, and leave receipts unsigned
-- **PR gates** — the consumer workflow pins `retornatus==1.4.1` and runs blocking `verify`, `gate suppressions`, and `gate scope`
+- **PR gates** — the consumer workflow pins the current release and runs blocking `verify`, `gate suppressions`, and `gate scope`
 - **Trusted Publishing** — tag `v*` on `main` publishes after tests, a distribution contents check, and a matching changelog section
 - **Supply chain** — GitHub Actions are pinned to commit SHAs; `SECURITY.md` and CodeQL cover private reports and Python analysis
 
