@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0026/E-005",
+  "type": "repository_observation",
+  "subject": "docs/guide/README.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"docs/guide/README.md\").read_text(); assert \"session-start\" in t; print(\"guide readme ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:04:59.404754Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"docs/guide/README.md\").read_text(); assert \"session-start\" in t; print(\"guide readme ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:04:59.380338Z",
+  "ended_at": "2026-09-30T23:04:59.402609Z",
+  "duration_ms": 22,
+  "output_sha256": "92fd673e57a2f40349cd14dc5288d0d351b6e6a5af87a1d869d2eab3eaeb9bd6",
+  "output_tail": "guide readme ok\n",
+  "output_artifact": ".retornatus/changes/C-0026/evidence/E-005.output.txt",
+  "git_commit": "306a36191d6a6e86c0cb33513fb5782fec7cdc58",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0026/claim-done-5",
+      "note": null
+    }
+  ]
+}

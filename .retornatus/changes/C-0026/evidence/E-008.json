@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0026/E-008",
+  "type": "test_result",
+  "subject": "docs/guide/Cloud-agents.md",
+  "source": "python3 -c 'from pathlib import Path; t=Path(\"docs/guide/Cloud-agents.md\").read_text(); assert \"sessionStart\" in t; print(\"cloud agents ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:05:00.265414Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "python3",
+    "-c",
+    "from pathlib import Path; t=Path(\"docs/guide/Cloud-agents.md\").read_text(); assert \"sessionStart\" in t; print(\"cloud agents ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:05:00.241339Z",
+  "ended_at": "2026-09-30T23:05:00.263414Z",
+  "duration_ms": 22,
+  "output_sha256": "db59f286472d25686237220f4d39334071cfb048b32ffc7d2d1cdf893480ac79",
+  "output_tail": "cloud agents ok\n",
+  "output_artifact": ".retornatus/changes/C-0026/evidence/E-008.output.txt",
+  "git_commit": "306a36191d6a6e86c0cb33513fb5782fec7cdc58",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0026/claim-done-8",
+      "note": null
+    }
+  ]
+}
