@@ -1,0 +1,12 @@
+../workspace/.venv/lib/python3.12/site-packages/coverage/inorout.py:558: CoverageWarning: Module retornatus was never imported. (module-not-imported); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-module-not-imported
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+/workspace/.venv/lib/python3.12/site-packages/coverage/control.py:967: CoverageWarning: No data was collected. (no-data-collected); see https://coverage.readthedocs.io/en/7.16.1/messages.html#warning-no-data-collected
+  self._warn("No data was collected.", slug="no-data-collected")
+/workspace/.venv/lib/python3.12/site-packages/pytest_cov/plugin.py:366: CovReportWarning: Failed to generate report: No data to report.
+
+  warnings.warn(CovReportWarning(message), stacklevel=1)
+
+WARNING: Failed to generate report: No data to report.
+
+                                                                         [100%]
+2 passed in 0.04s
