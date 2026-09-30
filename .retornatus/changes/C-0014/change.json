@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0014",
+  "title": "Config presets for init",
+  "demand": {
+    "schema_version": 1,
+    "statement": "CLI users must initialize a Retornatus project with a packaged config preset. python covers uv pytest ruff and mypy. python-platform extends python and adds path-triggered ship and AI evidence rules. Out of scope: a version bump, merging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T13:18:22.645221Z"
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 from enum import StrEnum
+from typing import Any
 
 from pydantic import Field
 
@@ -42,6 +43,7 @@ class AssuranceResult(DomainModel):
     unverified_evidence_ids: list[EvidenceId] = Field(default_factory=list)
     evidence_labels: list[str] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
+    surfaces: list[dict[str, Any]] = Field(default_factory=list)
 
 
 _DOC_MARKERS = re.compile(r"\b(document|documented|docs|readme|openapi|spec)\b", re.I)

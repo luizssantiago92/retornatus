@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-010",
+  "type": "test_result",
+  "subject": "verify reports surface status not required when no infra or AI paths match",
+  "source": "uv run pytest -q --no-cov tests/test_surfaces.py::test_rules_are_not_required_without_matching_paths",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:35:07.119937Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_surfaces.py::test_rules_are_not_required_without_matching_paths"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:35:06.544442Z",
+  "ended_at": "2026-09-30T13:35:07.084494Z",
+  "duration_ms": 540,
+  "output_sha256": "b55e3964fe4f7284de74686d27b00bb12462ea7b499eabe3caf7613fc3e5f418",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.36s\n",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-010.output.txt",
+  "git_commit": "68372d3275734637d4c984825b1d74975824faaa",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0014/claim-done-10",
+      "note": null
+    }
+  ]
+}

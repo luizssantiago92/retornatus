@@ -20,6 +20,7 @@ from retornatus.cli import lesson as _lesson
 from retornatus.cli import loop as _loop
 from retornatus.cli import ops as _ops
 from retornatus.cli import policy as _policy
+from retornatus.cli import preset as _preset
 from retornatus.cli import question as _question
 from retornatus.cli import receipt as _receipt
 from retornatus.cli import root as _root
@@ -44,6 +45,7 @@ _REGISTERED = (
     _decision,
     _rule,
     _policy,
+    _preset,
     _assurance,
     _execution,
     _task,

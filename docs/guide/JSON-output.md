@@ -24,6 +24,8 @@ Gate documents also include `gate`, `passed`, and `findings` (every message text
 
 `verify` adds `rationale`, `evidence_labels`, `unverified_evidence_ids`, and `receipt` (`null` unless `--receipt` wrote a file).
 
+When `[surfaces]` is set (the `python-platform` preset), `verify` also adds `surfaces`: one object per rule (`ship`, `ai`) with `status`, `matched_paths`, `required_checks`, and `missing`. `status` is `not required` when no changed or scoped path matches, `satisfied` when the executed command and the note are present, and `unsatisfied` when they are not. Projects without `[surfaces]` omit the field, so older documents stay valid. See [Presets](Presets.md).
+
 `change overview` adds the dashboard projection: `title`, `lane`, `contract_version`, `contract_active`, `what`, `evidence_lines`, `tasks`, `questions`, `next`, and `parallelizable`.
 
 ## Example

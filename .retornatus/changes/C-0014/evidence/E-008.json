@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0014/E-008",
+  "type": "test_result",
+  "subject": "python-platform preset extends the python checks",
+  "source": "uv run pytest -q --no-cov tests/test_presets.py::test_python_platform_extends_python",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T13:35:07.115807Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_presets.py::test_python_platform_extends_python"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T13:35:06.198471Z",
+  "ended_at": "2026-09-30T13:35:06.506278Z",
+  "duration_ms": 307,
+  "output_sha256": "e596cce97643441f2f2c7ef01ee068b6705ce1e028a07a32ba3bd3b3d35d7353",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.13s\n",
+  "output_artifact": ".retornatus/changes/C-0014/evidence/E-008.output.txt",
+  "git_commit": "68372d3275734637d4c984825b1d74975824faaa",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0014/claim-done-8",
+      "note": null
+    }
+  ]
+}

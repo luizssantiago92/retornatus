@@ -88,6 +88,10 @@ retornatus verify C-0001 --run-checks
 
 Both execute the declared argv through the same capture path as `evidence run` and record the Evidence.
 
+## Ship and AI surfaces
+
+The `python-platform` preset adds `[surfaces]`. `verify` requires extra Evidence only when a Task resource or a git worktree path matches that table's globs. Otherwise the rule is `not required` (see `surfaces` on `verify --json`). A match needs an executed command — the suggested infra check, or the configured eval command — plus a narrative rollback or fallback note. The checks parse config and templates. They do not review a Terraform plan, and they do not grade eval quality. Globs and commands are overridden in `config.toml`. Full page: [Presets](Presets.md).
+
 ## Suppression gate
 
 ```bash

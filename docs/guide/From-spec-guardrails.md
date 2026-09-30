@@ -34,6 +34,7 @@ Reto: Situation → Contract → Action(+Tasks) → Evidence → Assurance → L
 | “Are we done?” | `evidence run --claim … -- <command>` for tests/build/lint, then `verify <C-id>` |
 | “Load the skill pack” | `integrate` (hub) + optional `intake analyze` / `skill need --prompt` |
 | “Doctor / health” | `doctor` (Process vs Brakes) |
+| `python-platform` Ship / AI Surface in `design.md` | `init --preset python-platform`: path-triggered executed Evidence plus a rollback or fallback note. See [Presets](Presets.md) |
 
 ## What deliberately did **not** come over
 
