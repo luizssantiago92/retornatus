@@ -355,6 +355,96 @@ def test_rag_extends_python_platform_and_python() -> None:
     assert '"docker", "build", "."' in text
 
 
+_WORKER_SHIP_GLOBS = (
+    "**/tasks/**",
+    "**/tasks.py",
+    "**/workers/**",
+    "**/worker.py",
+    "**/jobs/**",
+    "**/celery_app.py",
+    "**/celery.py",
+    "**/celeryconfig.py",
+    "**/beat*",
+    "**/schedules/**",
+    "**/queues.py",
+    "**/queues.toml",
+    "**/queues.y*ml",
+)
+
+
+def test_worker_extends_python_platform_and_python() -> None:
+    base = resolve_preset("python")
+    platform = resolve_preset("python-platform")
+    worker = resolve_preset("worker")
+
+    assert worker.extends == "python-platform"
+    assert [check.name for check in worker.required_checks] == [
+        check.name for check in base.required_checks
+    ]
+    assert [check.run for check in worker.required_checks] == [
+        check.run for check in base.required_checks
+    ]
+    assert worker.code_globs == (
+        "src/**",
+        "app/**",
+        "tests/**",
+        "tasks/**",
+        "workers/**",
+        "jobs/**",
+        "schedules/**",
+        "celery_app.py",
+        "celery.py",
+        "celeryconfig.py",
+        "worker.py",
+    )
+    assert worker.ship_globs == platform.ship_globs + _WORKER_SHIP_GLOBS
+    assert [check.name for check in worker.ship_checks] == [
+        *[check.name for check in platform.ship_checks],
+        "worker",
+    ]
+    check = worker.ship_checks[-1]
+    assert check.optional is True
+    assert check.suggested is True
+    assert check.globs == _WORKER_SHIP_GLOBS
+    assert check.run == ("uv", "run", "celery", "-A", "app", "inspect", "ping")
+    assert all(not item.optional for item in platform.ship_checks)
+    assert worker.ship_note_subject == "ship rollback and job retry"
+    assert platform.ship_note_subject == "ship rollback"
+    assert worker.ai_globs == platform.ai_globs
+    assert worker.ai_run == platform.ai_run
+    assert worker.ai_note_subject == "ai fallback"
+    assert [item.name for item in worker.suggestions] == [
+        "eager-tasks",
+        "rq-burst",
+        "arq-check",
+    ]
+
+    text = render_config(worker)
+    data = tomllib.loads(text)
+    assert data["schema_version"] == 1
+    assert data["project"]["preset"] == "worker"
+    assert data["project"]["initialized"] is True
+    assert [item["name"] for item in data["assurance"]["required_checks"]] == [
+        "pytest",
+        "ruff",
+        "mypy",
+    ]
+    assert "tasks/**" in data["governance"]["scope"]["code_globs"]
+    assert "celery_app.py" in data["governance"]["scope"]["code_globs"]
+    assert data["surfaces"]["ship"]["note_subject"] == "ship rollback and job retry"
+    assert "**/tasks.py" in data["surfaces"]["ship"]["globs"]
+    assert "**/beat*" in data["surfaces"]["ship"]["globs"]
+    assert "**/Dockerfile" in data["surfaces"]["ship"]["globs"]
+    assert "checks" not in data["surfaces"]["ship"]
+    assert "suggestions" not in data
+    assert "# optional = true" in text
+    assert '"uv", "run", "celery", "-A", "app", "inspect", "ping"' in text
+    assert '"uv", "run", "rq", "worker", "--burst"' in text
+    assert '"uv", "run", "arq", "app.worker.WorkerSettings", "--check"' in text
+    assert "task_always_eager" in text
+    assert '"docker", "build", "."' in text
+
+
 def test_extends_appends_ai_globs() -> None:
     def reader(name: str) -> dict[str, object]:
         if name == "base":
@@ -441,6 +531,7 @@ def test_list_presets_and_show() -> None:
         "python",
         "python-platform",
         "rag",
+        "worker",
     ]
     shown = render_preset_document("python-platform")
     assert shown.startswith("# preset: python-platform\n# extends: python\n")
@@ -454,6 +545,9 @@ def test_list_presets_and_show() -> None:
     rag = render_preset_document("rag")
     assert rag.startswith("# preset: rag\n# extends: python-platform\n")
     assert tomllib.loads(rag)["project"]["preset"] == "rag"
+    worker = render_preset_document("worker")
+    assert worker.startswith("# preset: worker\n# extends: python-platform\n")
+    assert tomllib.loads(worker)["project"]["preset"] == "worker"
 
 
 def test_unknown_preset_lists_available_names() -> None:
@@ -537,6 +631,7 @@ def test_cli_list_presets_does_not_write(tmp_path: Path) -> None:
     assert "python:" in blob
     assert "python-platform:" in blob
     assert "rag:" in blob
+    assert "worker:" in blob
     assert not (tmp_path / ".retornatus").exists()
     assert not (tmp_path / ".gitignore").exists()
 
@@ -593,6 +688,7 @@ def test_preset_toml_is_readable_from_an_installed_wheel(tmp_path: Path) -> None
     assert "retornatus/bootstrap/presets/fastapi.toml" in names
     assert "retornatus/bootstrap/presets/django.toml" in names
     assert "retornatus/bootstrap/presets/rag.toml" in names
+    assert "retornatus/bootstrap/presets/worker.toml" in names
 
     venv = tmp_path / "venv"
     assert subprocess.run(["uv", "venv", str(venv)], check=False, cwd=ROOT).returncode == 0
@@ -613,11 +709,13 @@ def test_preset_toml_is_readable_from_an_installed_wheel(tmp_path: Path) -> None
         "fastapi = root.joinpath('fastapi.toml').read_text(encoding='utf-8')\n"
         "django = root.joinpath('django.toml').read_text(encoding='utf-8')\n"
         "rag = root.joinpath('rag.toml').read_text(encoding='utf-8')\n"
+        "worker = root.joinpath('worker.toml').read_text(encoding='utf-8')\n"
         "assert 'name = \"python\"' in python_toml\n"
         "assert 'extends = \"python\"' in platform\n"
         "assert 'extends = \"python-platform\"' in fastapi\n"
         "assert 'extends = \"python-platform\"' in django\n"
         "assert 'extends = \"python-platform\"' in rag\n"
+        "assert 'extends = \"python-platform\"' in worker\n"
     )
     ran = subprocess.run(
         [str(python), "-c", script],
