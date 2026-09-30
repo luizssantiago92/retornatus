@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/E-008",
+  "type": "test_result",
+  "subject": "retornatus doctor and retornatus ops run gate-scan exit 0",
+  "source": "uv run retornatus doctor",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T01:08:53.962521Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "retornatus",
+    "doctor"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T01:08:53.740486Z",
+  "ended_at": "2026-09-30T01:08:53.957685Z",
+  "duration_ms": 217,
+  "output_sha256": "e28d2e825ebd26f237250ac4213a6bd77a8bf388eb470467b4ab055a8fa00eff",
+  "output_tail": "Retornatus wake @ /workspace\ninitialized: True\nenvironment: cursor\ncapabilities: native_rules=True native_skills=True native_sandbox=True native_worktrees=true native_subagents=true\nchanges: 8 ['C-0001', 'C-0002', 'C-0003', 'C-0004', 'C-0005', 'C-0006', 'C-0007', 'C-0008']\nrules: 2\nlearnings: 0\nindex_entities: 26\nproject_context:\n  # Project\n  Retornatus continuity map for `retornatus`.\n  ## Identity\n  - Path: repository root (clone path varies by machine)\n  - README signal: # Retornatus\n  ## Language / stack\n  - `pyproject.toml`\n  ## Important directories\n  - `src`\n  - `tests`\n  - `docs`\n  - `.github`\n  - `.cursor`\n  - `docs/archive`\n  ## Tests\n  - tests/\n\nprocess: 4/4 - workflow continuity\n  - ok: .retornatus/ present\n  - ok: config.toml\n  - ok: hub skill or host bridge\n  - ok: project.md (optional for greenfield)\nbrakes: 4/4 - mechanical gates\n  - ok: gate module importable\n  - ok: assurance/verify path importable\n  - ok: active contract gate pass\n  - ok: wake/index path available\nmode: Brakes-ready\n  Process = hub/workflow can run; Brakes = gates + verify paths are usable\nwarnings:\n  - R-0001: Rule Candidate inactive — needs HUMAN Decision to activate\n  - R-0002: Rule Candidate inactive — needs HUMAN Decision to activate\n",
+  "output_artifact": ".retornatus/changes/C-0008/evidence/E-008.output.txt",
+  "git_commit": "90ff3b4dbf931198e33d22375909d616076b5fa1",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0008/claim-done-9",
+      "note": null
+    }
+  ]
+}

@@ -14,10 +14,10 @@ Canonical files under `.retornatus/` (Changes, Contracts, Evidence, the public r
 [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml) pins the published package:
 
 ```bash
-uv tool install "retornatus==1.4.0"
+uv tool install "retornatus==1.4.1"
 ```
 
-Release 1.4.0 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, and the Ed25519 `receipt` commands.
+Release 1.4.1 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, and the Ed25519 `receipt` commands.
 
 To install this git tree instead of the PyPI pin (for example while developing the harness), use the same command as [Quick start](Quick-start.md):
 
@@ -128,7 +128,7 @@ A session can skip `hooks install`, and a commit can pass `--no-verify`. The che
 
 Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml) to `.github/workflows/retornatus.yml`. On `pull_request`, and on pushes to `main` or `master`, the job:
 
-1. Installs with `uv tool install "retornatus==1.4.0"`.
+1. Installs with `uv tool install "retornatus==1.4.1"`.
 2. Runs `retornatus doctor`.
 3. Runs `retornatus wake`.
 4. Runs `retornatus ops run gate-scan`.

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0008/E-006",
+  "type": "test_result",
+  "subject": "scripts/publish_preflight.py",
+  "source": "env GITHUB_EVENT_NAME=push GITHUB_REF_NAME=v1.4.1 uv run python scripts/publish_preflight.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T01:08:38.407469Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "env",
+    "GITHUB_EVENT_NAME=push",
+    "GITHUB_REF_NAME=v1.4.1",
+    "uv",
+    "run",
+    "python",
+    "scripts/publish_preflight.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T01:08:38.238680Z",
+  "ended_at": "2026-09-30T01:08:38.401533Z",
+  "duration_ms": 162,
+  "output_sha256": "603d68ebd9659ff03ba4a8565859f24a6f906fa4e725d6843c8d086823f5b7a8",
+  "output_tail": "version=1.4.1\nskip=false\nretornatus 1.4.1 is not on PyPI yet — publish may continue.\n",
+  "output_artifact": ".retornatus/changes/C-0008/evidence/E-006.output.txt",
+  "git_commit": "90ff3b4dbf931198e33d22375909d616076b5fa1",
+  "worktree_dirty": true,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0008/claim-done-6",
+      "note": null
+    }
+  ]
+}

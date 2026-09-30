@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0008",
+  "version": 1,
+  "what": "Raise the declared floors to typer>=0.27.2 and pydantic>=2.1, keep cryptography>=42 and tomli-w>=1.0 when a lowest-direct pytest run passes, add an Ubuntu Python 3.11 lowest-direct CI job, add a CLI smoke test that prints the package version, and bump the package version to 1.4.1.",
+  "constraints": [],
+  "done_criteria": [
+    "pyproject.toml declares typer>=0.27.2 and pydantic>=2.1 and version 1.4.1",
+    "src/retornatus/__init__.py and uv.lock contain version 1.4.1",
+    "CHANGELOG.md contains the heading ## [1.4.1] - 2026-09-30 and keeps an empty Unreleased heading above it",
+    "README.md, docs/guide/Cloud-agents.md, docs/guide/Quick-start.md, docs/guide/README.md, and templates/ci/retornatus-pr.yml contain the 1.4.1 pin or version",
+    "A permission check shows .github/workflows/ci.yml contains resolution lowest-direct on ubuntu-latest with Python 3.11",
+    "scripts/publish_preflight.py exits 0 for tag v1.4.1 and prints that 1.4.1 is not on PyPI yet",
+    "tests/test_cli.py asserts the CLI prints the __version__ string",
+    "uv run pytest exits 0 after a lowest-direct dependency sync",
+    "retornatus doctor and retornatus ops run gate-scan exit 0",
+    "retornatus gate suppressions exits 0 against origin/main"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T01:03:46.797568Z"
+}
