@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0024",
+  "title": "Release prep 1.6.0",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Prepare release 1.6.0 so the package version, changelog, and current-release docs match the agent Stop hooks already on main. Scope is version pins, the dated 1.6.0 changelog section, the landing What's new block, and distribution checks. Out of scope is merging, tagging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-09-30T20:53:20.591568Z"
+}

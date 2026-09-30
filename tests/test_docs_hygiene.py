@@ -137,7 +137,8 @@ def test_landing_og_image_and_news_mention_presets() -> None:
     html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
     assert f'property="og:image" content="{_OG_IMAGE}"' in html
     news = _section(html, 'id="news"', "</section>")
-    assert "1.5.0" in news
+    assert "1.6.0" in news
+    assert "agent hooks" in news
     assert "init presets" in news
     for name in ("python", "python-platform", "fastapi", "django", "rag"):
         assert name in news
