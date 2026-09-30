@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "C-0011/E-010",
+  "type": "test_result",
+  "subject": "docs/assets/retornatus-mascot.webp",
+  "source": "uv run --with pillow python -c 'from collections import deque\nfrom PIL import Image\n\n\ndef check(path):\n    im = Image.open(path).convert(\"RGBA\")\n    w, h = im.size\n    px = im.load()\n\n    def idx(x, y):\n        return y * w + x\n\n    cminx, cminy, cmaxx, cmaxy = w, h, 0, 0\n    for y in range(h):\n        for x in range(w):\n            if px[x, y][3] > 200:\n                cminx = min(cminx, x)\n                cminy = min(cminy, y)\n                cmaxx = max(cmaxx, x)\n                cmaxy = max(cmaxy, y)\n    cw, ch = cmaxx - cminx, cmaxy - cminy\n    seen = bytearray(w * h)\n    bg = bytearray(w * h)\n    holes = 0\n    for y in range(h):\n        for x in range(w):\n            i = idx(x, y)\n            if seen[i] or px[x, y][3] != 0:\n                continue\n            q = deque([(x, y)])\n            seen[i] = 1\n            comp = []\n            touch = False\n            while q:\n                cx, cy = q.popleft()\n                comp.append((cx, cy))\n                touch = touch or cx in (0, w - 1) or cy in (0, h - 1)\n                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):\n                    if 0 <= nx < w and 0 <= ny < h and not seen[idx(nx, ny)] and px[nx, ny][3] == 0:\n                        seen[idx(nx, ny)] = 1\n                        q.append((nx, ny))\n            if touch or len(comp) >= 7000:\n                for cx, cy in comp:\n                    bg[idx(cx, cy)] = 1\n            else:\n                holes += 1\n    bad = 0\n    highlight = 0\n    for y in range(h):\n        for x in range(w):\n            head = cminx + 0.22 * cw <= x <= cminx + 0.58 * cw and cminy <= y <= cminy + 0.28 * ch\n            hand = (\n                cminx + 0.02 * cw <= x <= cminx + 0.32 * cw\n                and cminy + 0.18 * ch <= y <= cminy + 0.52 * ch\n            )\n            if not (head or hand):\n                continue\n            i = idx(x, y)\n            r, g, b, a = px[x, y]\n            if a == 255 and min(r, g, b) >= 250 and head:\n                highlight += 1\n            if bg[i] or a == 255:\n                continue\n            if any(\n                0 <= nx < w and 0 <= ny < h and bg[idx(nx, ny)]\n                for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1))\n            ):\n                continue\n            bad += 1\n    print(path, \"holes\", holes, \"interior\", bad, \"highlight\", highlight)\n    assert holes == 0 and bad == 0 and highlight >= 200, path\n\n\nfor name in (\n    \"docs/assets/retornatus-mascot.webp\",\n    \"docs/assets/retornatus-mascot-neon.webp\",\n    \"docs/assets/retornatus-mascot-square.webp\",\n):\n    check(name)\nprint(\"head and hand silhouette opaque\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T06:22:18.271665Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "--with",
+    "pillow",
+    "python",
+    "-c",
+    "from collections import deque\nfrom PIL import Image\n\n\ndef check(path):\n    im = Image.open(path).convert(\"RGBA\")\n    w, h = im.size\n    px = im.load()\n\n    def idx(x, y):\n        return y * w + x\n\n    cminx, cminy, cmaxx, cmaxy = w, h, 0, 0\n    for y in range(h):\n        for x in range(w):\n            if px[x, y][3] > 200:\n                cminx = min(cminx, x)\n                cminy = min(cminy, y)\n                cmaxx = max(cmaxx, x)\n                cmaxy = max(cmaxy, y)\n    cw, ch = cmaxx - cminx, cmaxy - cminy\n    seen = bytearray(w * h)\n    bg = bytearray(w * h)\n    holes = 0\n    for y in range(h):\n        for x in range(w):\n            i = idx(x, y)\n            if seen[i] or px[x, y][3] != 0:\n                continue\n            q = deque([(x, y)])\n            seen[i] = 1\n            comp = []\n            touch = False\n            while q:\n                cx, cy = q.popleft()\n                comp.append((cx, cy))\n                touch = touch or cx in (0, w - 1) or cy in (0, h - 1)\n                for nx, ny in ((cx - 1, cy), (cx + 1, cy), (cx, cy - 1), (cx, cy + 1)):\n                    if 0 <= nx < w and 0 <= ny < h and not seen[idx(nx, ny)] and px[nx, ny][3] == 0:\n                        seen[idx(nx, ny)] = 1\n                        q.append((nx, ny))\n            if touch or len(comp) >= 7000:\n                for cx, cy in comp:\n                    bg[idx(cx, cy)] = 1\n            else:\n                holes += 1\n    bad = 0\n    highlight = 0\n    for y in range(h):\n        for x in range(w):\n            head = cminx + 0.22 * cw <= x <= cminx + 0.58 * cw and cminy <= y <= cminy + 0.28 * ch\n            hand = (\n                cminx + 0.02 * cw <= x <= cminx + 0.32 * cw\n                and cminy + 0.18 * ch <= y <= cminy + 0.52 * ch\n            )\n            if not (head or hand):\n                continue\n            i = idx(x, y)\n            r, g, b, a = px[x, y]\n            if a == 255 and min(r, g, b) >= 250 and head:\n                highlight += 1\n            if bg[i] or a == 255:\n                continue\n            if any(\n                0 <= nx < w and 0 <= ny < h and bg[idx(nx, ny)]\n                for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1))\n            ):\n                continue\n            bad += 1\n    print(path, \"holes\", holes, \"interior\", bad, \"highlight\", highlight)\n    assert holes == 0 and bad == 0 and highlight >= 200, path\n\n\nfor name in (\n    \"docs/assets/retornatus-mascot.webp\",\n    \"docs/assets/retornatus-mascot-neon.webp\",\n    \"docs/assets/retornatus-mascot-square.webp\",\n):\n    check(name)\nprint(\"head and hand silhouette opaque\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T06:22:14.273670Z",
+  "ended_at": "2026-09-30T06:22:18.268356Z",
+  "duration_ms": 3994,
+  "output_sha256": "811b87e43601bafa574de692b7e93c1ac3d6b64d3b956df51c20db7fff37fb0c",
+  "output_tail": "docs/assets/retornatus-mascot.webp holes 0 interior 0 highlight 3164\ndocs/assets/retornatus-mascot-neon.webp holes 0 interior 0 highlight 3292\ndocs/assets/retornatus-mascot-square.webp holes 0 interior 0 highlight 2846\nhead and hand silhouette opaque\n",
+  "output_artifact": ".retornatus/changes/C-0011/evidence/E-010.output.txt",
+  "git_commit": "0ab499203478a04069e02d14a01fe680ec6099ed",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0011/claim-done-10",
+      "note": null
+    }
+  ]
+}

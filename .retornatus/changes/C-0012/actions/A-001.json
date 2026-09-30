@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "init creates or updates .gitignore with one delimited block for the local index and cache, pem and key files, and env files, while .env.example and public keys under .retornatus/keys stay committable. A second init does not duplicate that block or remove existing lines. receipt keygen keeps the private key outside the repository, and init plus keygen print a warning when git tracks a pem or key file. The changelog, CLI reference, and vulnerability policy describe that behavior.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0 for fresh, repeated, and preserved gitignore lines",
+    "git check-ignore exits 1 for a pub file and exits 0 for pem",
+    "CHANGELOG Unreleased and CLI.md contain the init ignore rules",
+    "The vulnerability policy file contains the init ignore rules",
+    "keygen prints a warning when git tracks a pem file"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0012/T-001",
+      "description": "Append an idempotent gitignore block from init, warn on tracked private keys, and document it",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/bootstrap/init.py",
+        "src/retornatus/bootstrap/gitignore.py",
+        "src/retornatus/cli/root.py",
+        "src/retornatus/cli/receipt.py",
+        "tests/test_init.py",
+        "tests/test_cli_robustness.py",
+        "tests/test_json_verdict.py",
+        "tests/test_scope_and_suppressions.py",
+        ".gitignore",
+        "CHANGELOG.md",
+        "SECURITY.md",
+        "README.md",
+        "docs/guide/CLI.md",
+        "docs/guide/Git-governance.md",
+        "docs/guide/Cloud-agents.md",
+        "docs/guide/Quick-start.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

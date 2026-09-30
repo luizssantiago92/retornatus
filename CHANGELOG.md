@@ -15,12 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The sticky pull-request comment leads with a one-line verdict summary, omits the overview gate list so the JSON gate table is the only gate result, and folds stale-snapshot warnings plus per-evidence labels into a collapsed details block.
-- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). README uses the sharp image `docs/assets/retornatus-mascot.webp`. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
+- The approved mascot is the chrome-agent artwork (black suit, teal ouroboros, orange comet flame). Background inside the serpent ring is transparent, including the gaps by the head, headphones, and shoulders. The white shirt stays opaque, and every pixel inside the head, hand, and suit silhouette stays opaque, including the specular highlight on the chrome head. Glow edges keep a soft alpha. README uses the sharp image `docs/assets/retornatus-mascot.webp`. The docs site hero uses `docs/assets/retornatus-mascot-neon.webp` with a 3.6s CSS teal/orange glow that does not run when `prefers-reduced-motion: reduce`. Open Graph, Twitter, and favicon use `docs/assets/retornatus-mascot-square.webp`.
 
 ### Fixed
 
 - Skill Markdown saved with Windows CRLF line endings still loads. `gate skill-research --json` prints the verdict envelope instead of failing before any stdout.
 - Tutorial 01 and How it works section 7 use the DONE criterion `docs/health.md documents GET /health`, so evidence subject `docs/health.md` matches claim subject `/health.md` and `verify` returns SATISFIED. A regression test runs the Tutorial 01 and Quick start command sequences.
+
+### Security
+
+- `retornatus init` appends a delimited `.gitignore` block for `.retornatus/index/`, `.retornatus/runtime/`, `*.pem`, `*.key`, `.env`, and `.env.*`, and keeps `!.env.example` plus `.retornatus/keys/*.pub` committable. A second run does not duplicate the block or remove existing lines.
+- `retornatus init` and `retornatus receipt keygen` warn when git tracks a `*.pem` or `*.key` file. The signing private key is still written only outside the repository.
 
 ## [1.4.1] - 2026-09-30
 

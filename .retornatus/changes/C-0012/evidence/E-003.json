@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/E-003",
+  "type": "test_result",
+  "subject": "CHANGELOG Unreleased and CLI.md contain the init ignore rules",
+  "source": "uv run python -c 'from pathlib import Path\nchangelog = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\")\ncli = Path(\"docs/guide/CLI.md\").read_text(encoding=\"utf-8\")\nunreleased = changelog.split(\"## [1.4.1]\", 1)[0]\nassert \"## [Unreleased]\" in unreleased\nassert \".retornatus/index/\" in unreleased\nassert \"*.pem\" in unreleased\nassert \"!.env.example\" in unreleased\nassert \"# retornatus-gitignore:begin\" in cli\nassert \".retornatus/keys/*.pub\" in cli\nprint(\"changelog and CLI reference ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:42:35.773659Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\nchangelog = Path(\"CHANGELOG.md\").read_text(encoding=\"utf-8\")\ncli = Path(\"docs/guide/CLI.md\").read_text(encoding=\"utf-8\")\nunreleased = changelog.split(\"## [1.4.1]\", 1)[0]\nassert \"## [Unreleased]\" in unreleased\nassert \".retornatus/index/\" in unreleased\nassert \"*.pem\" in unreleased\nassert \"!.env.example\" in unreleased\nassert \"# retornatus-gitignore:begin\" in cli\nassert \".retornatus/keys/*.pub\" in cli\nprint(\"changelog and CLI reference ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:42:35.737406Z",
+  "ended_at": "2026-09-30T05:42:35.769077Z",
+  "duration_ms": 31,
+  "output_sha256": "e2f86e9a7ee3a7846bc22f74cb8307d65c78a2ca968c1a31865ba11caa7148c8",
+  "output_tail": "changelog and CLI reference ok\n",
+  "output_artifact": ".retornatus/changes/C-0012/evidence/E-003.output.txt",
+  "git_commit": "a081b069a0c321d44e8ba9cdc67ea5c28e7e7457",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0012/claim-done-3",
+      "note": null
+    }
+  ]
+}

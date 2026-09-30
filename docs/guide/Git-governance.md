@@ -33,9 +33,11 @@ In this repository (and by default for Retornatus-governed work here):
 
 **Usually no**
 
-- Secrets (`.env`, tokens, credentials)
-- Derived `.retornatus/index/` and `.retornatus/runtime/` (see root `.gitignore`)
+- Secrets (`.env`, tokens, credentials, `*.pem`, `*.key`)
+- Derived `.retornatus/index/` and `.retornatus/runtime/` (locks, executions, cache)
 - Accidental IDE noise
+
+`retornatus init` appends that set when `.gitignore` has no `# retornatus-gitignore:begin` marker. The block is `.retornatus/index/`, `.retornatus/runtime/`, `*.pem`, `*.key`, `.env`, and `.env.*`, then `!.env.example` and `!.retornatus/keys/*.pub`. Running `init` again does not duplicate the block and does not delete lines above it. Canonical files (Changes, Contracts, Evidence, `config.toml`, public keys) stay tracked. `init` and `receipt keygen` print a warning when git already tracks a `*.pem` or `*.key` file. `receipt keygen` still writes the signing private key outside the repository.
 
 ## Commit messages
 

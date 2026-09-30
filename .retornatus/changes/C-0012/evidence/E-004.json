@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/E-004",
+  "type": "test_result",
+  "subject": "The vulnerability policy file contains the init ignore rules",
+  "source": "uv run python -c 'from pathlib import Path\npolicy = Path(\"SECURITY.md\").read_text(encoding=\"utf-8\")\nassert \"retornatus-gitignore:begin\" in policy\nassert \".retornatus/index/\" in policy\nassert \"*.pem\" in policy\nassert \"!.env.example\" in policy\nassert \".retornatus/keys/*.pub\" in policy\nprint(\"vulnerability policy ok\")'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:42:36.075858Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\npolicy = Path(\"SECURITY.md\").read_text(encoding=\"utf-8\")\nassert \"retornatus-gitignore:begin\" in policy\nassert \".retornatus/index/\" in policy\nassert \"*.pem\" in policy\nassert \"!.env.example\" in policy\nassert \".retornatus/keys/*.pub\" in policy\nprint(\"vulnerability policy ok\")"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:42:36.039926Z",
+  "ended_at": "2026-09-30T05:42:36.071141Z",
+  "duration_ms": 31,
+  "output_sha256": "7545811ded1a49f33b4de7cbf5858210776a68f575779e3efe22fc34d7ece2e5",
+  "output_tail": "vulnerability policy ok\n",
+  "output_artifact": ".retornatus/changes/C-0012/evidence/E-004.output.txt",
+  "git_commit": "15c6d63b8c9eb37f0e5c26ef6eac286a946bd869",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0012/claim-done-4",
+      "note": null
+    }
+  ]
+}
