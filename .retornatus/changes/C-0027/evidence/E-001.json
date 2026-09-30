@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0027/E-001",
+  "type": "test_result",
+  "subject": "src/retornatus/__init__.py",
+  "source": "uv run python /tmp/c0027-checks/versions.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:51:35.833648Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0027-checks/versions.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:50:11.813771Z",
+  "ended_at": "2026-09-30T23:50:11.844827Z",
+  "duration_ms": 31,
+  "output_sha256": "fabe5e514369ab5ead71667567f3026387a30ac384fececef117b59851eb2d13",
+  "output_tail": "versions ok\n",
+  "output_artifact": ".retornatus/changes/C-0027/evidence/E-001.output.txt",
+  "git_commit": "dddb12a0c0f5529800d68a64f8c0c3d7739fc0d8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0027/claim-done-1",
+      "note": null
+    }
+  ]
+}

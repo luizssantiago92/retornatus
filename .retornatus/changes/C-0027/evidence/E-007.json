@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0027/E-007",
+  "type": "repository_observation",
+  "subject": "README.md contains the current release version 1.7.0",
+  "source": "uv run python /tmp/c0027-checks/readme_version.py",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:51:35.852420Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0027-checks/readme_version.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:50:12.021801Z",
+  "ended_at": "2026-09-30T23:50:12.050297Z",
+  "duration_ms": 28,
+  "output_sha256": "28a1352d445eb7e74d2aaf3f5295ad2f59f8ff0b05bfba91b9cb7b51da2f38b6",
+  "output_tail": "readme ok\n",
+  "output_artifact": ".retornatus/changes/C-0027/evidence/E-007.output.txt",
+  "git_commit": "dddb12a0c0f5529800d68a64f8c0c3d7739fc0d8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0027/claim-done-7",
+      "note": null
+    }
+  ]
+}
