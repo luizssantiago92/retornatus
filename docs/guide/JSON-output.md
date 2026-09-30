@@ -75,3 +75,5 @@ retornatus change overview C-0001 --format json
 ```
 
 A missing Change on `change overview --json` still exits `1`. Stderr carries `Change not found: …` and stdout is an envelope with `verdict` null and that sentence in `errors`.
+
+The [GitHub Action](GitHub-Action.md) reads these documents. `retornatus ci comment` turns them into the sticky pull-request comment. It does not compute a second verdict.

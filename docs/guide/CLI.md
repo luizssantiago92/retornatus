@@ -71,6 +71,7 @@ retornatus skill --help
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
 | `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |
 | `verify` / `verify --receipt` / `verify --json` | Assurance over Contract DONE. `--json` prints the [verdict envelope](JSON-output.md) |
+| `ci comment` | Sticky pull-request markdown from `verify --json` and `gate --json`, plus `change overview --format pr` when `--path` is set. See [GitHub Action](GitHub-Action.md) |
 | `verify --run-checks` | Run required checks, record Evidence, then verify |
 | `verify --allow-self-reported` | Migration opt-out: accept self-reported test/build/lint evidence. Does not bypass required checks |
 | `receipt keygen` / `receipt keygen --print` | Write the public key into `.retornatus/keys/`. Private key goes to the user config dir, or stdout for a CI secret |

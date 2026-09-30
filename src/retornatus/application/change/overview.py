@@ -105,8 +105,17 @@ class ChangeOverview:
         return "\n".join(lines)
 
 
-def render_pull_request(root: Path, change_id: str) -> str:
-    """Markdown pull-request body: claims, evidence trust, checks, and gates."""
+def render_pull_request(
+    root: Path,
+    change_id: str,
+    *,
+    include_gates: bool = True,
+) -> str:
+    """Markdown pull-request body: claims, evidence trust, checks, and gates.
+
+    ``include_gates=False`` skips the overview gate list. The CI comment does
+    that so the JSON gate table is the only gate result.
+    """
     from retornatus.application.assurance.settings import (
         allow_self_reported_enabled,
         load_required_checks,
@@ -213,21 +222,22 @@ def render_pull_request(root: Path, change_id: str) -> str:
             else:
                 lines.append(f"- **{check.name}** `{rendered}` — not matched")
 
-    lines.extend(["", "### Gates", ""])
-    gate_results = [
-        gate_contract(root, change_id),
-        gate_evidence(root, change_id),
-        gate_assurance(root, change_id),
-    ]
-    if git_available(root):
-        gate_results.append(gate_suppressions(root))
-        gate_results.append(gate_scope(root, change_id))
-    else:
-        lines.append("_Scope and suppressions need a git work tree; not evaluated._")
-    for result in gate_results:
-        status = "pass" if result.passed else "fail"
-        detail = "; ".join(result.messages) if result.messages else ""
-        lines.append(f"- **{result.name.value}** — {status} — {detail}")
+    if include_gates:
+        lines.extend(["", "### Gates", ""])
+        gate_results = [
+            gate_contract(root, change_id),
+            gate_evidence(root, change_id),
+            gate_assurance(root, change_id),
+        ]
+        if git_available(root):
+            gate_results.append(gate_suppressions(root))
+            gate_results.append(gate_scope(root, change_id))
+        else:
+            lines.append("_Scope and suppressions need a git work tree; not evaluated._")
+        for result in gate_results:
+            status = "pass" if result.passed else "fail"
+            detail = "; ".join(result.messages) if result.messages else ""
+            lines.append(f"- **{result.name.value}** — {status} — {detail}")
 
     if overview.next_line:
         lines.extend(["", "### Next", "", f"`{overview.next_line}`"])

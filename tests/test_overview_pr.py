@@ -8,6 +8,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from retornatus.application.assurance.evidence import EvidenceService
+from retornatus.application.change.overview import render_pull_request
 from retornatus.bootstrap.init import initialize_project
 from retornatus.cli.main import app
 
@@ -77,6 +78,32 @@ def test_overview_pr_labels_executed_and_self_reported(tmp_path: Path) -> None:
     assert "**unit** `pytest -q` — not matched" in body
     assert "**contract** — pass" in body
     assert "commit `" in body
+
+
+def test_pull_request_overview_can_omit_its_gate_list(tmp_path: Path) -> None:
+    initialize_project(tmp_path)
+    created = runner.invoke(
+        app,
+        [
+            "change",
+            "create",
+            "--path",
+            str(tmp_path),
+            "--title",
+            "Health",
+            "--demand",
+            "Add health",
+            "--what",
+            "GET /health returns 200",
+            "--done",
+            "pytest covers GET /health returns 200",
+        ],
+    )
+    assert created.exit_code == 0, created.stdout
+    body = render_pull_request(tmp_path, "C-0001", include_gates=False)
+    assert "### Claims" in body
+    assert "### Gates" not in body
+    assert "No changed paths" not in body
 
 
 def test_overview_format_rejects_unknown_value(tmp_path: Path) -> None:

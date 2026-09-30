@@ -40,6 +40,7 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 | --- | --- |
 | [Gates](Gates.md) | Mechanical STOP gates and Assurance verdicts |
 | [JSON output](JSON-output.md) | `--json` verdict envelope for verify, gates, and overview |
+| [GitHub Action](GitHub-Action.md) | Sticky pull-request comment with the verdict |
 | [CLI](CLI.md) | Intention-oriented commands |
 | [Architecture](Architecture.md) | Layers, persistence, native-first adapters |
 | [Environments](Environments.md) | Cursor, Claude Code, Codex, GitHub Copilot, generic |

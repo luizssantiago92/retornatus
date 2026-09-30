@@ -1,0 +1,25 @@
+ok guide/overview.html
+ok guide/quick-start.html
+ok guide/how-it-works.html
+ok guide/concepts.html
+ok guide/glossary.html
+ok guide/faq.html
+ok guide/skills.html
+ok guide/memory.html
+ok guide/governance.html
+ok guide/git-governance.html
+ok guide/cloud-agents.html
+ok guide/gates.html
+ok guide/json-output.html
+ok guide/github-action.html
+ok guide/cli.html
+ok guide/architecture.html
+ok guide/environments.html
+ok guide/non-goals.html
+ok guide/from-spec-guardrails.html
+ok guide/landscape.html
+ok guide/tutorials/index.html
+ok guide/tutorials/01-first-change.html
+ok guide/tutorials/02-brownfield-wake.html
+ok credits.html
+Docs sources render. Commit the markdown; Pages generates the HTML.

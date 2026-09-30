@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0013/E-009",
+  "type": "security_test",
+  "subject": "Retornatus gates job contains least-privilege permission and dogfoods uses local",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'.github/workflows/ci.yml'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nstart = text.index('\"'\"'name: Retornatus gates'\"'\"')\nrest = text[start:]\njob = rest[: rest.index('\"'\"'\\n  lowest-direct:'\"'\"')]\nassert '\"'\"'permissions:'\"'\"' in job\nassert '\"'\"'contents: read'\"'\"' in job\nassert '\"'\"'pull-requests: write'\"'\"' in job\nassert '\"'\"'uses: ./'\"'\"' in job\nwrites = [line.strip() for line in job.splitlines() if line.strip().endswith('\"'\"': write'\"'\"')]\nassert writes == ['\"'\"'pull-requests: write'\"'\"'], writes\nprint('\"'\"'ok'\"'\"')'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T06:22:03.487098Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('.github/workflows/ci.yml').read_text(encoding='utf-8')\nstart = text.index('name: Retornatus gates')\nrest = text[start:]\njob = rest[: rest.index('\\n  lowest-direct:')]\nassert 'permissions:' in job\nassert 'contents: read' in job\nassert 'pull-requests: write' in job\nassert 'uses: ./' in job\nwrites = [line.strip() for line in job.splitlines() if line.strip().endswith(': write')]\nassert writes == ['pull-requests: write'], writes\nprint('ok')"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T06:22:03.450385Z",
+  "ended_at": "2026-09-30T06:22:03.478821Z",
+  "duration_ms": 28,
+  "output_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+  "output_tail": "ok\n",
+  "output_artifact": ".retornatus/changes/C-0013/evidence/E-009.output.txt",
+  "git_commit": "ab6c4297d34240695a9980fb5ef076bed2f20597",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0013/claim-done-8",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0013",
+  "version": 1,
+  "what": "Add a composite GitHub Action that runs verify and the diff gates with --json and posts one sticky pull-request comment rendered by retornatus ci comment.",
+  "constraints": [],
+  "done_criteria": [
+    "pytest exits 0 for the CI comment tests",
+    "ruff check of src tests and scripts exits 0",
+    "mypy on the retornatus package exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "CHANGELOG Unreleased section records the GitHub Action",
+    "CLI reference contains a GitHub Action guide link",
+    "Independent review of the pull request workflow is recorded"
+  ],
+  "active": true,
+  "activated_at": "2026-09-30T06:00:45.035649Z"
+}

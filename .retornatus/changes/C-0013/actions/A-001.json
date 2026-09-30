@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "id": "C-0013/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v2",
+  "objective": "Add a composite GitHub Action that runs verify and the diff gates with --json and posts one sticky pull-request comment rendered by retornatus ci comment.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest exits 0 for the CI comment tests",
+    "ruff check of src tests and scripts exits 0",
+    "mypy on the retornatus package exits 0",
+    "The HTML documentation check exits 0",
+    "uv lock check exits 0",
+    "CHANGELOG Unreleased section records the GitHub Action",
+    "CLI reference contains a GitHub Action guide link",
+    "Retornatus gates job contains least-privilege permission and dogfoods uses local"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0013/T-001",
+      "description": "Ship the composite action, the ci comment renderer, docs, and CI dogfood",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/**",
+        "tests/**",
+        "docs/**",
+        "scripts/**",
+        "templates/**",
+        "action.yml",
+        ".github/workflows/ci.yml",
+        "CHANGELOG.md",
+        "README.md",
+        ".gitignore"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
