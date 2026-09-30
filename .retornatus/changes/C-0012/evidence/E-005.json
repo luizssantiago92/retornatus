@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/E-005",
+  "type": "test_result",
+  "subject": "keygen prints a warning when git tracks a pem file",
+  "source": "uv run pytest -q --no-cov tests/test_cli_robustness.py::test_keygen_warns_when_pem_is_tracked_and_stays_outside",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:42:36.833355Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_cli_robustness.py::test_keygen_warns_when_pem_is_tracked_and_stays_outside"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:42:36.338352Z",
+  "ended_at": "2026-09-30T05:42:36.822386Z",
+  "duration_ms": 484,
+  "output_sha256": "c9bcb144c21494e85f380ae0032b056c0b060b27bbfcfada9bc048d41195af09",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.30s\n",
+  "output_artifact": ".retornatus/changes/C-0012/evidence/E-005.output.txt",
+  "git_commit": "13c39f3f9a85ce56b6b8450f21c39ba23a661414",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0012/claim-done-5",
+      "note": null
+    }
+  ]
+}
