@@ -8,6 +8,10 @@ from pathlib import Path
 import tomli_w
 
 from retornatus import __version__
+from retornatus.bootstrap.gitignore import (
+    ensure_retornatus_gitignore,
+    tracked_private_key_files,
+)
 from retornatus.constants import RETORNATUS_DIR
 
 SCHEMA_VERSION = 1
@@ -51,6 +55,8 @@ class InitResult:
     retornatus_dir: Path
     created: bool
     already_initialized: bool
+    gitignore_updated: bool = False
+    tracked_private_keys: tuple[str, ...] = ()
 
 
 def find_project_root(start: Path | None = None) -> Path:
@@ -71,6 +77,8 @@ def initialize_project(root: Path | None = None, *, force: bool = False) -> Init
     """
     project_root = find_project_root(root)
     retornatus_dir = project_root / RETORNATUS_DIR
+    gitignore_updated = ensure_retornatus_gitignore(project_root)
+    tracked = tuple(tracked_private_key_files(project_root))
 
     if is_initialized(project_root) and not force:
         return InitResult(
@@ -78,6 +86,8 @@ def initialize_project(root: Path | None = None, *, force: bool = False) -> Init
             retornatus_dir=retornatus_dir,
             created=False,
             already_initialized=True,
+            gitignore_updated=gitignore_updated,
+            tracked_private_keys=tracked,
         )
 
     retornatus_dir.mkdir(parents=True, exist_ok=True)
@@ -97,4 +107,6 @@ def initialize_project(root: Path | None = None, *, force: bool = False) -> Init
         retornatus_dir=retornatus_dir,
         created=True,
         already_initialized=False,
+        gitignore_updated=gitignore_updated,
+        tracked_private_keys=tracked,
     )

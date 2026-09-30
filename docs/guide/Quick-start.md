@@ -57,6 +57,7 @@ retornatus doctor
 You should see:
 
 - `.retornatus/config.toml`
+- A `.gitignore` block for the local index, cache, private keys, and `.env` files (`.env.example` and `.retornatus/keys/*.pub` stay committable)
 - Hub skill (e.g. `.cursor/skills/retornatus/SKILL.md` on Cursor)
 - `doctor` reporting initialized state
 

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "C-0012/E-001",
+  "type": "test_result",
+  "subject": "pytest exits 0 for fresh, repeated, and preserved gitignore lines",
+  "source": "uv run pytest -q --no-cov tests/test_init.py -k 'fresh_init_gitignore_block_is_idempotent or gitignore_preserves_existing_lines or gitignore_preserves_crlf'",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T05:42:34.684824Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "--no-cov",
+    "tests/test_init.py",
+    "-k",
+    "fresh_init_gitignore_block_is_idempotent or gitignore_preserves_existing_lines or gitignore_preserves_crlf"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T05:42:34.212457Z",
+  "ended_at": "2026-09-30T05:42:34.676495Z",
+  "duration_ms": 464,
+  "output_sha256": "5f28b7691c6999eabca8b5f8d9d40e43ae9e116de90c4fca3abb00273daf55f3",
+  "output_tail": "...                                                                      [100%]\n3 passed, 11 deselected in 0.27s\n",
+  "output_artifact": ".retornatus/changes/C-0012/evidence/E-001.output.txt",
+  "git_commit": "9164fbb05fbf082b6e718058ee78b2ff17af4fcd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0012/claim-done-1",
+      "note": null
+    }
+  ]
+}

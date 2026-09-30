@@ -264,7 +264,7 @@ Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · 
 | Public key | `.retornatus/keys/<key-id>.pub` | Yes. `<key-id>` is the SHA-256 fingerprint of the raw public key |
 | Private key | User config directory, or `RETORNATUS_SIGNING_KEY` (PEM, base64, or even-length hex) | **No.** Never inside the repo, and never copied there from the environment |
 
-`receipt keygen` writes the public key into the repo and the private key under the user config dir (`$XDG_CONFIG_HOME/retornatus` or `%APPDATA%\retornatus`). `receipt keygen --print` prints the private key instead, for a CI secret.
+`receipt keygen` writes the public key into the repo and the private key under the user config dir (`$XDG_CONFIG_HOME/retornatus` or `%APPDATA%\retornatus`). `receipt keygen --print` prints the private key instead, for a CI secret. `retornatus init` and `receipt keygen` warn on stderr if git already tracks a `*.pem` or `*.key` file.
 
 **Threat model.** An agent that can read the private key can produce a valid signature. Keep `RETORNATUS_SIGNING_KEY` and the config-dir key **out of the agent's environment**. Verification needs only the committed public key, so a fresh clone can check a receipt without the secret.
 
