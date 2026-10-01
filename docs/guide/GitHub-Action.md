@@ -54,7 +54,7 @@ The token is the `github-token` input, which defaults to `github.token`. The act
 
 | Input | Default | Meaning |
 | --- | --- | --- |
-| `version` | `latest` | PyPI release (`1.7.0`), `latest`, or `local` (install the checkout). The installed CLI must provide `retornatus ci comment` |
+| `version` | `latest` | PyPI release (`1.8.0`), `latest`, or `local` (install the checkout). The installed CLI must provide `retornatus ci comment` |
 | `change` | empty | One Change id. Empty detects ids touched under `.retornatus/changes` |
 | `base` | empty | Git revision for the diff. Empty uses the pull request base SHA, or `origin/<default branch>` on other events |
 | `comment` | `true` | Post or update the sticky comment |

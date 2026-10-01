@@ -1,6 +1,6 @@
 # Documentation
 
-Guides for **Retornatus 1.7.0**.
+Guides for **Retornatus 1.8.0**.
 
 **Browse on the website:** [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) · [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html)
 

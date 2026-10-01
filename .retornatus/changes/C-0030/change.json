@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0030",
+  "title": "Release prep 1.8.0",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Prepare release 1.8.0 so the package version, changelog, and current-release docs match the file-edit scope warning already on main and the README overhaul. Scope is version pins, the dated 1.8.0 changelog section, the README and landing What's new blocks, and distribution checks. Out of scope is merging, tagging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T02:49:28.919132Z"
+}

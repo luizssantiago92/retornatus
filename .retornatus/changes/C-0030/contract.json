@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0030",
+  "version": 1,
+  "what": "Bump the declared package version from 1.7.0 to 1.8.0, move the Unreleased file-edit scope warning and a Docs note for the README overhaul under a dated 1.8.0 section, list the scope warning as shipped in 1.8.0 in the README and site What's new blocks, and pin current-release docs to 1.8.0.",
+  "constraints": [],
+  "done_criteria": [
+    "pyproject.toml, src/retornatus/__init__.py, and uv.lock contain version 1.8.0",
+    ".retornatus/config.toml version equals installed package version 1.8.0",
+    "CHANGELOG.md contains the heading ## [1.8.0] - 2026-09-30 and an empty Unreleased section above it",
+    "The file /docs/index.html news section contains 1.8.0 and the scope warning hook",
+    "docs/guide/Cloud-agents.md, docs/guide/Quick-start.md, and docs/guide/README.md contain version 1.8.0",
+    "action.yml and the file /docs/guide/GitHub-Action.md contain version example 1.8.0",
+    "README.md contains the current release version 1.8.0 and lists hook file-edit as shipped in 1.8.0",
+    "uv build exits 0",
+    "scripts/check_dist_contents.py exits 0",
+    "uvx twine check exits 0",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T02:49:28.927627Z"
+}
