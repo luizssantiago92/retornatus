@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `retornatus hook file-edit` warns when an agent edits a file outside the active Change scope. Claude Code uses `PreToolUse` (`Edit|Write|MultiEdit`, `additionalContext`, and `permissionDecision` deny). Cursor warns on `postToolUse` (`additional_context`) and blocks on `preToolUse` (`permission` deny, `agent_message`); `afterFileEdit` documents no output fields, so it is not installed. Codex uses `PreToolUse` on `apply_patch` (`additionalContext`, and `permissionDecision` deny). The path check is the same match as `gate scope`. `[hooks] scope_mode` is `warn` (default), `block`, or `off`. `block` denies only where the host documents a deny, and otherwise warns. In-scope paths, no active Change, and `.retornatus/` stay silent. Errors fail open. `integrate --hooks` installs the hook beside Stop and session-start, and `integrate --remove-hooks` deletes only those Retornatus entries. `doctor` reports file-edit and `scope_mode`. This repository stays hooks-disabled. CI stays the source of truth. See `docs/guide/Agent-hooks.md`.
+
 ## [1.7.0] - 2026-09-30
 
 ### Added

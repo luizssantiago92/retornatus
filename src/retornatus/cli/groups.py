@@ -53,7 +53,8 @@ hooks_app = typer.Typer(
 hook_app = typer.Typer(
     help=(
         "Agent hooks. stop guards the turn. "
-        "session-start injects the active Change."
+        "session-start injects the active Change. "
+        "file-edit warns when an edit leaves the active Change scope."
     )
 )
 preset_app = typer.Typer(help="Inspect packaged config presets.")

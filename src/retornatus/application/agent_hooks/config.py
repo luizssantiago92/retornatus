@@ -2,6 +2,7 @@
 
 Stop entries are identified by ``retornatus hook stop --host <name>``.
 Session-start entries use ``retornatus hook session-start --host <name>``.
+File-edit entries use ``retornatus hook file-edit --host <name>``.
 A second install updates those entries. User hooks and unrelated keys stay.
 """
 
@@ -16,6 +17,10 @@ from retornatus.domain.errors import UsageError
 HOSTS: tuple[str, ...] = ("claude", "cursor", "codex")
 CURSOR_LOOP_LIMIT = 1
 COMMAND_TIMEOUT_SECONDS = 30
+CLAUDE_FILE_EDIT_MATCHER = "Edit|Write|MultiEdit"
+CODEX_FILE_EDIT_MATCHER = "apply_patch|Edit|Write"
+CURSOR_FILE_EDIT_MATCHER = "Write"
+_CURSOR_FILE_EDIT_EVENTS = ("preToolUse", "postToolUse")
 
 _RELATIVE: dict[str, Path] = {
     "claude": Path(".claude") / "settings.json",
@@ -32,6 +37,11 @@ def stop_command(host: str) -> str:
 def session_start_command(host: str) -> str:
     """Shell command the host runs when a session starts."""
     return f"retornatus hook session-start --host {host}"
+
+
+def file_edit_command(host: str) -> str:
+    """Shell command the host runs around a file edit."""
+    return f"retornatus hook file-edit --host {host}"
 
 
 def parse_hosts(raw: list[str] | None) -> tuple[str, ...]:
@@ -74,6 +84,11 @@ def is_retornatus_session_command(command: object, host: str) -> bool:
     return _command_has(command, ["retornatus", "hook", "session-start", "--host", host])
 
 
+def is_retornatus_file_edit_command(command: object, host: str) -> bool:
+    """True when ``command`` invokes this host's file-edit hook."""
+    return _command_has(command, ["retornatus", "hook", "file-edit", "--host", host])
+
+
 def _command_has(command: object, needle: list[str]) -> bool:
     if not isinstance(command, str):
         return False
@@ -83,16 +98,16 @@ def _command_has(command: object, needle: list[str]) -> bool:
 
 
 def agent_hook_status(root: Path) -> dict[str, str]:
-    """Stop and session-start state for each host.
+    """Stop, session-start, and file-edit state for each host.
 
-    ``absent`` means neither Retornatus hook is present. ``unreadable`` means
+    ``absent`` means no Retornatus hook is present. ``unreadable`` means
     the file is not a JSON object. Otherwise the value names each hook.
     """
     return {host: _status_one(root, host) for host in HOSTS}
 
 
 def install_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
-    """Merge Retornatus Stop and session-start hooks into the selected files."""
+    """Merge Retornatus Stop, session-start, and file-edit hooks into the files."""
     states: dict[str, str] = {}
     for host in hosts:
         _install_one(root, host)
@@ -101,7 +116,7 @@ def install_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
 
 
 def remove_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
-    """Drop Retornatus Stop and session-start hooks. Other hooks and keys stay."""
+    """Drop Retornatus Stop, session-start, and file-edit hooks. Other hooks stay."""
     return {host: _remove_one(root, host) for host in hosts}
 
 
@@ -115,11 +130,13 @@ def _status_one(root: Path, host: str) -> str:
         return "unreadable"
     stop = _contains(data, host, kind="stop")
     session = _contains(data, host, kind="session")
-    if not stop and not session:
+    file_edit = _contains(data, host, kind="file-edit")
+    if not stop and not session and not file_edit:
         return "absent"
     stop_state = "installed" if stop else "absent"
     session_state = "installed" if session else "absent"
-    return f"stop={stop_state} session-start={session_state}"
+    file_edit_state = "installed" if file_edit else "absent"
+    return f"stop={stop_state} session-start={session_state} file-edit={file_edit_state}"
 
 
 def _install_one(root: Path, host: str) -> None:
@@ -141,6 +158,17 @@ def _install_one(root: Path, host: str) -> None:
             },
             is_retornatus_session_command,
         )
+        for event in _CURSOR_FILE_EDIT_EVENTS:
+            updated = _upsert_cursor_list(
+                updated,
+                event,
+                {
+                    "command": file_edit_command("cursor"),
+                    "matcher": CURSOR_FILE_EDIT_MATCHER,
+                    "timeout": COMMAND_TIMEOUT_SECONDS,
+                },
+                is_retornatus_file_edit_command,
+            )
     else:
         updated = _upsert_grouped(
             data,
@@ -156,6 +184,15 @@ def _install_one(root: Path, host: str) -> None:
             _grouped_handler(host, kind="session"),
             is_retornatus_session_command,
         )
+        matcher = CLAUDE_FILE_EDIT_MATCHER if host == "claude" else CODEX_FILE_EDIT_MATCHER
+        updated = _upsert_grouped(
+            updated,
+            host,
+            "PreToolUse",
+            _grouped_handler(host, kind="file-edit"),
+            is_retornatus_file_edit_command,
+            matcher=matcher,
+        )
     _write_json(path, updated)
 
 
@@ -168,10 +205,13 @@ def _remove_one(root: Path, host: str) -> str:
     if host == "cursor":
         updated = _strip_cursor_list(data, "stop", is_retornatus_stop_command)
         updated = _strip_cursor_list(updated, "sessionStart", is_retornatus_session_command)
+        for event in _CURSOR_FILE_EDIT_EVENTS:
+            updated = _strip_cursor_list(updated, event, is_retornatus_file_edit_command)
         updated = _drop_cursor_scaffold(updated)
     else:
         updated = _strip_grouped(data, host, "Stop", is_retornatus_stop_command)
         updated = _strip_grouped(updated, host, "SessionStart", is_retornatus_session_command)
+        updated = _strip_grouped(updated, host, "PreToolUse", is_retornatus_file_edit_command)
     if json.dumps(updated, sort_keys=True) == before:
         return "absent"
     if updated:
@@ -185,16 +225,13 @@ def _contains(data: dict[str, Any], host: str, *, kind: str) -> bool:
     hooks = data.get("hooks")
     if not isinstance(hooks, dict):
         return False
-    predicate = is_retornatus_stop_command if kind == "stop" else is_retornatus_session_command
+    predicate = _predicate(kind)
     if host == "cursor":
-        key = "stop" if kind == "stop" else "sessionStart"
-        entries = hooks.get(key)
-        if not isinstance(entries, list):
-            return False
-        return any(
-            isinstance(item, dict) and predicate(item.get("command"), host) for item in entries
+        keys = _CURSOR_FILE_EDIT_EVENTS if kind == "file-edit" else (
+            ("stop",) if kind == "stop" else ("sessionStart",)
         )
-    key = "Stop" if kind == "stop" else "SessionStart"
+        return any(_cursor_list_has(hooks, key, predicate) for key in keys)
+    key = {"stop": "Stop", "session": "SessionStart", "file-edit": "PreToolUse"}[kind]
     groups = hooks.get(key)
     if not isinstance(groups, list):
         return False
@@ -209,8 +246,28 @@ def _contains(data: dict[str, Any], host: str, *, kind: str) -> bool:
     return False
 
 
+def _predicate(kind: str) -> Any:
+    if kind == "stop":
+        return is_retornatus_stop_command
+    if kind == "session":
+        return is_retornatus_session_command
+    return is_retornatus_file_edit_command
+
+
+def _cursor_list_has(hooks: dict[str, Any], event: str, predicate: Any) -> bool:
+    entries = hooks.get(event)
+    if not isinstance(entries, list):
+        return False
+    return any(isinstance(item, dict) and predicate(item.get("command"), "cursor") for item in entries)
+
+
 def _grouped_handler(host: str, *, kind: str) -> dict[str, Any]:
-    command = stop_command(host) if kind == "stop" else session_start_command(host)
+    if kind == "stop":
+        command = stop_command(host)
+    elif kind == "session":
+        command = session_start_command(host)
+    else:
+        command = file_edit_command(host)
     return {
         "type": "command",
         "command": command,
@@ -224,6 +281,7 @@ def _upsert_grouped(
     event: str,
     handler: dict[str, Any],
     predicate: Any,
+    matcher: str | None = None,
 ) -> dict[str, Any]:
     label = hook_config_path(Path(), host).name
     hooks = _object_key(data, "hooks", label=label)
@@ -241,20 +299,34 @@ def _upsert_grouped(
             continue
         inner = group["hooks"]
         kept: list[Any] = []
+        replaced_here = False
         for item in inner:
             if isinstance(item, dict) and predicate(item.get("command"), host):
                 if not updated:
                     kept.append(handler)
                     updated = True
+                    replaced_here = True
                 continue
             kept.append(item)
         cloned = dict(group)
         cloned["hooks"] = kept
+        if replaced_here and matcher and _only_our_hooks(kept, host, predicate):
+            cloned["matcher"] = matcher
         rewritten.append(cloned)
     if not updated:
-        rewritten.append({"hooks": [handler]})
+        fresh: dict[str, Any] = {}
+        if matcher:
+            fresh["matcher"] = matcher
+        fresh["hooks"] = [handler]
+        rewritten.append(fresh)
     hooks[event] = rewritten
     return data
+
+
+def _only_our_hooks(items: list[Any], host: str, predicate: Any) -> bool:
+    return bool(items) and all(
+        isinstance(item, dict) and predicate(item.get("command"), host) for item in items
+    )
 
 
 def _strip_grouped(

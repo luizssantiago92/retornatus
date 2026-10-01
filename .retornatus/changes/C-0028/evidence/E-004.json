@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0028/E-004",
+  "type": "test_result",
+  "subject": "docs/guide/CLI.md",
+  "source": "uv run python -c 'from pathlib import Path; t=Path('\"'\"'docs/guide/CLI.md'\"'\"').read_text(); assert '\"'\"'hook file-edit'\"'\"' in t; print('\"'\"'cli ok'\"'\"')'",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T01:01:13.546876Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; t=Path('docs/guide/CLI.md').read_text(); assert 'hook file-edit' in t; print('cli ok')"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T01:01:13.201451Z",
+  "ended_at": "2026-10-01T01:01:13.232393Z",
+  "duration_ms": 30,
+  "output_sha256": "538c5200a727b4e11f832eb9bd2a585eb65684121d594e0d826bddad6b1815a1",
+  "output_tail": "cli ok\n",
+  "output_artifact": ".retornatus/changes/C-0028/evidence/E-004.output.txt",
+  "git_commit": "dabfbec3bd02b2e78344f00db6f97ba3a999efa2",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0028/claim-done-4",
+      "note": null
+    }
+  ]
+}

@@ -270,7 +270,7 @@ Two Skill worlds:
 | Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
 | Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `checks run`, `gate *` (including `suppressions` and `scope`), `verify` / `verify --run-checks` / `verify --allow-self-reported` / `verify --receipt`, `receipt keygen` / `sign` / `verify` |
 | Hooks | `hooks install` / `remove` / `status` (pre-commit + commit-msg) |
-| Agent hooks | `integrate --hooks` / `integrate --remove-hooks` / `hook session-start` / `hook stop` (opt-in; CI stays the source of truth) |
+| Agent hooks | `integrate --hooks` / `integrate --remove-hooks` / `hook file-edit` / `hook session-start` / `hook stop` (opt-in; CI stays the source of truth) |
 | Attempt budget | `action budget --max N` · `gate budget` |
 | Learning | `change learn`, `lesson from-gate` |
 | Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |

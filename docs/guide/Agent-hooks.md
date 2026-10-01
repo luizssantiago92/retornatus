@@ -1,10 +1,10 @@
 # Agent hooks
 
-Two opt-in hooks sit in the agent loop. A session-start hook injects the active Change so the agent begins with the finish line. A Stop hook asks the agent to keep going when that Change is not `SATISFIED`. Git hooks (`hooks install`) still run at commit time.
+Three opt-in hooks sit in the agent loop. A session-start hook injects the active Change so the agent begins with the finish line. A file-edit hook warns when an edit leaves that Change's declared scope. A Stop hook asks the agent to keep going when the Change is not `SATISFIED`. Git hooks (`hooks install`) still run at commit time.
 
-Both can be skipped, both fail open, and a host can cap how many times Stop continues the turn. **CI remains the source of truth.** The pull-request check (`verify`, `gate suppressions`, `gate scope`) is the result that counts. See [Cloud agents](Cloud-agents.md) and [GitHub Action](GitHub-Action.md).
+All three can be skipped, all three fail open, and a host can cap how many times Stop continues the turn. **CI remains the source of truth.** The pull-request check (`verify`, `gate suppressions`, `gate scope`) is the result that counts. The file-edit hook is an early warning. It does not replace `gate scope`. See [Cloud agents](Cloud-agents.md) and [GitHub Action](GitHub-Action.md).
 
-Tool gates, subagent hooks, and MCP are not installed.
+Subagent hooks and MCP are not installed. The file-edit hook is the only tool hook, and only on the edit events documented below.
 
 This repository does not write the hooks into its own `.claude/`, `.cursor/hooks.json`, or `.codex/`. Run the command in the project you want to guard.
 
@@ -19,9 +19,9 @@ retornatus integrate --remove-hooks
 retornatus doctor
 ```
 
-`--host` is repeatable. Omit it to update Claude, Cursor, and Codex. `--remove-hooks` deletes only the Retornatus Stop and session-start commands. Other hooks and keys stay. A second `--hooks` updates those entries in place and does not add a duplicate.
+`--host` is repeatable. Omit it to update Claude, Cursor, and Codex. `--remove-hooks` deletes only the Retornatus Stop, session-start, and file-edit commands. Other hooks and keys stay. A second `--hooks` updates those entries in place and does not add a duplicate.
 
-`doctor` prints `agent hooks:` for each host. `absent` means the file is missing, unreadable as JSON is `unreadable`, and a file with no Retornatus command is `absent`. When a Retornatus command is present the line names both hooks, for example `stop=installed session-start=installed` or `stop=installed session-start=absent`. Absent is normal. The hooks are opt-in, and a missing hook does not fail `doctor`.
+`doctor` prints `agent hooks:` for each host. `absent` means the file is missing, unreadable as JSON is `unreadable`, and a file with no Retornatus command is `absent`. When a Retornatus command is present the line names each hook, for example `stop=installed session-start=installed file-edit=installed` or `stop=installed session-start=absent file-edit=absent`. Absent is normal. The hooks are opt-in, and a missing hook does not fail `doctor`. For an initialized project, `doctor` also prints `hooks scope_mode:` as `warn`, `block`, `off`, or `invalid`.
 
 ## What the hook runs
 
@@ -147,11 +147,72 @@ Checked against the host docs on 2026-09-30. All three hosts document this event
 - [Cursor hooks](https://cursor.com/docs/hooks). `sessionStart` lives in `.cursor/hooks.json`. Stdin carries `session_id`, `is_background_agent`, and optional `composer_mode`. The output field is `additional_context`. The hook is fire-and-forget. Cloud agents defer `sessionStart` (it would run after the first write, not at true session start). Self-hosted pool workers do run it when a session claims the worker.
 - [Codex hooks](https://developers.openai.com/codex/hooks). `SessionStart` lives in `.codex/hooks.json`. That page currently redirects to `https://learn.chatgpt.com/docs/hooks`. Stdin adds `source` (`startup`, `resume`, `clear`, or `compact`). Omitting `matcher` matches every source. JSON on stdout uses the same `hookSpecificOutput.additionalContext` shape as Claude. Plain text on stdout is also extra developer context; invalid JSON is not.
 
-`[hooks] session_context` is Retornatus project config in `.retornatus/config.toml`, the same table as `allow_questions`, not the host's `[hooks]` table. Codex can also read inline `[hooks]` from its own `config.toml`. `integrate --hooks` still writes `.codex/hooks.json` only.
+`[hooks] session_context` is Retornatus project config in `.retornatus/config.toml`, the same table as `allow_questions` and `scope_mode`, not the host's `[hooks]` table. Codex can also read inline `[hooks]` from its own `config.toml`. `integrate --hooks` still writes `.codex/hooks.json` only.
 
 ```toml
 [hooks]
 session_context = false
+```
+
+## File edit
+
+Each host also runs:
+
+```bash
+retornatus hook file-edit --host claude
+retornatus hook file-edit --host cursor
+retornatus hook file-edit --host codex
+```
+
+The command reads the host JSON object from stdin and ignores extra fields. A non-object is treated as an empty object. It finds `.retornatus/` from the working directory (parents included) and loads every Change whose Contract is active. Each edited path is resolved against the repo root and compared with `path_in_scope`, the same match `gate scope` uses for Task resources and `.retornatus/**`. There is no subprocess and no git call.
+
+A path inside the declared scope, a project with no active Change, and anything under `.retornatus/` print nothing. The edit proceeds. A path outside every matching rule prints a short warning: the path, each active Change that does not cover it, that Change's declared scope, and the next step (revert the edit, or add the path to the Change's Task resources). One file must sit inside every active Change, the same way the pre-commit scope hook checks the diff against each active Change.
+
+| Situation | Result |
+| --- | --- |
+| No `.retornatus/`, or no active Change | Exit 0, no stdout |
+| Path in scope for every active Change, or under `.retornatus/` | Exit 0, no stdout |
+| `[hooks] scope_mode = "off"` | Exit 0, no stdout. The default is `warn`, including when the key is absent |
+| Out of scope, mode `warn` | Exit 0 and the host warning below. The edit is not blocked |
+| Out of scope, mode `block`, on an event that documents a deny | Exit 0 and a deny payload. The warning is the deny reason |
+| Out of scope, mode `block`, on an event that cannot deny | Exit 0 and the warn payload for that event |
+| Invalid JSON, unknown host, a bad `scope_mode`, or any internal error | Exit 0, no decision. One `fail-open` line goes to stderr |
+
+`[hooks] scope_mode` accepts `warn`, `block`, or `off`. Any other value fails open.
+
+```toml
+[hooks]
+scope_mode = "warn"
+```
+
+Checked against the host docs on 2026-10-01. All three hosts have a documented way to put a message back in front of the agent, so all three are installed. Events that cannot carry that message are skipped.
+
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks). `PreToolUse` runs before the tool call. The matcher is `Edit|Write|MultiEdit`. `Write` and `Edit` put the absolute path in `tool_input.file_path` (Windows paths use backslashes; the hook normalizes them). The current reference lists `Write` and `Edit`, not `MultiEdit`; the matcher still includes `MultiEdit` so an older client that sends that name with `file_path` is covered. A warning is `hookSpecificOutput.additionalContext` with `hookEventName` `PreToolUse`. A block is `permissionDecision` `deny` plus `permissionDecisionReason`, which is shown to Claude. `PostToolUse` can also carry `additionalContext`, but it cannot undo the edit, so `block` on that event falls back to the warning.
+- [Cursor hooks](https://cursor.com/docs/hooks). `afterFileEdit` matches `Write` and the input field is `file_path`. That section documents no output fields, so the event is not installed. `beforeReadFile` can deny a read with `user_message` shown to the user. That is not an edit, and it is not a message to the agent, so it is not installed. `preToolUse` and `postToolUse` match `Write`. `preToolUse` can return `permission` `deny` and `agent_message` (delivered when the action is denied). It does not document a warning that still lets the tool run, so warn mode stays silent on that event. `postToolUse` returns `additional_context`, which is injected after the tool result. Warn mode uses that field. Block mode denies on `preToolUse` and, if `postToolUse` still runs, falls back to `additional_context`.
+- [Codex hooks](https://developers.openai.com/codex/hooks). `PreToolUse` intercepts file edits made through `apply_patch`. The matcher is `apply_patch|Edit|Write`. Stdin still reports `tool_name` `apply_patch`, and the patch body is `tool_input.command`. Paths are the `*** Add File:`, `*** Update File:`, `*** Delete File:`, and `*** Move to:` headers from the [apply_patch grammar](https://github.com/openai/codex/blob/main/codex-rs/prompts/templates/apply_patch_tool_instructions.md). A warning is `hookSpecificOutput.additionalContext`. A block is `permissionDecision` `deny` plus `permissionDecisionReason`. `PostToolUse` can add context after the edit and cannot undo it, so `block` there falls back to the warning.
+
+Claude and Codex, warn mode:
+
+```json
+{"hookSpecificOutput": {"hookEventName": "PreToolUse", "additionalContext": "src/other.py is outside C-0001 scope (src/retornatus/). Revert the edit, or update the Change scope (Task resources) to include this path."}}
+```
+
+Claude and Codex, block mode:
+
+```json
+{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "src/other.py is outside C-0001 scope (src/retornatus/). Revert the edit, or update the Change scope (Task resources) to include this path."}}
+```
+
+Cursor warn mode (`postToolUse`):
+
+```json
+{"additional_context": "src/other.py is outside C-0001 scope (src/retornatus/). Revert the edit, or update the Change scope (Task resources) to include this path."}
+```
+
+Cursor block mode (`preToolUse`):
+
+```json
+{"permission": "deny", "agent_message": "src/other.py is outside C-0001 scope (src/retornatus/). Revert the edit, or update the Change scope (Task resources) to include this path."}
 ```
 
 ## Files
@@ -184,6 +245,18 @@ Fresh install, with no other keys in the file:
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "retornatus hook file-edit --host claude",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }
@@ -204,6 +277,20 @@ Fresh install, with no other keys in the file:
     "sessionStart": [
       {
         "command": "retornatus hook session-start --host cursor",
+        "timeout": 30
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "retornatus hook file-edit --host cursor",
+        "matcher": "Write",
+        "timeout": 30
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "retornatus hook file-edit --host cursor",
+        "matcher": "Write",
         "timeout": 30
       }
     ]
@@ -237,6 +324,18 @@ Fresh install, with no other keys in the file:
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "retornatus hook file-edit --host codex",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }
@@ -252,7 +351,7 @@ Cursor has no `stop_hook_active` field. The generated `stop` entry sets `loop_li
 
 ## Fail-open
 
-A policy hook that crashes should not freeze the session. Invalid stdin, an unknown `--host`, a raised exception, and a missing project all exit 0 with no block JSON. The diagnostic is a single stderr line that starts with `retornatus hook stop: fail-open` or `retornatus hook session-start: fail-open`. The command timeout in the Claude and Codex files is 30 seconds (the host default is 600). Cursor's session-start entry uses the same 30 second timeout. `failClosed` stays at its default, false.
+A policy hook that crashes should not freeze the session. Invalid stdin, an unknown `--host`, a raised exception, and a missing project all exit 0 with no block JSON. The diagnostic is a single stderr line that starts with `retornatus hook stop: fail-open`, `retornatus hook session-start: fail-open`, or `retornatus hook file-edit: fail-open`. The command timeout in the Claude and Codex files is 30 seconds (the host default is 600). Cursor's session-start and file-edit entries use the same 30 second timeout. `failClosed` stays at its default, false.
 
 ## Codex trust
 
@@ -265,12 +364,12 @@ Codex can also read inline `[hooks]` from `config.toml`. If one layer contains b
 Checked against the host docs on 2026-09-30:
 
 - [Claude Code hooks](https://code.claude.com/docs/en/hooks). Stop still lives in `.claude/settings.json`. Exit 2 still blocks, and so does exit 0 with `decision: "block"` and `reason`. The Stop hook uses the JSON decision and exit 0. `hookSpecificOutput.additionalContext` on Stop can continue the turn as feedback instead of a block; Stop uses `decision`. Session start uses `additionalContext` inside `hookSpecificOutput`, with `hookEventName` set to `SessionStart`. An `if` filter does not run on Stop, so the generated Stop entry has none. The 8-continuation cap is in addition to `stop_hook_active`. Stop input includes `last_assistant_message`; the hook prefers that field over `transcript_path` because the transcript file can lag the turn.
-- [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` answers with `followup_message`, not `decision`. `sessionStart` answers with `additional_context`. Cloud agents run command hooks from that file, including `stop`, once the machine is writable. They do not run hooks during an early read-only turn, and they defer `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
+- [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` answers with `followup_message`, not `decision`. `sessionStart` answers with `additional_context`. File edits warn through `postToolUse` `additional_context` and block through `preToolUse` `permission` `deny`. `afterFileEdit` has no documented output fields. Cloud agents run command hooks from that file, including `stop`, once the machine is writable. They do not run hooks during an early read-only turn, and they defer `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
 - [Codex hooks](https://developers.openai.com/codex/hooks). The project file is `.codex/hooks.json`. Stop uses `decision: "block"` and `reason`, and it expects JSON on stdout when the process exits 0. Empty stdout allows the stop. Plain text on stdout is invalid for Stop. Session start accepts `hookSpecificOutput.additionalContext` and also treats plain stdout as developer context.
 
 ## Related
 
-- [CLI](CLI.md) for `hook session-start`, `hook stop`, and `integrate --hooks`
+- [CLI](CLI.md) for `hook file-edit`, `hook session-start`, `hook stop`, and `integrate --hooks`
 - [Gates](Gates.md) for what `SATISFIED` means
 - [JSON output](JSON-output.md) for the verdict the hook evaluates
 - [Cloud agents](Cloud-agents.md) for a clean VM
