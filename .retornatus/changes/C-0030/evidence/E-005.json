@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0030/E-005",
+  "type": "repository_observation",
+  "subject": "docs/guide/Cloud-agents.md",
+  "source": "uv run python /tmp/c0030-checks/docs_versions.py",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T02:54:21.292584Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0030-checks/docs_versions.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T02:52:55.482146Z",
+  "ended_at": "2026-10-01T02:52:55.507337Z",
+  "duration_ms": 25,
+  "output_sha256": "8d300be4d220daf7dd7dda3c7bb35cf19443437043556749e9afaa7584648e5f",
+  "output_tail": "docs ok\n",
+  "output_artifact": ".retornatus/changes/C-0030/evidence/E-005.output.txt",
+  "git_commit": "3ee81b1ffcdfb581e8a014bdda870061535a0fdd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0030/claim-done-5",
+      "note": null
+    }
+  ]
+}
