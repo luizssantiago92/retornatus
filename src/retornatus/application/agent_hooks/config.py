@@ -1,6 +1,7 @@
 """Write and remove project agent-hook config for Claude, Cursor, and Codex.
 
 Stop entries are identified by ``retornatus hook stop --host <name>``.
+Subagent-stop entries use ``retornatus hook subagent-stop --host <name>``.
 Session-start entries use ``retornatus hook session-start --host <name>``.
 File-edit entries use ``retornatus hook file-edit --host <name>``.
 A second install updates those entries. User hooks and unrelated keys stay.
@@ -32,6 +33,11 @@ _RELATIVE: dict[str, Path] = {
 def stop_command(host: str) -> str:
     """Shell command the host runs at turn end."""
     return f"retornatus hook stop --host {host}"
+
+
+def subagent_stop_command(host: str) -> str:
+    """Shell command the host runs when a subagent stops."""
+    return f"retornatus hook subagent-stop --host {host}"
 
 
 def session_start_command(host: str) -> str:
@@ -71,8 +77,14 @@ def is_retornatus_stop_command(command: object, host: str) -> bool:
     """True when ``command`` invokes this host's Stop hook.
 
     A prefix such as ``uv run`` still matches. A different host does not.
+    ``hook subagent-stop`` does not match, because ``stop`` is its own token.
     """
     return _command_has(command, ["retornatus", "hook", "stop", "--host", host])
+
+
+def is_retornatus_subagent_stop_command(command: object, host: str) -> bool:
+    """True when ``command`` invokes this host's subagent-stop hook."""
+    return _command_has(command, ["retornatus", "hook", "subagent-stop", "--host", host])
 
 
 def is_retornatus_session_command(command: object, host: str) -> bool:
@@ -94,7 +106,7 @@ def _command_has(command: object, needle: list[str]) -> bool:
 
 
 def agent_hook_status(root: Path) -> dict[str, str]:
-    """Stop, session-start, and file-edit state for each host.
+    """Stop, subagent-stop, session-start, and file-edit state for each host.
 
     ``absent`` means no Retornatus hook is present. ``unreadable`` means
     the file is not a JSON object. Otherwise the value names each hook.
@@ -103,7 +115,7 @@ def agent_hook_status(root: Path) -> dict[str, str]:
 
 
 def install_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
-    """Merge Retornatus Stop, session-start, and file-edit hooks into the files."""
+    """Merge Retornatus Stop, subagent-stop, session-start, and file-edit hooks."""
     states: dict[str, str] = {}
     for host in hosts:
         _install_one(root, host)
@@ -112,7 +124,7 @@ def install_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
 
 
 def remove_agent_hooks(root: Path, hosts: tuple[str, ...]) -> dict[str, str]:
-    """Drop Retornatus Stop, session-start, and file-edit hooks. Other hooks stay."""
+    """Drop Retornatus Stop, subagent-stop, session-start, and file-edit hooks."""
     return {host: _remove_one(root, host) for host in hosts}
 
 
@@ -125,14 +137,16 @@ def _status_one(root: Path, host: str) -> str:
     except UsageError:
         return "unreadable"
     stop = _contains(data, host, kind="stop")
+    subagent = _contains(data, host, kind="subagent")
     session = _contains(data, host, kind="session")
     file_edit = _contains(data, host, kind="file-edit")
-    if not stop and not session and not file_edit:
+    if not stop and not subagent and not session and not file_edit:
         return "absent"
     stop_state = "installed" if stop else "absent"
+    subagent_state = "installed" if subagent else "absent"
     session_state = "installed" if session else "absent"
     file_edit_state = "installed" if file_edit else "absent"
-    return f"stop={stop_state} session-start={session_state} file-edit={file_edit_state}"
+    return f"stop={stop_state} session-start={session_state} file-edit={file_edit_state} subagent-stop={subagent_state}"
 
 
 def _install_one(root: Path, host: str) -> None:
@@ -144,6 +158,12 @@ def _install_one(root: Path, host: str) -> None:
             "stop",
             {"command": stop_command("cursor"), "loop_limit": CURSOR_LOOP_LIMIT},
             is_retornatus_stop_command,
+        )
+        updated = _upsert_cursor_list(
+            updated,
+            "subagentStop",
+            {"command": subagent_stop_command("cursor"), "loop_limit": CURSOR_LOOP_LIMIT},
+            is_retornatus_subagent_stop_command,
         )
         updated = _upsert_cursor_list(
             updated,
@@ -176,6 +196,13 @@ def _install_one(root: Path, host: str) -> None:
         updated = _upsert_grouped(
             updated,
             host,
+            "SubagentStop",
+            _grouped_handler(host, kind="subagent"),
+            is_retornatus_subagent_stop_command,
+        )
+        updated = _upsert_grouped(
+            updated,
+            host,
             "SessionStart",
             _grouped_handler(host, kind="session"),
             is_retornatus_session_command,
@@ -200,12 +227,14 @@ def _remove_one(root: Path, host: str) -> str:
     before = json.dumps(data, sort_keys=True)
     if host == "cursor":
         updated = _strip_cursor_list(data, "stop", is_retornatus_stop_command)
+        updated = _strip_cursor_list(updated, "subagentStop", is_retornatus_subagent_stop_command)
         updated = _strip_cursor_list(updated, "sessionStart", is_retornatus_session_command)
         for event in _CURSOR_FILE_EDIT_EVENTS:
             updated = _strip_cursor_list(updated, event, is_retornatus_file_edit_command)
         updated = _drop_cursor_scaffold(updated)
     else:
         updated = _strip_grouped(data, host, "Stop", is_retornatus_stop_command)
+        updated = _strip_grouped(updated, host, "SubagentStop", is_retornatus_subagent_stop_command)
         updated = _strip_grouped(updated, host, "SessionStart", is_retornatus_session_command)
         updated = _strip_grouped(updated, host, "PreToolUse", is_retornatus_file_edit_command)
     if json.dumps(updated, sort_keys=True) == before:
@@ -223,9 +252,19 @@ def _contains(data: dict[str, Any], host: str, *, kind: str) -> bool:
         return False
     predicate = _predicate(kind)
     if host == "cursor":
-        keys = _CURSOR_FILE_EDIT_EVENTS if kind == "file-edit" else (("stop",) if kind == "stop" else ("sessionStart",))
+        keys = {
+            "stop": ("stop",),
+            "subagent": ("subagentStop",),
+            "session": ("sessionStart",),
+            "file-edit": _CURSOR_FILE_EDIT_EVENTS,
+        }[kind]
         return any(_cursor_list_has(hooks, key, predicate) for key in keys)
-    key = {"stop": "Stop", "session": "SessionStart", "file-edit": "PreToolUse"}[kind]
+    key = {
+        "stop": "Stop",
+        "subagent": "SubagentStop",
+        "session": "SessionStart",
+        "file-edit": "PreToolUse",
+    }[kind]
     groups = hooks.get(key)
     if not isinstance(groups, list):
         return False
@@ -243,6 +282,8 @@ def _contains(data: dict[str, Any], host: str, *, kind: str) -> bool:
 def _predicate(kind: str) -> Any:
     if kind == "stop":
         return is_retornatus_stop_command
+    if kind == "subagent":
+        return is_retornatus_subagent_stop_command
     if kind == "session":
         return is_retornatus_session_command
     return is_retornatus_file_edit_command
@@ -258,6 +299,8 @@ def _cursor_list_has(hooks: dict[str, Any], event: str, predicate: Any) -> bool:
 def _grouped_handler(host: str, *, kind: str) -> dict[str, Any]:
     if kind == "stop":
         command = stop_command(host)
+    elif kind == "subagent":
+        command = subagent_stop_command(host)
     elif kind == "session":
         command = session_start_command(host)
     else:

@@ -33,7 +33,7 @@ The [README](../../README.md) is the product entry point. This folder is the mar
 | [Governance](Governance.md) | Authority, Rules, Policy, Human Decisions, bypass |
 | [Git governance](Git-governance.md) | Commit / PR / merge / publish blast-radius tiers |
 | [Cloud agents](Cloud-agents.md) | Clean VMs: install the CLI, reinstall hooks, leave receipts unsigned, enforce on the PR |
-| [Agent hooks](Agent-hooks.md) | Opt-in session-start, file-edit, and Stop hooks for Claude, Cursor, and Codex. CI stays the source of truth |
+| [Agent hooks](Agent-hooks.md) | Opt-in session-start, file-edit, Stop, and subagent-stop hooks for Claude, Cursor, and Codex. CI stays the source of truth |
 
 ## Reference
 

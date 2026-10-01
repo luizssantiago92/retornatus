@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0037",
+  "version": 1,
+  "what": "Add retornatus hook subagent-stop for Claude Code, Cursor, and Codex by reusing the Stop hook decision, install it with integrate --hooks, honor [hooks] subagent_stop, report it from doctor, and document the host payloads.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "The file /guide/Agent-hooks.md is documented and contains subagentStop, followup_message, and subagent_stop",
+    "The file /CLI.md is documented and contains hook subagent-stop",
+    "The file /CHANGELOG.md is documented and contains an Unreleased subagent-stop entry",
+    "The file /README.md is documented and contains hook subagent-stop"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T17:44:34.608006Z"
+}

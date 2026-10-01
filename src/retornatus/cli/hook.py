@@ -1,4 +1,4 @@
-"""CLI commands: agent Stop, session-start, and file-edit hooks."""
+"""CLI commands: agent Stop, subagent-stop, session-start, and file-edit hooks."""
 
 from __future__ import annotations
 
@@ -34,6 +34,37 @@ def hook_stop(
     raw = sys.stdin.read()
     start = path if path is not None else Path.cwd()
     response = handle_stop(host, raw, start=start, walk=path is None)
+    if response.stderr:
+        sys.stderr.write(response.stderr)
+    if response.stdout:
+        sys.stdout.write(response.stdout)
+    raise typer.Exit(code=response.exit_code)
+
+
+@hook_app.command("subagent-stop")
+def hook_subagent_stop(
+    host: str = typer.Option(
+        ...,
+        "--host",
+        help="Agent host: claude, cursor, or codex.",
+    ),
+    path: Path | None = typer.Option(
+        None,
+        "--path",
+        "-p",
+        help="Project root. Omit to walk up from the working directory.",
+    ),
+) -> None:
+    """Allow or remind a subagent from the host's subagent-stop JSON on stdin.
+
+    Exit 0 either way. A reminder is host JSON on stdout. Failures print one
+    diagnostic on stderr and allow the subagent to finish.
+    """
+    from retornatus.application.agent_hooks.stop import handle_subagent_stop
+
+    raw = sys.stdin.read()
+    start = path if path is not None else Path.cwd()
+    response = handle_subagent_stop(host, raw, start=start, walk=path is None)
     if response.stderr:
         sys.stderr.write(response.stderr)
     if response.stdout:

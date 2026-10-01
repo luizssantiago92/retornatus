@@ -18,7 +18,7 @@ retornatus skill --help
 | `init --preset <name> --force-config` | Replace an existing `config.toml` with that preset. `--force` alone, with no preset, still writes the minimal config |
 | `preset show <name>` / `preset list` | Print one preset's rendered config, or list presets. See [Presets](Presets.md) |
 | `integrate` | Hub skill + detected Environment bridges |
-| `integrate --hooks` | Also install the agent Stop, session-start, and file-edit hooks. `--host` selects claude, cursor, or codex. See [Agent hooks](Agent-hooks.md) |
+| `integrate --hooks` | Also install the agent Stop, subagent-stop, session-start, and file-edit hooks. `--host` selects claude, cursor, or codex. See [Agent hooks](Agent-hooks.md) |
 | `integrate --remove-hooks` | Remove the Retornatus Stop hook and leave other hooks in place |
 | `project-init` | Brownfield map → `project/project.md` |
 | `wake` / `wake --bridges` | Reconstruct state; rebuild index; optional bridges |
@@ -79,6 +79,7 @@ retornatus skill --help
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
 | `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |
 | `hook stop --host HOST` | Agent turn-end hook (`HOST` is claude, cursor, or codex). Reads host JSON on stdin. See [Agent hooks](Agent-hooks.md) |
+| `hook subagent-stop --host HOST` | Subagent-stop hook. Same reminder as `hook stop`. See [Agent hooks](Agent-hooks.md) |
 | `hook session-start --host HOST` | Agent session-start hook. Injects the active Change. See [Agent hooks](Agent-hooks.md) |
 | `hook file-edit --host HOST` | Agent file-edit hook. Warns when the path leaves the active Change scope. See [Agent hooks](Agent-hooks.md) |
 | `verify` / `verify --receipt` / `verify --json` | Assurance over Contract DONE. `--json` prints the [verdict envelope](JSON-output.md) |

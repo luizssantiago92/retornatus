@@ -50,7 +50,36 @@ def assistant_message_text(host: str, payload: dict[str, Any]) -> str | None:
     if field is not None and field in payload and isinstance(payload[field], str):
         text = payload[field].strip()
         return text or None
-    path = payload.get("transcript_path")
+    return _text_from_transcript_field(payload, "transcript_path")
+
+
+def subagent_assistant_text(host: str, payload: dict[str, Any]) -> str | None:
+    """Last subagent text from the fields each host documents for subagent stop.
+
+    Claude Code and Codex prefer ``last_assistant_message``. A present string
+    wins, including a statement. ``null`` and a missing field fall through to
+    ``agent_transcript_path`` (the subagent transcript), then the parent
+    ``transcript_path``. Cursor ``subagentStop`` has no assistant-text field.
+    It uses ``agent_transcript_path``, then ``transcript_path``, then
+    ``summary``.
+    """
+    field = _DIRECT_MESSAGE_FIELD.get(host)
+    if field is not None and field in payload and isinstance(payload[field], str):
+        text = payload[field].strip()
+        return text or None
+    for key in ("agent_transcript_path", "transcript_path"):
+        found = _text_from_transcript_field(payload, key)
+        if found:
+            return found
+    if host == "cursor":
+        summary = payload.get("summary")
+        if isinstance(summary, str) and summary.strip():
+            return summary.strip()
+    return None
+
+
+def _text_from_transcript_field(payload: dict[str, Any], key: str) -> str | None:
+    path = payload.get(key)
     if not isinstance(path, str) or not path.strip():
         return None
     return read_transcript_assistant_text(Path(path).expanduser())

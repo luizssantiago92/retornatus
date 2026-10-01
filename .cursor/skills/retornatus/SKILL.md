@@ -123,7 +123,7 @@ When a release is ready: summarize, confirm CI, stop — owner merges / tags / p
 | Intake | `intake analyze --prompt` (+ `--answer`, `--create-skill`) |
 | Skill | `skill need --prompt\|--action`, `skill create/list/activate/evolve/export` |
 | Proof | `evidence run --claim -- <command>`, `checks run`, `evidence add --claim` (narrative), `verify` / `verify --run-checks`, `gate *` (suppressions, scope), `hooks install` |
-| Agent hooks | `integrate --hooks`, `integrate --remove-hooks`, `hook file-edit`, `hook session-start`, `hook stop` (opt-in; CI stays the source of truth) |
+| Agent hooks | `integrate --hooks`, `integrate --remove-hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop` (opt-in; CI stays the source of truth) |
 | Policy | `policy check`, `gate policy`, `run --strict-policy` |
 | Problems | `finding add`, `question open/resolve/reopen` |
 | Tasks | `task start/complete/fail/reopen` |

@@ -33,6 +33,33 @@ def load_project_config(root: Path) -> dict[str, Any]:
     return data
 
 
+def subagent_stop_enabled(root: Path) -> bool:
+    """True unless ``[hooks] subagent_stop`` is boolean false.
+
+    A missing table or a missing key keeps the default, true.
+    A non-boolean value is an error so the hook fails open.
+    """
+    hooks = load_project_config(root).get("hooks")
+    if hooks is None:
+        return True
+    if not isinstance(hooks, dict):
+        raise ValueError("Invalid [hooks]: expected a table")
+    if "subagent_stop" not in hooks:
+        return True
+    raw = hooks["subagent_stop"]
+    if isinstance(raw, bool):
+        return raw
+    raise ValueError("Invalid [hooks] subagent_stop: expected true or false")
+
+
+def subagent_stop_label(root: Path) -> str:
+    """Toggle for ``doctor``. A broken value is ``invalid`` and does not raise."""
+    try:
+        return "true" if subagent_stop_enabled(root) else "false"
+    except (OSError, ValueError):
+        return "invalid"
+
+
 def allow_question_stops(root: Path) -> bool:
     """True unless ``[hooks] allow_questions`` is boolean false.
 

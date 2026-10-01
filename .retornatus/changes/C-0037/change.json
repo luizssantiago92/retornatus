@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0037",
+  "title": "Subagent stop hook",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Add a subagent-stop hook that reuses the Stop hook decision. Cursor subagentStop returns followup_message and sets loop_limit to 1. Claude Code SubagentStop and Codex SubagentStop return decision block with the reason and honor stop_hook_active. Skip questions, Cursor aborted or error, no active Change, and a SATISFIED Change. [hooks] subagent_stop defaults to true. doctor reports the toggle and the installed hook. Document the host payloads checked on 2026-10-01.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T17:44:34.598174Z"
+}

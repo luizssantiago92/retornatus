@@ -742,5 +742,5 @@ def test_doctor_reports_a_stop_only_install(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     report = run_doctor(tmp_path)
-    assert report.agent_hooks["cursor"] == "stop=installed session-start=absent file-edit=absent"
-    assert "cursor: stop=installed session-start=absent file-edit=absent" in report.render()
+    assert report.agent_hooks["cursor"] == ("stop=installed session-start=absent file-edit=absent subagent-stop=absent")
+    assert "cursor: stop=installed session-start=absent file-edit=absent subagent-stop=absent" in report.render()

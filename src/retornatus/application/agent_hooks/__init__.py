@@ -1,1 +1,1 @@
-"""Agent-native Stop, session-start, and file-edit hooks for Claude, Cursor, and Codex."""
+"""Agent-native Stop, subagent-stop, session-start, and file-edit hooks."""

@@ -1,10 +1,10 @@
 # Agent hooks
 
-Three opt-in hooks sit in the agent loop. A session-start hook injects the active Change so the agent begins with the finish line. A file-edit hook warns when an edit leaves that Change's declared scope. A Stop hook asks the agent to keep going when the Change is not `SATISFIED`. Git hooks (`hooks install`) still run at commit time.
+Four opt-in hooks sit in the agent loop. A session-start hook injects the active Change so the agent begins with the finish line. A file-edit hook warns when an edit leaves that Change's declared scope. A Stop hook asks the agent to keep going when the Change is not `SATISFIED`. A subagent-stop hook asks the subagent to keep going with that same reminder. Git hooks (`hooks install`) still run at commit time.
 
 All three can be skipped, all three fail open, and a host can cap how many times Stop continues the turn. **CI remains the source of truth.** The pull-request check (`verify`, `gate suppressions`, `gate scope`) is the result that counts. The file-edit hook is an early warning. It does not replace `gate scope`. See [Cloud agents](Cloud-agents.md) and [GitHub Action](GitHub-Action.md).
 
-Subagent hooks and MCP are not installed. The file-edit hook is the only tool hook, and only on the edit events documented below.
+`SubagentStart` and MCP are not installed. The subagent-stop hook is. The file-edit hook is the only tool hook, and only on the edit events documented below.
 
 This repository does not write the hooks into its own `.claude/`, `.cursor/hooks.json`, or `.codex/`. Run the command in the project you want to guard.
 
@@ -19,9 +19,9 @@ retornatus integrate --remove-hooks
 retornatus doctor
 ```
 
-`--host` is repeatable. Omit it to update Claude, Cursor, and Codex. `--remove-hooks` deletes only the Retornatus Stop, session-start, and file-edit commands. Other hooks and keys stay. A second `--hooks` updates those entries in place and does not add a duplicate.
+`--host` is repeatable. Omit it to update Claude, Cursor, and Codex. `--remove-hooks` deletes only the Retornatus Stop, subagent-stop, session-start, and file-edit commands. Other hooks and keys stay. A second `--hooks` updates those entries in place and does not add a duplicate.
 
-`doctor` prints `agent hooks:` for each host. `absent` means the file is missing, unreadable as JSON is `unreadable`, and a file with no Retornatus command is `absent`. When a Retornatus command is present the line names each hook, for example `stop=installed session-start=installed file-edit=installed` or `stop=installed session-start=absent file-edit=absent`. Absent is normal. The hooks are opt-in, and a missing hook does not fail `doctor`. For an initialized project, `doctor` also prints `hooks scope_mode:` as `warn`, `block`, `off`, or `invalid`.
+`doctor` prints `agent hooks:` for each host. `absent` means the file is missing, unreadable as JSON is `unreadable`, and a file with no Retornatus command is `absent`. When a Retornatus command is present the line names each hook, for example `stop=installed session-start=installed file-edit=installed subagent-stop=installed` or `stop=installed session-start=absent file-edit=absent subagent-stop=absent`. Absent is normal. The hooks are opt-in, and a missing hook does not fail `doctor`. For an initialized project, `doctor` also prints `hooks allow_questions:`, `hooks subagent_stop:` (`true`, `false`, or `invalid`), and `hooks scope_mode:` as `warn`, `block`, `off`, or `invalid`.
 
 ## What the hook runs
 
@@ -235,6 +235,17 @@ Fresh install, with no other keys in the file:
         ]
       }
     ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "retornatus hook subagent-stop --host claude",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
@@ -271,6 +282,12 @@ Fresh install, with no other keys in the file:
     "stop": [
       {
         "command": "retornatus hook stop --host cursor",
+        "loop_limit": 1
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "retornatus hook subagent-stop --host cursor",
         "loop_limit": 1
       }
     ],
@@ -314,6 +331,17 @@ Fresh install, with no other keys in the file:
         ]
       }
     ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "retornatus hook subagent-stop --host codex",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
@@ -343,15 +371,49 @@ Fresh install, with no other keys in the file:
 
 Existing `version`, permissions, matchers, and other commands stay. The Retornatus command is the identity of the entry, so a later install can replace the timeout or `loop_limit` without adding a second hook.
 
+## Subagent stop
+
+Each host also runs:
+
+```bash
+retornatus hook subagent-stop --host claude
+retornatus hook subagent-stop --host cursor
+retornatus hook subagent-stop --host codex
+```
+
+The command is the Stop decision again. It reads the host JSON object from stdin, ignores extra fields, and evaluates every active Change in-process. There is no second copy of the Assurance check.
+
+| Situation | Result |
+| --- | --- |
+| `[hooks] subagent_stop` is boolean `false` | Exit 0, no stdout. The subagent finishes. |
+| No `.retornatus/`, no active Change, or every active Change is `SATISFIED` | Exit 0, no stdout. |
+| Any active Change is not `SATISFIED` (missing evidence, stale evidence, or any other unproven claim), and the subagent is not asking a question or ending on a Cursor interrupt | Exit 0 and the same host JSON the Stop hook writes. |
+| The subagent's last message is a question, and `[hooks] allow_questions` is not `false` | Exit 0, no stdout. |
+| Invalid JSON, an unknown host, a non-boolean `subagent_stop`, or any internal error | Exit 0, no reminder. One `retornatus hook subagent-stop: fail-open` line goes to stderr. |
+
+`[hooks] subagent_stop` defaults to `true`. A missing key keeps that default. Only boolean `false` turns the reminder off. `doctor` prints `hooks subagent_stop: true`, `false`, or `invalid`.
+
+Claude Code and Codex answer with `decision: "block"` and `reason` on stdout and exit 0. Exit 2 is the other way those hosts continue a subagent; this command uses the JSON decision, the same path as Stop. Cursor answers with `followup_message` and no `decision`. The host applies that field only when `status` is `completed`.
+
+Question text uses the field the host documents for this event. Claude Code and Codex prefer `last_assistant_message`. A string wins. `null` or a missing field falls through to `agent_transcript_path` (the subagent transcript), then the parent `transcript_path`. Cursor `subagentStop` has no `last_assistant_message`. It reads `agent_transcript_path`, then `transcript_path`, then `summary`. The question heuristic is the one in [Questions to the user](#questions-to-the-user).
+
+Checked against the host docs on 2026-10-01:
+
+- [Cursor hooks](https://cursor.com/docs/hooks). The event is `subagentStop`. Input includes `status` (`completed`, `error`, or `aborted`), `loop_count`, `modified_files`, `summary`, and `agent_transcript_path`. Output is `followup_message`, consumed only when `status` is `completed`. `loop_limit` on the hook entry caps follow-ups (host default 5).
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks). The event is `SubagentStop`. Input adds `stop_hook_active`, `agent_id`, `agent_type`, `agent_transcript_path`, and `last_assistant_message`. `decision: "block"` with `reason` keeps the subagent running. Exit 2 does the same with stderr.
+- [Codex hooks](https://developers.openai.com/codex/hooks). The event is `SubagentStop`. Input adds `turn_id`, `agent_id`, `agent_type`, `agent_transcript_path`, `stop_hook_active`, and `last_assistant_message`. JSON on stdout with `decision: "block"` and `reason` continues the subagent. Exit 2 writes the reason to stderr. Plain text on stdout is invalid for this event.
+
+`modified_files` is extra input. The reminder does not filter claims by those paths. A Change that is not `SATISFIED` is an open proof obligation, including evidence that is missing or stale for the claims the work touched.
+
 ## Loop guard
 
 Claude and Codex set `stop_hook_active` to true when this turn is already a continuation from a Stop hook. The command allows the stop in that case, so it does not block twice in a row. Claude also stops continuing after eight blocks in a row (`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`). Codex treats `continue: false` from any matching Stop hook as stronger than a block from another hook.
 
-Cursor has no `stop_hook_active` field. The generated `stop` entry sets `loop_limit` to 1 (the host default is 5). That is one automatic follow-up. `followup_message` is only applied when `status` is `completed`. An `aborted` or `error` status allows the stop. `failClosed` is left at its default, false, so a crash or a timeout does not trap the agent.
+Cursor has no `stop_hook_active` field. The generated `stop` and `subagentStop` entries each set `loop_limit` to 1 (the host default is 5). That is one automatic follow-up. `followup_message` is only applied when `status` is `completed`. An `aborted` or `error` status allows the stop. `failClosed` is left at its default, false, so a crash or a timeout does not trap the agent. Claude Code and Codex set `stop_hook_active` on `SubagentStop` as well as on `Stop`. The subagent command allows the finish when that field is true.
 
 ## Fail-open
 
-A policy hook that crashes should not freeze the session. Invalid stdin, an unknown `--host`, a raised exception, and a missing project all exit 0 with no block JSON. The diagnostic is a single stderr line that starts with `retornatus hook stop: fail-open`, `retornatus hook session-start: fail-open`, or `retornatus hook file-edit: fail-open`. The command timeout in the Claude and Codex files is 30 seconds (the host default is 600). Cursor's session-start and file-edit entries use the same 30 second timeout. `failClosed` stays at its default, false.
+A policy hook that crashes should not freeze the session. Invalid stdin, an unknown `--host`, a raised exception, and a missing project all exit 0 with no block JSON. The diagnostic is a single stderr line that starts with `retornatus hook stop: fail-open`, `retornatus hook subagent-stop: fail-open`, `retornatus hook session-start: fail-open`, or `retornatus hook file-edit: fail-open`. The command timeout in the Claude and Codex files is 30 seconds (the host default is 600). Cursor's session-start and file-edit entries use the same 30 second timeout. Cursor's `subagentStop` entry sets `loop_limit` instead of a timeout, the same as `stop`. `failClosed` stays at its default, false.
 
 ## Codex trust
 
@@ -364,12 +426,12 @@ Codex can also read inline `[hooks]` from `config.toml`. If one layer contains b
 Checked against the host docs on 2026-09-30:
 
 - [Claude Code hooks](https://code.claude.com/docs/en/hooks). Stop still lives in `.claude/settings.json`. Exit 2 still blocks, and so does exit 0 with `decision: "block"` and `reason`. The Stop hook uses the JSON decision and exit 0. `hookSpecificOutput.additionalContext` on Stop can continue the turn as feedback instead of a block; Stop uses `decision`. Session start uses `additionalContext` inside `hookSpecificOutput`, with `hookEventName` set to `SessionStart`. An `if` filter does not run on Stop, so the generated Stop entry has none. The 8-continuation cap is in addition to `stop_hook_active`. Stop input includes `last_assistant_message`; the hook prefers that field over `transcript_path` because the transcript file can lag the turn.
-- [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` answers with `followup_message`, not `decision`. `sessionStart` answers with `additional_context`. File edits warn through `postToolUse` `additional_context` and block through `preToolUse` `permission` `deny`. `afterFileEdit` has no documented output fields. Cloud agents run command hooks from that file, including `stop`, once the machine is writable. They do not run hooks during an early read-only turn, and they defer `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
-- [Codex hooks](https://developers.openai.com/codex/hooks). The project file is `.codex/hooks.json`. Stop uses `decision: "block"` and `reason`, and it expects JSON on stdout when the process exits 0. Empty stdout allows the stop. Plain text on stdout is invalid for Stop. Session start accepts `hookSpecificOutput.additionalContext` and also treats plain stdout as developer context.
+- [Cursor hooks](https://cursor.com/docs/hooks). Project hooks are `.cursor/hooks.json`. `stop` and `subagentStop` answer with `followup_message`, not `decision`. `sessionStart` answers with `additional_context`. File edits warn through `postToolUse` `additional_context` and block through `preToolUse` `permission` `deny`. `afterFileEdit` has no documented output fields. Cloud agents run command hooks from that file, including `stop` and `subagentStop`, once the machine is writable. They do not run hooks during an early read-only turn, and they defer `sessionStart`. `~/.cursor/hooks.json` is not available on a cloud agent VM.
+- [Codex hooks](https://developers.openai.com/codex/hooks). The project file is `.codex/hooks.json`. Stop and `SubagentStop` use `decision: "block"` and `reason`, and they expect JSON on stdout when the process exits 0. Empty stdout allows the stop. Plain text on stdout is invalid for those events. Session start accepts `hookSpecificOutput.additionalContext` and also treats plain stdout as developer context.
 
 ## Related
 
-- [CLI](CLI.md) for `hook file-edit`, `hook session-start`, `hook stop`, and `integrate --hooks`
+- [CLI](CLI.md) for `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop`, and `integrate --hooks`
 - [Gates](Gates.md) for what `SATISFIED` means
 - [JSON output](JSON-output.md) for the verdict the hook evaluates
 - [Cloud agents](Cloud-agents.md) for a clean VM
