@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "C-0028/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Add retornatus hook file-edit for Claude Code, Cursor, and Codex. Compare the edited path with gate scope matching. Warn by default. Honor scope_mode warn, block, or off. Install and remove it with integrate --hooks. Document the host mechanisms.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "tests/test_file_edit_hook.py exits 0",
+    "src/retornatus/cli/hook.py contains hook file-edit for claude, cursor, and codex",
+    "The file /guide/Agent-hooks.md contains file-edit, scope_mode, additionalContext, and additional_context",
+    "The file /CLI.md contains hook file-edit",
+    "The file /CHANGELOG.md contains an Unreleased file-edit entry",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0028/T-001",
+      "description": "Implement the file-edit scope hook, install and remove it with the other agent hooks, report it from doctor, and document the host payloads",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/",
+        "tests/",
+        "docs/",
+        "README.md",
+        "CHANGELOG.md",
+        "AGENTS.md",
+        ".cursor/skills/retornatus/SKILL.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

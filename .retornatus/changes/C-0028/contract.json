@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0028",
+  "version": 1,
+  "what": "Add retornatus hook file-edit for Claude Code, Cursor, and Codex. Compare the edited path with gate scope matching. Warn by default. Honor scope_mode warn, block, or off. Install and remove it with integrate --hooks. Document the host mechanisms.",
+  "constraints": [],
+  "done_criteria": [
+    "tests/test_file_edit_hook.py exits 0",
+    "src/retornatus/cli/hook.py contains hook file-edit for claude, cursor, and codex",
+    "The file /guide/Agent-hooks.md contains file-edit, scope_mode, additionalContext, and additional_context",
+    "The file /CLI.md contains hook file-edit",
+    "The file /CHANGELOG.md contains an Unreleased file-edit entry",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T00:46:31.284035Z"
+}

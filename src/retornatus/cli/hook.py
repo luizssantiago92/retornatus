@@ -1,4 +1,4 @@
-"""CLI command: agent Stop hook."""
+"""CLI commands: agent Stop, session-start, and file-edit hooks."""
 
 from __future__ import annotations
 
@@ -65,6 +65,38 @@ def hook_session_start(
     raw = sys.stdin.read()
     start = path if path is not None else Path.cwd()
     response = handle_session_start(host, raw, start=start, walk=path is None)
+    if response.stderr:
+        sys.stderr.write(response.stderr)
+    if response.stdout:
+        sys.stdout.write(response.stdout)
+    raise typer.Exit(code=response.exit_code)
+
+
+@hook_app.command("file-edit")
+def hook_file_edit(
+    host: str = typer.Option(
+        ...,
+        "--host",
+        help="Agent host: claude, cursor, or codex.",
+    ),
+    path: Path | None = typer.Option(
+        None,
+        "--path",
+        "-p",
+        help="Project root. Omit to walk up from the working directory.",
+    ),
+) -> None:
+    """Warn when a file edit leaves the active Change scope.
+
+    Exit 0 always. A warning or a deny is host JSON on stdout. In-scope
+    edits, no active Change, and ``.retornatus/`` print nothing. Failures
+    print one diagnostic on stderr and allow the edit.
+    """
+    from retornatus.application.agent_hooks.file_edit import handle_file_edit
+
+    raw = sys.stdin.read()
+    start = path if path is not None else Path.cwd()
+    response = handle_file_edit(host, raw, start=start, walk=path is None)
     if response.stderr:
         sys.stderr.write(response.stderr)
     if response.stdout:
