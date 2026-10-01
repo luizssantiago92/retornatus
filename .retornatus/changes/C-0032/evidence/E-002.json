@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0032/E-002",
+  "type": "security_test",
+  "subject": "pytest reports that read-only jobs set a permission of contents read",
+  "source": "uv run pytest -q tests/test_workflow_hardening.py::test_read_only_jobs_set_contents_read --no-cov",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T14:13:45.401495Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_workflow_hardening.py::test_read_only_jobs_set_contents_read",
+    "--no-cov"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T14:13:45.230840Z",
+  "ended_at": "2026-10-01T14:13:45.397739Z",
+  "duration_ms": 166,
+  "output_sha256": "4bcefcc9f6c645923b9993ccf73ad92e6b400ca25458ea14e095857fc2131342",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.01s\n",
+  "output_artifact": ".retornatus/changes/C-0032/evidence/E-002.output.txt",
+  "git_commit": "f70d5dad4e2156d0eb7533adcb31eb60e856cacd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0032/claim-done-2",
+      "note": null
+    }
+  ]
+}
