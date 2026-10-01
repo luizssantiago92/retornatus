@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "C-0027/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Bump the declared package version from 1.6.0 to 1.7.0, move the Unreleased Stop-hook question exception and SessionStart notes under a dated 1.7.0 section, mention the SessionStart hook in the site What's new block, and pin current-release docs to 1.7.0.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pyproject.toml, src/retornatus/__init__.py, and uv.lock contain version 1.7.0",
+    ".retornatus/config.toml version equals installed package version 1.7.0",
+    "CHANGELOG.md contains the heading ## [1.7.0] - 2026-09-30 and an empty Unreleased section above it",
+    "The file /docs/index.html news section contains 1.7.0 and SessionStart",
+    "docs/guide/Cloud-agents.md, docs/guide/Quick-start.md, and docs/guide/README.md contain version 1.7.0",
+    "action.yml and the file /docs/guide/GitHub-Action.md contain version example 1.7.0",
+    "README.md contains the current release version 1.7.0",
+    "uv build exits 0",
+    "scripts/check_dist_contents.py exits 0",
+    "uvx twine check exits 0",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0027/T-001",
+      "description": "Bump version pins, date the 1.7.0 changelog, and mention the SessionStart hook in What's new",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "pyproject.toml",
+        "uv.lock",
+        "src/retornatus/__init__.py",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/index.html",
+        "docs/guide/Cloud-agents.md",
+        "docs/guide/Quick-start.md",
+        "docs/guide/README.md",
+        "docs/guide/GitHub-Action.md",
+        "action.yml",
+        "tests/test_docs_hygiene.py"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

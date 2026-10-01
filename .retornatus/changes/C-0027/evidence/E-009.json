@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0027/E-009",
+  "type": "test_result",
+  "subject": "scripts/check_dist_contents.py",
+  "source": "uv run python scripts/check_dist_contents.py dist",
+  "producer": "retornatus",
+  "observed_at": "2026-09-30T23:51:35.856709Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "scripts/check_dist_contents.py",
+    "dist"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-09-30T23:50:12.611761Z",
+  "ended_at": "2026-09-30T23:50:12.657868Z",
+  "duration_ms": 46,
+  "output_sha256": "0993b508f21b03a193e1d45afa428d6509d030cb3073aeb068e4bf1ab1bed925",
+  "output_tail": "Distribution contents OK (dist)\n",
+  "output_artifact": ".retornatus/changes/C-0027/evidence/E-009.output.txt",
+  "git_commit": "dddb12a0c0f5529800d68a64f8c0c3d7739fc0d8",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0027/claim-done-9",
+      "note": null
+    }
+  ]
+}
