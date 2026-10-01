@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0028/E-005",
+  "type": "test_result",
+  "subject": "./CHANGELOG.md",
+  "source": "uv run python -c 'from pathlib import Path; t=Path('\"'\"'CHANGELOG.md'\"'\"').read_text(); head=t.split('\"'\"'## [1.7.0]'\"'\"', 1)[0]; assert '\"'\"'## [Unreleased]'\"'\"' in head and '\"'\"'file-edit'\"'\"' in head; print('\"'\"'changelog ok'\"'\"')'",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T01:01:13.552654Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path; t=Path('CHANGELOG.md').read_text(); head=t.split('## [1.7.0]', 1)[0]; assert '## [Unreleased]' in head and 'file-edit' in head; print('changelog ok')"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T01:01:13.238201Z",
+  "ended_at": "2026-10-01T01:01:13.267237Z",
+  "duration_ms": 29,
+  "output_sha256": "44a0b09485c8ddccf2059b31b1e493ed850a2a1e3f996f42022f89d6fceaf057",
+  "output_tail": "changelog ok\n",
+  "output_artifact": ".retornatus/changes/C-0028/evidence/E-005.output.txt",
+  "git_commit": "dabfbec3bd02b2e78344f00db6f97ba3a999efa2",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0028/claim-done-5",
+      "note": null
+    }
+  ]
+}
