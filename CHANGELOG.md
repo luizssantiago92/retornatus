@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Read-only CI jobs (`test`, `Lowest direct dependencies`, publish `verify`, and publish `package`) set `permissions: contents: read` on the job, so a later workflow-level change cannot widen their token. Third-party actions stay pinned to full commit SHAs with a version comment, checkout does not persist credentials, and Dependabot updates those pins weekly. CONTRIBUTING.md records the rule. The publish job still uses the `pypi` environment.
+
 ### Fixed
 
 - `gate suppressions` scans untracked, non-ignored files (`git ls-files --others --exclude-standard`) when neither `--base` nor `--staged` is set. Each line is treated as added, the same as a new file in the diff. Gitignored paths stay out. `--base` and `--staged` are unchanged, so a clean CI checkout still scans only the committed range.

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0032/E-006",
+  "type": "test_result",
+  "subject": "CONTRIBUTING.md documents that third-party actions are pinned to commit SHAs and",
+  "source": "uv run pytest -q tests/test_workflow_hardening.py::test_contributing_states_the_pin_rule --no-cov",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T14:13:46.918042Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_workflow_hardening.py::test_contributing_states_the_pin_rule",
+    "--no-cov"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T14:13:46.757591Z",
+  "ended_at": "2026-10-01T14:13:46.912835Z",
+  "duration_ms": 155,
+  "output_sha256": "4bcefcc9f6c645923b9993ccf73ad92e6b400ca25458ea14e095857fc2131342",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.01s\n",
+  "output_artifact": ".retornatus/changes/C-0032/evidence/E-006.output.txt",
+  "git_commit": "f70d5dad4e2156d0eb7533adcb31eb60e856cacd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0032/claim-done-6",
+      "note": null
+    }
+  ]
+}

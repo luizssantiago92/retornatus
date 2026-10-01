@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "C-0032/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Read-only CI and publish jobs set permissions contents read on the job itself. Existing SHA pins, persist-credentials false, Dependabot, and the pypi environment stay. CONTRIBUTING.md and CHANGELOG Unreleased document the rule, and tests lock the pins, permissions, Dependabot schedule, and pypi environment.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest reports that third-party uses are pinned to 40-character commit SHAs with a version comment",
+    "pytest reports that read-only jobs set a permission of contents read",
+    "pytest reports that every checkout step sets persist-credentials to false",
+    "pytest reports that dependabot schedules github-actions weekly",
+    "pytest reports that the publish job keeps environment name pypi",
+    "CONTRIBUTING.md documents that third-party actions are pinned to commit SHAs and workflows default to contents read",
+    "CHANGELOG.md Unreleased contains a Security entry for pinned actions and least-privilege token scopes",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0032/T-001",
+      "description": "Set contents read on read-only jobs and lock the pin, permission, Dependabot, and pypi rules in tests and docs",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/publish.yml",
+        "tests/test_workflow_hardening.py",
+        "CONTRIBUTING.md",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

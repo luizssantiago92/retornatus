@@ -80,3 +80,95 @@ def test_publish_workflow_disables_uv_cache() -> None:
     text = (ROOT / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
     assert "enable-cache: true" not in text
     assert text.count("enable-cache: false") == 2
+
+
+def _job_block(text: str, job_id: str, following: list[str]) -> str:
+    marker = f"\n  {job_id}:\n"
+    assert marker in text, job_id
+    rest = text.split(marker, 1)[1]
+    ends = [rest.find(f"\n  {name}:\n") for name in following]
+    ends = [index for index in ends if index >= 0]
+    if not ends:
+        return rest
+    return rest[: min(ends)]
+
+
+def test_every_checkout_step_drops_credentials() -> None:
+    for path in [*WORKFLOWS, TEMPLATE]:
+        text = path.read_text(encoding="utf-8")
+        steps = re.split(r"\n\s*- ", text)
+        saw_checkout = False
+        for step in steps:
+            if "actions/checkout@" not in step:
+                continue
+            saw_checkout = True
+            assert "persist-credentials: false" in step, path
+        if "actions/checkout@" in text:
+            assert saw_checkout, path
+
+
+def test_read_only_jobs_set_contents_read() -> None:
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    test_job = _job_block(ci, "test", ["governance", "lowest-direct"])
+    lowest = _job_block(ci, "lowest-direct", [])
+    assert "permissions:\n      contents: read\n" in test_job
+    assert "id-token:" not in test_job
+    assert "pull-requests:" not in test_job
+    assert "permissions:\n      contents: read\n" in lowest
+    assert "id-token:" not in lowest
+
+    publish = (ROOT / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
+    verify = _job_block(publish, "verify", ["package", "publish", "publish-testpypi"])
+    package = _job_block(publish, "package", ["publish", "publish-testpypi"])
+    assert "permissions:\n      contents: read\n" in verify
+    assert "id-token:" not in verify
+    assert "permissions:\n      contents: read\n" in package
+    assert "id-token:" not in package
+
+
+def test_publish_job_keeps_pypi_environment() -> None:
+    text = (ROOT / ".github" / "workflows" / "publish.yml").read_text(encoding="utf-8")
+    publish = _job_block(text, "publish", ["publish-testpypi"])
+    assert "name: pypi" in publish
+    assert "id-token: write" in publish
+    assert "attestations: write" in publish
+    testpypi = _job_block(text, "publish-testpypi", [])
+    assert "name: testpypi" in testpypi
+    assert "id-token: write" in testpypi
+    assert "name: pypi" not in testpypi
+
+
+def test_dependabot_updates_github_actions_weekly() -> None:
+    text = (ROOT / ".github" / "dependabot.yml").read_text(encoding="utf-8")
+    assert re.search(
+        r"package-ecosystem:\s*github-actions\s+"
+        r"directory:\s*/\s+"
+        r"schedule:\s+"
+        r"interval:\s*weekly\b",
+        text,
+    )
+    assert re.search(
+        r"package-ecosystem:\s*uv\s+"
+        r"directory:\s*/\s+"
+        r"schedule:\s+"
+        r"interval:\s*weekly\b",
+        text,
+    )
+    assert "package-ecosystem: pip" not in text
+
+
+def test_contributing_states_the_pin_rule() -> None:
+    text = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    assert "full commit SHA" in text
+    assert "contents: read" in text
+    assert "persist-credentials: false" in text
+    assert "pypi" in text
+
+
+def test_changelog_unreleased_security_entry() -> None:
+    text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    unreleased = text.split("## [1.8.0]", 1)[0]
+    assert "## [Unreleased]" in unreleased
+    assert "### Security" in unreleased
+    assert "contents: read" in unreleased
+    assert "pypi" in unreleased
