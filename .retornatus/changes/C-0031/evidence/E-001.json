@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "C-0031/E-001",
+  "type": "test_result",
+  "subject": "pytest reports an untracked non-ignored file that contains a suppression marker",
+  "source": "uv run pytest -q tests/test_scope_and_suppressions.py::test_suppressions_scan_untracked_files_and_skip_ignored --no-cov",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T13:51:28.373941Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "tests/test_scope_and_suppressions.py::test_suppressions_scan_untracked_files_and_skip_ignored",
+    "--no-cov"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T13:51:27.890270Z",
+  "ended_at": "2026-10-01T13:51:28.368180Z",
+  "duration_ms": 477,
+  "output_sha256": "a132c74d7b7c74739e7571fb00cd0a8be848d9686b936586ce31a93451c151b2",
+  "output_tail": ".                                                                        [100%]\n1 passed in 0.29s\n",
+  "output_artifact": ".retornatus/changes/C-0031/evidence/E-001.output.txt",
+  "git_commit": "9d4c54f057d51c13d7778999bd57da036219fc4f",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0031/claim-done-1",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0031/E-004",
+  "type": "repository_observation",
+  "subject": "/guide/Gates.md",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'docs/guide/Gates.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nassert '\"'\"'untracked non-ignored'\"'\"' in text\nassert '\"'\"'git ls-files --others --exclude-standard'\"'\"' in text\nprint('\"'\"'gates docs ok'\"'\"')\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T13:51:30.196077Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('docs/guide/Gates.md').read_text(encoding='utf-8')\nassert 'untracked non-ignored' in text\nassert 'git ls-files --others --exclude-standard' in text\nprint('gates docs ok')\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T13:51:30.156889Z",
+  "ended_at": "2026-10-01T13:51:30.190741Z",
+  "duration_ms": 33,
+  "output_sha256": "2ff80adc234ca20f186822b7170fa8b3b6f3d3340ec0a7575a1aef1654f8d5ad",
+  "output_tail": "gates docs ok\n",
+  "output_artifact": ".retornatus/changes/C-0031/evidence/E-004.output.txt",
+  "git_commit": "9d4c54f057d51c13d7778999bd57da036219fc4f",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0031/claim-done-4",
+      "note": null
+    }
+  ]
+}
