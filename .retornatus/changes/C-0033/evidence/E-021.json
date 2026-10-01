@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "id": "C-0033/E-009",
+  "id": "C-0033/E-021",
   "type": "build_result",
   "subject": "uv lock --check exits 0 as a build",
   "source": "uv-lock",
   "producer": "retornatus",
-  "observed_at": "2026-10-01T14:44:32.082959Z",
-  "subject_state": "commit:3701282fbcfa7b70243003991694715e25c27474",
+  "observed_at": "2026-10-01T14:49:43.334709Z",
+  "subject_state": "commit:ef589ad0802de82d4bb1e8f6d2eebf4d43596cd9",
   "provenance": "executed",
   "command": [
     "uv",
@@ -14,13 +14,13 @@
     "--check"
   ],
   "exit_code": 0,
-  "started_at": "2026-10-01T14:44:32.030895Z",
-  "ended_at": "2026-10-01T14:44:32.040659Z",
+  "started_at": "2026-10-01T14:49:43.268668Z",
+  "ended_at": "2026-10-01T14:49:43.277751Z",
   "duration_ms": 9,
   "output_sha256": "67adf164361cb1476c2e261d8af1a7c6874a0b377eff42183919a283c1070d86",
   "output_tail": "Resolved 36 packages in 1ms\n",
-  "output_artifact": ".retornatus/changes/C-0033/evidence/E-009.output.txt",
-  "git_commit": "3701282fbcfa7b70243003991694715e25c27474",
+  "output_artifact": ".retornatus/changes/C-0033/evidence/E-021.output.txt",
+  "git_commit": "ef589ad0802de82d4bb1e8f6d2eebf4d43596cd9",
   "worktree_dirty": false,
   "timed_out": false,
   "relations": [
