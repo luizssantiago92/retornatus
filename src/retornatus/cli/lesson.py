@@ -61,6 +61,4 @@ def lesson_from_gate(
         for msg in result.gate_messages:
             typer.echo(f"  - {msg}")
     if result.rule_candidate:
-        typer.echo(
-            f"Rule Candidate {result.rule_candidate.id} (inactive — needs Decision)"
-        )
+        typer.echo(f"Rule Candidate {result.rule_candidate.id} (inactive — needs Decision)")

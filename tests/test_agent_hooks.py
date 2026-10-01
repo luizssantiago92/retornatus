@@ -249,25 +249,19 @@ def test_malformed_hook_files_are_left_unchanged(tmp_path: Path) -> None:
     claude = hook_config_path(tmp_path, "claude")
     claude.parent.mkdir(parents=True)
     claude.write_text(json.dumps({"hooks": []}), encoding="utf-8")
-    rejected = runner.invoke(
-        app, ["integrate", "--hooks", "--host", "claude", "--path", str(tmp_path)]
-    )
+    rejected = runner.invoke(app, ["integrate", "--hooks", "--host", "claude", "--path", str(tmp_path)])
     assert rejected.exit_code == 2
     assert json.loads(claude.read_text(encoding="utf-8")) == {"hooks": []}
 
     claude.write_text(json.dumps({"hooks": {"Stop": {}}}), encoding="utf-8")
-    rejected_stop = runner.invoke(
-        app, ["integrate", "--hooks", "--host", "claude", "--path", str(tmp_path)]
-    )
+    rejected_stop = runner.invoke(app, ["integrate", "--hooks", "--host", "claude", "--path", str(tmp_path)])
     assert rejected_stop.exit_code == 2
     assert "must be a list" in rejected_stop.stderr
 
     cursor = hook_config_path(tmp_path, "cursor")
     cursor.parent.mkdir(parents=True, exist_ok=True)
     cursor.write_text("[]", encoding="utf-8")
-    rejected_cursor = runner.invoke(
-        app, ["integrate", "--hooks", "--host", "cursor", "--path", str(tmp_path)]
-    )
+    rejected_cursor = runner.invoke(app, ["integrate", "--hooks", "--host", "cursor", "--path", str(tmp_path)])
     assert rejected_cursor.exit_code == 2
     assert cursor.read_text(encoding="utf-8") == "[]"
     assert "JSON object" in rejected_cursor.stderr
@@ -328,9 +322,7 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
     plain = runner.invoke(app, ["integrate", "--path", str(tmp_path)])
     assert plain.exit_code == 0, plain.stdout
     assert "echo user-stop" in hook_config_path(tmp_path, "claude").read_text(encoding="utf-8")
-    assert stop_command("cursor") not in hook_config_path(tmp_path, "cursor").read_text(
-        encoding="utf-8"
-    )
+    assert stop_command("cursor") not in hook_config_path(tmp_path, "cursor").read_text(encoding="utf-8")
 
     installed = runner.invoke(app, ["integrate", "--hooks", "--path", str(tmp_path)])
     assert installed.exit_code == 0, installed.stdout
@@ -339,17 +331,11 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
 
     claude_body = json.loads(hook_config_path(tmp_path, "claude").read_text(encoding="utf-8"))
     assert claude_body["permissions"] == {"allow": ["Bash"]}
-    commands = [
-        item["command"]
-        for group in claude_body["hooks"]["Stop"]
-        for item in group["hooks"]
-    ]
+    commands = [item["command"] for group in claude_body["hooks"]["Stop"] for item in group["hooks"]]
     assert commands.count(stop_command("claude")) == 1
     assert "echo user-stop" in commands
     session_commands_claude = [
-        item["command"]
-        for group in claude_body["hooks"]["SessionStart"]
-        for item in group["hooks"]
+        item["command"] for group in claude_body["hooks"]["SessionStart"] for item in group["hooks"]
     ]
     assert session_commands_claude == [session_start_command("claude")]
     assert "echo user-pre" in json.dumps(claude_body["hooks"]["PreToolUse"])
@@ -359,9 +345,7 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
         for item in group["hooks"]
         if item["command"] == stop_command("claude")
     ]
-    assert ours == [
-        {"type": "command", "command": stop_command("claude"), "timeout": 30}
-    ]
+    assert ours == [{"type": "command", "command": stop_command("claude"), "timeout": 30}]
     first_text = hook_config_path(tmp_path, "claude").read_text(encoding="utf-8")
     runner.invoke(app, ["integrate", "--hooks", "--host", "claude", "--path", str(tmp_path)])
     assert hook_config_path(tmp_path, "claude").read_text(encoding="utf-8") == first_text
@@ -379,18 +363,10 @@ def test_integrate_merges_idempotently_and_preserves_user_hooks(tmp_path: Path) 
 
     codex_body = json.loads(hook_config_path(tmp_path, "codex").read_text(encoding="utf-8"))
     assert codex_body["description"] == "workspace hooks"
-    codex_commands = [
-        item["command"]
-        for group in codex_body["hooks"]["Stop"]
-        for item in group["hooks"]
-    ]
+    codex_commands = [item["command"] for group in codex_body["hooks"]["Stop"] for item in group["hooks"]]
     assert "echo codex-user" in codex_commands
     assert codex_commands.count(stop_command("codex")) == 1
-    codex_session = [
-        item["command"]
-        for group in codex_body["hooks"]["SessionStart"]
-        for item in group["hooks"]
-    ]
+    codex_session = [item["command"] for group in codex_body["hooks"]["SessionStart"] for item in group["hooks"]]
     assert codex_session == [session_start_command("codex")]
 
 
@@ -436,12 +412,8 @@ def test_remove_hooks_keeps_user_entries_and_deletes_ours_only(tmp_path: Path) -
     assert not hook_config_path(tmp_path, "cursor").exists()
     claude_body = json.loads(hook_config_path(tmp_path, "claude").read_text(encoding="utf-8"))
     assert claude_body["permissions"] == {"deny": ["Read"]}
-    assert claude_body["hooks"]["Stop"] == [
-        {"hooks": [{"type": "command", "command": "echo stay"}]}
-    ]
-    assert claude_body["hooks"]["SessionStart"] == [
-        {"hooks": [{"type": "command", "command": "echo session-stay"}]}
-    ]
+    assert claude_body["hooks"]["Stop"] == [{"hooks": [{"type": "command", "command": "echo stay"}]}]
+    assert claude_body["hooks"]["SessionStart"] == [{"hooks": [{"type": "command", "command": "echo session-stay"}]}]
     assert "removed" in removed.stdout
     again = runner.invoke(app, ["integrate", "--remove-hooks", "--host", "claude", "--path", str(tmp_path)])
     assert again.exit_code == 0, again.stdout
@@ -731,11 +703,7 @@ def test_session_start_edges(tmp_path: Path, monkeypatch) -> None:
             "Operators run one health command and read its exit code.",
             "--task",
             "Implement the health command",
-            *[
-                item
-                for index in range(13)
-                for item in ("--resource", f"0:pkg{index}/")
-            ],
+            *[item for index in range(13) for item in ("--resource", f"0:pkg{index}/")],
         ],
     )
     assert _create_resources.exit_code == 0, _create_resources.stdout

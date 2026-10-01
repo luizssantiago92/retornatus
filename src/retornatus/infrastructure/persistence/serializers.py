@@ -13,9 +13,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def dump_json_model(model: BaseModel) -> bytes:
-    return (
-        model.model_dump_json(indent=2, exclude_none=False) + "\n"
-    ).encode("utf-8")
+    return (model.model_dump_json(indent=2, exclude_none=False) + "\n").encode("utf-8")
 
 
 def load_json_model(data: bytes, model_type: type[T]) -> T:

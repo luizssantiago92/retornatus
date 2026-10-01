@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0034",
+  "version": 1,
+  "what": "Apply ruff format to src, tests, and scripts in one dedicated commit, record that full commit SHA in .git-blame-ignore-revs, document git config blame.ignoreRevsFile .git-blame-ignore-revs in CONTRIBUTING.md, add ruff format --check src tests scripts beside the existing CI lint step without renaming jobs or changing the matrix, and add a CHANGELOG Unreleased entry.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CONTRIBUTING.md is documented and contains git config blame.ignoreRevsFile .git-blame-ignore-revs",
+    "CHANGELOG.md is documented and contains an Unreleased ruff format entry",
+    "Human review of /.github/workflows/ci.yml confirms the format check stays in the existing lint job"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T15:11:15.009244Z"
+}

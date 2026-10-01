@@ -33,10 +33,5 @@ def action_budget_cmd(
         typer.echo("Provide --max N or --clear")
         raise typer.Exit(code=1)
     else:
-        action = TaskService(path or Path.cwd()).set_max_attempts(
-            action_id, max_attempts
-        )
-    typer.echo(
-        f"{action.id}: max_attempts={action.max_attempts!r} "
-        f"attempt_count={action.attempt_count}"
-    )
+        action = TaskService(path or Path.cwd()).set_max_attempts(action_id, max_attempts)
+    typer.echo(f"{action.id}: max_attempts={action.max_attempts!r} attempt_count={action.attempt_count}")

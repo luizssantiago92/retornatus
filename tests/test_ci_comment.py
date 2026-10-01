@@ -97,9 +97,7 @@ def test_comment_drops_overview_gates_and_collapses_warnings() -> None:
         "C-0001/E-001 recorded git_commit abc does not match HEAD def (stale snapshot; not a failure)",
         "C-0001/E-002 recorded git_commit abc does not match HEAD def (stale snapshot; not a failure)",
     ]
-    document["evidence_labels"] = [
-        "C-0001/E-001 type=test_result provenance=executed exit_code=0 status=executed"
-    ]
+    document["evidence_labels"] = ["C-0001/E-001 type=test_result provenance=executed exit_code=0 status=executed"]
     overview = "\n".join(
         [
             "## C-0001 — Health",

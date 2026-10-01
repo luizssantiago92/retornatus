@@ -148,15 +148,11 @@ def change_create(
         ready = result.situation_assessment.sufficient_for_contract
         typer.echo(f"Situation sufficient: {ready}")
         if result.situation_assessment.repo_signals:
-            typer.echo(
-                f"Repo signals: {len(result.situation_assessment.repo_signals)}"
-            )
+            typer.echo(f"Repo signals: {len(result.situation_assessment.repo_signals)}")
         if not ready:
             for q in result.situation_assessment.focused_questions:
                 typer.echo(f"  Q[{q.topic}]: {q.question}")
-    typer.echo(
-        f"Contract v{result.contract.version} active={result.contract.active}"
-    )
+    typer.echo(f"Contract v{result.contract.version} active={result.contract.active}")
     if result.action:
         typer.echo(f"Action {result.action.id}")
         for t in result.action.tasks:
@@ -274,9 +270,7 @@ def change_activate(
     except ValueError as exc:
         typer.echo(str(exc))
         raise typer.Exit(1) from exc
-    typer.echo(
-        f"Activated {change_id} → contract v{contract.version} active={contract.active}"
-    )
+    typer.echo(f"Activated {change_id} → contract v{contract.version} active={contract.active}")
 
 
 @change_app.command("reopen")
@@ -299,16 +293,7 @@ def change_reopen(
         situation_note=note,
         activate=not draft,
     )
-    typer.echo(
-        f"Reopened {change_id} → contract v{contract.version} active={contract.active}"
-    )
-    archive = (
-        Path(root)
-        / ".retornatus"
-        / "changes"
-        / change_id
-        / "contracts"
-        / f"v{contract.version - 1}.json"
-    )
+    typer.echo(f"Reopened {change_id} → contract v{contract.version} active={contract.active}")
+    archive = Path(root) / ".retornatus" / "changes" / change_id / "contracts" / f"v{contract.version - 1}.json"
     if archive.is_file():
         typer.echo(f"Archived prior version at {archive}")

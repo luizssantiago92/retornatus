@@ -52,9 +52,7 @@ def parse_hosts(raw: list[str] | None) -> tuple[str, ...]:
     for item in raw:
         name = item.strip().casefold()
         if name not in HOSTS:
-            raise UsageError(
-                f"Unknown host {item!r}. Expected one of: claude, cursor, codex."
-            )
+            raise UsageError(f"Unknown host {item!r}. Expected one of: claude, cursor, codex.")
         if name not in selected:
             selected.append(name)
     return tuple(selected)
@@ -65,9 +63,7 @@ def hook_config_path(root: Path, host: str) -> Path:
     try:
         relative = _RELATIVE[host]
     except KeyError as exc:
-        raise UsageError(
-            f"Unknown host {host!r}. Expected one of: claude, cursor, codex."
-        ) from exc
+        raise UsageError(f"Unknown host {host!r}. Expected one of: claude, cursor, codex.") from exc
     return root / relative
 
 
@@ -227,9 +223,7 @@ def _contains(data: dict[str, Any], host: str, *, kind: str) -> bool:
         return False
     predicate = _predicate(kind)
     if host == "cursor":
-        keys = _CURSOR_FILE_EDIT_EVENTS if kind == "file-edit" else (
-            ("stop",) if kind == "stop" else ("sessionStart",)
-        )
+        keys = _CURSOR_FILE_EDIT_EVENTS if kind == "file-edit" else (("stop",) if kind == "stop" else ("sessionStart",))
         return any(_cursor_list_has(hooks, key, predicate) for key in keys)
     key = {"stop": "Stop", "session": "SessionStart", "file-edit": "PreToolUse"}[kind]
     groups = hooks.get(key)
@@ -324,9 +318,7 @@ def _upsert_grouped(
 
 
 def _only_our_hooks(items: list[Any], host: str, predicate: Any) -> bool:
-    return bool(items) and all(
-        isinstance(item, dict) and predicate(item.get("command"), host) for item in items
-    )
+    return bool(items) and all(isinstance(item, dict) and predicate(item.get("command"), host) for item in items)
 
 
 def _strip_grouped(
@@ -348,11 +340,7 @@ def _strip_grouped(
             rewritten.append(group)
             continue
         inner = group["hooks"]
-        kept = [
-            item
-            for item in inner
-            if not (isinstance(item, dict) and predicate(item.get("command"), host))
-        ]
+        kept = [item for item in inner if not (isinstance(item, dict) and predicate(item.get("command"), host))]
         if len(kept) != len(inner):
             changed = True
         if not kept:
@@ -412,11 +400,7 @@ def _strip_cursor_list(
     entries = hooks.get(event)
     if not isinstance(entries, list):
         return data
-    kept = [
-        item
-        for item in entries
-        if not (isinstance(item, dict) and predicate(item.get("command"), "cursor"))
-    ]
+    kept = [item for item in entries if not (isinstance(item, dict) and predicate(item.get("command"), "cursor"))]
     if len(kept) == len(entries):
         return data
     if kept:

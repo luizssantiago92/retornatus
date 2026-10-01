@@ -59,12 +59,8 @@ def test_python_platform_extends_python() -> None:
     platform = resolve_preset("python-platform")
 
     assert platform.extends == "python"
-    assert [check.name for check in platform.required_checks] == [
-        check.name for check in base.required_checks
-    ]
-    assert [check.run for check in platform.required_checks] == [
-        check.run for check in base.required_checks
-    ]
+    assert [check.name for check in platform.required_checks] == [check.name for check in base.required_checks]
+    assert [check.run for check in platform.required_checks] == [check.run for check in base.required_checks]
     assert platform.code_globs == base.code_globs
 
     text = render_config(platform)
@@ -124,12 +120,8 @@ def test_fastapi_extends_python_platform_and_python() -> None:
     fastapi = resolve_preset("fastapi")
 
     assert fastapi.extends == "python-platform"
-    assert [check.name for check in fastapi.required_checks] == [
-        check.name for check in base.required_checks
-    ]
-    assert [check.run for check in fastapi.required_checks] == [
-        check.run for check in base.required_checks
-    ]
+    assert [check.name for check in fastapi.required_checks] == [check.name for check in base.required_checks]
+    assert [check.run for check in fastapi.required_checks] == [check.run for check in base.required_checks]
     assert fastapi.code_globs == (
         "src/**",
         "app/**",
@@ -182,12 +174,8 @@ def test_django_extends_python_platform_and_python() -> None:
     django = resolve_preset("django")
 
     assert django.extends == "python-platform"
-    assert [check.name for check in django.required_checks] == [
-        check.name for check in base.required_checks
-    ]
-    assert [check.run for check in django.required_checks] == [
-        check.run for check in base.required_checks
-    ]
+    assert [check.name for check in django.required_checks] == [check.name for check in base.required_checks]
+    assert [check.run for check in django.required_checks] == [check.run for check in base.required_checks]
     assert django.code_globs == (
         "src/**",
         "app/**",
@@ -260,12 +248,8 @@ def test_rag_extends_python_platform_and_python() -> None:
     rag = resolve_preset("rag")
 
     assert rag.extends == "python-platform"
-    assert [check.name for check in rag.required_checks] == [
-        check.name for check in base.required_checks
-    ]
-    assert [check.run for check in rag.required_checks] == [
-        check.run for check in base.required_checks
-    ]
+    assert [check.name for check in rag.required_checks] == [check.name for check in base.required_checks]
+    assert [check.run for check in rag.required_checks] == [check.run for check in base.required_checks]
     assert rag.code_globs == (
         "src/**",
         "app/**",
@@ -289,9 +273,7 @@ def test_rag_extends_python_platform_and_python() -> None:
         "*models*.json",
     )
     assert rag.ship_globs == platform.ship_globs
-    assert [check.name for check in rag.ship_checks] == [
-        check.name for check in platform.ship_checks
-    ]
+    assert [check.name for check in rag.ship_checks] == [check.name for check in platform.ship_checks]
     assert rag.ai_globs == platform.ai_globs + (
         "**/retrieval/**",
         "**/rag/**",
@@ -378,12 +360,8 @@ def test_worker_extends_python_platform_and_python() -> None:
     worker = resolve_preset("worker")
 
     assert worker.extends == "python-platform"
-    assert [check.name for check in worker.required_checks] == [
-        check.name for check in base.required_checks
-    ]
-    assert [check.run for check in worker.required_checks] == [
-        check.run for check in base.required_checks
-    ]
+    assert [check.name for check in worker.required_checks] == [check.name for check in base.required_checks]
+    assert [check.run for check in worker.required_checks] == [check.run for check in base.required_checks]
     assert worker.code_globs == (
         "src/**",
         "app/**",

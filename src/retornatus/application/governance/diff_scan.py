@@ -130,11 +130,7 @@ def _fenced_line_numbers(root: Path, path: str) -> set[int]:
                 opener_len = len(token)
             continue
         stripped = raw.strip()
-        if (
-            stripped
-            and len(stripped) >= opener_len
-            and set(stripped) == {opener}
-        ):
+        if stripped and len(stripped) >= opener_len and set(stripped) == {opener}:
             opener = None
             continue
         inside.add(number)
@@ -183,9 +179,7 @@ def _compile_patterns(extra: tuple[str, ...]) -> list[tuple[str, re.Pattern[str]
         try:
             compiled.append((f"extra:{expression}", re.compile(expression)))
         except re.error as exc:
-            raise UsageError(
-                f"Invalid governance.suppressions.extra_patterns[{index}]: {exc}"
-            ) from exc
+            raise UsageError(f"Invalid governance.suppressions.extra_patterns[{index}]: {exc}") from exc
     return compiled
 
 
@@ -195,9 +189,7 @@ def _compile_allow(patterns: tuple[str, ...]) -> list[re.Pattern[str]]:
         try:
             compiled.append(re.compile(expression))
         except re.error as exc:
-            raise UsageError(
-                f"Invalid governance.suppressions.allow_patterns[{index}]: {exc}"
-            ) from exc
+            raise UsageError(f"Invalid governance.suppressions.allow_patterns[{index}]: {exc}") from exc
     return compiled
 
 

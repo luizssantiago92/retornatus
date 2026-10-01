@@ -67,10 +67,7 @@ class AdaptationService:
             title=title,
             summary=summary,
             tags=tags or [],
-            relations=[
-                Relation(type=RelationType.RELEVANT_TO, target_id=rid)
-                for rid in (related_ids or [])
-            ],
+            relations=[Relation(type=RelationType.RELEVANT_TO, target_id=rid) for rid in (related_ids or [])],
         )
         self.repo.save_learning(meta, body)
         return meta
@@ -90,9 +87,7 @@ class AdaptationService:
         """
         relations = []
         if from_learning_id:
-            relations.append(
-                Relation(type=RelationType.DERIVED_FROM, target_id=from_learning_id)
-            )
+            relations.append(Relation(type=RelationType.DERIVED_FROM, target_id=from_learning_id))
         candidate = Rule(
             id=self.next_rule_id(),
             statement=statement,
@@ -154,22 +149,16 @@ class AdaptationService:
         try:
             decision, _ = self.repo.load_decision(human_decision_id)
         except FileNotFoundError as exc:
-            raise HumanAuthorityError(
-                f"Human Decision {human_decision_id} not found"
-            ) from exc
+            raise HumanAuthorityError(f"Human Decision {human_decision_id} not found") from exc
 
         if decision.authority.category != AuthorityCategory.HUMAN:
             raise HumanAuthorityError("Decision must carry HUMAN authority")
         if decision.kind is not DecisionKind.APPROVE_RULE_ACTIVATION:
             # str(StrEnum) is the value. Keep the historical Class.MEMBER label.
             label = f"{type(decision.kind).__name__}.{decision.kind.name}"
-            raise HumanAuthorityError(
-                f"Decision kind must be APPROVE_RULE_ACTIVATION, got {label}"
-            )
+            raise HumanAuthorityError(f"Decision kind must be APPROVE_RULE_ACTIVATION, got {label}")
         if decision.subject_id != rule_id:
-            raise HumanAuthorityError(
-                f"Decision subject {decision.subject_id} does not match rule {rule_id}"
-            )
+            raise HumanAuthorityError(f"Decision subject {decision.subject_id} does not match rule {rule_id}")
         if decision.confirmation_token != rule_id:
             raise HumanAuthorityError("Decision confirmation_token mismatch")
 

@@ -30,9 +30,7 @@ def test_intake_routine_for_typo(tmp_path: Path) -> None:
 
 def test_intake_proposes_skill_and_requires_human(tmp_path: Path) -> None:
     initialize_project(tmp_path)
-    analysis = analyze_prompt_intake(
-        tmp_path, "Add Stripe webhook signature verification"
-    )
+    analysis = analyze_prompt_intake(tmp_path, "Add Stripe webhook signature verification")
     assert analysis.verdict is IntakeVerdict.PROPOSE_SKILL
     assert analysis.skill_need_required is True
     assert analysis.create_authorized is False
@@ -76,13 +74,9 @@ def test_intake_reuses_existing_active_skill(tmp_path: Path) -> None:
 
     repo = FileRepository(tmp_path)
     skill, body, rev = repo.load_skill("S-0001")
-    repo.save_skill(
-        skill.model_copy(update={"status": SkillStatus.ACTIVE}), body, expected=rev
-    )
+    repo.save_skill(skill.model_copy(update={"status": SkillStatus.ACTIVE}), body, expected=rev)
 
-    analysis = analyze_prompt_intake(
-        tmp_path, "Need stripe webhook verification again"
-    )
+    analysis = analyze_prompt_intake(tmp_path, "Need stripe webhook verification again")
     assert analysis.verdict is IntakeVerdict.REUSE_SKILL
     assert any("S-0001" in s for s in analysis.existing_skill_ids)
 

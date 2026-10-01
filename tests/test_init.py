@@ -256,9 +256,7 @@ def test_gitignore_directory_is_left_alone(tmp_path: Path) -> None:
     assert (tmp_path / ".gitignore").is_dir()
 
 
-def test_tracked_private_key_scan_tolerates_git_failures(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_tracked_private_key_scan_tolerates_git_failures(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import retornatus.bootstrap.gitignore as gitignore_mod
 
     def _boom(*_args: object, **_kwargs: object) -> subprocess.CompletedProcess[bytes]:

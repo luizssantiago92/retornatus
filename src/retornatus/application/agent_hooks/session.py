@@ -137,19 +137,13 @@ def _change_block(root: Path, change_id: str) -> str:
     claims = document.get("claims")
     unproven: list[dict[str, Any]] = []
     if isinstance(claims, list):
-        unproven = [
-            claim
-            for claim in claims
-            if isinstance(claim, dict) and claim.get("status") != "SATISFIED"
-        ]
+        unproven = [claim for claim in claims if isinstance(claim, dict) and claim.get("status") != "SATISFIED"]
     if not unproven:
         lines.append("unproven: none")
     else:
         for claim in unproven:
             command = evidence_command_for_claim(root, change_id, claim)
-            lines.append(
-                f"unproven: {claim.get('id')} ({claim.get('status')}). Next: {command}"
-            )
+            lines.append(f"unproven: {claim.get('id')} ({claim.get('status')}). Next: {command}")
     return "\n".join(lines)
 
 

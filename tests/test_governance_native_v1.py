@@ -105,9 +105,7 @@ def test_policy_check_and_gate_deny(tmp_path: Path) -> None:
     assert run.exit_code == 1
     assert "DENY" in run.stdout or '"policy_verdict": "DENY"' in run.stdout
 
-    gate_cli = runner.invoke(
-        app, ["gate", "policy", created.action.id, "--path", str(tmp_path)]
-    )
+    gate_cli = runner.invoke(app, ["gate", "policy", created.action.id, "--path", str(tmp_path)])
     assert gate_cli.exit_code == 1
 
 
@@ -200,9 +198,7 @@ def test_v1_acceptance_continuity_with_policy_and_wake(tmp_path: Path) -> None:
     )
     # Bridges refreshed on activate — Cursor rules should list the rule
     mdc = (tmp_path / ".cursor" / "rules" / "retornatus.mdc").read_text(encoding="utf-8")
-    assert "Do not commit secrets" in mdc or format_active_rules_markdown(
-        FileRepository(tmp_path).list_rules()
-    )
+    assert "Do not commit secrets" in mdc or format_active_rules_markdown(FileRepository(tmp_path).list_rules())
 
     # Delete index and wake again
     index_db = tmp_path / ".retornatus" / "index" / "retornatus.db"

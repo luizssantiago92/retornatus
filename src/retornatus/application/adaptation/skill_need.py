@@ -42,22 +42,16 @@ def _assess_haystack(
         return SkillNeedAssessment(
             required=True,
             rationale=(
-                f"Text references specialized topic `{topic}` — "
-                "research a current Skill (Action not required to start)"
+                f"Text references specialized topic `{topic}` — research a current Skill (Action not required to start)"
             ),
             suggested_need=f"Current best practices for {topic} in this stack",
             source=source,
         )
 
-    if _TRIVIAL_MARKERS.search(hay) or (
-        short_objective and (task_count is None or task_count <= 2) and len(hay) < 160
-    ):
+    if _TRIVIAL_MARKERS.search(hay) or (short_objective and (task_count is None or task_count <= 2) and len(hay) < 160):
         return SkillNeedAssessment(
             required=False,
-            rationale=(
-                "Looks routine — Environment-native skills/context suffice; "
-                "skip Skill ceremony"
-            ),
+            rationale=("Looks routine — Environment-native skills/context suffice; skip Skill ceremony"),
             source=source,
         )
 

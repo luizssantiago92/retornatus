@@ -99,10 +99,7 @@ def project_change_status(root: Path, change_id: str) -> ChangeStatusProjection:
         header = f"{change_id}: contract v{contract_version} active — {change.title}"
 
     lines = [header]
-    lines.append(
-        f"  tasks: ready={ready} blocked={blocked} active={active} "
-        f"completed={completed} failed={failed}"
-    )
+    lines.append(f"  tasks: ready={ready} blocked={blocked} active={active} completed={completed} failed={failed}")
     lines.append(f"  open_questions: {open_q}")
     if nxt.primary:
         lines.append(f"  next: {nxt.primary.kind}\t{nxt.primary.id}\t{nxt.primary.summary}")

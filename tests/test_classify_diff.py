@@ -76,17 +76,14 @@ def test_medium_diff_lifts_quick_text_to_standard() -> None:
 
 def test_text_only_classification_is_unchanged() -> None:
     assert classify_change(demand="Fix typo in README", what="typo only").lane is ComplexityLane.QUICK
-    assert (
-        classify_change(demand="Add OAuth login", what="OAuth for payments").lane
-        is ComplexityLane.COMPLEX
-    )
+    assert classify_change(demand="Add OAuth login", what="OAuth for payments").lane is ComplexityLane.COMPLEX
 
 
 def test_from_diff_cli_uses_scope_globs(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     (tmp_path / ".retornatus").mkdir()
     (tmp_path / ".retornatus" / "config.toml").write_text(
-        "[governance.scope]\nsensitive_globs = [\"**/billing/**\"]\n",
+        '[governance.scope]\nsensitive_globs = ["**/billing/**"]\n',
         encoding="utf-8",
     )
     billing = tmp_path / "billing"

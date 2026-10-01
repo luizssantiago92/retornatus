@@ -82,10 +82,7 @@ def init(
     for line in tracked_private_key_warnings(result.tracked_private_keys):
         typer.echo(line, err=True)
     if result.gitignore_updated:
-        typer.echo(
-            "Gitignore: appended Retornatus ignore rules to "
-            f"{result.root / '.gitignore'}"
-        )
+        typer.echo(f"Gitignore: appended Retornatus ignore rules to {result.root / '.gitignore'}")
 
     if result.config_preserved:
         typer.echo(
@@ -96,9 +93,7 @@ def init(
         raise typer.Exit(code=1)
 
     if result.config_written and result.preset:
-        typer.echo(
-            f"Wrote preset {result.preset!r} to {result.retornatus_dir / 'config.toml'}"
-        )
+        typer.echo(f"Wrote preset {result.preset!r} to {result.retornatus_dir / 'config.toml'}")
 
     if result.created:
         typer.echo(f"Initialized Retornatus at {result.retornatus_dir}")
@@ -278,15 +273,12 @@ def verify(
     if run_checks:
         from retornatus.application.assurance.checks import run_required_checks
 
-        outcome = run_required_checks(
-            root, change_id, timeout_seconds=check_timeout
-        )
+        outcome = run_required_checks(root, change_id, timeout_seconds=check_timeout)
         for note in outcome.notes:
             typer.echo(f"WARN {note}", err=as_json)
         for evidence in outcome.evidence:
             typer.echo(
-                f"Recorded {evidence.id} argv={' '.join(evidence.command or [])} "
-                f"exit_code={evidence.exit_code}",
+                f"Recorded {evidence.id} argv={' '.join(evidence.command or [])} exit_code={evidence.exit_code}",
                 err=as_json,
             )
     allowed = allow_self_reported or allow_self_reported_enabled(root)
@@ -348,11 +340,7 @@ def run(
     from retornatus.application.governance.policy import PolicyVerdict
 
     root = resolve_root(path)
-    ctx = (
-        assemble_assurance_context(root, action_id)
-        if assurance
-        else assemble_execution_context(root, action_id)
-    )
+    ctx = assemble_assurance_context(root, action_id) if assurance else assemble_execution_context(root, action_id)
     typer.echo(ctx.model_dump_json(indent=2))
     if strict_policy and ctx.policy_verdict in {
         PolicyVerdict.DENY.value,

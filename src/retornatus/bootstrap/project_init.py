@@ -47,9 +47,7 @@ def detect_tests(root: Path) -> list[str]:
         text = p.read_text(encoding="utf-8", errors="replace").lower()
         if name == "pyproject.toml" and "pytest" in text:
             signals.append("pytest (pyproject)")
-        if name == "package.json" and any(
-            k in text for k in ('"jest"', '"vitest"', '"mocha"', '"test":')
-        ):
+        if name == "package.json" and any(k in text for k in ('"jest"', '"vitest"', '"mocha"', '"test":')):
             signals.append("js test script")
     return signals
 
@@ -119,13 +117,9 @@ def project_init(root: Path) -> Path:
         changes = sorted(p.name for p in paths.changes.iterdir() if p.is_dir())
         retornatus_state.append(f"changes: {len(changes)}")
     if paths.rules.is_dir():
-        retornatus_state.append(
-            f"rules: {len(list(paths.rules.glob('R-*.json')))}"
-        )
+        retornatus_state.append(f"rules: {len(list(paths.rules.glob('R-*.json')))}")
     if paths.skills.is_dir():
-        retornatus_state.append(
-            f"skills: {len([p for p in paths.skills.iterdir() if p.is_dir()])}"
-        )
+        retornatus_state.append(f"skills: {len([p for p in paths.skills.iterdir() if p.is_dir()])}")
 
     body = f"""# Project
 

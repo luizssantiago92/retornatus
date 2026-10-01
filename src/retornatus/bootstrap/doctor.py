@@ -68,10 +68,7 @@ class DoctorReport:
             lines.append(f"brakes: {self.brakes.ratio} - {self.brakes.name}")
             lines.extend(f"  - {d}" for d in self.brakes.details)
             lines.append(f"mode: {self.mode}")
-            lines.append(
-                "  Process = hub/workflow can run; "
-                "Brakes = gates + verify paths are usable"
-            )
+            lines.append("  Process = hub/workflow can run; Brakes = gates + verify paths are usable")
         if self.agent_hooks:
             lines.append("agent hooks:")
             lines.extend(f"  {name}: {state}" for name, state in self.agent_hooks.items())
@@ -107,8 +104,7 @@ def _score_process(root: Path, wake: WakeReport) -> ReadinessScore:
         ),
         (
             "project_context",
-            (root / ".retornatus" / "project" / "project.md").is_file()
-            or not wake.initialized,
+            (root / ".retornatus" / "project" / "project.md").is_file() or not wake.initialized,
             "project.md (optional for greenfield)",
         ),
     ]
@@ -182,9 +178,7 @@ def _score_brakes(root: Path, wake: WakeReport) -> ReadinessScore:
         if not any_active or active_ok:
             earned += 1
             details.append(
-                "ok: active contract gate pass"
-                if any_active
-                else "ok: only draft contracts (activate then gate)"
+                "ok: active contract gate pass" if any_active else "ok: only draft contracts (activate then gate)"
             )
         else:
             details.append("fail: active contract(s) fail gate contract")
@@ -249,16 +243,12 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
             continue
         if not contract.active:
             warnings.append(
-                f"{cid}: contract v{contract.version} is draft — "
-                "run `change activate` when Situation is sufficient"
+                f"{cid}: contract v{contract.version} is draft — run `change activate` when Situation is sufficient"
             )
         else:
             gate = gate_contract(project_root, cid)
             if not gate.passed:
-                diagnostics.append(
-                    f"{cid}: active contract fails gate contract: "
-                    + "; ".join(gate.messages)
-                )
+                diagnostics.append(f"{cid}: active contract fails gate contract: " + "; ".join(gate.messages))
 
     for skill in repo.list_skills():
         if skill.status is SkillStatus.DRAFT:
@@ -266,24 +256,17 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
         if skill.status is SkillStatus.ACTIVE:
             gate = gate_skill_research(project_root, skill.id)
             if not gate.passed:
-                diagnostics.append(
-                    f"{skill.id}: ACTIVE without research gate: "
-                    + "; ".join(gate.messages)
-                )
+                diagnostics.append(f"{skill.id}: ACTIVE without research gate: " + "; ".join(gate.messages))
 
     for rule in repo.list_rules():
         if not rule.active:
-            warnings.append(
-                f"{rule.id}: Rule Candidate inactive — needs HUMAN Decision to activate"
-            )
+            warnings.append(f"{rule.id}: Rule Candidate inactive — needs HUMAN Decision to activate")
 
     if wake.change_ids and wake.index_entities == 0:
         warnings.append("Index empty despite Changes — wake rebuild may have failed")
 
     if process.complete and not brakes.complete:
-        warnings.append(
-            "Process ready but Brakes incomplete — gates may not stop incomplete work"
-        )
+        warnings.append("Process ready but Brakes incomplete — gates may not stop incomplete work")
 
     version_warning = _config_version_warning(project_root)
     if version_warning:

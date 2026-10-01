@@ -33,23 +33,13 @@ policy_app = typer.Typer(help="Policy evaluation (ALLOW / DENY / REQUIRE_HUMAN).
 assurance_app = typer.Typer(help="Assurance evaluation and independent review.")
 execution_app = typer.Typer(help="Host Execution observations (not an agent runtime).")
 task_app = typer.Typer(help="Task lifecycle within an Action.")
-lesson_app = typer.Typer(
-    help="Lessons from gate failures (Learning + optional Rule Candidate)."
-)
+lesson_app = typer.Typer(help="Lessons from gate failures (Learning + optional Rule Candidate).")
 ops_app = typer.Typer(help="Operational hygiene loops (not Change construction).")
-intake_app = typer.Typer(
-    help="Analyze freeform prompts; propose Skills only with human confirmation."
-)
+intake_app = typer.Typer(help="Analyze freeform prompts; propose Skills only with human confirmation.")
 action_app = typer.Typer(help="Action utilities (budget / attempt ceiling).")
-checks_app = typer.Typer(
-    help="Run owner-declared required checks and record Evidence."
-)
-ci_app = typer.Typer(
-    help="CI helpers. Render a pull-request comment from verify and gate JSON."
-)
-hooks_app = typer.Typer(
-    help="Git hooks: suppression scan, scope gate, commit message path."
-)
+checks_app = typer.Typer(help="Run owner-declared required checks and record Evidence.")
+ci_app = typer.Typer(help="CI helpers. Render a pull-request comment from verify and gate JSON.")
+hooks_app = typer.Typer(help="Git hooks: suppression scan, scope gate, commit message path.")
 hook_app = typer.Typer(
     help=(
         "Agent hooks. stop guards the turn. "

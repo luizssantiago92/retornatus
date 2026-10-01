@@ -160,8 +160,7 @@ def _untracked_file_lines(root: Path, name: str) -> list[AddedLine]:
         return []
     text = raw.decode("utf-8", errors="replace")
     return [
-        AddedLine(path=name, line_number=number, text=line)
-        for number, line in enumerate(text.splitlines(), start=1)
+        AddedLine(path=name, line_number=number, text=line) for number, line in enumerate(text.splitlines(), start=1)
     ]
 
 

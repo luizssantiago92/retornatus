@@ -118,10 +118,7 @@ class QuestionLoop:
             id=format_owned_id(change_id, "Q", n),
             statement=statement,
             grounded_in=finding_ids,
-            relations=[
-                Relation(type=RelationType.GROUNDED_IN, target_id=fid)
-                for fid in finding_ids
-            ],
+            relations=[Relation(type=RelationType.GROUNDED_IN, target_id=fid) for fid in finding_ids],
         )
         self.repo.save_question(question)
         return question
@@ -166,11 +163,7 @@ class QuestionLoop:
             return question
 
         ids = list(evidence_ids or [])
-        needs_proof = (
-            require_evidence
-            if require_evidence is not None
-            else _requires_evidence(question.statement)
-        )
+        needs_proof = require_evidence if require_evidence is not None else _requires_evidence(question.statement)
         if needs_proof and not ids:
             raise ResolutionIncompleteError(
                 "Resolution requires attributable Evidence for this verifiable Question "
@@ -182,9 +175,7 @@ class QuestionLoop:
             try:
                 self.repo.load_evidence(eid)
             except FileNotFoundError as exc:
-                raise ResolutionIncompleteError(
-                    f"Resolution cites missing Evidence: {eid}"
-                ) from exc
+                raise ResolutionIncompleteError(f"Resolution cites missing Evidence: {eid}") from exc
 
         updated = question.model_copy(
             update={
@@ -200,8 +191,6 @@ class QuestionLoop:
 
     def reopen_question(self, question_id: str) -> Question:
         question, rev = self.repo.load_question(question_id)
-        updated = question.model_copy(
-            update={"lifecycle": QuestionLifecycle.OPEN, "resolution": None}
-        )
+        updated = question.model_copy(update={"lifecycle": QuestionLifecycle.OPEN, "resolution": None})
         self.repo.save_question(updated, expected=rev)
         return updated

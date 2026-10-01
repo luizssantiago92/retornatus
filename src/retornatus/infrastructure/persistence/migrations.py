@@ -35,16 +35,12 @@ class MigrationRegistry:
         if version == 0:
             raise IncompatibleSchemaError("Missing schema_version")
         if version > target_version:
-            raise IncompatibleSchemaError(
-                f"Artifact schema_version {version} is newer than supported {target_version}"
-            )
+            raise IncompatibleSchemaError(f"Artifact schema_version {version} is newer than supported {target_version}")
         data = dict(payload)
         while version < target_version:
             key = (version, version + 1)
             if key not in self._migrations:
-                raise IncompatibleSchemaError(
-                    f"No migration registered from v{version} to v{version + 1}"
-                )
+                raise IncompatibleSchemaError(f"No migration registered from v{version} to v{version + 1}")
             data = self._migrations[key](data)
             data["schema_version"] = version + 1
             version += 1

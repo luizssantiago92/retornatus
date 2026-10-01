@@ -211,9 +211,7 @@ def _overlay(parent: Preset, raw: dict[str, Any], *, filename: str) -> Preset:
     if not isinstance(declared, str) or not declared.strip():
         raise UsageError(f"Preset {filename!r} is missing name")
     if declared.strip() != filename:
-        raise UsageError(
-            f"Preset file {filename}.toml declares name {declared.strip()!r}"
-        )
+        raise UsageError(f"Preset file {filename}.toml declares name {declared.strip()!r}")
     summary = raw.get("summary", parent.summary)
     if not isinstance(summary, str) or not summary.strip():
         raise UsageError(f"Preset {filename!r} is missing summary")
@@ -320,14 +318,10 @@ def _surface_checks(raw: object, *, filename: str) -> tuple[SurfaceCheck, ...]:
         seen.add(name.strip())
         suggested = item.get("suggested", True)
         if not isinstance(suggested, bool):
-            raise UsageError(
-                f"Preset {filename!r} ship check {name.strip()!r} suggested must be a boolean"
-            )
+            raise UsageError(f"Preset {filename!r} ship check {name.strip()!r} suggested must be a boolean")
         optional = item.get("optional", False)
         if not isinstance(optional, bool):
-            raise UsageError(
-                f"Preset {filename!r} ship check {name.strip()!r} optional must be a boolean"
-            )
+            raise UsageError(f"Preset {filename!r} ship check {name.strip()!r} optional must be a boolean")
         checks.append(
             SurfaceCheck(
                 name=name.strip(),
@@ -357,11 +351,7 @@ def _globs(value: object, *, label: str) -> tuple[str, ...]:
 
 
 def _argv(value: object, *, label: str) -> tuple[str, ...]:
-    if (
-        not isinstance(value, list)
-        or not value
-        or any(not isinstance(part, str) or part == "" for part in value)
-    ):
+    if not isinstance(value, list) or not value or any(not isinstance(part, str) or part == "" for part in value):
         raise UsageError(f"{label} must be a non-empty list of strings")
     return tuple(value)
 

@@ -80,8 +80,7 @@ def record_lesson_from_gate(
             passed, messages = result.passed, list(result.messages)
         else:
             raise ValueError(
-                f"Unknown gate `{gate}`. "
-                "Use: contract, evidence, assurance, skill-research, policy, budget"
+                f"Unknown gate `{gate}`. Use: contract, evidence, assurance, skill-research, policy, budget"
             )
 
     related = [x for x in (change_id, skill_id, action_id) if x]

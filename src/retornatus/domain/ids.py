@@ -14,9 +14,7 @@ _PROJECT_ID = re.compile(r"^(?P<prefix>[LRDS])-(?P<num>\d{4,})$")
 # Change: C-0001
 _CHANGE_ID = re.compile(r"^C-(?P<num>\d{4,})$")
 # Change-owned: C-0001/A-001, C-0001/T-001, ...
-_OWNED_ID = re.compile(
-    r"^(?P<change>C-\d{4,})/(?P<kind>[ATFQE])-(?P<num>\d{3,})$"
-)
+_OWNED_ID = re.compile(r"^(?P<change>C-\d{4,})/(?P<kind>[ATFQE])-(?P<num>\d{3,})$")
 # Bypass records: B-0001
 _BYPASS_ID = re.compile(r"^B-(?P<num>\d{4,})$")
 

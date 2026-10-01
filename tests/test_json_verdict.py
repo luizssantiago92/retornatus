@@ -189,9 +189,7 @@ def test_verify_json_run_checks_notes_go_to_stderr(tmp_path: Path) -> None:
 def test_gate_contract_pass_fail_and_warning(tmp_path: Path) -> None:
     _create(tmp_path)
     plain, document = _pair(["gate", "contract", "C-0001", "--path", str(tmp_path)])
-    rendered = runner.invoke(
-        app, ["gate", "contract", "C-0001", "--path", str(tmp_path), "--json"]
-    )
+    rendered = runner.invoke(app, ["gate", "contract", "C-0001", "--path", str(tmp_path), "--json"])
     assert plain.exit_code == 0
     assert document["gate"] == "contract"
     assert document["passed"] is True
@@ -258,9 +256,7 @@ def test_gate_skill_research_pass_and_fail(tmp_path: Path) -> None:
     assert created.exit_code == 0, created.stdout
     skill_dir = next((tmp_path / ".retornatus" / "adaptation" / "skills").glob("S-*"))
     skill_id = skill_dir.name
-    failed_plain, failed = _pair(
-        ["gate", "skill-research", skill_id, "--path", str(tmp_path)]
-    )
+    failed_plain, failed = _pair(["gate", "skill-research", skill_id, "--path", str(tmp_path)])
     assert failed_plain.exit_code == 1
     assert failed["gate"] == "skill-research"
     assert failed["skill_id"] == skill_id
@@ -297,9 +293,7 @@ def test_gate_skill_research_json_accepts_crlf_skill(tmp_path: Path) -> None:
     skill_dir = next((tmp_path / ".retornatus" / "adaptation" / "skills").glob("S-*"))
     skill_md = skill_dir / "SKILL.md"
     skill_md.write_bytes(skill_md.read_bytes().replace(b"\n", b"\r\n"))
-    plain, document = _pair(
-        ["gate", "skill-research", skill_dir.name, "--path", str(tmp_path)]
-    )
+    plain, document = _pair(["gate", "skill-research", skill_dir.name, "--path", str(tmp_path)])
     assert plain.exit_code == 1
     assert document["verdict"] == "FAIL"
     assert document["skill_id"] == skill_dir.name
@@ -314,9 +308,7 @@ def test_gate_policy_pass_and_fail(tmp_path: Path) -> None:
     assert document["action_id"] == "C-0001/A-001"
     assert document["passed"] is True
 
-    failed_plain, failed = _pair(
-        ["gate", "policy", "C-0001/A-999", "--path", str(tmp_path)]
-    )
+    failed_plain, failed = _pair(["gate", "policy", "C-0001/A-999", "--path", str(tmp_path)])
     assert failed_plain.exit_code == 1
     assert failed["verdict"] == "FAIL"
     assert failed["passed"] is False
@@ -335,9 +327,7 @@ def test_gate_budget_pass_and_fail(tmp_path: Path) -> None:
         ["action", "budget", "C-0001/A-001", "--max", "1", "--path", str(tmp_path)],
     )
     assert limited.exit_code == 0, limited.stdout
-    failed_task = runner.invoke(
-        app, ["task", "fail", "C-0001/T-001", "--path", str(tmp_path)]
-    )
+    failed_task = runner.invoke(app, ["task", "fail", "C-0001/T-001", "--path", str(tmp_path)])
     assert failed_task.exit_code == 0, failed_task.stdout
     failed_plain, failed = _pair(["gate", "budget", "C-0001/A-001", "--path", str(tmp_path)])
     assert failed_plain.exit_code == 1
@@ -369,9 +359,7 @@ def test_gate_suppressions_pass_and_fail(tmp_path: Path) -> None:
     assert failed_plain.exit_code == 1
     assert failed["verdict"] == "FAIL"
     assert failed["findings"]
-    rendered = runner.invoke(
-        app, ["gate", "suppressions", "--path", str(tmp_path), "--json"]
-    )
+    rendered = runner.invoke(app, ["gate", "suppressions", "--path", str(tmp_path), "--json"])
     assert _lines(rendered.stderr) == _lines(failed_plain.stdout)
     assert rendered.stdout.strip().startswith("{")
 
@@ -409,9 +397,7 @@ def test_overview_json_pass_and_missing(tmp_path: Path) -> None:
     _create(tmp_path)
     _satisfy(tmp_path)
     plain = runner.invoke(app, ["change", "overview", "C-0001", "--path", str(tmp_path)])
-    rendered = runner.invoke(
-        app, ["change", "overview", "C-0001", "--path", str(tmp_path), "--json"]
-    )
+    rendered = runner.invoke(app, ["change", "overview", "C-0001", "--path", str(tmp_path), "--json"])
     formatted = runner.invoke(
         app,
         ["change", "overview", "C-0001", "--path", str(tmp_path), "--format", "json"],
@@ -435,21 +421,15 @@ def test_overview_json_pass_and_missing(tmp_path: Path) -> None:
 
     contract = tmp_path / ".retornatus" / "changes" / "C-0001" / "contract.json"
     contract.unlink()
-    bare = runner.invoke(
-        app, ["change", "overview", "C-0001", "--path", str(tmp_path), "--json"]
-    )
+    bare = runner.invoke(app, ["change", "overview", "C-0001", "--path", str(tmp_path), "--json"])
     bare_doc = _load(bare.stdout)
     _assert_schema(bare_doc)
     assert bare.exit_code == 0
     assert bare_doc["verdict"] is None
     assert bare_doc["claims"] == []
 
-    missing_plain = runner.invoke(
-        app, ["change", "overview", "C-0099", "--path", str(tmp_path)]
-    )
-    missing = runner.invoke(
-        app, ["change", "overview", "C-0099", "--path", str(tmp_path), "--json"]
-    )
+    missing_plain = runner.invoke(app, ["change", "overview", "C-0099", "--path", str(tmp_path)])
+    missing = runner.invoke(app, ["change", "overview", "C-0099", "--path", str(tmp_path), "--json"])
     assert missing_plain.exit_code == 1
     assert missing.exit_code == 1
     assert "Change not found: C-0099" in missing_plain.stdout
@@ -471,9 +451,7 @@ def test_verify_json_warning_is_diagnostic(tmp_path: Path) -> None:
         producer="agent",
         supports_claim_id="C-0001/claim-done-1",
     )
-    plain, document = _pair(
-        ["verify", "C-0001", "--allow-self-reported", "--path", str(tmp_path)]
-    )
+    plain, document = _pair(["verify", "C-0001", "--allow-self-reported", "--path", str(tmp_path)])
     rendered = runner.invoke(
         app,
         [

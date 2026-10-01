@@ -23,9 +23,7 @@ from retornatus.cli.main import app
 runner = CliRunner()
 
 _DONE = "pytest exits 0 for the health command"
-_WARNING_TAIL = (
-    "Revert the edit, or update the Change scope (Task resources) to include this path."
-)
+_WARNING_TAIL = "Revert the edit, or update the Change scope (Task resources) to include this path."
 
 
 def _create(root: Path, *resources: str, draft: bool = False, title: str = "Scoped") -> None:
@@ -491,9 +489,7 @@ def test_none_declared_scope_and_walk_up(tmp_path: Path, monkeypatch) -> None:
     walked = runner.invoke(
         app,
         ["hook", "file-edit", "--host", "codex"],
-        input=json.dumps(
-            {"tool_name": "apply_patch", "tool_input": {"command": "*** Add File: src/app.py\n"}}
-        ),
+        input=json.dumps({"tool_name": "apply_patch", "tool_input": {"command": "*** Add File: src/app.py\n"}}),
     )
     assert walked.exit_code == 0, walked.output
     assert "none declared" in _warning(walked.stdout, "codex")
@@ -524,9 +520,7 @@ def test_install_and_remove_are_idempotent(tmp_path: Path) -> None:
             {
                 "permissions": {"allow": ["Bash"]},
                 "hooks": {
-                    "PreToolUse": [
-                        {"matcher": "Bash", "hooks": [{"type": "command", "command": "echo user-pre"}]}
-                    ]
+                    "PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "echo user-pre"}]}]
                 },
             }
         ),
@@ -596,9 +590,7 @@ def test_install_and_remove_are_idempotent(tmp_path: Path) -> None:
     cursor_left = json.loads(hook_config_path(tmp_path, "cursor").read_text(encoding="utf-8"))
     assert list(cursor_left["hooks"]) == ["stop"]
     assert file_edit_command("cursor") not in hook_config_path(tmp_path, "cursor").read_text(encoding="utf-8")
-    again_removed = runner.invoke(
-        app, ["integrate", "--remove-hooks", "--host", "claude", "--path", str(tmp_path)]
-    )
+    again_removed = runner.invoke(app, ["integrate", "--remove-hooks", "--host", "claude", "--path", str(tmp_path)])
     assert again_removed.exit_code == 0
     assert "absent" in again_removed.stdout
 

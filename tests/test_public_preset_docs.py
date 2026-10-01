@@ -46,7 +46,7 @@ def test_landing_hero_uses_readme_card_and_lists_presets() -> None:
     assert "retornatus init --preset fastapi" in html
     for name in PRESETS:
         assert f"<h3>{name}</h3>" in html
-    square = 'assets/retornatus-mascot-square.webp'
+    square = "assets/retornatus-mascot-square.webp"
     assert f'href="{square}"' in html
     css = (ROOT / "docs/site.css").read_text(encoding="utf-8")
     assert "prefers-reduced-motion: reduce" in css
@@ -88,10 +88,7 @@ def test_neon_cutout_is_gone_from_live_files_and_assets_shrunk() -> None:
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     unreleased = changelog.split("## [1.4.1]", 1)[0]
     assert "retornatus-mascot-neon.webp` is removed" in unreleased
-    hero = (
-        "docs site hero uses the same static card as the README, "
-        "`docs/assets/retornatus-mascot-readme.webp`"
-    )
+    hero = "docs site hero uses the same static card as the README, `docs/assets/retornatus-mascot-readme.webp`"
     assert hero in unreleased
     assert "docs site hero uses `docs/assets/retornatus-mascot-neon.webp`" not in unreleased
     assert changelog_hits == ["CHANGELOG.md"]

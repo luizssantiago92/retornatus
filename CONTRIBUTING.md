@@ -29,6 +29,16 @@ uv run retornatus --help
 
 `verify` accepts execution evidence only when the argv is one of those commands, the exit code is 0, the recorded commit is still the tree under test, and the source worktree is clean. A follow-up commit that only adds `.retornatus/changes/` evidence still counts. Record the commands with `retornatus checks run -c <C-id>` or `verify <C-id> --run-checks` after the implementation commit. Do not rewrite evidence on older Changes.
 
+## Formatting
+
+`ruff format` formats `src`, `tests`, and `scripts`. CI runs `uv run ruff format --check src tests scripts` in the existing lint job. Job names and the test matrix stay the same.
+
+`.git-blame-ignore-revs` lists the formatting commit so `git blame` can skip it. GitHub honors that file automatically. Locally:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
+
 ## Pull requests
 
 - Keep changes scoped; prefer small milestones.

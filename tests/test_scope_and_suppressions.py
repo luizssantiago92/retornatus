@@ -57,27 +57,21 @@ def test_suppressions_flag_added_markers_and_honor_allowlists(tmp_path: Path) ->
     source.parent.mkdir()
     source.write_text("def ok() -> None:\n    return None\n", encoding="utf-8")
     _commit(tmp_path, "app")
-    noqa = "no" + "qa"
+    marker = "no" + "qa"
     type_ignore = "type: " + "ignore"
     no_cover = "pragma: " + "no cover"
     source.write_text(
-        f"def ok() -> None:  # {noqa}\n"
-        f"    return None  # {type_ignore}\n"
-        f"    # {no_cover}\n",
+        f"def ok() -> None:  # {marker}\n    return None  # {type_ignore}\n    # {no_cover}\n",
         encoding="utf-8",
     )
-    scanned = runner.invoke(
-        app, ["gate", "suppressions", "--path", str(tmp_path)]
-    )
+    scanned = runner.invoke(app, ["gate", "suppressions", "--path", str(tmp_path)])
     assert scanned.exit_code == 1, scanned.stdout
     assert "noqa" in scanned.stdout
     assert "type-ignore" in scanned.stdout
     assert "pragma-no-cover" in scanned.stdout
 
     subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True, capture_output=True)
-    staged = runner.invoke(
-        app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)]
-    )
+    staged = runner.invoke(app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)])
     assert staged.exit_code == 1, staged.stdout
 
     repo = FileRepository(tmp_path)
@@ -89,17 +83,13 @@ def test_suppressions_flag_added_markers_and_honor_allowlists(tmp_path: Path) ->
         }
     }
     repo.save_config(data, expected=rev)
-    allowed = runner.invoke(
-        app, ["gate", "suppressions", "--path", str(tmp_path)]
-    )
+    allowed = runner.invoke(app, ["gate", "suppressions", "--path", str(tmp_path)])
     assert allowed.exit_code == 0, allowed.stdout
 
     other = tmp_path / "notes.py"
     other.write_text("HACK = True\n", encoding="utf-8")
     subprocess.run(["git", "add", "notes.py"], cwd=tmp_path, check=True, capture_output=True)
-    extra = runner.invoke(
-        app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)]
-    )
+    extra = runner.invoke(app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)])
     assert extra.exit_code == 1, extra.stdout
     assert "HACK" in extra.stdout
 
@@ -126,17 +116,13 @@ def test_suppressions_scan_untracked_files_and_skip_ignored(tmp_path: Path) -> N
     gitignore = tmp_path / ".gitignore"
     gitignore.write_bytes(gitignore.read_bytes() + b"secret_skip.py\n")
 
-    scanned = runner.invoke(
-        app, ["gate", "suppressions", "--path", str(tmp_path)]
-    )
+    scanned = runner.invoke(app, ["gate", "suppressions", "--path", str(tmp_path)])
     assert scanned.exit_code == 1, scanned.stdout
     assert "stray.py:1:" in scanned.stdout
     assert "secret_skip.py" not in scanned.stdout
     assert "blob.bin" not in scanned.stdout
 
-    staged = runner.invoke(
-        app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)]
-    )
+    staged = runner.invoke(app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)])
     assert staged.exit_code == 0, staged.stdout
     assert "stray.py" not in staged.stdout
 
@@ -237,11 +223,7 @@ def test_suppressions_skip_markdown_code_and_flag_prose(tmp_path: Path) -> None:
     assert "app.py" in result.stdout
     assert lint_mark in result.stdout
     # The backtick mention and the fenced lines are not hits.
-    flagged = [
-        line
-        for line in result.stdout.splitlines()
-        if "Cloud-agents.md" in line
-    ]
+    flagged = [line for line in result.stdout.splitlines() if "Cloud-agents.md" in line]
     assert len(flagged) == 1
     assert "Prose must not pass" in flagged[0]
 
@@ -310,9 +292,7 @@ def test_scope_resources_denied_and_sensitive(tmp_path: Path) -> None:
     assert "denied path: .env" in denied.stdout
 
     # Harness files stay in scope even when not listed on a Task.
-    (tmp_path / ".retornatus" / "project" / "project.md").write_text(
-        "# notes\n", encoding="utf-8"
-    )
+    (tmp_path / ".retornatus" / "project" / "project.md").write_text("# notes\n", encoding="utf-8")
     worktree = runner.invoke(
         app,
         ["gate", "scope", created.change.id, "--path", str(tmp_path)],

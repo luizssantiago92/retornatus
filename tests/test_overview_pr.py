@@ -39,9 +39,7 @@ def test_overview_pr_labels_executed_and_self_reported(tmp_path: Path) -> None:
     config = tmp_path / ".retornatus" / "config.toml"
     existing = config.read_text(encoding="utf-8")
     config.write_text(
-        existing
-        + "\n[assurance]\n"
-        + 'required_checks = [{name = "unit", run = ["pytest", "-q"]}]\n',
+        existing + "\n[assurance]\n" + 'required_checks = [{name = "unit", run = ["pytest", "-q"]}]\n',
         encoding="utf-8",
     )
 

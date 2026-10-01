@@ -113,7 +113,6 @@ def tracked_private_key_warnings(paths: Sequence[str]) -> list[str]:
         return []
     lines = [f"warning: private key file is tracked by git: {path}" for path in paths]
     lines.append(
-        "warning: remove tracked *.pem and *.key files from git. "
-        "Signing keys are written outside the repository."
+        "warning: remove tracked *.pem and *.key files from git. Signing keys are written outside the repository."
     )
     return lines

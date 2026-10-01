@@ -39,10 +39,7 @@ class DiffSignals:
 
     def render(self) -> str:
         sensitive = ", ".join(self.sensitive_paths) if self.sensitive_paths else "none"
-        return (
-            f"{self.file_count} files, {self.lines_changed} lines changed, "
-            f"sensitive: {sensitive}"
-        )
+        return f"{self.file_count} files, {self.lines_changed} lines changed, sensitive: {sensitive}"
 
 
 def _diff_is_small(diff: DiffSignals) -> bool:
@@ -74,11 +71,7 @@ def collect_diff_signals(root: Path, base: str) -> DiffSignals:
             if deleted.isdigit():
                 lines_changed += int(deleted)
     settings = load_scope_settings(root)
-    sensitive = [
-        path
-        for path in paths
-        if any(glob_match(path, pattern) for pattern in settings.sensitive_globs)
-    ]
+    sensitive = [path for path in paths if any(glob_match(path, pattern) for pattern in settings.sensitive_globs)]
     return DiffSignals(
         file_count=len(paths),
         lines_changed=lines_changed,
@@ -186,11 +179,7 @@ def classify_change(
         and not _NON_QUICK_MARKERS.search(hay)
     )
     diff_allows_quick = diff is None or _diff_is_small(diff)
-    if (
-        quickish
-        and diff_allows_quick
-        and demand_kind not in {DemandKind.MIGRATION, DemandKind.SECURITY}
-    ):
+    if quickish and diff_allows_quick and demand_kind not in {DemandKind.MIGRATION, DemandKind.SECURITY}:
         recommendations.extend(
             [
                 "Short Contract with clear DONE is enough",
@@ -214,8 +203,7 @@ def classify_change(
         )
         return LaneClassification(
             lane=ComplexityLane.COMPLEX,
-            rationale="Many DONE criteria, tasks, or constraints — earn Task graph rigor"
-            + diff_note,
+            rationale="Many DONE criteria, tasks, or constraints — earn Task graph rigor" + diff_note,
             recommendations=recommendations,
         )
 

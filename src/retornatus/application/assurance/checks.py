@@ -30,9 +30,7 @@ class RequiredCheckRun:
 
     @property
     def all_passed(self) -> bool:
-        return bool(self.evidence) and all(
-            item.exit_code == 0 and not item.timed_out for item in self.evidence
-        )
+        return bool(self.evidence) and all(item.exit_code == 0 and not item.timed_out for item in self.evidence)
 
 
 def run_required_checks(
@@ -59,19 +57,13 @@ def run_required_checks(
         raise UsageError(f"No contract for {change_id}") from exc
     claims = build_claims_from_contract(contract)
     planned = [(check, _targets_for_check(check, claims)) for check in checks]
-    captures = [
-        capture_command(root, list(check.run), timeout_seconds=timeout_seconds)
-        for check, _targets in planned
-    ]
+    captures = [capture_command(root, list(check.run), timeout_seconds=timeout_seconds) for check, _targets in planned]
     service = EvidenceService(root)
     outcome = RequiredCheckRun()
     for (check, targets), capture in zip(planned, captures, strict=True):
         if not targets:
             evidence_type = next(iter(check.types), "test_result")
-            outcome.notes.append(
-                f"check {check.name}: no execution claim matched; "
-                f"recorded unbound {evidence_type}"
-            )
+            outcome.notes.append(f"check {check.name}: no execution claim matched; recorded unbound {evidence_type}")
             outcome.evidence.append(
                 service.record_executed(
                     change_id=change_id,

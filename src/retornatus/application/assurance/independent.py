@@ -54,9 +54,7 @@ def claims_requiring_independent_review(claims: list[Claim]) -> list[Claim]:
     """Claims whose proportional Evidence includes review/security judgment."""
     needed: list[Claim] = []
     for claim in claims:
-        types = set(claim.required_evidence_types) or set(
-            infer_required_evidence_types(claim.statement)
-        )
+        types = set(claim.required_evidence_types) or set(infer_required_evidence_types(claim.statement))
         if types & {"review_result", "security_test"}:
             needed.append(claim)
             continue
@@ -103,10 +101,7 @@ def plan_independent_assurance(
 
     return IndependentReviewPlan(
         required=True,
-        rationale=(
-            "Independent Assurance required for claims: "
-            + ", ".join(c.id for c in needing)
-        ),
+        rationale=("Independent Assurance required for claims: " + ", ".join(c.id for c in needing)),
         claims_needing_review=[c.id for c in needing],
         action_id=resolved_action,
         execution_context=ctx,
@@ -170,8 +165,7 @@ def commit_mismatch_warnings(
         if strict_execution and item.type in EXECUTION_EVIDENCE_TYPES:
             continue
         warnings.append(
-            f"{item.id} recorded git_commit {recorded} does not match HEAD {head} "
-            "(stale snapshot; not a failure)"
+            f"{item.id} recorded git_commit {recorded} does not match HEAD {head} (stale snapshot; not a failure)"
         )
     return warnings
 
@@ -192,9 +186,7 @@ def evaluate_change_assurance(
     contract, _ = repo.load_contract(change_id)
     claims = build_claims_from_contract(contract)
     evidence = EvidenceService(root).list_for_change(change_id)
-    current_states = (
-        derive_current_subject_states(root, evidence) if use_git_state else {}
-    )
+    current_states = derive_current_subject_states(root, evidence) if use_git_state else {}
     if allow_self_reported is None:
         allow_self_reported = allow_self_reported_enabled(root)
     checks = load_required_checks(root)
@@ -204,9 +196,7 @@ def evaluate_change_assurance(
     clean: bool | None = None
     equivalent: Callable[[str], bool] | None = None
     if use_git_state:
-        dirty_subjects = subjects_with_uncommitted_changes(
-            root, [item.subject for item in evidence]
-        )
+        dirty_subjects = subjects_with_uncommitted_changes(root, [item.subject for item in evidence])
         mode = uncommitted_changes_mode(root)
         if checks:
             head = current_git_head(root)

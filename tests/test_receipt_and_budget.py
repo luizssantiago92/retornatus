@@ -98,9 +98,7 @@ def test_wrong_public_key_fails(tmp_path: Path, monkeypatch: pytest.MonkeyPatch)
     assert "does not match" in reason
 
 
-def test_verify_from_clone_with_public_key_only(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_verify_from_clone_with_public_key_only(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _use_config(monkeypatch, tmp_path)
     origin = _project(tmp_path / "origin")
     keygen(origin)
@@ -119,16 +117,12 @@ def test_verify_from_clone_with_public_key_only(
     assert ok, msg
     assert msg == "ok"
     private_bits = [
-        p
-        for p in clone.rglob("*")
-        if p.is_file() and "PRIVATE KEY" in p.read_text(encoding="utf-8", errors="ignore")
+        p for p in clone.rglob("*") if p.is_file() and "PRIVATE KEY" in p.read_text(encoding="utf-8", errors="ignore")
     ]
     assert private_bits == []
 
 
-def test_env_signing_key_is_not_written(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_env_signing_key_is_not_written(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     xdg = tmp_path / "xdg"
     monkeypatch.setenv("XDG_CONFIG_HOME", str(xdg))
     monkeypatch.delenv("RETORNATUS_SIGNING_KEY_PATH", raising=False)
@@ -159,9 +153,7 @@ def test_bad_signing_key_input(monkeypatch: pytest.MonkeyPatch) -> None:
         parse_private_key("aa")
 
 
-def test_private_key_file_is_created_at_mode_0600(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_private_key_file_is_created_at_mode_0600(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Mode 0600 comes from os.open, not from a later chmod.
 
     umask 0 would make a normal write world-readable. chmod is forced to fail
@@ -195,16 +187,12 @@ def test_private_key_file_is_created_at_mode_0600(
     assert pem.startswith("-----BEGIN PRIVATE KEY-----")
     assert pem.endswith("\n")
     leftovers = [
-        child
-        for child in path.parent.iterdir()
-        if child.name.startswith(f".{path.name}.") and child.suffix == ".tmp"
+        child for child in path.parent.iterdir() if child.name.startswith(f".{path.name}.") and child.suffix == ".tmp"
     ]
     assert leftovers == []
 
 
-def test_private_key_write_on_windows_mode_and_failed_replace(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_private_key_write_on_windows_mode_and_failed_replace(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Windows ignores POSIX mode; a failed replace must not leave the temp file."""
     from retornatus.application.assurance import receipt as receipt_mod
 
@@ -230,9 +218,7 @@ def test_private_key_write_on_windows_mode_and_failed_replace(
     assert "BEGIN PRIVATE KEY" in path.read_text(encoding="utf-8")
 
 
-def test_private_key_write_closes_fd_when_open_fails(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_private_key_write_closes_fd_when_open_fails(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     from retornatus.application.assurance import receipt as receipt_mod
 
     _use_config(monkeypatch, tmp_path)
@@ -248,9 +234,7 @@ def test_private_key_write_closes_fd_when_open_fails(
     assert list(path.parent.glob(f".{path.name}.*.tmp")) == []
 
 
-def test_keygen_refuses_private_key_inside_project(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_keygen_refuses_private_key_inside_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     root = _project(tmp_path / "proj")
     monkeypatch.setenv("XDG_CONFIG_HOME", str(root / "inside-config"))
     monkeypatch.delenv("RETORNATUS_SIGNING_KEY", raising=False)
@@ -264,9 +248,7 @@ def test_keygen_refuses_private_key_inside_project(
     assert not any(root.rglob("*.pem"))
 
 
-def test_legacy_hmac_is_not_portable(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_legacy_hmac_is_not_portable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _use_config(monkeypatch, tmp_path)
     root = _project(tmp_path / "proj")
     key = b"legacy-local-key"
@@ -304,9 +286,7 @@ def test_legacy_hmac_is_not_portable(
         verify_receipt_dict(root, payload)
 
 
-def test_legacy_receipt_file_roundtrip_message(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_legacy_receipt_file_roundtrip_message(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     root = _project(tmp_path / "proj")
     monkeypatch.delenv("RETORNATUS_RECEIPT_KEY", raising=False)
     receipt = tmp_path / "legacy.json"

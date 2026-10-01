@@ -59,9 +59,7 @@ def skill_list(path: Path | None = typer.Option(None, "--path", "-p")) -> None:
         typer.echo("No skills.")
         return
     for skill in skills:
-        typer.echo(
-            f"{skill.id}\tv{skill.version}\t{skill.status.value}\t{skill.title}"
-        )
+        typer.echo(f"{skill.id}\tv{skill.version}\t{skill.status.value}\t{skill.title}")
 
 
 @skill_app.command("need")

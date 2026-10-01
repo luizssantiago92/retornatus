@@ -149,11 +149,7 @@ def apply_surface_rules(
     detail = "Surface requirements unmet: " + " | ".join(
         f"{rule['name']}: {'; '.join(rule['missing'])}" for rule in unmet
     )
-    rationale = (
-        detail
-        if result.verdict is AssuranceVerdict.SATISFIED
-        else f"{detail}. {result.rationale}"
-    )
+    rationale = detail if result.verdict is AssuranceVerdict.SATISFIED else f"{detail}. {result.rationale}"
     verdict = result.verdict
     if verdict is AssuranceVerdict.SATISFIED or verdict is AssuranceVerdict.INCONCLUSIVE:
         verdict = AssuranceVerdict.NOT_SATISFIED
@@ -295,11 +291,7 @@ def _parse_globs(value: object, *, label: str) -> tuple[str, ...]:
 
 
 def _parse_argv(value: object, *, label: str) -> tuple[str, ...]:
-    if (
-        not isinstance(value, list)
-        or not value
-        or any(not isinstance(part, str) or part == "" for part in value)
-    ):
+    if not isinstance(value, list) or not value or any(not isinstance(part, str) or part == "" for part in value):
         raise ValueError(f"Invalid {label}: expected a non-empty list of strings")
     return tuple(value)
 
@@ -329,9 +321,7 @@ def _parse_checks(value: object) -> tuple[SurfaceCheck, ...]:
         seen.add(cleaned)
         optional = item.get("optional", False)
         if not isinstance(optional, bool):
-            raise ValueError(
-                f"Invalid surfaces.ship.checks[{index}]: optional must be a boolean"
-            )
+            raise ValueError(f"Invalid surfaces.ship.checks[{index}]: optional must be a boolean")
         checks.append(
             SurfaceCheck(
                 name=cleaned,

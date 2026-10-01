@@ -85,9 +85,7 @@ def test_path_level_freshness_isolated_from_unrelated_commits(tmp_path: Path) ->
     assert result.verdict is AssuranceVerdict.SATISFIED
 
     # Changing the documented file itself must stale prior Evidence
-    (tmp_path / "docs" / "overview.md").write_text(
-        "# Overview\n\nUpdated.\n", encoding="utf-8"
-    )
+    (tmp_path / "docs" / "overview.md").write_text("# Overview\n\nUpdated.\n", encoding="utf-8")
     git_commit_all(tmp_path, "Update docs")
     evidence2 = EvidenceService(tmp_path).list_for_change(cid)
     states2 = derive_current_subject_states(tmp_path, evidence2)
@@ -139,9 +137,7 @@ def test_host_execution_record(tmp_path: Path) -> None:
     assert record.subject_state and record.subject_state.startswith("commit:")
     listed = svc.list_for_action(created.action.id)
     assert len(listed) == 1
-    assert (
-        tmp_path / ".retornatus" / "runtime" / "executions" / f"{record.id}.json"
-    ).is_file()
+    assert (tmp_path / ".retornatus" / "runtime" / "executions" / f"{record.id}.json").is_file()
 
 
 def test_resolve_subject_commit_prefers_path(tmp_path: Path) -> None:

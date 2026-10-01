@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `ruff format` is applied to `src`, `tests`, and `scripts`. CI runs `uv run ruff format --check src tests scripts` in the existing lint job. Job names and the test matrix are unchanged. `.git-blame-ignore-revs` names the formatting commit. GitHub honors that file for blame. Locally, run `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+
 ### Added
 
 - This repository's `.retornatus/config.toml` declares `[assurance] required_checks` for `uv run pytest -q`, `uv run ruff check src tests scripts`, `uv run mypy`, `uv run python scripts/build_docs_html.py --check`, and `uv lock --check`. `verify` accepts execution evidence only from those commands, with exit code 0, on a clean source tree, at the recorded commit. A later commit that only stores evidence under `.retornatus/changes/` (or `.retornatus/index/` and `.retornatus/runtime/`) does not stale that check. A later source commit does. Older Changes are not rewritten.

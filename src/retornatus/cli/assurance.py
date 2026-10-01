@@ -28,9 +28,7 @@ def assurance_plan(
     if plan.action_id:
         typer.echo(f"action={plan.action_id}")
     if plan.execution_context is not None:
-        typer.echo(
-            f"fresh_context independent={plan.execution_context.independent_assurance}"
-        )
+        typer.echo(f"fresh_context independent={plan.execution_context.independent_assurance}")
     raise typer.Exit(code=0 if not plan.required else 2)
 
 

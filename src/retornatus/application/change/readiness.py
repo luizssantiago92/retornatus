@@ -137,10 +137,7 @@ def synchronize_action(action: Action) -> SyncProjection:
                 # first active owner wins for conflict reporting
                 active_owners.setdefault(resource, task.id)
 
-    projections = [
-        project_task_state(t, tasks_by_id=by_id, active_resource_owners=active_owners)
-        for t in action.tasks
-    ]
+    projections = [project_task_state(t, tasks_by_id=by_id, active_resource_owners=active_owners) for t in action.tasks]
 
     ready = [p.task_id for p in projections if p.state is DerivedTaskState.READY]
     blocked = [p.task_id for p in projections if p.state is DerivedTaskState.BLOCKED]

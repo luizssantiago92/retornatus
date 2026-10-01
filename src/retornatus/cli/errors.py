@@ -33,8 +33,7 @@ def translate_cli_error(exc: BaseException) -> tuple[str, int] | None:
         return (f"Invalid JSON: {exc.msg}", 2)
     if isinstance(exc, sqlite3.OperationalError):
         return (
-            "Search query is not valid for the index. "
-            "Use plain words; punctuation is matched literally.",
+            "Search query is not valid for the index. Use plain words; punctuation is matched literally.",
             2,
         )
     if isinstance(exc, FileNotFoundError):

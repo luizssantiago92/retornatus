@@ -66,13 +66,8 @@ class TaskService:
             allowed.add(TaskLifecycle.PENDING)
             allowed.add(TaskLifecycle.ACTIVE)
         if lifecycle not in allowed:
-            raise TaskLifecycleError(
-                f"Cannot transition {task_id} {current.value} → {lifecycle.value}"
-            )
-        updated_tasks = [
-            t.model_copy(update={"lifecycle": lifecycle}) if t.id == task_id else t
-            for t in action.tasks
-        ]
+            raise TaskLifecycleError(f"Cannot transition {task_id} {current.value} → {lifecycle.value}")
+        updated_tasks = [t.model_copy(update={"lifecycle": lifecycle}) if t.id == task_id else t for t in action.tasks]
         updated = action.model_copy(update={"tasks": updated_tasks})
         self.repo.save_action(updated, expected=rev)
         return updated
