@@ -74,7 +74,7 @@ retornatus skill --help
 | `evidence run [options] -- <command…>` | Run a command (no shell, cwd = project root) and record `provenance=executed` |
 | `checks run -c <C-id>` | Execute `[assurance] required_checks` and record Evidence |
 | `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates. `--json` prints the [verdict envelope](JSON-output.md) |
-| `gate suppressions` | STOP when added lines contain suppression or skip markers (`--staged`, `--base`, `--json`) |
+| `gate suppressions` | STOP when added lines contain suppression or skip markers. The default scan includes untracked non-ignored files; `--staged` and `--base` do not (`--json`) |
 | `gate scope <C-id>` | STOP when the diff leaves Task resources or hits denied/sensitive paths (`--base`, `--staged`, `--json`) |
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
 | `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |

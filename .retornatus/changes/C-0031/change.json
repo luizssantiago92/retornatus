@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0031",
+  "title": "Scan untracked files in gate suppressions",
+  "demand": {
+    "schema_version": 1,
+    "statement": "The CLI command gate suppressions must also scan untracked non-ignored files, treating each as added lines, while --base and a clean CI checkout stay unchanged. Gitignored files stay out of scope.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T13:37:40.968662Z"
+}
