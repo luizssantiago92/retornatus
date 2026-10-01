@@ -8,6 +8,7 @@ No universal hashing infrastructure.
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
@@ -80,6 +81,7 @@ _HARNESS_DIRTY_PREFIXES = (
     ".retornatus/index/",
     ".retornatus/runtime/",
 )
+_COMMIT_SHA = re.compile(r"^[0-9a-fA-F]{7,64}$")
 
 
 def git_toplevel(root: Path) -> Path | None:
@@ -220,6 +222,48 @@ def subjects_with_uncommitted_changes(root: Path, subjects: list[str]) -> set[st
         if path_has_uncommitted_changes(root, rel):
             dirty.add(subject)
     return dirty
+
+
+def commit_delta_is_harness_only(root: Path, recorded: str, head: str) -> bool:
+    """True when ``recorded`` and ``head`` differ only by harness bookkeeping.
+
+    Used so committing Evidence under ``.retornatus/changes/`` does not stale a
+    required check that ran against the previous commit. A source path in the
+    delta returns False. Missing or non-hex revisions return False.
+    """
+    recorded_text = recorded.strip()
+    head_text = head.strip()
+    if not _COMMIT_SHA.fullmatch(recorded_text) or not _COMMIT_SHA.fullmatch(head_text):
+        return False
+    if recorded_text.casefold() == head_text.casefold():
+        return True
+    try:
+        completed = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "diff",
+                "--name-only",
+                "--diff-filter=ACDMRTUXB",
+                recorded_text,
+                head_text,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    if completed.returncode != 0:
+        return False
+    paths = [
+        line.strip().replace("\\", "/")
+        for line in completed.stdout.splitlines()
+        if line.strip()
+    ]
+    return all(_harness_bookkeeping(path) for path in paths)
 
 
 def _harness_bookkeeping(rel: str) -> bool:

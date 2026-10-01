@@ -79,7 +79,7 @@ required_checks = [
 - recorded `git_commit` equal to current HEAD
 - a clean worktree at execution time, and no uncommitted source changes now
 
-Evidence files Retornatus just wrote under `.retornatus/changes/` do not, by themselves, count as a dirty tree. Any other uncommitted path does. `allow_self_reported` does not bypass a configured check.
+Evidence files Retornatus just wrote under `.retornatus/changes/` do not, by themselves, count as a dirty tree. Any other uncommitted path does. Committing those files does not stale the check either, when the commits after the recorded SHA change only `.retornatus/changes/`, `.retornatus/index/`, or `.retornatus/runtime/`. The same rule applies to a `commit:<sha>` subject state. A later commit that changes any other path does. `allow_self_reported` does not bypass a configured check.
 
 ```bash
 retornatus checks run -c C-0001

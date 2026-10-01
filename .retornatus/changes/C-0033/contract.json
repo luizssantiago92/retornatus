@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0033",
+  "version": 1,
+  "what": "Set [assurance] required_checks in .retornatus/config.toml to the five commands this repository always runs, document them in CONTRIBUTING.md and CHANGELOG.md, and keep verify SATISFIED for this Change after those commands are recorded on a clean tree. Older Changes stay unmodified.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CONTRIBUTING.md is documented and contains the repository required checks",
+    "CHANGELOG.md is documented and contains an Unreleased required checks entry",
+    "The file /.retornatus/config.toml is documented with required_checks"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T14:39:32.140056Z"
+}

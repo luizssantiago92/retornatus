@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from enum import StrEnum
 from typing import Any
 
@@ -171,6 +171,7 @@ def evidence_is_fresh(
     evidence: Evidence,
     *,
     current_subject_states: dict[str, str] | None = None,
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> bool:
     """
     Derive validity/staleness when current subject state is known.
@@ -180,6 +181,8 @@ def evidence_is_fresh(
 
     Commit-based states (``commit:<sha>``) compare on the SHA only; optional
     suffixes like ``|review:approved`` are ignored for freshness.
+    ``commit_equivalent`` may treat ``commit:<recorded>`` as fresh when the only
+    files changed since that SHA are harness bookkeeping.
     """
     if not current_subject_states or not evidence.subject_state:
         return True
@@ -188,7 +191,23 @@ def evidence_is_fresh(
         return True
     recorded = evidence.subject_state.split("|", 1)[0].strip()
     current_core = current.split("|", 1)[0].strip()
-    return recorded == current_core
+    if recorded == current_core:
+        return True
+    return _commit_states_equivalent(recorded, current_core, commit_equivalent)
+
+
+def _commit_states_equivalent(
+    recorded: str,
+    current: str,
+    commit_equivalent: Callable[[str], bool] | None,
+) -> bool:
+    prefix = "commit:"
+    if commit_equivalent is None:
+        return False
+    if not recorded.startswith(prefix) or not current.startswith(prefix):
+        return False
+    recorded_sha = recorded[len(prefix) :].strip()
+    return bool(recorded_sha) and commit_equivalent(recorded_sha)
 
 
 def _evidence_supports_claim(evidence: Evidence, claim: Claim) -> bool:
@@ -274,6 +293,7 @@ def required_check_issue(
     *,
     git_head: str | None,
     worktree_clean: bool | None,
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> tuple[str, str] | None:
     """Why executed evidence fails an owner-declared required check.
 
@@ -282,6 +302,11 @@ def required_check_issue(
 
     Self-reported execution evidence stays unverified even when
     ``allow_self_reported`` is set: the owner named the commands that count.
+
+    ``commit_equivalent`` may accept a recorded commit that is not HEAD when
+    the only files changed since that commit are harness bookkeeping (evidence
+    just committed under ``.retornatus/changes/``). A missing callback keeps
+    the strict HEAD match.
     """
     if not checks or evidence.type not in EXECUTION_EVIDENCE_TYPES:
         return None
@@ -313,7 +338,15 @@ def required_check_issue(
     if git_head is None:
         return None
     recorded = (evidence.git_commit or "").strip()
-    if not recorded or recorded.casefold() != git_head.strip().casefold():
+    head = git_head.strip()
+    same_commit = bool(recorded) and recorded.casefold() == head.casefold()
+    equivalent = bool(
+        recorded
+        and not same_commit
+        and commit_equivalent is not None
+        and commit_equivalent(recorded)
+    )
+    if not same_commit and not equivalent:
         shown = recorded or "none"
         return (
             "stale",
@@ -385,6 +418,7 @@ def evaluate_assurance(
     worktree_clean: bool | None = None,
     uncommitted_subjects: set[str] | None = None,
     uncommitted_mode: str = "default",
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> AssuranceResult:
     """
     Evaluate whether Evidence structurally supports each Claim.
@@ -397,7 +431,8 @@ def evaluate_assurance(
       provenance is ``executed`` and the exit code is 0, unless
       ``allow_self_reported`` is set
     - When ``required_checks`` is set, execution evidence must be an exact argv
-      match, exit 0, recorded commit == ``git_head``, and a clean worktree.
+      match, exit 0, recorded commit == ``git_head`` (or equivalent via
+      ``commit_equivalent``), and a clean worktree.
       ``allow_self_reported`` does not bypass that.
     - Uncommitted edits to a claim subject path are stale when the mode fails
       (default: execution types fail, narrative types warn)
@@ -416,6 +451,7 @@ def evaluate_assurance(
                 checks,
                 git_head=git_head,
                 worktree_clean=worktree_clean,
+                commit_equivalent=commit_equivalent,
             )
             if issue is not None:
                 check_issues[item.id] = issue
@@ -488,7 +524,11 @@ def evaluate_assurance(
         fresh = [
             e
             for e in structural
-            if evidence_is_fresh(e, current_subject_states=current_subject_states)
+            if evidence_is_fresh(
+                e,
+                current_subject_states=current_subject_states,
+                commit_equivalent=commit_equivalent,
+            )
         ]
         fresh_ids = {id(e) for e in fresh}
         stale = [e for e in structural if id(e) not in fresh_ids]

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "C-0033/E-020",
+  "type": "build_result",
+  "subject": "/build_docs_html.py",
+  "source": "uv-lock",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T14:49:43.331402Z",
+  "subject_state": "commit:ef589ad0802de82d4bb1e8f6d2eebf4d43596cd9",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "lock",
+    "--check"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T14:49:43.268668Z",
+  "ended_at": "2026-10-01T14:49:43.277751Z",
+  "duration_ms": 9,
+  "output_sha256": "67adf164361cb1476c2e261d8af1a7c6874a0b377eff42183919a283c1070d86",
+  "output_tail": "Resolved 36 packages in 1ms\n",
+  "output_artifact": ".retornatus/changes/C-0033/evidence/E-020.output.txt",
+  "git_commit": "ef589ad0802de82d4bb1e8f6d2eebf4d43596cd9",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0033/claim-done-4",
+      "note": null
+    }
+  ]
+}
