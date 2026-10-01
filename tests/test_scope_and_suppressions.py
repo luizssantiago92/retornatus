@@ -57,11 +57,11 @@ def test_suppressions_flag_added_markers_and_honor_allowlists(tmp_path: Path) ->
     source.parent.mkdir()
     source.write_text("def ok() -> None:\n    return None\n", encoding="utf-8")
     _commit(tmp_path, "app")
-    noqa = "no" + "qa"
+    marker = "no" + "qa"
     type_ignore = "type: " + "ignore"
     no_cover = "pragma: " + "no cover"
     source.write_text(
-        f"def ok() -> None:  # {noqa}\n    return None  # {type_ignore}\n    # {no_cover}\n",
+        f"def ok() -> None:  # {marker}\n    return None  # {type_ignore}\n    # {no_cover}\n",
         encoding="utf-8",
     )
     scanned = runner.invoke(app, ["gate", "suppressions", "--path", str(tmp_path)])

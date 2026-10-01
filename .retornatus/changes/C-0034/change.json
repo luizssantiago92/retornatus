@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0034",
+  "title": "Adopt ruff format and blame ignore revs",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Maintainers must adopt ruff format for Python under src, tests, and scripts. Scope is one formatting commit, a root .git-blame-ignore-revs file naming that commit, a CONTRIBUTING.md note for blame.ignoreRevsFile, a ruff format --check step on the existing CI lint job, and a CHANGELOG Unreleased entry. Out of scope: behavior changes, job renames, matrix changes, merging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "QUICK",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T15:11:15.000535Z"
+}
