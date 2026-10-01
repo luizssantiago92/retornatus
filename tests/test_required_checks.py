@@ -181,6 +181,7 @@ def test_evidence_commit_does_not_stale_required_check(tmp_path: Path) -> None:
             "/health",
             "--claim",
             "C-0001/claim-done-1",
+            "--git-state",
             "--",
             *argv,
         ],

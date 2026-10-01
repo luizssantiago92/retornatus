@@ -277,7 +277,11 @@ def _evidence_trust(
     )
     if issue is not None:
         return issue[0]
-    if not evidence_is_fresh(item, current_subject_states=current_states):
+    if not evidence_is_fresh(
+        item,
+        current_subject_states=current_states,
+        commit_equivalent=commit_equivalent,
+    ):
         return "stale"
     if item.subject in dirty_subjects and uncommitted_subject_fails(item.type, uncommitted_mode):
         return "stale"

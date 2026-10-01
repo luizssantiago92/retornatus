@@ -171,6 +171,7 @@ def evidence_is_fresh(
     evidence: Evidence,
     *,
     current_subject_states: dict[str, str] | None = None,
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> bool:
     """
     Derive validity/staleness when current subject state is known.
@@ -180,6 +181,8 @@ def evidence_is_fresh(
 
     Commit-based states (``commit:<sha>``) compare on the SHA only; optional
     suffixes like ``|review:approved`` are ignored for freshness.
+    ``commit_equivalent`` may treat ``commit:<recorded>`` as fresh when the only
+    files changed since that SHA are harness bookkeeping.
     """
     if not current_subject_states or not evidence.subject_state:
         return True
@@ -188,7 +191,23 @@ def evidence_is_fresh(
         return True
     recorded = evidence.subject_state.split("|", 1)[0].strip()
     current_core = current.split("|", 1)[0].strip()
-    return recorded == current_core
+    if recorded == current_core:
+        return True
+    return _commit_states_equivalent(recorded, current_core, commit_equivalent)
+
+
+def _commit_states_equivalent(
+    recorded: str,
+    current: str,
+    commit_equivalent: Callable[[str], bool] | None,
+) -> bool:
+    prefix = "commit:"
+    if commit_equivalent is None:
+        return False
+    if not recorded.startswith(prefix) or not current.startswith(prefix):
+        return False
+    recorded_sha = recorded[len(prefix) :].strip()
+    return bool(recorded_sha) and commit_equivalent(recorded_sha)
 
 
 def _evidence_supports_claim(evidence: Evidence, claim: Claim) -> bool:
@@ -505,7 +524,11 @@ def evaluate_assurance(
         fresh = [
             e
             for e in structural
-            if evidence_is_fresh(e, current_subject_states=current_subject_states)
+            if evidence_is_fresh(
+                e,
+                current_subject_states=current_subject_states,
+                commit_equivalent=commit_equivalent,
+            )
         ]
         fresh_ids = {id(e) for e in fresh}
         stale = [e for e in structural if id(e) not in fresh_ids]
