@@ -114,9 +114,22 @@ def test_readme_anchor_matches_em_dash_heading() -> None:
 
 def test_readme_news_does_not_pin_a_package_version() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    section = _section(readme, "What\u2019s new (1.4.0)", "What\u2019s new (1.3.0)")
+    assert "What\u2019s new (1.4.0)" not in readme
+    assert "What\u2019s new (1.3.0)" not in readme
+    assert "What\u2019s new (1.2" not in readme
+    assert "What\u2019s new (1.1" not in readme
+    section = _section(readme, "## What\u2019s new", "\n## ")
     assert "retornatus==" not in section
     assert "current release" in section
+    assert "1.5" in section
+    assert "1.7.0" in section
+    assert "hook file-edit" in section
+    assert "scope_mode" in section
+    changelog = (
+        "https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md"
+    )
+    assert changelog in section
+    assert 150 <= len(readme.splitlines()) <= 200
 
 
 def test_credits_license_and_prd_link_text() -> None:

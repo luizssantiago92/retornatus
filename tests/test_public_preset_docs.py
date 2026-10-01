@@ -13,7 +13,8 @@ _ASSET_BUDGET = 49_268 + 63_046
 def test_readme_presets_section_names_each_preset() -> None:
     text = (ROOT / "README.md").read_text(encoding="utf-8")
     start = text.index("## Presets")
-    section = text[start : text.index("## 2. Verify readiness")]
+    next_heading = text.index("\n## ", start + 1)
+    section = text[start:next_heading]
     for name in PRESETS:
         assert f"`{name}`" in section
     assert "retornatus init --preset fastapi" in section

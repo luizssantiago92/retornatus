@@ -25,393 +25,168 @@
 [![CI](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml/badge.svg)](https://github.com/luizssantiago92/retornatus/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/luizssantiago92/retornatus/blob/main/LICENSE)
 
-**Repo-native governance harness** for AI coding agents (Cursor, Claude Code, Codex, and similar).
-
-Agents are fast — and optimistic. They ship code, summarize what they *think* they did, and move on. Retornatus installs a **repeatable contract** into your repo: agree on the finish line in writing, execute under that agreement, and close only when **evidence** supports the goal. Intent, progress, and lessons live under **`.retornatus/` in git**, not in a chat scrollback.
-
-Your coding agent still **writes the code**. Retornatus **governs the loop and keeps the record**.
+Agents are fast — and optimistic. They ship code, summarize what they think they did, and move on. Retornatus keeps the finish line, the proof, and the notes in **`.retornatus/` inside git**, so the next session does not start from zero. Your coding agent still **writes the code**.
 
 | Without Retornatus | With Retornatus |
 | --- | --- |
 | Jumps to code and says “done” | Written finish line first; “done” needs evidence |
 | Each chat starts from zero | `.retornatus/` survives sessions and handoffs |
-| Same ceremony for a typo and a payment flow | Complexity lanes match depth to risk |
-| Whole playbook pasted every turn | Hub + at most one specialization Skill per turn |
-| Agent invents a Skill from a vague prompt | `intake analyze` proposes; you confirm `CREATE=yes` |
-| Lessons vanish when the tab closes | Learnings (and optional Rules) stay in the repo |
+| Same ceremony for a typo and a payment flow | Depth matches the risk |
+| The whole manual pasted every turn | One short map each turn; extra guidance only when the task needs it |
+| Agent invents a procedure from a vague prompt | You confirm before a new procedure is saved |
+| The agent stops when it feels finished | Optional hooks carry the open goal into the session, the edit, and the end of the turn |
+| Lessons vanish when the tab closes | Notes (and optional rules you accept) stay in the repo |
 
-Package **1.7.0** is on [PyPI](https://pypi.org/project/retornatus/). Maintainer release steps: [CONTRIBUTING](https://github.com/luizssantiago92/retornatus/blob/main/CONTRIBUTING.md#releases).
+Package **1.7.0** is on [PyPI](https://pypi.org/project/retornatus/).
 
-[What it is](#what-it-is) · [Install](#1-install) · [Presets](#presets) · [Verify](#2-verify-readiness) · [First change](#3-run-your-first-change) · [Checklist](#getting-started-checklist) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Commands](#commands-cheat-sheet) · [Cloud agents](#cloud-and-remote-agents) · [Docs](#documentation) · [Credits](#credits)
+[What it is](#what-it-is) · [30 seconds](#see-it-in-30-seconds) · [What’s new](#whats-new) · [Quick start](#quick-start) · [Presets](#presets) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Hooks](#agent-hooks) · [Docs](#documentation)
 
----
+## See it in 30 seconds
+
+A Change for `GET /health` already has a self-reported test note. That note does not count. Record the command, then verify again. Trimmed from a real run:
+
+```console
+$ retornatus verify C-0001
+C-0001/E-001 type=test_result provenance=self_reported status=UNVERIFIED
+{
+  "verdict": "NOT_SATISFIED",
+  "rationale": "Unverified claims (self-reported execution evidence does not satisfy): C-0001/claim-done-1. Re-record with `evidence run` or pass --allow-self-reported."
+}
+
+$ retornatus evidence run -c C-0001 -t test_result -s "/health" \
+    --claim C-0001/claim-done-1 -- python3 -c 'print("ok")'
+Recorded C-0001/E-002
+provenance=executed exit_code=0 timed_out=false
+git_commit=28be3be8c93e098080c9692e32a18c263b525f0e dirty=False
+
+$ retornatus verify C-0001
+C-0001/E-002 type=test_result provenance=executed exit_code=0 status=executed
+{
+  "verdict": "SATISFIED",
+  "rationale": "All claims have matching attributable evidence"
+}
+```
 
 ## What it is
 
-A **governance harness** for AI-assisted software work — not an IDE, not an LLM runtime, and not an agent marketplace. The host agent still writes code; Retornatus structures obligations, proof, and memory under **`.retornatus/`**.
+A **governance harness** — not an IDE, not a model, and not an agent store. The host agent still writes code. Retornatus keeps the agreement, the proof, and the memory under **`.retornatus/`**.
 
-After install, work moves through a durable loop you can inspect in files:
+**Demand** → **Situation** → **Contract** → **Action** → **Evidence** → **Assurance** → **Learning**
 
-**Demand** → **Situation** (requirements) → **Contract** (WHAT + DONE) → **Action** (+ **Tasks** when needed) → **Evidence** → **Assurance** → **Learning**
+You approve the product intent. The agent implements. Push, merge, and publish stay on your terms ([git governance](https://luizssantiago92.github.io/retornatus/guide/git-governance.html)).
 
-Along that loop the harness also:
+## What’s new
 
-- Sizes ceremony to risk (**QUICK** / **STANDARD** / **COMPLEX**)
-- Surfaces **focused questions** when the ask is fuzzy (`change elicit`)
-- Scores readiness (**Process** vs **Brakes**) via `doctor`
-- Stages freeform chat into Skill proposals only with **human confirmation** (`intake analyze`)
-- Loads at most **one** specialization Skill when needed (`skill need` / `skill create`)
+One block for the **current release** **1.7.0**, plus work already on `main`. From **1.5** through **1.7**:
 
-You approve product intent and consequential Rules. The agent implements. Push, merge, and publish stay on your terms ([git governance](https://luizssantiago92.github.io/retornatus/guide/git-governance.html)).
+- **Presets (1.5)** — `retornatus init --preset` for `python`, `python-platform`, `fastapi`, `django`, `rag`, and `worker`
+- **Pull requests (1.5)** — the [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) comments the verdict on the PR
+- **Agent hooks** — `hook stop` (1.6; 1.7 lets a real question end the turn), `hook session-start` (1.7), and `hook file-edit` (unreleased scope warning; `[hooks] scope_mode` is `warn`, `block`, or `off`)
 
----
+Full notes: [CHANGELOG.md](https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md).
 
-## 1. Install
+## Quick start
 
-You need **Python 3.11+**. We recommend [`uv`](https://docs.astral.sh/uv/) (installs Python CLIs quickly). If you do not have `uv` yet:
+Python 3.11+. Install [uv](https://docs.astral.sh/uv/) if you do not have it, then run this in **your application repository** (the project the agent should change):
 
 ```bash
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-# macOS / Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Then run these in **your application repository** (the project the agent should change — not necessarily this harness repo):
-
-```bash
-# Install the Retornatus CLI once on your machine
 uv tool install retornatus
-
 cd /path/to/your-app
-
-# Create .retornatus/ (config + durable memory layout)
-retornatus init
-
-# Install the hub skill into your agent environment (e.g. .cursor/skills/)
-retornatus integrate
-
-# Readiness check — Process vs Brakes scores
-retornatus doctor
+retornatus init && retornatus integrate && retornatus doctor
 ```
 
 | Command | What it does |
 | --- | --- |
-| **`uv tool install retornatus`** | Puts the `retornatus` CLI on your PATH via uv |
-| **`init`** | Creates `.retornatus/config.toml` and the canonical folders for Changes, Evidence, Learnings. Optional `--preset` writes a packaged config — see [Presets](#presets) |
-| **`integrate`** | Projects the **hub skill** so your AI agent knows the Retornatus loop |
-| **`doctor`** | Audits readiness — **Process** (healthy workflow) vs **Brakes** (hard STOPs / gates) |
+| **`uv tool install retornatus`** | Puts `retornatus` on your PATH |
+| **`init`** | Creates `.retornatus/`. Optional `--preset` — see [Presets](#presets) |
+| **`integrate`** | Installs the hub skill so the agent knows the loop |
+| **`doctor`** | Readiness: healthy workflow versus hard stops |
 
-One-shot without a global install: `uvx retornatus --help`. Package page: [PyPI](https://pypi.org/project/retornatus/).
+One-shot without a global install: `uvx retornatus --help`. You are ready when `.retornatus/` exists, the hub skill is visible to the agent, and `doctor` is not stopping on “not initialized.” For a repo that already has history: `retornatus project-init` and `retornatus wake --bridges`.
 
-Day to day you work in **agent chat**; the agent (following the hub skill) calls the CLI when a gate or record is needed.
+Ask the agent for a written Change before code: *Create a Retornatus Change for GET /health returning 200. Contract and gates before code.*
 
-**Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Environments](https://luizssantiago92.github.io/retornatus/guide/environments.html) · [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html)
-
----
+**Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Environments](https://luizssantiago92.github.io/retornatus/guide/environments.html) · [FAQ](https://luizssantiago92.github.io/retornatus/guide/faq.html)
 
 ## Presets
 
-`init` without `--preset` writes a minimal config. `--preset` writes a starting `.retornatus/config.toml` from a TOML file shipped in the package. List them with `retornatus init --list-presets`. An existing `config.toml` stays in place unless you pass `--force-config`.
+`init` without `--preset` writes a minimal config. `retornatus init --list-presets` lists packaged configs. An existing `config.toml` stays unless you pass `--force-config`.
 
-| Preset | Purpose | What it adds |
-| --- | --- | --- |
-| `python` | Python 3.11+ repo whose proof is tests and static checks | pytest, ruff, and mypy as required checks; code roots `src/`, `app/`, and `tests/` |
-| `python-platform` | Python backend plus deploy files or model behavior | Extends `python`. Path-triggered **ship** and **AI** rules |
-| `fastapi` | FastAPI service | Extends `python-platform`. API layout globs; Alembic paths count as ship |
-| `django` | Django project | Extends `python-platform`. Django layout globs; migration paths count as ship |
-| `rag` | RAG, LLM, or MCP service | Extends `python-platform`. Retrieval and prompt globs; a stronger AI surface |
-| `worker` | Background jobs and queues (Celery, RQ, Dramatiq, arq, scheduled jobs) | Extends `python-platform`. Task and queue globs; task code counts as ship and needs a retry note |
+`python` (pytest, ruff, and mypy), `python-platform` (deploy files or model behavior), `fastapi`, `django`, `rag`, and `worker` (background jobs).
 
 ```bash
 retornatus init --preset fastapi
 ```
 
-**Ship** means deploy files: a Dockerfile, Compose, Terraform, Helm, or GitHub Actions workflows. When one of those paths is part of the Change, `verify` expects the matching command to have been executed, plus a short note on how you roll back. With `worker`, task, job, schedule, and queue files count as ship too, and the note must also say how the job retries and why running it again is safe. **AI** means prompts, evals, MCP, or retrieval code. When one of those paths is part of the Change, `verify` expects the eval command to have run, plus a note on what happens when the model is down. If those paths are not in the Change, the rule is not required.
-
-These checks record that a command ran and exited 0. They do not review a Terraform plan, audit security, or score retrieval quality.
-
-Full page: [Presets](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Presets.md).
-
----
-
-## 2. Verify readiness
-
-Re-run `doctor` after upgrades or machine changes. You are ready when:
-
-- `.retornatus/` exists and `init` has been run in this project  
-- The hub skill is visible to your agent (after `integrate`)  
-- `doctor` is not hard-stopping on “not initialized”  
-- Your AI coding agent can open the project and follow the hub skill  
-
-For brownfield repos, also consider `retornatus project-init` and `retornatus wake --bridges` so existing context is captured before the first Change.
-
----
-
-## 3. Run your first change
-
-Open your AI coding agent in the project and ask for a concrete goal, for example:
-
-> Create a Retornatus Change for GET /health returning 200. Contract and gates before code.
-
-Ask it to follow the installed **Retornatus hub skill**. Prefer chat for product intent; use the CLI when you want mechanical gates yourself.
-
-| Step | You do | Agent / CLI does |
-| --- | --- | --- |
-| 1 | Describe what you want | Optional **intake** staging (`intake analyze`) and/or **requirements analysis** (`change elicit`) — answer focused questions in chat; size the work (`change classify`) |
-| 2 | Agree how you’ll know it’s done | Create/activate the finish line → check it (`gate contract`) |
-| 3 | Let it build | Work the next ready step (`loop next` / `run`); specialize only if needed (`skill need` → human confirm → `skill create`) |
-| 4 | Demand proof | Attach proof to the goals → done check (`verify`) |
-
-If the agent jumps straight to code: *Stop. Finish Situation (requirements) + Contract (and pass `gate contract`) before the build sprint.*
-
-**Go deeper:** [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Tutorials](https://luizssantiago92.github.io/retornatus/guide/tutorials/) · [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html)
-
----
-
-## Getting started checklist
-
-- [ ] Python 3.11+ available (`python --version`)
-- [ ] Ran `uv tool install retornatus` (or use `uvx`)
-- [ ] In **your app** repo: `retornatus init` → `integrate` → `doctor`
-- [ ] Opened the project in your AI coding agent and confirmed the hub skill is visible
-- [ ] Asked for a written Change / Contract before implementation
-- [ ] Know where docs live: [Website](https://luizssantiago92.github.io/retornatus/) · [Docs hub](https://luizssantiago92.github.io/retornatus/guide/)
-
-Stuck? [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [FAQ](https://luizssantiago92.github.io/retornatus/guide/faq.html)
-
----
+These checks record that a command ran and exited 0. They do not review a Terraform plan or score retrieval quality. Full page: [Presets](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Presets.md).
 
 ## How it works
 
-A focused software-construction cycle — durable files under `.retornatus/`, gates as brakes:
-
-```text
-Understand  →  Agree     →  Build              →  Prove           →  Learn
-Situation      Contract     Action (+ Tasks)      Evidence            Learning
-(requirements) (WHAT+DONE)  (agent writes code)   + verify            (+ Rules?)
-```
-
-| Step | In plain words | Command / artifact |
+| Step | In plain words | Command |
 | --- | --- | --- |
-| **Understand** | Before coding, clarify what “login” / “fix X” actually means | `change elicit` → Situation |
-| **Agree** | Write the finish line you both accept | Contract → `gate contract` |
-| **Build** | Implement under that agreement | Action / Tasks → `loop next` / `run` |
-| **Prove** | “Done” needs evidence, not a chat summary | Evidence → `verify` |
-| **Learn** | Keep what mattered for the next Change | Learning / optional Rules |
+| **Understand** | Clarify the ask before coding | `change elicit` |
+| **Agree** | Write the finish line | `gate contract` |
+| **Build** | Implement under that agreement | `loop next` / `run` |
+| **Prove** | “Done” needs evidence | `evidence run` → `verify` |
+| **Learn** | Keep what mattered | `change learn` |
 
-When the ask is fuzzy, `change elicit` exits `1` and lists **focused questions** (with options). The agent should ask them in chat; you answer; record with `--answer TOPIC=…`. Clear asks can skip straight to a Contract.
-
-Optional: `change classify` picks QUICK / STANDARD / COMPLEX so ceremony matches risk.
-
-For a freeform chat prompt that might need specialization, prefer **`intake analyze`**: it stages the ask against `.retornatus/`, proposes a Skill only when you answer `CREATE=yes`, and never auto-creates from chat alone. Early signal without creating: `skill need --prompt "…"`.
-
-**Status / overview** are projections. If they disagree with files, **the files win**.
-
----
+A fuzzy ask makes `change elicit` exit `1` and list questions. A prompt that might need a new procedure goes through `intake analyze`; nothing is saved until you answer `CREATE=yes`. [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html).
 
 ## What you get — and why it helps
 
-### Requirements analysis (Situation)
+**Requirements.** Without a written situation, “add login” becomes three products in three chats. [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html).
 
-**Without it:** “Add login” becomes three different products in three chats.
+**Memory.** Changes, proof, and lessons live in git. `wake` rebuilds continuity. [Memory](https://luizssantiago92.github.io/retornatus/guide/memory.html).
 
-**With Situation:** The harness surfaces material questions (actors, scope, out of scope, how you’ll know it worked), reads kickoff files when present, and refuses to pretend the Contract is ready until those answers exist.
+**Proof.** `verify` returns `SATISFIED`, `NOT_SATISFIED`, or `INCONCLUSIVE`. Test, build, and lint results count only when Retornatus ran the command. Required checks, freshness, and `gate suppressions` / `gate scope`: [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html).
 
-### Memory — the repo remembers
+**Depth.** A typo stays small. Payments, security, or a new design get a deeper pass.
 
-Changes, Contracts, Evidence, and Learnings live under `.retornatus/` in git. `wake` rebuilds continuity. Chat is a window; **git is the source of truth**.
+**One map, then one extra guide.** The hub skill is the short map every turn. A specialization Skill is an optional playbook for one kind of work — at most one, and only after you confirm it. [Skills](https://luizssantiago92.github.io/retornatus/guide/skills.html).
 
-### Proof before “done”
+## Agent hooks
 
-A Contract states WHAT and DONE. Evidence binds to those claims. `verify` returns SATISFIED / NOT_SATISFIED / INCONCLUSIVE. Gates return non-zero = **STOP**.
+`retornatus integrate --hooks` installs three opt-in hooks for Claude Code, Cursor, and Codex. `hook session-start` injects the active Change. `hook file-edit` warns when an edit leaves that Change’s scope (`[hooks] scope_mode` is `warn` by default, or `block`, or `off`). `hook stop` asks the agent to keep going when the Change is not `SATISFIED`, and lets a real question to you end the turn. They fail open. The pull-request check stays the source of truth. Guide: [Agent hooks](https://luizssantiago92.github.io/retornatus/guide/agent-hooks.html).
 
-Test, security-test, build, and lint results only count when Retornatus ran the command (`evidence run … -- <command>`). The record stores argv, exit code, timing, a SHA-256 of combined stdout/stderr, and the git HEAD (when the directory is a repository). `evidence add` is self-reported: for those types `verify` marks the evidence **UNVERIFIED** and does not exit 0. Narrative notes (`review_result`, `repository_observation`) can still be recorded with `evidence add` and are labeled self-reported. While migrating, `verify --allow-self-reported` or `[assurance] allow_self_reported = true` in `.retornatus/config.toml` restores the old acceptance. A recorded commit that no longer matches HEAD is a warning, not a failure — unless the owner named the commands that count.
+## Commands
 
-**Required checks.** Put the real commands in `[assurance] required_checks` (`name` + `run` argv, optional `types`). `verify` then accepts execution evidence only when the argv matches one of those checks exactly, the exit code is 0, the recorded commit is the current HEAD, and the worktree has no uncommitted source changes. `evidence run -- true` does not pass. `verify --run-checks` and `checks run` execute the declared commands through the same capture path. `allow_self_reported` does not bypass a configured check.
-
-**Freshness.** Uncommitted or untracked edits to a claim subject path make that evidence stale. Execution types fail by default; narrative types warn. Set `[assurance] uncommitted_changes` to `"fail"` or `"warn"` to override.
-
-**Diff gates and hooks.** `gate suppressions` stops newly added skip and ignore markers. `gate scope` compares the git diff with the change’s Task resources (denied paths always fail; sensitive paths need a satisfied `review_result` or `security_test` claim). `hooks install` wires both into pre-commit, and a commit-msg hook that reads the message from `$1`.
-
-**Agent hooks.** `retornatus integrate --hooks` writes an opt-in session-start hook and a turn-end Stop hook for Claude Code, Cursor, and Codex. Session start injects the active Change. If that Change is not `SATISFIED`, Stop asks the agent to keep going and record evidence. Both fail open, and they do not replace the pull-request check. Guide: [Agent hooks](https://luizssantiago92.github.io/retornatus/guide/agent-hooks.html).
-
-### Ceremony matches risk
-
-QUICK for a typo; STANDARD for a normal feature; COMPLEX when security, payments, or high novelty need more depth.
-
-### Hub + Skills (human-controlled)
-
-The hub skill is the map every turn. At most one specialization Skill while executing — research current sources when needed, not a mega-pack every message.
-
-Two Skill worlds:
-
-| Path | When | Control |
-| --- | --- | --- |
-| **Analyzed intake** | Freeform prompt may need specialization | `intake analyze` → human answers → `--create-skill` only with `CREATE=yes` |
-| **Manual** | You explicitly ask for a Skill | `skill create --need "…"` |
-
-`skill need --prompt` can flag need early (no Action required). Agents must not invent Skills from a vague prompt without your confirmation.
-
-**Go deeper:** [How it works](https://luizssantiago92.github.io/retornatus/guide/how-it-works.html) · [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html) · [Memory](https://luizssantiago92.github.io/retornatus/guide/memory.html) · [Skills](https://luizssantiago92.github.io/retornatus/guide/skills.html)
-
----
-
-## Commands cheat sheet
-
-| Intent | Command |
-| --- | --- |
-| Continuity | `wake`, `doctor`, `status`, `project-init`, `integrate`, `init --preset`, `init --list-presets`, `preset show` |
-| Requirements / lane | `change elicit` (`--answer`, `--write`), `change classify`, `change create`, `change activate` |
-| Prompt intake | `intake analyze` (`--answer`, `--create-skill` with human `CREATE=yes`) |
-| Dashboard | `change overview` |
-| Next work | `loop next` · `task start` / `complete` / `fail` / `reopen` |
-| Skills | `skill need` (`--prompt` / `--action`), `skill create`, `skill activate`, `skill export` |
-| Proof | `evidence run --claim … -- <command>` (tests/build/lint), `evidence add --claim …` (notes), `checks run`, `gate *` (including `suppressions` and `scope`), `verify` / `verify --run-checks` / `verify --allow-self-reported` / `verify --receipt`, `receipt keygen` / `sign` / `verify` |
-| Hooks | `hooks install` / `remove` / `status` (pre-commit + commit-msg) |
-| Agent hooks | `integrate --hooks` / `integrate --remove-hooks` / `hook file-edit` / `hook session-start` / `hook stop` (opt-in; CI stays the source of truth) |
-| Attempt budget | `action budget --max N` · `gate budget` |
-| Learning | `change learn`, `lesson from-gate` |
-| Human boundary | `decision record`, `rule propose` / `activate` · `policy check` |
-
-Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html) · hub skill after `integrate`.
-
----
+Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`. Diff gates: `gate suppressions`, `gate scope`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
 
 ## Verify receipts
 
-`verify --receipt` and `receipt sign` write an **Ed25519** receipt under `.retornatus/assurance/receipts/`. The signature covers the verify verdict. `receipt verify` checks it.
-
-**What a receipt proves.** Someone who held the private key signed that result. It does not prove the agent was sandboxed, and it is not a receipt network.
-
-**Where the keys live.**
-
-| Material | Where | Committed? |
-| --- | --- | --- |
-| Public key | `.retornatus/keys/<key-id>.pub` | Yes. `<key-id>` is the SHA-256 fingerprint of the raw public key |
-| Private key | User config directory, or `RETORNATUS_SIGNING_KEY` (PEM, base64, or even-length hex) | **No.** Never inside the repo, and never copied there from the environment |
-
-`receipt keygen` writes the public key into the repo and the private key under the user config dir (`$XDG_CONFIG_HOME/retornatus` or `%APPDATA%\retornatus`). `receipt keygen --print` prints the private key instead, for a CI secret. `retornatus init` and `receipt keygen` warn on stderr if git already tracks a `*.pem` or `*.key` file.
-
-**Threat model.** An agent that can read the private key can produce a valid signature. Keep `RETORNATUS_SIGNING_KEY` and the config-dir key **out of the agent's environment**. Verification needs only the committed public key, so a fresh clone can check a receipt without the secret.
-
-**CI.** Store the private key as a GitHub Actions secret and sign in CI, where the agent that edits the repo does not see it:
-
-```yaml
-- name: Sign verify receipt
-  env:
-    RETORNATUS_SIGNING_KEY: ${{ secrets.RETORNATUS_SIGNING_KEY }}
-  run: retornatus verify C-0001 --receipt
-```
-
-Anyone who clones the repo (the public key is already in `.retornatus/keys/`) can run `retornatus receipt verify path/to/receipt.json`.
-
-**Legacy HMAC.** Older `HMAC-SHA256` receipts still verify only on a machine that has the old local key. `receipt verify` reports them as `legacy_hmac` with `portable: false` and prints a deprecation warning. That key is not written into the repo.
-
-CLI mistakes print `error: …` instead of a traceback. An invalid id such as `verify ../../../tmp` exits `2`. Search text with quotes or hyphens is matched as literal words (it does not crash). Gates and `verify` still use `0` for pass / SATISFIED and `1` for STOP / not SATISFIED.
-
----
-
-## What’s new (1.4.0)
-
-- **Required checks** — when `[assurance] required_checks` is set, `verify` accepts execution evidence only for those commands (`verify --run-checks`, `checks run`)
-- **Cloud and remote agents** — install the CLI on the clean VM, run `hooks install` on every fresh clone, and leave receipts unsigned
-- **PR gates** — the consumer workflow pins the current release and runs blocking `verify`, `gate suppressions`, and `gate scope`
-- **Trusted Publishing** — tag `v*` on `main` publishes after tests, a distribution contents check, and a matching changelog section
-- **Supply chain** — GitHub Actions are pinned to commit SHAs; `SECURITY.md` and CodeQL cover private reports and Python analysis
-
-## What’s new (1.3.0)
-
-- **Verify receipts** — Ed25519 signature checked with the committed public key; private key stays outside the repo (`verify --receipt`, `receipt verify`). Legacy HMAC receipts are `legacy_hmac` and not portable  
-- **Action attempt budget** — `action budget --max N` + `gate budget` stop runaway retries  
-- **AGENTS.md** map for host agents + CI check that docs HTML stays in sync with markdown  
-- **From Spec Guardrails** migration page + **Landscape** comparison with adjacent harnesses  
-
-## What’s new (1.2.1)
-
-- **Prompt intake** — `intake analyze` stages a freeform request against `.retornatus/`, proposes Skill only with human `CREATE=yes`  
-- **Two Skill worlds** — analyzed intake (controlled) or manual `skill create`  
-- **Early skill need** — `skill need --prompt` without requiring an Action  
-
-## What’s new (1.2.0)
-
-- **Situation as requirements analysis** — focused questions with options, `--answer` / `--write`, kickoff discovery  
-- Focused software cycle in hub/README: Understand → Agree → Build → Prove → Learn  
-
-## What’s new (1.1.x)
-
-- **Change overview** — claims, evidence, tasks, and next work in one view  
-- **Doctor scores** — process health vs hard brakes  
-- **Lessons from gates** — failed checks can guide the next return  
-- **Ops loops** — optional hygiene scans  
-- **Public site** — product landing + full HTML docs on GitHub Pages  
-
----
+`verify --receipt` writes an Ed25519 receipt for the verdict. The private key stays outside the repo; a clone checks the receipt with the committed public key. Keys, the CI signing step, and the threat model: [CLI — Receipts](https://luizssantiago92.github.io/retornatus/guide/cli.html).
 
 ## Cloud and remote agents
 
-A cloud or remote agent (Cursor cloud agent, Codex, Claude Code on a VM, a CI sandbox) starts clean. Install the CLI on that machine. Git does not version hooks, so every fresh clone runs `retornatus hooks install`. Leave receipts unsigned: the private signing key stays off the agent VM. The enforcement is the GitHub pull-request workflow (`verify`, `gate suppressions --base`, `gate scope --base`), wherever the agent ran.
+A cloud agent starts from a clean machine. Install from PyPI. Git does not version hooks, so every fresh clone runs `hooks install`. Leave receipts unsigned.
 
 ```bash
-uv tool install --force git+https://github.com/luizssantiago92/retornatus.git
+pip install retornatus
+# or
+uv tool install retornatus
 export PATH="$HOME/.local/bin:$PATH"
 retornatus hooks install
 retornatus hooks status
 retornatus doctor
 ```
 
-[`templates/ci/retornatus-pr.yml`](https://github.com/luizssantiago92/retornatus/blob/main/templates/ci/retornatus-pr.yml) runs the [GitHub Action](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/GitHub-Action.md) (`uses: luizssantiago92/retornatus@v1`). The action installs Retornatus, runs `verify` and the diff gates, and posts one sticky comment. Full notes: [Cloud agents](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Cloud-agents.md).
-
----
+[`templates/ci/retornatus-pr.yml`](https://github.com/luizssantiago92/retornatus/blob/main/templates/ci/retornatus-pr.yml) runs the [GitHub Action](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/GitHub-Action.md) (`uses: luizssantiago92/retornatus@v1`) and comments the verdict on the PR. Notes: [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html).
 
 ## Documentation
 
-| Want… | Go here |
-| --- | --- |
-| Product story (non-jargon) | [Website](https://luizssantiago92.github.io/retornatus/) |
-| First ten minutes | [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) |
-| Init presets | [Presets](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/Presets.md) |
-| Cloud / remote agents | [Cloud agents](https://luizssantiago92.github.io/retornatus/guide/cloud-agents.html) |
-| Pull-request verdict comment | [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) |
-| Full technical guide | [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) |
-| Concepts | [Overview](https://luizssantiago92.github.io/retornatus/guide/overview.html) · [Concepts](https://luizssantiago92.github.io/retornatus/guide/concepts.html) |
-| Coming from Spec Guardrails | [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) |
-| Adjacent harnesses | [Landscape](https://luizssantiago92.github.io/retornatus/guide/landscape.html) |
-| Product requirements | [PRD](https://github.com/luizssantiago92/retornatus/blob/main/docs/archive/PRD.md) |
-| Credits & lineage | [Credits](https://luizssantiago92.github.io/retornatus/credits.html) |
+[Website](https://luizssantiago92.github.io/retornatus/) · [Quick start](https://luizssantiago92.github.io/retornatus/guide/quick-start.html) · [Docs hub](https://luizssantiago92.github.io/retornatus/guide/) · [From Spec Guardrails](https://luizssantiago92.github.io/retornatus/guide/from-spec-guardrails.html) · [PRD](https://github.com/luizssantiago92/retornatus/blob/main/docs/archive/PRD.md).
 
-Markdown sources for editors: [`docs/guide/`](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/README.md). GitHub Pages generates the HTML from those files. To preview locally, run `python scripts/build_docs_html.py` (the output is gitignored).
-
----
+Sources: [`docs/guide/`](https://github.com/luizssantiago92/retornatus/blob/main/docs/guide/README.md). Pages builds the HTML. Local preview: `python scripts/build_docs_html.py` (output is gitignored).
 
 ## Credits
 
-Ideas are credited by **influence**, not by superficial similarity. Retornatus does not claim novelty for established software-engineering patterns; its contribution is how those guarantees are separated, constrained, and composed.
+Ideas are credited by influence. **[Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails)** (MIT) is the direct predecessor: a separate successor, not a fork. Retornatus keeps the written plan, the gates, the proof, and the memory in a Python CLI under `.retornatus/`.
 
-### Direct predecessor — Spec Guardrails
+Provenance: [credits](https://luizssantiago92.github.io/retornatus/credits.html) · [credits-and-lineage.md](https://github.com/luizssantiago92/retornatus/blob/main/docs/credits-and-lineage.md).
 
-**[Spec Guardrails](https://github.com/luizssantiago92/spec-guardrails)** (MIT) is the **direct predecessor** of Retornatus.
+## Contributing / Maintainers
 
-Retornatus is a **separate successor architecture** informed by building and dogfooding Spec Guardrails. It is **not** a fork, rename, or line-by-line rewrite.
-
-| Proven concern (from Spec Guardrails dogfooding) | How Retornatus carries the guarantee |
-| --- | --- |
-| Repo-native governance | Durable state under `.retornatus/` |
-| Planning before opportunistic coding | Situation (requirements analysis) → Contract before the build sprint |
-| Gates / brakes | Mechanical STOP checks (non-zero exit) |
-| Evidence before “done” | Claim-bound Evidence → Assurance / `verify` |
-| Persistent memory | Changes, Learnings, Rules in git; `wake` continuity |
-| Human checkpoints | Human Decisions for consequential Rules |
-| Environment awareness | Hub skill + host adapters — agent still executes |
-
-**Original work in Retornatus:** Python domain model and CLI, `.retornatus/` layout, Demand / Situation / Contract / Action (plus Finding / Question / Resolution), Evidence separated from Assurance, complexity lanes (QUICK / STANDARD / COMPLEX), on-demand specialization Skills with research gates, human-controlled prompt intake (`intake analyze`), doctor Process vs Brakes, overview / ops / lessons loops, and the public docs site.
-
-**Transitive lineage:** Spec Guardrails itself credits upstream open-source work (spec-driven phases, task graphs, loop engineering, harness vocabulary, and related tools). Those influences arrive **through** Spec Guardrails unless Retornatus independently revisited them — see the full provenance write-up.
-
-**Full credits & lineage:** [credits on the website](https://luizssantiago92.github.io/retornatus/credits.html) · [credits-and-lineage.md](https://github.com/luizssantiago92/retornatus/blob/main/docs/credits-and-lineage.md) · Spec Guardrails’ own [credits](https://github.com/luizssantiago92/spec-guardrails/blob/main/docs/guide/credits.md)
-
----
+Issues and pull requests: [CONTRIBUTING.md](https://github.com/luizssantiago92/retornatus/blob/main/CONTRIBUTING.md). Maintainer release steps: [CONTRIBUTING — Releases](https://github.com/luizssantiago92/retornatus/blob/main/CONTRIBUTING.md#releases).
 
 ## License
 

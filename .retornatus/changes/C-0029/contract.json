@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0029",
+  "version": 1,
+  "what": "README.md is about 150-200 lines, leads with a 30-second verify demo, highlights agent hooks including file-edit, summarizes 1.5-1.7 in one What's new block, and points long receipts, presets, freshness, and credits detail at existing docs.",
+  "constraints": [],
+  "done_criteria": [
+    "The file /README.md contains between 150 and 200 lines, a console demo of verify then evidence run then SATISFIED, one What's new block for releases 1.5 through 1.7 plus hook file-edit, an agent hooks comparison row, a Quick start section, and a PyPI cloud install",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T01:49:50.585044Z"
+}

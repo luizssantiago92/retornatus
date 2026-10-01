@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0029",
+  "title": "README overhaul for 1.5-1.7",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Rewrite README.md so it is shorter, current through 1.7.0 plus the unreleased file-edit scope warning, and portfolio-friendly. Docs only. No product behavior changes.",
+    "kind": "OTHER"
+  },
+  "lane": "QUICK",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T01:49:50.577248Z"
+}

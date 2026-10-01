@@ -109,13 +109,31 @@ retornatus skill --help
 
 ## Receipts
 
-Ed25519. Public key: `.retornatus/keys/<key-id>.pub` (committed). Private key: `RETORNATUS_SIGNING_KEY` or the user config directory — never inside the project, and never copied from the environment onto disk.
+`verify --receipt` and `receipt sign` write an Ed25519 receipt under `.retornatus/assurance/receipts/`. The signature covers the verify verdict. `receipt verify` checks it with the committed public key.
 
-`receipt keygen` writes that private key only outside the repository. `--print` sends it to stdout for a CI secret and does not write a key file. If git already tracks a `*.pem` or `*.key` file, the command prints a warning on stderr. Untrack the file. The ignore rules from `init` keep a later `git add` from picking up a new one, and they do not ignore `.retornatus/keys/*.pub`.
+Someone who held the private key signed that result. The receipt does not prove the agent was sandboxed, and it is not a receipt network.
 
-An agent that can read the private key can still sign. Keep the key out of the agent's environment. Cloud and remote agents leave receipts unsigned. In CI, put the PEM in a GitHub Actions secret and run `retornatus verify <C-id> --receipt` with `RETORNATUS_SIGNING_KEY` set. Clones verify with only the public key. Setup for a clean VM: [Cloud agents](Cloud-agents.md).
+| Material | Where | Committed? |
+| --- | --- | --- |
+| Public key | `.retornatus/keys/<key-id>.pub` | Yes. `<key-id>` is the SHA-256 fingerprint of the raw public key |
+| Private key | User config directory, or `RETORNATUS_SIGNING_KEY` (PEM, base64, or even-length hex) | No. Never inside the repo, and never copied there from the environment |
 
-Legacy HMAC receipts verify only where the old local key exists. The result is `legacy_hmac`, `portable: false`, plus a deprecation warning.
+`receipt keygen` writes the public key into the repo and the private key under the user config dir (`$XDG_CONFIG_HOME/retornatus` or `%APPDATA%\retornatus`). `--print` sends the private key to stdout for a CI secret and does not write a key file. `retornatus init` and `receipt keygen` warn on stderr if git already tracks a `*.pem` or `*.key` file. Untrack that file. The ignore rules from `init` keep a later `git add` from picking up a new one, and they do not ignore `.retornatus/keys/*.pub`.
+
+An agent that can read the private key can still sign. Keep `RETORNATUS_SIGNING_KEY` and the config-dir key out of the agent's environment. Cloud and remote agents leave receipts unsigned. Verification needs only the committed public key, so a fresh clone can check a receipt without the secret. Setup for a clean VM: [Cloud agents](Cloud-agents.md).
+
+Store the private key as a GitHub Actions secret and sign in CI, where the agent that edits the repo does not see it:
+
+```yaml
+- name: Sign verify receipt
+  env:
+    RETORNATUS_SIGNING_KEY: ${{ secrets.RETORNATUS_SIGNING_KEY }}
+  run: retornatus verify C-0001 --receipt
+```
+
+Anyone who clones the repo can run `retornatus receipt verify path/to/receipt.json`.
+
+Legacy HMAC receipts verify only where the old local key exists. The result is `legacy_hmac`, `portable: false`, plus a deprecation warning. That key is not written into the repo.
 
 ## Problems
 
