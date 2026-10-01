@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0032",
+  "title": "Harden GitHub Actions permissions and pins",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Harden GitHub Actions in .github/workflows and action.yml: third-party uses stay on full commit SHAs with version comments, workflows default to contents read, read-only jobs set that permission on the job, checkout sets persist-credentials false, Dependabot updates github-actions weekly, CONTRIBUTING.md states the rule, and CHANGELOG Unreleased has a Security entry. Job names, the test matrix, and the pypi environment approval flow stay unchanged.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T14:08:27.570635Z"
+}

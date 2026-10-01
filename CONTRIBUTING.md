@@ -25,6 +25,8 @@ uv run retornatus --help
 - Do not claim Spec Guardrails full replacement in marketing copy.
 - Add or extend tests for gates, Policy, and persistence invariants.
 
+Third-party actions in `.github/workflows/` and `action.yml` are pinned to a full commit SHA with a trailing `# vX.Y.Z` comment. Workflows set top-level `permissions: contents: read`, and a job adds a wider scope only when that job needs it (`pull-requests: write` for the sticky comment, `security-events: write` for CodeQL, `pages: write` plus `id-token: write` for GitHub Pages, and `id-token: write` plus `attestations: write` for PyPI Trusted Publishing). Read-only jobs set `contents: read` on the job. `actions/checkout` sets `persist-credentials: false`. `.github/dependabot.yml` updates those pins and the uv lockfile weekly. The publish job keeps the `pypi` environment so the owner approval step stays in place.
+
 ## GitHub discoverability (owner)
 
 Homepage should stay `https://luizssantiago92.github.io/retornatus/`.
