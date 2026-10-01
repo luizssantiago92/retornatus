@@ -91,9 +91,7 @@ class Task(DomainModel):
         own_change = change_id_of(self.id)
         for dep in self.depends_on:
             if change_id_of(dep) != own_change:
-                raise ValueError(
-                    f"Task dependency {dep!r} must belong to Change {own_change}"
-                )
+                raise ValueError(f"Task dependency {dep!r} must belong to Change {own_change}")
             if dep == self.id:
                 raise ValueError("Task cannot depend on itself")
         return self
@@ -154,9 +152,7 @@ class Action(DomainModel):
         seen: set[str] = set()
         for task in self.tasks:
             if change_id_of(task.id) != change:
-                raise ValueError(
-                    f"Task {task.id!r} must belong to Change {change}"
-                )
+                raise ValueError(f"Task {task.id!r} must belong to Change {change}")
             if task.id in seen:
                 raise ValueError(f"Duplicate Task id in Action: {task.id!r}")
             seen.add(task.id)
@@ -202,9 +198,7 @@ class Question(DomainModel):
         change = change_id_of(self.id)
         for finding_id in self.grounded_in:
             if change_id_of(finding_id) != change:
-                raise ValueError(
-                    f"Finding {finding_id!r} must belong to Change {change}"
-                )
+                raise ValueError(f"Finding {finding_id!r} must belong to Change {change}")
         if self.lifecycle == QuestionLifecycle.RESOLVED and self.resolution is None:
             raise ValueError("Resolved Question requires a Resolution record")
         if self.lifecycle == QuestionLifecycle.OPEN and self.resolution is not None:
@@ -278,9 +272,7 @@ class Rule(DomainModel):
         description="Optional patterns matched against command lines (fnmatch or substring).",
     )
     active: bool = False
-    authority: Authority = Field(
-        default_factory=lambda: Authority(category=AuthorityCategory.HUMAN)
-    )
+    authority: Authority = Field(default_factory=lambda: Authority(category=AuthorityCategory.HUMAN))
     modes: list[RuleApplicationMode] = Field(default_factory=list)
     relations: list[Relation] = Field(default_factory=list)
 
@@ -301,9 +293,7 @@ class Rule(DomainModel):
     @model_validator(mode="after")
     def _active_requires_human_authority(self) -> Self:
         if self.active and self.authority.category != AuthorityCategory.HUMAN:
-            raise ValueError(
-                "Active authoritative Rule requires HUMAN authority validation"
-            )
+            raise ValueError("Active authoritative Rule requires HUMAN authority validation")
         return self
 
 
@@ -372,13 +362,15 @@ class Decision(DomainModel):
     def _human_authority_required(self) -> Self:
         if self.authority.category != AuthorityCategory.HUMAN:
             raise ValueError("Decision requires HUMAN authority")
-        if self.kind in {
-            DecisionKind.APPROVE_RULE_ACTIVATION,
-            DecisionKind.GOVERNANCE_BYPASS,
-        } and self.confirmation_token != self.subject_id:
-            raise ValueError(
-                "confirmation_token must equal subject_id for activation/bypass decisions"
-            )
+        if (
+            self.kind
+            in {
+                DecisionKind.APPROVE_RULE_ACTIVATION,
+                DecisionKind.GOVERNANCE_BYPASS,
+            }
+            and self.confirmation_token != self.subject_id
+        ):
+            raise ValueError("confirmation_token must equal subject_id for activation/bypass decisions")
         return self
 
 

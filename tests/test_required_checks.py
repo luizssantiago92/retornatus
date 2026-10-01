@@ -263,7 +263,7 @@ def test_uncommitted_subject_path_stales_execution_evidence(tmp_path: Path) -> N
             "--claim",
             "C-0001/claim-done-1",
             "--",
-            * _passing_argv(),
+            *_passing_argv(),
         ],
     )
     assert ran.exit_code == 0, ran.stdout

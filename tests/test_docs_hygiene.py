@@ -15,18 +15,13 @@ from retornatus.cli.main import app
 ROOT = Path(__file__).resolve().parents[1]
 runner = CliRunner()
 
-_OG_IMAGE = (
-    "https://luizssantiago92.github.io/retornatus/"
-    "assets/retornatus-mascot-square.webp"
-)
+_OG_IMAGE = "https://luizssantiago92.github.io/retornatus/assets/retornatus-mascot-square.webp"
 _LICENSE_URL = "https://github.com/luizssantiago92/retornatus/blob/main/LICENSE"
 
 
 def _github_anchor(heading: str) -> str:
     """GitHub heading slug: drop punctuation, then turn each space into a hyphen."""
-    kept = "".join(
-        ch if (ch.isalnum() or ch in "-_ ") else "" for ch in heading.lower()
-    )
+    kept = "".join(ch if (ch.isalnum() or ch in "-_ ") else "" for ch in heading.lower())
     return "#" + kept.replace(" ", "-")
 
 
@@ -47,19 +42,15 @@ def _render_credits() -> str:
 def _write_version(root: Path, version_line: str) -> None:
     config = root / ".retornatus" / "config.toml"
     lines = config.read_text(encoding="utf-8").splitlines()
-    replaced = [
-        version_line if line.startswith("version = ") else line for line in lines
-    ]
+    replaced = [version_line if line.startswith("version = ") else line for line in lines]
     config.write_text("\n".join(replaced) + "\n", encoding="utf-8")
 
 
 def test_repo_hub_copy_matches_packaged_hub() -> None:
-    packaged = (
-        ROOT / "src" / "retornatus" / "infrastructure" / "environment" / "hub" / "SKILL.md"
-    ).read_text(encoding="utf-8")
-    copied = (ROOT / ".cursor" / "skills" / "retornatus" / "SKILL.md").read_text(
+    packaged = (ROOT / "src" / "retornatus" / "infrastructure" / "environment" / "hub" / "SKILL.md").read_text(
         encoding="utf-8"
     )
+    copied = (ROOT / ".cursor" / "skills" / "retornatus" / "SKILL.md").read_text(encoding="utf-8")
     assert copied == packaged
     assert "portable HMAC" not in packaged
     assert "Ed25519 receipt (public key in `.retornatus/keys/`)" in packaged
@@ -101,9 +92,7 @@ def test_doctor_warns_when_config_version_differs(tmp_path: Path) -> None:
 
 def test_readme_anchor_matches_em_dash_heading() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    heading_line = next(
-        line for line in readme.splitlines() if line.startswith("## What you get")
-    )
+    heading_line = next(line for line in readme.splitlines() if line.startswith("## What you get"))
     heading = heading_line.removeprefix("## ").strip()
     assert "\u2014" in heading
     anchor = _github_anchor(heading)
@@ -125,9 +114,7 @@ def test_readme_news_does_not_pin_a_package_version() -> None:
     assert "1.8.0" in section
     assert "hook file-edit" in section
     assert "scope_mode" in section
-    changelog = (
-        "https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md"
-    )
+    changelog = "https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md"
     assert changelog in section
     assert 150 <= len(readme.splitlines()) <= 200
 

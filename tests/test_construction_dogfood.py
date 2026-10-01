@@ -50,9 +50,7 @@ def test_health_endpoint_construction_dogfood(tmp_path: Path) -> None:
             "Automated test covers GET /health returns 200",
             "Endpoint documented in docs/health.md",
         ],
-        project_context=(tmp_path / ".retornatus" / "project" / "project.md").read_text(
-            encoding="utf-8"
-        ),
+        project_context=(tmp_path / ".retornatus" / "project" / "project.md").read_text(encoding="utf-8"),
     )
     assert assessment.sufficient_for_contract
 

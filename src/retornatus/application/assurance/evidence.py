@@ -59,25 +59,17 @@ class EvidenceService:
         eid = format_owned_id(change_id, "E", self.next_evidence_number(change_id))
         relations: list[Relation] = []
         if supports_action_id:
-            relations.append(
-                Relation(type=RelationType.SUPPORTS, target_id=supports_action_id)
-            )
+            relations.append(Relation(type=RelationType.SUPPORTS, target_id=supports_action_id))
         if supports_claim_id:
-            relations.append(
-                Relation(type=RelationType.SUPPORTS, target_id=supports_claim_id)
-            )
+            relations.append(Relation(type=RelationType.SUPPORTS, target_id=supports_claim_id))
         if challenges_claim_id:
-            relations.append(
-                Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id)
-            )
+            relations.append(Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id))
 
         final_state: str | None
         if subject_state is not None:
             final_state = subject_state
         elif capture_git:
-            final_state = capture_subject_state(
-                self.root, use_git=True, subject=subject
-            )
+            final_state = capture_subject_state(self.root, use_git=True, subject=subject)
         else:
             final_state = None
 
@@ -161,17 +153,11 @@ class EvidenceService:
         eid = format_owned_id(change_id, "E", self.next_evidence_number(change_id))
         relations: list[Relation] = []
         if supports_action_id:
-            relations.append(
-                Relation(type=RelationType.SUPPORTS, target_id=supports_action_id)
-            )
+            relations.append(Relation(type=RelationType.SUPPORTS, target_id=supports_action_id))
         if supports_claim_id:
-            relations.append(
-                Relation(type=RelationType.SUPPORTS, target_id=supports_claim_id)
-            )
+            relations.append(Relation(type=RelationType.SUPPORTS, target_id=supports_claim_id))
         if challenges_claim_id:
-            relations.append(
-                Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id)
-            )
+            relations.append(Relation(type=RelationType.CHALLENGES, target_id=challenges_claim_id))
 
         artifact_path = self.repo.paths.evidence_output(eid)
         atomic_write_bytes(artifact_path, capture.output_bytes)
@@ -180,9 +166,7 @@ class EvidenceService:
         if subject_state is not None:
             final_state: str | None = subject_state
         elif capture_git:
-            final_state = capture_subject_state(
-                self.root, use_git=True, subject=subject
-            )
+            final_state = capture_subject_state(self.root, use_git=True, subject=subject)
         else:
             final_state = None
 

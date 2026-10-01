@@ -27,9 +27,7 @@ from retornatus.domain.relations import Relation, RelationType
 
 runner = CliRunner()
 _SCHEMA = json.loads(
-    (Path(__file__).resolve().parents[1] / "schemas" / "verdict-v1.schema.json").read_text(
-        encoding="utf-8"
-    )
+    (Path(__file__).resolve().parents[1] / "schemas" / "verdict-v1.schema.json").read_text(encoding="utf-8")
 )
 _VALIDATOR = Draft202012Validator(
     _SCHEMA,

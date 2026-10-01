@@ -169,10 +169,7 @@ def _warning(violations: list[tuple[EditedPath, list[tuple[str, str]]]]) -> str:
         scopes = " and ".join(f"{change_id} scope ({scope})" for change_id, scope in missed)
         parts.append(f"{path.display} is outside {scopes}")
     joined = "; ".join(parts)
-    return (
-        f"{joined}. Revert the edit, or update the Change scope "
-        "(Task resources) to include this path."
-    )
+    return f"{joined}. Revert the edit, or update the Change scope (Task resources) to include this path."
 
 
 def _scope_text(root: Path, change_id: str) -> str:

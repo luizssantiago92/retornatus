@@ -167,20 +167,14 @@ class RetornatusIndex:
                     rows = self._match(conn, fts_phrase(query), limit)
                 except sqlite3.OperationalError as exc:
                     raise SearchQueryError(
-                        "Search query is not valid for the index. "
-                        "Use plain words; punctuation is matched literally."
+                        "Search query is not valid for the index. Use plain words; punctuation is matched literally."
                     ) from exc
-            return [
-                {"id": r[0], "kind": r[1], "title": r[2] or ""}
-                for r in rows
-            ]
+            return [{"id": r[0], "kind": r[1], "title": r[2] or ""} for r in rows]
         finally:
             conn.close()
 
     @staticmethod
-    def _match(
-        conn: sqlite3.Connection, query: str, limit: int
-    ) -> list[sqlite3.Row]:
+    def _match(conn: sqlite3.Connection, query: str, limit: int) -> list[sqlite3.Row]:
         return conn.execute(
             """
             SELECT documents_fts.id, documents_fts.kind, entities.title

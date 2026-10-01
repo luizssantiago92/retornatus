@@ -258,11 +258,7 @@ def commit_delta_is_harness_only(root: Path, recorded: str, head: str) -> bool:
         return False
     if completed.returncode != 0:
         return False
-    paths = [
-        line.strip().replace("\\", "/")
-        for line in completed.stdout.splitlines()
-        if line.strip()
-    ]
+    paths = [line.strip().replace("\\", "/") for line in completed.stdout.splitlines() if line.strip()]
     return all(_harness_bookkeeping(path) for path in paths)
 
 

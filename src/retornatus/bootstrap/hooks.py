@@ -127,11 +127,7 @@ def check_commit_message(message_file: Path) -> list[str]:
     if not message_file.is_file():
         raise UsageError(f"Commit message file not found: {message_file}")
     text = message_file.read_text(encoding="utf-8", errors="replace")
-    body = [
-        line.strip()
-        for line in text.splitlines()
-        if line.strip() and not line.strip().startswith("#")
-    ]
+    body = [line.strip() for line in text.splitlines() if line.strip() and not line.strip().startswith("#")]
     if not body:
         return ["Commit message is empty"]
     return []
@@ -150,7 +146,7 @@ def _pre_commit_body(invocation: str) -> str:
     return "\n".join(
         [
             "_retornatus_root=$(git rev-parse --show-toplevel) || exit 1",
-            f"_retornatus() {{ {invocation} \"$@\"; }}",
+            f'_retornatus() {{ {invocation} "$@"; }}',
             '_retornatus gate suppressions --staged --path "$_retornatus_root" || exit $?',
             '_retornatus hooks scope --path "$_retornatus_root" || exit $?',
         ]
@@ -165,7 +161,7 @@ def _commit_msg_body(invocation: str) -> str:
             "  exit 1",
             "fi",
             "_retornatus_root=$(git rev-parse --show-toplevel) || exit 1",
-            f"_retornatus() {{ {invocation} \"$@\"; }}",
+            f'_retornatus() {{ {invocation} "$@"; }}',
             '_retornatus hooks commit-msg --message-file "$1" --path "$_retornatus_root" || exit $?',
         ]
     )

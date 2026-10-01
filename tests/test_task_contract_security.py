@@ -93,14 +93,7 @@ def test_contract_reopen_archives_prior_version(tmp_path: Path) -> None:
     assert reopened.active is True
     assert "v2" in reopened.what
 
-    archive = (
-        tmp_path
-        / ".retornatus"
-        / "changes"
-        / created.change.id
-        / "contracts"
-        / "v1.json"
-    )
+    archive = tmp_path / ".retornatus" / "changes" / created.change.id / "contracts" / "v1.json"
     assert archive.is_file()
     prior = FileRepository(tmp_path)._load_json(archive, type(created.contract))[0]
     assert prior.version == 1

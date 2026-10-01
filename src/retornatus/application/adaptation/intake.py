@@ -83,9 +83,7 @@ class IntakeAnalysis:
         if self.suggested_need:
             lines.append(f"- suggested_need={self.suggested_need}")
         if self.existing_skill_ids:
-            lines.append(
-                "- existing_skills: " + ", ".join(self.existing_skill_ids)
-            )
+            lines.append("- existing_skills: " + ", ".join(self.existing_skill_ids))
         lines.extend(
             [
                 "",
@@ -98,10 +96,7 @@ class IntakeAnalysis:
         if self.focused_questions:
             lines.append("## Focused questions (human)")
             lines.append("")
-            lines.append(
-                "_Answer these before creating a Skill "
-                f"(at most {MAX_INTAKE_QUESTIONS})._"
-            )
+            lines.append(f"_Answer these before creating a Skill (at most {MAX_INTAKE_QUESTIONS})._")
             lines.append("")
             for i, q in enumerate(self.focused_questions, start=1):
                 lines.append(f"{i}. **[{q.topic}]** {q.question}")
@@ -112,8 +107,7 @@ class IntakeAnalysis:
                         lines.append(f"     - {opt}")
                 lines.append("")
             lines.append(
-                "Record answers: `retornatus intake analyze --prompt \"…\" "
-                "--answer \"TOPIC=…\"` (repeat `--answer`)."
+                'Record answers: `retornatus intake analyze --prompt "…" --answer "TOPIC=…"` (repeat `--answer`).'
             )
             lines.append("")
         if self.create_authorized:
@@ -121,8 +115,7 @@ class IntakeAnalysis:
                 [
                     "## Next",
                     "",
-                    "Human confirmed Skill creation. Run with `--create-skill` "
-                    "or `skill create --need \"…\"`.",
+                    'Human confirmed Skill creation. Run with `--create-skill` or `skill create --need "…"`.',
                     "",
                 ]
             )
@@ -232,15 +225,13 @@ def analyze_prompt_intake(
     if active_overlap and need.required:
         analysis.verdict = IntakeVerdict.REUSE_SKILL
         analysis.rationale = (
-            "Specialization markers present, but an ACTIVE Skill already overlaps — "
-            "reuse before creating another"
+            "Specialization markers present, but an ACTIVE Skill already overlaps — reuse before creating another"
         )
         analysis.focused_questions = [
             IntakeQuestion(
                 topic="REUSE",
                 question=(
-                    "Confirm reuse of existing Skill "
-                    f"{active_overlap[0].split('(')[0]} instead of creating a new one?"
+                    f"Confirm reuse of existing Skill {active_overlap[0].split('(')[0]} instead of creating a new one?"
                 ),
                 why_material="Duplicate Skills rot; prefer one researched specialization",
                 options=[
@@ -252,8 +243,7 @@ def analyze_prompt_intake(
     elif need.required:
         analysis.verdict = IntakeVerdict.PROPOSE_SKILL
         analysis.rationale = (
-            "Prompt appears to require specialization the agent should research. "
-            "Ask the human before creating a Skill."
+            "Prompt appears to require specialization the agent should research. Ask the human before creating a Skill."
         )
         analysis.focused_questions = [
             IntakeQuestion(
@@ -262,10 +252,7 @@ def analyze_prompt_intake(
                     "Does this work need a researched specialization Skill "
                     f"(suggested: {need.suggested_need or 'current best practices'})?"
                 ),
-                why_material=(
-                    "Skill ceremony has cost — only earn it when Environment-native "
-                    "context is not enough"
-                ),
+                why_material=("Skill ceremony has cost — only earn it when Environment-native context is not enough"),
                 options=[
                     "yes — create a Skill",
                     "no — Environment context is enough",
@@ -291,8 +278,7 @@ def analyze_prompt_intake(
     else:
         analysis.verdict = IntakeVerdict.ROUTINE
         analysis.rationale = (
-            "No clear specialization gap — skip Skill ceremony; "
-            "use Situation/Contract if requirements are still open"
+            "No clear specialization gap — skip Skill ceremony; use Situation/Contract if requirements are still open"
         )
 
     if answers:
@@ -365,25 +351,19 @@ def apply_intake_answers(
         updated.verdict = IntakeVerdict.CREATE_SKILL
         updated.create_authorized = True
         updated.focused_questions = []
-        updated.rationale = (
-            "Human authorized DRAFT Skill creation after intake questions"
-        )
+        updated.rationale = "Human authorized DRAFT Skill creation after intake questions"
         return updated
 
     if create_no:
         updated.verdict = IntakeVerdict.PROPOSE_SKILL
         updated.create_authorized = False
         updated.rationale = "Skill still proposed, but creation deferred by human"
-        updated.focused_questions = [
-            q for q in analysis.focused_questions if q.topic.upper() not in normalized
-        ]
+        updated.focused_questions = [q for q in analysis.focused_questions if q.topic.upper() not in normalized]
         return updated
 
     # Partial answers — keep unanswered questions
     answered = {t.upper() for t in normalized}
-    updated.focused_questions = [
-        q for q in analysis.focused_questions if q.topic.upper() not in answered
-    ]
+    updated.focused_questions = [q for q in analysis.focused_questions if q.topic.upper() not in answered]
     if not updated.focused_questions and updated.skill_need_required:
         if create_yes:
             updated.verdict = IntakeVerdict.CREATE_SKILL
@@ -408,13 +388,8 @@ def create_skill_from_intake(
 ) -> Skill:
     """Create a DRAFT Skill only when intake authorized creation."""
     if not analysis.create_authorized:
-        raise ValueError(
-            "Skill creation not authorized — complete intake answers "
-            "(CREATE=yes) first"
-        )
-    need = analysis.suggested_need or (
-        f"Specialization for: {analysis.prompt[:120]}"
-    )
+        raise ValueError("Skill creation not authorized — complete intake answers (CREATE=yes) first")
+    need = analysis.suggested_need or (f"Specialization for: {analysis.prompt[:120]}")
     skill, _ = SkillService(root).create_for_specialization(
         specialization=need,
         title=need if len(need) < 80 else need[:77] + "…",

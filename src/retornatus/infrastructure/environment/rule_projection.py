@@ -26,10 +26,7 @@ def format_active_rules_markdown(rules: list[Rule]) -> str:
         return "_No active Retornatus Rules._"
     lines = ["Active Retornatus Rules (canonical truth: `.retornatus/`):", ""]
     for rule in sorted(active, key=lambda r: r.id):
-        lines.append(
-            f"- **{rule.id}**: {rule.statement} "
-            f"_(applicability: {rule.applicability})_"
-        )
+        lines.append(f"- **{rule.id}**: {rule.statement} _(applicability: {rule.applicability})_")
     return "\n".join(lines)
 
 

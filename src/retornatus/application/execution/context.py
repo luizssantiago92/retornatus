@@ -87,9 +87,7 @@ def _learning_relevant(learning: LearningMetadata, haystack: set[str]) -> bool:
         learning.summary,
         " ".join(learning.tags),
     )
-    return bool(learn_tokens & haystack) or any(
-        r.target_id for r in learning.relations if r.target_id in haystack
-    )
+    return bool(learn_tokens & haystack) or any(r.target_id for r in learning.relations if r.target_id in haystack)
 
 
 def assemble_execution_context(
@@ -134,11 +132,7 @@ def assemble_execution_context(
         action_id,
     )
 
-    rules = [
-        r
-        for r in repo.list_rules()
-        if r.active and _rule_applies(r, haystack)
-    ]
+    rules = [r for r in repo.list_rules() if r.active and _rule_applies(r, haystack)]
 
     learnings = repo.list_learnings()
     if query:
@@ -146,9 +140,7 @@ def assemble_execution_context(
         learnings = [
             L
             for L in learnings
-            if q in L.title.lower()
-            or (L.summary and q in L.summary.lower())
-            or any(q in t.lower() for t in L.tags)
+            if q in L.title.lower() or (L.summary and q in L.summary.lower()) or any(q in t.lower() for t in L.tags)
         ]
     else:
         relevant = [L for L in learnings if _learning_relevant(L, haystack)]

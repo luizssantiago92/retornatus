@@ -76,9 +76,7 @@ def intake_analyze(
         except ValueError as exc:
             typer.echo(str(exc))
             raise typer.Exit(1) from exc
-        typer.echo(
-            f"Created {skill.id} ({skill.status.value}) — research RESEARCH + PROCEDURE next"
-        )
+        typer.echo(f"Created {skill.id} ({skill.status.value}) — research RESEARCH + PROCEDURE next")
         raise typer.Exit(0)
 
     # Exit codes: 0 routine/reuse/authorized; 2 propose (questions remain); 1 error

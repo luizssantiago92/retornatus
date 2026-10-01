@@ -14,8 +14,7 @@ from retornatus.application.governance.gates import GateResult
 from retornatus.application.report.envelope import gate_document
 
 JSON_OUTPUT_HELP = (
-    "Print the versioned verdict envelope as the only stdout. "
-    "Diagnostics go to stderr. Exit codes match text mode."
+    "Print the versioned verdict envelope as the only stdout. Diagnostics go to stderr. Exit codes match text mode."
 )
 
 

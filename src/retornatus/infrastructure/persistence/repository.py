@@ -81,9 +81,7 @@ class FileRepository:
         if expected is not None:
             assert_unchanged(expected)
         elif path.exists():
-            raise ConcurrencyConflict(
-                f"Refusing to overwrite existing artifact without expected revision: {path}"
-            )
+            raise ConcurrencyConflict(f"Refusing to overwrite existing artifact without expected revision: {path}")
         data = dump_json_model(model)
         atomic_write_bytes(path, data)
         _, revision = read_revision(path)
@@ -122,9 +120,7 @@ class FileRepository:
         elif path.exists() and expected is None:
             # Allow create-or-replace only when caller passes expected=None AND
             # we treat missing expected as create-only for new files; if exists, require expected.
-            raise ConcurrencyConflict(
-                f"Refusing to overwrite existing markdown without expected revision: {path}"
-            )
+            raise ConcurrencyConflict(f"Refusing to overwrite existing markdown without expected revision: {path}")
         text = dump_markdown(body, front_matter=front_matter)
         atomic_write_text(path, text)
         _, revision = read_revision(path)
@@ -157,11 +153,7 @@ class FileRepository:
     def list_change_ids(self) -> list[str]:
         if not self.paths.changes.is_dir():
             return []
-        return sorted(
-            p.name
-            for p in self.paths.changes.iterdir()
-            if p.is_dir() and (p / "change.json").is_file()
-        )
+        return sorted(p.name for p in self.paths.changes.iterdir() if p.is_dir() and (p / "change.json").is_file())
 
     def save_situation(
         self,
@@ -195,47 +187,31 @@ class FileRepository:
     def load_contract(self, change_id: str) -> tuple[Contract, ArtifactRevision]:
         return self._load_json(self.paths.contract_json(change_id), Contract)
 
-    def save_action(
-        self, action: Action, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
+    def save_action(self, action: Action, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
         return self._save_json(self.paths.action_json(action.id), action, expected=expected)
 
     def load_action(self, action_id: str) -> tuple[Action, ArtifactRevision]:
         return self._load_json(self.paths.action_json(action_id), Action)
 
-    def save_finding(
-        self, finding: Finding, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
-        return self._save_json(
-            self.paths.finding_json(finding.id), finding, expected=expected
-        )
+    def save_finding(self, finding: Finding, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
+        return self._save_json(self.paths.finding_json(finding.id), finding, expected=expected)
 
     def load_finding(self, finding_id: str) -> tuple[Finding, ArtifactRevision]:
         return self._load_json(self.paths.finding_json(finding_id), Finding)
 
-    def save_question(
-        self, question: Question, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
-        return self._save_json(
-            self.paths.question_json(question.id), question, expected=expected
-        )
+    def save_question(self, question: Question, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
+        return self._save_json(self.paths.question_json(question.id), question, expected=expected)
 
     def load_question(self, question_id: str) -> tuple[Question, ArtifactRevision]:
         return self._load_json(self.paths.question_json(question_id), Question)
 
-    def save_evidence(
-        self, evidence: Evidence, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
-        return self._save_json(
-            self.paths.evidence_json(evidence.id), evidence, expected=expected
-        )
+    def save_evidence(self, evidence: Evidence, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
+        return self._save_json(self.paths.evidence_json(evidence.id), evidence, expected=expected)
 
     def load_evidence(self, evidence_id: str) -> tuple[Evidence, ArtifactRevision]:
         return self._load_json(self.paths.evidence_json(evidence_id), Evidence)
 
-    def save_rule(
-        self, rule: Rule, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
+    def save_rule(self, rule: Rule, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
         return self._save_json(self.paths.rule_json(rule.id), rule, expected=expected)
 
     def load_rule(self, rule_id: str) -> tuple[Rule, ArtifactRevision]:
@@ -250,13 +226,9 @@ class FileRepository:
             rules.append(rule)
         return rules
 
-    def save_decision(
-        self, decision: Decision, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
+    def save_decision(self, decision: Decision, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
         self.paths.decisions.mkdir(parents=True, exist_ok=True)
-        return self._save_json(
-            self.paths.decision_json(decision.id), decision, expected=expected
-        )
+        return self._save_json(self.paths.decision_json(decision.id), decision, expected=expected)
 
     def load_decision(self, decision_id: str) -> tuple[Decision, ArtifactRevision]:
         return self._load_json(self.paths.decision_json(decision_id), Decision)
@@ -270,13 +242,9 @@ class FileRepository:
             items.append(decision)
         return items
 
-    def save_bypass(
-        self, bypass: BypassRecord, *, expected: ArtifactRevision | None = None
-    ) -> ArtifactRevision:
+    def save_bypass(self, bypass: BypassRecord, *, expected: ArtifactRevision | None = None) -> ArtifactRevision:
         self.paths.bypasses.mkdir(parents=True, exist_ok=True)
-        return self._save_json(
-            self.paths.bypass_json(bypass.id), bypass, expected=expected
-        )
+        return self._save_json(self.paths.bypass_json(bypass.id), bypass, expected=expected)
 
     def load_bypass(self, bypass_id: str) -> tuple[BypassRecord, ArtifactRevision]:
         return self._load_json(self.paths.bypass_json(bypass_id), BypassRecord)
@@ -301,9 +269,7 @@ class FileRepository:
         front = json.loads(meta.model_dump_json())
         return self.save_markdown(path, body, front_matter=front, expected=expected)
 
-    def load_learning(
-        self, learning_id: str
-    ) -> tuple[LearningMetadata, str, ArtifactRevision]:
+    def load_learning(self, learning_id: str) -> tuple[LearningMetadata, str, ArtifactRevision]:
         meta, body, revision = self.load_markdown(self.paths.learning_md(learning_id))
         if meta is None:
             raise IncompatibleSchemaError(f"Learning {learning_id} missing metadata")

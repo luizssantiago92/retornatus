@@ -39,6 +39,4 @@ def assert_unchanged(expected: ArtifactRevision) -> None:
     current_data, current = read_revision(expected.path)
     del current_data
     if current.content_hash != expected.content_hash:
-        raise ConcurrencyConflict(
-            f"Concurrent modification detected for {expected.path}"
-        )
+        raise ConcurrencyConflict(f"Concurrent modification detected for {expected.path}")

@@ -54,9 +54,7 @@ def test_activate_draft_contract_via_workflow_and_cli(tmp_path: Path) -> None:
         done_criteria=["Automated test covers GET /ready"],
         activate_contract=False,
     )
-    result = runner.invoke(
-        app, ["change", "activate", draft.change.id, "--path", str(tmp_path)]
-    )
+    result = runner.invoke(app, ["change", "activate", draft.change.id, "--path", str(tmp_path)])
     assert result.exit_code == 0, result.stdout
     assert "active=True" in result.stdout
 
@@ -165,9 +163,7 @@ def test_finding_question_auto_number_and_reopen(tmp_path: Path) -> None:
 
     # CLI reopen
     loop.resolve_question(q2.id, summary="Documented again")
-    cli = runner.invoke(
-        app, ["question", "reopen", q2.id, "--path", str(tmp_path)]
-    )
+    cli = runner.invoke(app, ["question", "reopen", q2.id, "--path", str(tmp_path)])
     assert cli.exit_code == 0, cli.stdout
     assert "Reopened" in cli.stdout
     q, _ = FileRepository(tmp_path).load_question(q2.id)

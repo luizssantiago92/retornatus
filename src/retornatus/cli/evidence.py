@@ -100,9 +100,7 @@ def evidence_run(
     if argv and argv[0] == "--":
         argv = argv[1:]
     if not argv:
-        typer.echo(
-            "Missing command. Usage: retornatus evidence run [options] -- <command...>"
-        )
+        typer.echo("Missing command. Usage: retornatus evidence run [options] -- <command...>")
         raise typer.Exit(code=2)
     try:
         ev = EvidenceService(path or Path.cwd()).run(
@@ -122,10 +120,7 @@ def evidence_run(
         typer.echo(str(exc))
         raise typer.Exit(code=2) from exc
     typer.echo(f"Recorded {ev.id}")
-    typer.echo(
-        f"provenance={ev.provenance.value} exit_code={ev.exit_code} "
-        f"timed_out={str(ev.timed_out).lower()}"
-    )
+    typer.echo(f"provenance={ev.provenance.value} exit_code={ev.exit_code} timed_out={str(ev.timed_out).lower()}")
     if ev.git_commit:
         typer.echo(f"git_commit={ev.git_commit} dirty={ev.worktree_dirty}")
     else:

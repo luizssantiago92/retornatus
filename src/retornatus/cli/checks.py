@@ -28,8 +28,5 @@ def checks_run(
     for note in outcome.notes:
         typer.echo(f"WARN {note}")
     for evidence in outcome.evidence:
-        typer.echo(
-            f"Recorded {evidence.id} argv={' '.join(evidence.command or [])} "
-            f"exit_code={evidence.exit_code}"
-        )
+        typer.echo(f"Recorded {evidence.id} argv={' '.join(evidence.command or [])} exit_code={evidence.exit_code}")
     raise typer.Exit(0 if outcome.all_passed else 1)

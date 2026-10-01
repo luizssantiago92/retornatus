@@ -178,9 +178,7 @@ def test_receipt_keygen_sign_and_verify(tmp_path: Path) -> None:
     assert "public_key:" in keygen.output
     assert "BEGIN PRIVATE KEY" not in keygen.output
     project_text = "\n".join(
-        path.read_text(encoding="utf-8", errors="ignore")
-        for path in root.rglob("*")
-        if path.is_file()
+        path.read_text(encoding="utf-8", errors="ignore") for path in root.rglob("*") if path.is_file()
     )
     assert "BEGIN PRIVATE KEY" not in project_text
 
@@ -190,9 +188,7 @@ def test_receipt_keygen_sign_and_verify(tmp_path: Path) -> None:
         env={"XDG_CONFIG_HOME": xdg},
     )
     assert signed.exit_code == 0, signed.output
-    receipt_line = next(
-        line for line in signed.output.splitlines() if line.startswith("receipt:")
-    )
+    receipt_line = next(line for line in signed.output.splitlines() if line.startswith("receipt:"))
     receipt_path = receipt_line.split(": ", 1)[1]
     checked = runner.invoke(
         app,

@@ -51,9 +51,7 @@ _TEST_MARKERS = re.compile(
     r"\b(test|pytest|automated|returns|endpoint|behavior|health|integration)\b",
     re.I,
 )
-_SECURITY_MARKERS = re.compile(
-    r"\b(security|unauthorized|authn|authz|permission|secret)\b", re.I
-)
+_SECURITY_MARKERS = re.compile(r"\b(security|unauthorized|authn|authz|permission|secret)\b", re.I)
 _REVIEW_MARKERS = re.compile(r"\b(review|human approval|manual check)\b", re.I)
 _BUILD_MARKERS = re.compile(r"\b(build|compile|package)\b", re.I)
 
@@ -212,22 +210,14 @@ def _commit_states_equivalent(
 
 def _evidence_supports_claim(evidence: Evidence, claim: Claim) -> bool:
     """Structural binding: SUPPORTS→claim.id, matching type, and subject when set."""
-    bound = any(
-        r.type is RelationType.SUPPORTS and r.target_id == claim.id
-        for r in evidence.relations
-    )
+    bound = any(r.type is RelationType.SUPPORTS and r.target_id == claim.id for r in evidence.relations)
     if not bound:
         return False
     if evidence.type not in claim.required_evidence_types:
         return False
-    if claim.subject and not evidence_subject_matches_claim(
-        evidence.subject, claim.subject
-    ):
+    if claim.subject and not evidence_subject_matches_claim(evidence.subject, claim.subject):
         return False
-    challenged = any(
-        r.type is RelationType.CHALLENGES and r.target_id == claim.id
-        for r in evidence.relations
-    )
+    challenged = any(r.type is RelationType.CHALLENGES and r.target_id == claim.id for r in evidence.relations)
     return not challenged
 
 
@@ -328,9 +318,7 @@ def required_check_issue(
     matched = any(list(check.run) == argv for check in applicable)
     if not matched:
         rendered = " ".join(argv) if argv else "(none)"
-        names = ", ".join(
-            f"{c.name}={' '.join(c.run)}" for c in applicable
-        ) or "(none apply to this type)"
+        names = ", ".join(f"{c.name}={' '.join(c.run)}" for c in applicable) or "(none apply to this type)"
         return (
             "unverified",
             f"{evidence.id} argv [{rendered}] does not match a required check ({names})",
@@ -340,12 +328,7 @@ def required_check_issue(
     recorded = (evidence.git_commit or "").strip()
     head = git_head.strip()
     same_commit = bool(recorded) and recorded.casefold() == head.casefold()
-    equivalent = bool(
-        recorded
-        and not same_commit
-        and commit_equivalent is not None
-        and commit_equivalent(recorded)
-    )
+    equivalent = bool(recorded and not same_commit and commit_equivalent is not None and commit_equivalent(recorded))
     if not same_commit and not equivalent:
         shown = recorded or "none"
         return (
@@ -381,10 +364,7 @@ def describe_evidence(evidence: Evidence, *, allow_self_reported: bool) -> str:
     """One-line label so verify output shows provenance and trust."""
     provenance = evidence.provenance.value
     if evidence.type not in EXECUTION_EVIDENCE_TYPES:
-        return (
-            f"{evidence.id} type={evidence.type} provenance={provenance} "
-            "status=self-reported"
-        )
+        return f"{evidence.id} type={evidence.type} provenance={provenance} status=self-reported"
     if evidence.provenance is EvidenceProvenance.EXECUTED:
         if evidence.timed_out:
             status = "failing(timeout)"
@@ -392,19 +372,10 @@ def describe_evidence(evidence: Evidence, *, allow_self_reported: bool) -> str:
             status = "executed"
         else:
             status = f"failing(exit {evidence.exit_code})"
-        return (
-            f"{evidence.id} type={evidence.type} provenance=executed "
-            f"exit_code={evidence.exit_code} status={status}"
-        )
+        return f"{evidence.id} type={evidence.type} provenance=executed exit_code={evidence.exit_code} status={status}"
     if allow_self_reported:
-        return (
-            f"{evidence.id} type={evidence.type} provenance=self_reported "
-            "status=self-reported(allowed)"
-        )
-    return (
-        f"{evidence.id} type={evidence.type} provenance=self_reported "
-        "status=UNVERIFIED"
-    )
+        return f"{evidence.id} type={evidence.type} provenance=self_reported status=self-reported(allowed)"
+    return f"{evidence.id} type={evidence.type} provenance=self_reported status=UNVERIFIED"
 
 
 def evaluate_assurance(
@@ -455,9 +426,7 @@ def evaluate_assurance(
             )
             if issue is not None:
                 check_issues[item.id] = issue
-    labels = [
-        describe_evidence(e, allow_self_reported=allow_self_reported) for e in items
-    ]
+    labels = [describe_evidence(e, allow_self_reported=allow_self_reported) for e in items]
     for item in items:
         issue = check_issues.get(item.id)
         if issue is not None:
@@ -484,18 +453,11 @@ def evaluate_assurance(
             continue
         fails = uncommitted_subject_fails(item.type, uncommitted_mode)
         tail = " (stale)" if fails else " (warning)"
-        _warn(
-            f"{item.id} subject {item.subject!r} has uncommitted changes{tail}"
-        )
+        _warn(f"{item.id} subject {item.subject!r} has uncommitted changes{tail}")
     if allow_self_reported and not checks:
         for item in items:
-            if (
-                item.type in EXECUTION_EVIDENCE_TYPES
-                and item.provenance is not EvidenceProvenance.EXECUTED
-            ):
-                _warn(
-                    f"{item.id} self-reported {item.type} accepted via allow_self_reported"
-                )
+            if item.type in EXECUTION_EVIDENCE_TYPES and item.provenance is not EvidenceProvenance.EXECUTED:
+                _warn(f"{item.id} self-reported {item.type} accepted via allow_self_reported")
 
     if not claims:
         return AssuranceResult(
@@ -533,9 +495,7 @@ def evaluate_assurance(
         fresh_ids = {id(e) for e in fresh}
         stale = [e for e in structural if id(e) not in fresh_ids]
         for item in list(fresh):
-            if item.subject in dirty_subjects and uncommitted_subject_fails(
-                item.type, uncommitted_mode
-            ):
+            if item.subject in dirty_subjects and uncommitted_subject_fails(item.type, uncommitted_mode):
                 fresh.remove(item)
                 stale.append(item)
 
@@ -580,14 +540,10 @@ def evaluate_assurance(
             e
             for e in items
             if any(
-                r.type in {RelationType.SUPPORTS, RelationType.CHALLENGES}
-                and r.target_id == claim.id
+                r.type in {RelationType.SUPPORTS, RelationType.CHALLENGES} and r.target_id == claim.id
                 for r in e.relations
             )
-            or (
-                claim.subject is not None
-                and evidence_subject_matches_claim(e.subject, claim.subject)
-            )
+            or (claim.subject is not None and evidence_subject_matches_claim(e.subject, claim.subject))
         ]
         if related:
             # Evidence exists for this subject/claim but does not satisfy requirements
@@ -601,20 +557,12 @@ def evaluate_assurance(
             claim_results[claim.id] = "INCONCLUSIVE"
             inconclusive.append(claim.id)
 
-    stale_notes = [
-        message
-        for kind, message in check_issues.values()
-        if kind == "stale"
-    ]
-    uncommitted_fail_notes = [
-        message for message in warnings if message.endswith("(stale)")
-    ]
+    stale_notes = [message for kind, message in check_issues.values() if kind == "stale"]
+    uncommitted_fail_notes = [message for message in warnings if message.endswith("(stale)")]
     if unmet:
         verdict = AssuranceVerdict.NOT_SATISFIED
         if stale_claim_ids and (stale_notes or uncommitted_fail_notes):
-            rationale = "Stale evidence: " + "; ".join(
-                [*uncommitted_fail_notes, *stale_notes]
-            )
+            rationale = "Stale evidence: " + "; ".join([*uncommitted_fail_notes, *stale_notes])
         else:
             rationale = f"Unmet claims: {', '.join(unmet)}"
     elif unverified_claims:
@@ -644,9 +592,7 @@ def evaluate_assurance(
         claims=claims,
         evidence_ids=evidence_ids,
         rationale=rationale,
-        relations=[
-            Relation(type=RelationType.SUPPORTS, target_id=eid) for eid in unique_support
-        ],
+        relations=[Relation(type=RelationType.SUPPORTS, target_id=eid) for eid in unique_support],
         claim_results=claim_results,
         unverified_evidence_ids=unverified_ids,
         evidence_labels=labels,

@@ -76,8 +76,7 @@ def bound_evidence(claim_id: str, evidence: list[Evidence]) -> list[dict[str, An
     rows: list[dict[str, Any]] = []
     for item in evidence:
         supports = any(
-            relation.type is RelationType.SUPPORTS and relation.target_id == claim_id
-            for relation in item.relations
+            relation.type is RelationType.SUPPORTS and relation.target_id == claim_id for relation in item.relations
         )
         if not supports:
             continue

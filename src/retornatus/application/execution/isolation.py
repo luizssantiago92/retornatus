@@ -80,8 +80,7 @@ def isolation_boundaries(
                 kind="workspace isolation",
                 realization=BoundaryRealization.ADVISORY,
                 description=(
-                    "Use Environment/git worktrees for conflicting writers; "
-                    "Retornatus does not run a WorkspacePool"
+                    "Use Environment/git worktrees for conflicting writers; Retornatus does not run a WorkspacePool"
                 ),
             )
         )

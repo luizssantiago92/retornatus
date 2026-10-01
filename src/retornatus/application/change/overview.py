@@ -54,8 +54,7 @@ class ChangeOverview:
             f"# {self.change_id} - {self.title}",
             f"lane: {self.lane or 'unset'}",
             (
-                f"contract: v{self.contract_version} "
-                f"{'active' if self.contract_active else 'draft'}"
+                f"contract: v{self.contract_version} {'active' if self.contract_active else 'draft'}"
                 if self.contract_version is not None
                 else "contract: none"
             ),
@@ -69,10 +68,7 @@ class ChangeOverview:
         for row in self.claims:
             ev = ", ".join(row.evidence_ids) if row.evidence_ids else "(unbound)"
             types = ",".join(row.required_types) or "-"
-            lines.append(
-                f"- [{row.verdict}] {row.claim_id}: {row.statement} "
-                f"(need={types}; evidence={ev})"
-            )
+            lines.append(f"- [{row.verdict}] {row.claim_id}: {row.statement} (need={types}; evidence={ev})")
 
         lines.append("")
         lines.append("## Evidence")
@@ -99,9 +95,7 @@ class ChangeOverview:
         lines.append("## Next")
         lines.append(self.next_line or "(none)")
         if self.parallelizable:
-            lines.append(
-                "parallelizable: " + ", ".join(self.parallelizable)
-            )
+            lines.append("parallelizable: " + ", ".join(self.parallelizable))
         return "\n".join(lines)
 
 
@@ -159,8 +153,7 @@ def render_pull_request(
         "",
         f"**Lane:** {overview.lane or 'unset'}",
         (
-            f"**Contract:** v{overview.contract_version} "
-            f"({'active' if overview.contract_active else 'draft'})"
+            f"**Contract:** v{overview.contract_version} ({'active' if overview.contract_active else 'draft'})"
             if overview.contract_version is not None
             else "**Contract:** none"
         ),
@@ -175,10 +168,7 @@ def render_pull_request(
     for row in overview.claims:
         ev = ", ".join(row.evidence_ids) if row.evidence_ids else "(unbound)"
         types = ", ".join(row.required_types) or "-"
-        lines.append(
-            f"- **[{row.verdict}]** `{row.claim_id}`: {row.statement} "
-            f"(need: {types}; evidence: {ev})"
-        )
+        lines.append(f"- **[{row.verdict}]** `{row.claim_id}`: {row.statement} (need: {types}; evidence: {ev})")
 
     lines.extend(["", "### Evidence", ""])
     if not evidence:
@@ -195,18 +185,11 @@ def render_pull_request(
             uncommitted_mode=mode,
             commit_equivalent=equivalent,
         )
-        kind = (
-            "executed"
-            if item.provenance is EvidenceProvenance.EXECUTED
-            else "self-reported"
-        )
+        kind = "executed" if item.provenance is EvidenceProvenance.EXECUTED else "self-reported"
         exit_label = "n/a" if item.exit_code is None else str(item.exit_code)
         commit = item.git_commit or "n/a"
         command = " ".join(item.command) if item.command else "(none)"
-        lines.append(
-            f"- **{item.id}** — {kind}, exit `{exit_label}`, "
-            f"commit `{commit}`, trust: **{trust}**"
-        )
+        lines.append(f"- **{item.id}** — {kind}, exit `{exit_label}`, commit `{commit}`, trust: **{trust}**")
         lines.append(f"  - type `{item.type}`, subject `{item.subject}`, command `{command}`")
 
     lines.extend(["", "### Required checks", ""])
@@ -224,9 +207,7 @@ def render_pull_request(
             ]
             rendered = " ".join(check.run)
             if matched:
-                lines.append(
-                    f"- **{check.name}** `{rendered}` — matched by {', '.join(matched)}"
-                )
+                lines.append(f"- **{check.name}** `{rendered}` — matched by {', '.join(matched)}")
             else:
                 lines.append(f"- **{check.name}** `{rendered}` — not matched")
 
@@ -345,10 +326,7 @@ def build_change_overview(root: Path, change_id: str) -> ChangeOverview:
             bound = [
                 e.id
                 for e in evidence_list
-                if any(
-                    r.type is RelationType.SUPPORTS and r.target_id == claim.id
-                    for r in e.relations
-                )
+                if any(r.type is RelationType.SUPPORTS and r.target_id == claim.id for r in e.relations)
             ]
             claims.append(
                 ClaimRow(
@@ -364,11 +342,7 @@ def build_change_overview(root: Path, change_id: str) -> ChangeOverview:
 
     evidence_lines: list[str] = []
     for ev in EvidenceService(root).list_for_change(change_id):
-        supports = [
-            r.target_id
-            for r in ev.relations
-            if r.type is RelationType.SUPPORTS
-        ]
+        supports = [r.target_id for r in ev.relations if r.type is RelationType.SUPPORTS]
         evidence_lines.append(
             f"{ev.id} type={ev.type} provenance={ev.provenance.value} "
             f"subject={ev.subject} supports={','.join(supports) or '-'}"
@@ -384,9 +358,7 @@ def build_change_overview(root: Path, change_id: str) -> ChangeOverview:
                 continue
             sync = synchronize_action(action)
             for proj in sync.tasks:
-                task_lines.append(
-                    f"{proj.task_id} [{proj.state.value}] {proj.description}"
-                )
+                task_lines.append(f"{proj.task_id} [{proj.state.value}] {proj.description}")
 
     question_lines: list[str] = []
     qdir = repo.paths.change_dir(change_id) / "questions"

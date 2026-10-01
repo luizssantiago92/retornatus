@@ -141,10 +141,7 @@ class ClaudeCodeAdapter(EnvironmentAdapter):
             root / "CLAUDE.md",
             root,
             title="Project",
-            body=(
-                "## Retornatus\n"
-                "Respect Contracts, Rules, Authority, and Evidence under `.retornatus/`.\n"
-            ),
+            body=("## Retornatus\nRespect Contracts, Rules, Authority, and Evidence under `.retornatus/`.\n"),
         )
         return [path]
 
@@ -169,10 +166,7 @@ class CodexAdapter(EnvironmentAdapter):
             root / "AGENTS.md",
             root,
             title="Agents",
-            body=(
-                "## Retornatus\n"
-                "Use `.retornatus/` as canonical governance state.\n"
-            ),
+            body=("## Retornatus\nUse `.retornatus/` as canonical governance state.\n"),
         )
         return [path]
 

@@ -118,9 +118,7 @@ class ChangeWorkflow:
             constraints=constraints,
         )
         if require_sufficient_situation and not assessment.sufficient_for_contract:
-            raise ValueError(
-                f"Situation insufficient for Contract: {assessment.rationale}"
-            )
+            raise ValueError(f"Situation insufficient for Contract: {assessment.rationale}")
         if activate_contract and not assessment.sufficient_for_contract:
             # Soft guard: refuse activation when elicitation says not ready
             activate_contract = False
@@ -242,8 +240,7 @@ class ChangeWorkflow:
             origin_ref=origin_ref,
             objective=objective,
             success_conditions=success_conditions,
-            authority=authority
-            or Authority(category=AuthorityCategory.DELEGATED, rationale="routine"),
+            authority=authority or Authority(category=AuthorityCategory.DELEGATED, rationale="routine"),
             tasks=embedded,
         )
         self.repo.save_action(action)
@@ -272,15 +269,11 @@ class ChangeWorkflow:
             constraints=list(contract.constraints),
         )
         if not assessment.sufficient_for_contract:
-            raise ValueError(
-                f"Situation insufficient to activate Contract: {assessment.rationale}"
-            )
+            raise ValueError(f"Situation insufficient to activate Contract: {assessment.rationale}")
         if not contract.done_criteria:
             raise ValueError("Contract requires at least one done criterion before activation")
         activated = contract.activate()
-        change = change.model_copy(
-            update={"active_contract_version": activated.version}
-        )
+        change = change.model_copy(update={"active_contract_version": activated.version})
         self.repo.save_change(change, expected=change_rev)
         self.repo.save_contract(activated, expected=contract_rev)
         return activated
@@ -317,8 +310,7 @@ class ChangeWorkflow:
         try:
             meta, body, sit_rev = self.repo.load_situation(change_id)
             note = situation_note or (
-                f"Material change: reopened from contract v{current.version} → "
-                f"v{current.version + 1}"
+                f"Material change: reopened from contract v{current.version} → v{current.version + 1}"
             )
             new_body = body.rstrip() + f"\n\n## Reopened Situation\n\n{note}\n"
             self.repo.save_markdown(
@@ -360,9 +352,7 @@ class ChangeWorkflow:
                 activate = False
             else:
                 contract = contract.activate()
-                change = change.model_copy(
-                    update={"active_contract_version": contract.version}
-                )
+                change = change.model_copy(update={"active_contract_version": contract.version})
                 self.repo.save_change(change, expected=change_rev)
 
         # Overwrite active contract.json with new version (prior archived)

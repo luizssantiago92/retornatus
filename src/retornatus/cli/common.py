@@ -55,9 +55,7 @@ def parse_task_specs(
         specs[idx].depends_on_indices = dep_indices
     for item in resources or []:
         if ":" not in item:
-            raise typer.BadParameter(
-                f"Invalid --resource {item!r}; expected INDEX:resource/path"
-            )
+            raise typer.BadParameter(f"Invalid --resource {item!r}; expected INDEX:resource/path")
         left, right = item.split(":", 1)
         try:
             idx = int(left)

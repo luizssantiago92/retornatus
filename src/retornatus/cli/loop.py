@@ -30,10 +30,7 @@ def loop_next(
         for item in projection.ready:
             typer.echo(f"{item.kind}\t{item.id}\t{item.summary}")
         if projection.parallelizable_task_ids:
-            typer.echo(
-                "parallelizable\t"
-                + ",".join(projection.parallelizable_task_ids)
-            )
+            typer.echo("parallelizable\t" + ",".join(projection.parallelizable_task_ids))
         return
     item = projection.primary
     typer.echo(f"{item.kind}\t{item.id}\t{item.summary}")

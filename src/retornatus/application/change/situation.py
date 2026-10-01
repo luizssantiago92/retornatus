@@ -122,9 +122,7 @@ class SituationAssessment:
             )
             lines.append("")
             for q in self.focused_questions:
-                lines.append(
-                    f"- **{q.topic}**: {q.question} _(material: {q.why_material})_"
-                )
+                lines.append(f"- **{q.topic}**: {q.question} _(material: {q.why_material})_")
                 if q.options:
                     for i, opt in enumerate(q.options, start=1):
                         lines.append(f"  - {i}. {opt}")
@@ -152,9 +150,7 @@ def load_project_context_snippet(root: Path, *, max_chars: int = 2000) -> str:
     return text
 
 
-def discover_kickoff(
-    root: Path, *, max_chars_per_file: int = 1500
-) -> tuple[list[str], list[str]]:
+def discover_kickoff(root: Path, *, max_chars_per_file: int = 1500) -> tuple[list[str], list[str]]:
     """
     Find local kickoff / brief files and extract light facts.
 
@@ -302,9 +298,7 @@ def parse_answer_option(raw: str) -> tuple[str, str]:
             answer = answer.strip()
             if topic and answer:
                 return topic, answer
-    raise ValueError(
-        f"Invalid --answer '{raw}'; expected TOPIC=text (e.g. scope=Email+password only)"
-    )
+    raise ValueError(f"Invalid --answer '{raw}'; expected TOPIC=text (e.g. scope=Email+password only)")
 
 
 def merge_answers_into_inputs(
@@ -372,9 +366,7 @@ def assess_situation(
         inferred = "pyproject.toml" in signal or "pytest" in signal.lower()
         already = "Prefer pytest for automated verification" in assessment.constraints
         if inferred and not already:
-            assessment.constraints.append(
-                "Prefer pytest for automated verification (inferred from repo)"
-            )
+            assessment.constraints.append("Prefer pytest for automated verification (inferred from repo)")
 
     for fact in kickoff_facts or []:
         if fact and fact not in assessment.known_facts:
@@ -396,9 +388,7 @@ def assess_situation(
     if _has_substance(situation):
         assessment.known_facts.append("Situation narrative provided by agent/human")
     elif situation and not _has_substance(situation):
-        assessment.assumptions.append(
-            "Situation placeholder used — treat as unanalyzed unless Demand is trivial"
-        )
+        assessment.assumptions.append("Situation placeholder used — treat as unanalyzed unless Demand is trivial")
 
     questions: list[FocusedQuestion] = []
 
@@ -458,18 +448,10 @@ def assess_situation(
 
     demand_l = demand.lower()
     security_hit = any(
-        w in demand_l
-        for w in ("unauthorized", "authn", "authz", "security hole", "secret leak", "pii")
+        w in demand_l for w in ("unauthorized", "authn", "authz", "security hole", "secret leak", "pii")
     ) or ("auth" in demand_l and "oauth" not in demand_l)
-    if (
-        security_hit
-        and not constraints
-        and "constraints" not in answered
-        and "constraint" not in answered
-    ):
-        assessment.ambiguities.append(
-            "Security-sensitive Demand without explicit constraints"
-        )
+    if security_hit and not constraints and "constraints" not in answered and "constraint" not in answered:
+        assessment.ambiguities.append("Security-sensitive Demand without explicit constraints")
         questions.append(
             FocusedQuestion(
                 topic="constraints",
@@ -485,9 +467,7 @@ def assess_situation(
         )
 
     vague = _demand_looks_vague(demand, what=what)
-    obligations_clear = _has_substance(what) and not _looks_like_placeholder_done(
-        done_criteria
-    )
+    obligations_clear = _has_substance(what) and not _looks_like_placeholder_done(done_criteria)
     if vague and not obligations_clear:
         assessment.ambiguities.append(
             "Demand looks underspecified for software delivery (requirements analysis needed)"
@@ -542,9 +522,7 @@ def assess_situation(
             if vq.topic.lower() in answered:
                 continue
             if _topic_covered_in_facts(vq.topic, assessment.known_facts):
-                assessment.known_facts.append(
-                    f"Topic `{vq.topic}` already addressed in kickoff/facts — not re-asked"
-                )
+                assessment.known_facts.append(f"Topic `{vq.topic}` already addressed in kickoff/facts — not re-asked")
                 continue
             questions.append(vq)
 
@@ -552,14 +530,12 @@ def assess_situation(
     questions = [
         q
         for q in questions
-        if q.topic.lower() not in {"language", "stack", "runtime"}
-        and q.topic.lower() not in answered
+        if q.topic.lower() not in {"language", "stack", "runtime"} and q.topic.lower() not in answered
     ]
     assessment.focused_questions = _cap_questions(questions)
     # Missing decisions track only this round's remaining questions
     assessment.missing_decisions = [
-        f"Requirements topic `{q.topic}` not yet decided"
-        for q in assessment.focused_questions
+        f"Requirements topic `{q.topic}` not yet decided" for q in assessment.focused_questions
     ]
 
     simple = (
@@ -578,8 +554,7 @@ def assess_situation(
     else:
         assessment.sufficient_for_contract = False
         assessment.rationale = (
-            "Material uncertainty remains — answer focused questions "
-            "(requirements analysis) before activating Contract"
+            "Material uncertainty remains — answer focused questions (requirements analysis) before activating Contract"
             if assessment.focused_questions
             else "Insufficient structured understanding for Contract activation"
         )
@@ -601,21 +576,15 @@ def apply_decision_to_situation(
         assumptions=[a for a in assessment.assumptions if topic_l not in a.lower()],
         ambiguities=[a for a in assessment.ambiguities if topic_l not in a.lower()],
         missing_decisions=[
-            m
-            for m in assessment.missing_decisions
-            if topic_l not in m.lower() and f"`{topic_l}`" not in m.lower()
+            m for m in assessment.missing_decisions if topic_l not in m.lower() and f"`{topic_l}`" not in m.lower()
         ],
-        focused_questions=[
-            q for q in assessment.focused_questions if q.topic.lower() != topic_l
-        ],
+        focused_questions=[q for q in assessment.focused_questions if q.topic.lower() != topic_l],
         repo_signals=list(assessment.repo_signals),
         kickoff_sources=list(assessment.kickoff_sources),
     )
     if topic_l in {"constraints", "constraint"} and answer.strip():
         updated.constraints.append(answer.strip())
-    updated.sufficient_for_contract = (
-        not updated.focused_questions and not updated.missing_decisions
-    )
+    updated.sufficient_for_contract = not updated.focused_questions and not updated.missing_decisions
     updated.rationale = (
         "Focused questions resolved; Contract may be formalized"
         if updated.sufficient_for_contract

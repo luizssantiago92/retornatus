@@ -25,7 +25,7 @@ def seed_brownfield_service(root: Path, *, init_git: bool = True) -> Path:
         encoding="utf-8",
     )
     (root / "pyproject.toml").write_text(
-        '[project]\n'
+        "[project]\n"
         'name = "acme-service"\n'
         'version = "0.1.0"\n'
         'requires-python = ">=3.11"\n'

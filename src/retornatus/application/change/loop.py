@@ -61,9 +61,7 @@ def project_next_work(root: Path, change_id: str) -> LoopProjection:
             parallelizable.extend(sync.parallelizable)
             for proj in sync.tasks:
                 if proj.state is DerivedTaskState.READY:
-                    ready_items.append(
-                        LoopNext("task", proj.task_id, proj.description)
-                    )
+                    ready_items.append(LoopNext("task", proj.task_id, proj.description))
                 elif proj.state is DerivedTaskState.ACTIVE:
                     # Active work is legitimate to continue — surface as primary preference
                     ready_items.insert(

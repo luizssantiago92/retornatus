@@ -170,9 +170,7 @@ def _from_pem(data: bytes) -> Ed25519PrivateKey:
 
 def _from_seed(raw: bytes) -> Ed25519PrivateKey:
     if len(raw) != 32:
-        raise SigningKeyError(
-            f"Ed25519 private key seed must be 32 bytes, got {len(raw)}"
-        )
+        raise SigningKeyError(f"Ed25519 private key seed must be 32 bytes, got {len(raw)}")
     return Ed25519PrivateKey.from_private_bytes(raw)
 
 
@@ -182,10 +180,7 @@ def _from_der_or_seed(raw: bytes) -> Ed25519PrivateKey:
     try:
         key = serialization.load_der_private_key(raw, password=None)
     except (ValueError, TypeError) as exc:
-        raise SigningKeyError(
-            "Signing key must be PEM, base64 (32-byte seed or PKCS8), "
-            "or even-length hex"
-        ) from exc
+        raise SigningKeyError("Signing key must be PEM, base64 (32-byte seed or PKCS8), or even-length hex") from exc
     if not isinstance(key, Ed25519PrivateKey):
         raise SigningKeyError("Signing key is not an Ed25519 private key")
     return key
@@ -199,9 +194,7 @@ def parse_private_key(material: str) -> Ed25519PrivateKey:
     compact = "".join(text.split())
     if _HEX.fullmatch(compact):
         if len(compact) % 2:
-            raise SigningKeyError(
-                "Signing key hex has odd length; use even-length hex, base64, or PEM"
-            )
+            raise SigningKeyError("Signing key hex has odd length; use even-length hex, base64, or PEM")
         try:
             raw = bytes.fromhex(compact)
         except ValueError as exc:
@@ -210,9 +203,7 @@ def parse_private_key(material: str) -> Ed25519PrivateKey:
     try:
         raw = base64.b64decode(compact, validate=True)
     except (ValueError, TypeError) as exc:
-        raise SigningKeyError(
-            "Signing key must be PEM, base64, or even-length hex"
-        ) from exc
+        raise SigningKeyError("Signing key must be PEM, base64, or even-length hex") from exc
     if raw.startswith(b"-----BEGIN"):
         return _from_pem(raw)
     return _from_der_or_seed(raw)
@@ -249,9 +240,7 @@ def publish_public_key(root: Path, private_key: Ed25519PrivateKey) -> tuple[str,
     path.parent.mkdir(parents=True, exist_ok=True)
     pem = public_key_pem(public_key)
     if path.is_file() and path.read_text(encoding="utf-8").strip() != pem.strip():
-        raise SigningKeyError(
-            f"Committed public key {path.name} does not match the signing key"
-        )
+        raise SigningKeyError(f"Committed public key {path.name} does not match the signing key")
     path.write_text(pem, encoding="utf-8")
     return key_id, path
 
@@ -350,8 +339,7 @@ def load_public_key(root: Path, key_id: str) -> Ed25519PublicKey:
     path = RetornatusPaths(root).public_key_path(key_id)
     if not path.is_file():
         raise ReceiptError(
-            f"Public key {key_id} is not in .retornatus/keys "
-            "(verification needs the committed public key)"
+            f"Public key {key_id} is not in .retornatus/keys (verification needs the committed public key)"
         )
     try:
         loaded = serialization.load_pem_public_key(path.read_bytes())
@@ -400,9 +388,7 @@ def build_payload(
 
 def canonical_bytes(payload: dict[str, Any]) -> bytes:
     body = {k: v for k, v in payload.items() if k != "signature"}
-    return json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
-        "utf-8"
-    )
+    return json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
 def sign_payload(root: Path, payload: dict[str, Any]) -> dict[str, Any]:
@@ -424,10 +410,7 @@ def _parse_legacy_key(material: str) -> bytes:
         raise SigningKeyError("RETORNATUS_RECEIPT_KEY is empty")
     if all(c in "0123456789abcdefABCDEF" for c in text):
         if len(text) % 2:
-            raise SigningKeyError(
-                "RETORNATUS_RECEIPT_KEY hex has odd length; "
-                "use even-length hex or raw text"
-            )
+            raise SigningKeyError("RETORNATUS_RECEIPT_KEY hex has odd length; use even-length hex or raw text")
         try:
             return bytes.fromhex(text)
         except ValueError as exc:

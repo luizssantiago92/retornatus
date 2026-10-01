@@ -54,8 +54,7 @@ def simulate_health_endpoint_implementation(project_root: Path) -> HostExecution
 
     doc = docs_dir / "health.md"
     doc.write_text(
-        "# Health\n\n"
-        '`GET /health` returns `200` and `{"status":"ok"}`.\n',
+        '# Health\n\n`GET /health` returns `200` and `{"status":"ok"}`.\n',
         encoding="utf-8",
     )
 

@@ -67,7 +67,7 @@ def render_ci_comment(
     note_lines = [note.strip() for note in notes if note.strip()]
     if note_lines:
         lines.extend(["", "### Notes", ""])
-        lines.extend(f"- { _cell(note) }" for note in note_lines)
+        lines.extend(f"- {_cell(note)}" for note in note_lines)
     rationales = _rationales(verify_documents)
     if rationales:
         lines.extend(["", "### Verify", ""])
@@ -169,11 +169,7 @@ def _claim_counts(documents: Sequence[Mapping[str, Any]]) -> tuple[int, int]:
 
 
 def _gate_counts(documents: Sequence[Mapping[str, Any]]) -> tuple[int, int]:
-    passed = sum(
-        1
-        for document in documents
-        if document.get("verdict") == "PASS" or document.get("passed") is True
-    )
+    passed = sum(1 for document in documents if document.get("verdict") == "PASS" or document.get("passed") is True)
     return passed, len(documents)
 
 
@@ -304,9 +300,7 @@ def _gates_table(documents: Sequence[Mapping[str, Any]]) -> list[str]:
         else:
             raw = document.get("verdict")
             result = raw if isinstance(raw, str) and raw else "—"
-        lines.append(
-            f"| {_cell(gate_label)} | {_cell(change)} | {result} | {_cell(_detail(document))} |"
-        )
+        lines.append(f"| {_cell(gate_label)} | {_cell(change)} | {result} | {_cell(_detail(document))} |")
     return lines
 
 

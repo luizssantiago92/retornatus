@@ -69,9 +69,7 @@ def test_brownfield_full_gap_closure(tmp_path: Path) -> None:
             "Endpoint documented in docs/health.md",
             "Independent review of health surface",
         ],
-        project_context=(tmp_path / ".retornatus" / "project" / "project.md").read_text(
-            encoding="utf-8"
-        ),
+        project_context=(tmp_path / ".retornatus" / "project" / "project.md").read_text(encoding="utf-8"),
         repo_signals=signals,
     )
     assert assessment.sufficient_for_contract

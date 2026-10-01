@@ -143,18 +143,12 @@ class SkillService:
         skill_id = self.next_skill_id()
         name = _slugify(title or specialization)
         resolved_title = title or specialization
-        resolved_description = description or (
-            f"Use when working on: {specialization}"
-        )
+        resolved_description = description or (f"Use when working on: {specialization}")
         relations: list[Relation] = []
         if change_id:
-            relations.append(
-                Relation(type=RelationType.APPLIES_TO, target_id=change_id)
-            )
+            relations.append(Relation(type=RelationType.APPLIES_TO, target_id=change_id))
         if action_id:
-            relations.append(
-                Relation(type=RelationType.APPLIES_TO, target_id=action_id)
-            )
+            relations.append(Relation(type=RelationType.APPLIES_TO, target_id=action_id))
 
         skill = Skill(
             id=skill_id,
@@ -209,9 +203,7 @@ class SkillService:
                     + " — fill RESEARCH or use force with reason"
                 )
             if not bypass_reason or not bypass_reason.strip():
-                raise BypassError(
-                    "Governed bypass of skill-research requires --reason"
-                )
+                raise BypassError("Governed bypass of skill-research requires --reason")
             BypassService(self.root).record_bypass(
                 gate="skill-research",
                 entity_id=skill_id,
@@ -222,9 +214,7 @@ class SkillService:
                 ),
             )
 
-        updated = skill.model_copy(
-            update={"status": SkillStatus.ACTIVE, "updated_at": _utc_now()}
-        )
+        updated = skill.model_copy(update={"status": SkillStatus.ACTIVE, "updated_at": _utc_now()})
         self.repo.save_skill(updated, body, expected=rev)
         return updated
 
@@ -241,9 +231,7 @@ class SkillService:
         new_version = skill.version + 1
         relations = list(skill.relations)
         if from_learning_id:
-            relations.append(
-                Relation(type=RelationType.DERIVED_FROM, target_id=from_learning_id)
-            )
+            relations.append(Relation(type=RelationType.DERIVED_FROM, target_id=from_learning_id))
         stamp = _utc_now().date().isoformat()
         evolution_line = f"| {new_version} | {stamp} | {note} |\n"
         if "| Version | Date | Change |" in body:
@@ -273,10 +261,7 @@ class SkillService:
             if skill.action_id == action_id:
                 matched.append(skill)
                 continue
-            if any(
-                r.target_id == action_id and r.type is RelationType.APPLIES_TO
-                for r in skill.relations
-            ):
+            if any(r.target_id == action_id and r.type is RelationType.APPLIES_TO for r in skill.relations):
                 matched.append(skill)
         return matched
 
@@ -286,9 +271,7 @@ class SkillService:
         for skill in self.repo.list_skills():
             if skill.status is SkillStatus.SUPERSEDED:
                 continue
-            hay = " ".join(
-                [skill.title, skill.description, skill.specialization, skill.name]
-            ).lower()
+            hay = " ".join([skill.title, skill.description, skill.specialization, skill.name]).lower()
             score = hay.count(q) if q else 0
             if q and q in hay:
                 scored.append((score + 1, skill))
@@ -310,11 +293,6 @@ class SkillService:
         dest_dir.mkdir(parents=True, exist_ok=True)
         dest = dest_dir / "SKILL.md"
         # Cursor-friendly front matter + body without Retornatus HTML meta
-        front = (
-            f"---\n"
-            f"name: {skill.name}\n"
-            f"description: {skill.description}\n"
-            f"---\n\n"
-        )
+        front = f"---\nname: {skill.name}\ndescription: {skill.description}\n---\n\n"
         dest.write_text(front + body, encoding="utf-8")
         return dest

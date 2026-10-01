@@ -90,11 +90,7 @@ def _handle_stop(
     if not blocking:
         return StopResponse()
     reason = " ".join(_reason_for(root, document) for document in blocking)
-    body: dict[str, str] = (
-        {"followup_message": reason}
-        if name == "cursor"
-        else {"decision": "block", "reason": reason}
-    )
+    body: dict[str, str] = {"followup_message": reason} if name == "cursor" else {"decision": "block", "reason": reason}
     return StopResponse(stdout=json.dumps(body, ensure_ascii=False) + "\n")
 
 
@@ -153,11 +149,7 @@ def _reason_for(root: Path, document: dict[str, Any]) -> str:
     verdict = str(document.get("verdict") or "NOT_SATISFIED")
     claims = document.get("claims")
     if isinstance(claims, list):
-        unproven = [
-            claim
-            for claim in claims
-            if isinstance(claim, dict) and claim.get("status") != "SATISFIED"
-        ]
+        unproven = [claim for claim in claims if isinstance(claim, dict) and claim.get("status") != "SATISFIED"]
     else:
         unproven = []
     if not unproven:
@@ -167,10 +159,7 @@ def _reason_for(root: Path, document: dict[str, Any]) -> str:
     parts = [f"{claim.get('id')} ({claim.get('status')})" for claim in shown]
     more = f" +{len(unproven) - len(shown)} more" if len(unproven) > len(shown) else ""
     nxt = evidence_command_for_claim(root, change_id, shown[0])
-    return (
-        f"{change_id} is {verdict}. "
-        f"Unproven claims: {', '.join(parts)}{more}. Next: {nxt}"
-    )
+    return f"{change_id} is {verdict}. Unproven claims: {', '.join(parts)}{more}. Next: {nxt}"
 
 
 def evidence_command_for_claim(root: Path, change_id: str, claim: dict[str, Any]) -> str:

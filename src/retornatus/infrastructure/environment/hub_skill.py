@@ -10,10 +10,7 @@ def _hub_skill_text() -> str:
     if packaged.is_file():
         return packaged.read_text(encoding="utf-8")
     # Fallback if wheel layout omits the markdown file
-    return (
-        "---\nname: retornatus\ndescription: Retornatus hub skill\n---\n\n"
-        "# Retornatus Hub\n\nSee package docs.\n"
-    )
+    return "---\nname: retornatus\ndescription: Retornatus hub skill\n---\n\n# Retornatus Hub\n\nSee package docs.\n"
 
 
 def install_hub_skill(root: Path) -> Path:

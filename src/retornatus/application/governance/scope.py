@@ -165,15 +165,10 @@ def evaluate_scope(
     for name in denied:
         messages.append(f"denied path: {name}")
     for name in out_of_scope:
-        messages.append(
-            f"out of scope: {name} (not in Task.resources or .retornatus/**)"
-        )
+        messages.append(f"out of scope: {name} (not in Task.resources or .retornatus/**)")
     if sensitive and not sensitive_ok:
         joined = ", ".join(sensitive)
-        messages.append(
-            "sensitive paths require a satisfied review_result or security_test "
-            f"claim: {joined}"
-        )
+        messages.append(f"sensitive paths require a satisfied review_result or security_test claim: {joined}")
     if not names and not messages:
         messages_ok = ["No changed paths"]
         return ScopeReport(
@@ -234,8 +229,7 @@ def sensitive_claim_satisfied(root: Path, change_id: str) -> bool:
 
 def _supports(evidence: Evidence, claim_id: str) -> bool:
     return any(
-        relation.type is RelationType.SUPPORTS and relation.target_id == claim_id
-        for relation in evidence.relations
+        relation.type is RelationType.SUPPORTS and relation.target_id == claim_id for relation in evidence.relations
     )
 
 

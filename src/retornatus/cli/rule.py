@@ -62,9 +62,7 @@ def rule_activate(
 
     root = resolve_root(path)
     try:
-        rule = AdaptationService(root).activate_rule(
-            rule_id, human_decision_id=decision_id
-        )
+        rule = AdaptationService(root).activate_rule(rule_id, human_decision_id=decision_id)
     except HumanAuthorityError as exc:
         typer.echo(str(exc))
         raise typer.Exit(1) from exc

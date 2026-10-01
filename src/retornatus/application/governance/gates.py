@@ -222,9 +222,7 @@ def gate_assurance(
         claims = build_claims_from_contract(contract)
         evidence = EvidenceService(root).list_for_change(change_id)
         checks = load_required_checks(root)
-        dirty = subjects_with_uncommitted_changes(
-            root, [item.subject for item in evidence]
-        )
+        dirty = subjects_with_uncommitted_changes(root, [item.subject for item in evidence])
         head = current_git_head(root) if checks else None
         equivalent: Callable[[str], bool] | None = None
         if head:
