@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0035",
+  "version": 1,
+  "what": "Replace the 1.2.1 and 1.3.0 changelog stubs with sourced Keep a Changelog sections for 1.0.0, 1.1.0, 1.1.1, 1.2.0, 1.2.1, and 1.3.0, dated from the tags, grouped under Added, Changed, Fixed, and Security, with pull request numbers where the history records them.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented with dated sections for 1.0.0 through 1.3.0"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T16:52:19.737405Z"
+}

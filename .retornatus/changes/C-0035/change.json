@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0035",
+  "title": "Fill changelog history for 1.0.0 through 1.3.0",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Maintainers need CHANGELOG.md to record releases 1.0.0, 1.1.0, 1.1.1, 1.2.0, 1.2.1, and 1.3.0 from git tags, GitHub Releases, merged pull requests, and commit ranges. Scope is CHANGELOG.md plus one new Change record. Out of scope: product code, merge, and publish.",
+    "kind": "MAINTENANCE"
+  },
+  "lane": "QUICK",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T16:52:19.735059Z"
+}

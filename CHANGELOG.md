@@ -150,10 +150,110 @@ Work landed after PyPI **1.3.0**, including stacked pull requests #17, #18, #19,
 - `project.md` references `docs/archive/PRD.md`. The docs credits link points at the Pages site and the source markdown file (#36).
 - The `Retornatus gates` job and `templates/ci/retornatus-pr.yml` pin `astral-sh/setup-uv` to the same commit the other jobs use (`c18668ad3cf93ea998bef934396af7bb5c839dc7`, v10.2.0).
 
-## [1.3.0]
+## [1.3.0] - 2026-09-26
 
-Already on PyPI. Git tag `v1.3.0` was backfilled on 2026-09-29 and points at `a540efb`.
+Already on PyPI. Git tag `v1.3.0` was backfilled on 2026-09-29 and points at `a540efb` (commit date 2026-09-26). The range `v1.2.1..v1.3.0` is pull requests #12 and #13 plus the trees of #14 and #15.
 
-## [1.2.1]
+### Added
 
-Already on PyPI. Git tag `v1.2.1` was backfilled on 2026-09-29 and points at `f4d96d3`.
+- Ember replaces Seedcore as the live mascot on the README and the docs site. The README and the landing page document `intake analyze` and `skill need` (#12).
+- The site hero floats Ember over teal-gold energy waves. The black plate is keyed to a transparent PNG and cropped to the artwork (#13).
+- `verify --receipt` and `receipt verify` write an HMAC-SHA256 receipt (`retornatus-receipt/v1`). The key file is `.retornatus/runtime/receipt.key`, which is gitignored (#15).
+- `action budget --max N` and `gate budget` set an Action attempt ceiling (#15).
+- Root `AGENTS.md` maps the host loop. CI runs `scripts/build_docs_html.py --check`. `docs/guide/From-spec-guardrails.md` and `docs/guide/Landscape.md` record the Spec Guardrails migration and a comparison with nearby harnesses (#15).
+
+### Changed
+
+- The package version is 1.3.0 in `pyproject.toml` and `__version__` (#15).
+
+### Fixed
+
+- Guide HTML is rebuilt for intake and skills, the README "What you get" anchor is repaired, suggested GitHub topics are documented, and the machine-local path is dropped from project continuity (#14).
+
+### Security
+
+- The HMAC receipt key is created with mode `0600`. `RETORNATUS_RECEIPT_KEY` can supply the key.
+
+## [1.2.1] - 2026-09-23
+
+Already on PyPI. Git tag `v1.2.1` was backfilled on 2026-09-29 and points at `f4d96d3` (commit date 2026-09-23).
+
+### Added
+
+- `intake analyze` reviews a freeform prompt in stages and creates a Skill only after the human answers `CREATE=yes`. `skill need` can run before a Contract or Action exists. Manual `skill create` stays available (#10).
+
+### Changed
+
+- The package version is 1.2.1 in `pyproject.toml`, `__version__`, `uv.lock`, and the README What's new block, so a tag can publish the intake-gated Skill flow (#11).
+
+## [1.2.0] - 2026-09-22
+
+GitHub Release v1.2.0. Annotated tag `v1.2.0` points at `2d38d60`.
+
+### Added
+
+- Vague demands get focused questions with options. `change elicit --answer` and `change elicit --write` record answers, and kickoff facts feed Contract readiness. The hub and the guide frame Understand → Agree → Build → Prove → Learn (tag `2d38d60`; GitHub Release v1.2.0).
+- Git blast-radius governance: merge and publish stay owner-only. `.cursor/rules/git-governance.mdc`, `docs/guide/Git-governance.md`, the hub hard rules, and rule candidates R-0001 and R-0002 record it (`ae59584`).
+- Seedcore mascot, a landing page, and a GitHub Pages workflow (`d903278`).
+- HTML docs: a hub, Quick start, and the rest of the guide rendered for GitHub Pages by `scripts/build_docs_html.py`. The README leads with Website, Docs, and Quick start links (`2c9b23d`, `f80cb03`).
+
+### Changed
+
+- The public site and README lead with benefits, and the README mechanism story is expanded (`1e0fab5`, `c7c6bf5`).
+- Seedcore is a clean alpha cutout with a softer hero glow (`b0ffb86`).
+- CI pins mypy 1.15.0 so the typecheck job does not drift (`3b373dd`).
+- The package version is 1.2.0.
+
+### Fixed
+
+- `stdout.reconfigure` is read with `getattr`, so mypy no longer reports union-attr on `TextIO` (`a307b66`).
+- The UTF-8 stdio setup no longer trips ruff E402. Reconfigure lives in a helper so imports stay at the top of the module (`4d038dc`).
+
+## [1.1.1] - 2026-09-22
+
+Annotated tag `v1.1.1` points at `403f3c6`.
+
+### Fixed
+
+- The CLI reconfigures stdout and stderr to UTF-8 with `errors=replace` when `reconfigure` exists, so `change overview` and `doctor` stay readable on a Windows console that defaults to a legacy code page. Overview, doctor, and ops lines use ASCII hyphens instead of em dashes (`f46a2d2`). The package version is 1.1.1 (`403f3c6`).
+
+## [1.1.0] - 2026-09-22
+
+Annotated tag `v1.1.0` points at `f69d822`.
+
+### Added
+
+- `change overview` and `change classify`, including `change create --lane`. `doctor` reports Process and Brakes scores. `lesson from-gate` records a lesson from a failed gate. `ops list`, `ops show`, and `ops run` run operational loops. A consumer CI template lives at `templates/ci/retornatus-pr.yml`. The hub skill states token rules (`f69d822`). Change C-0001 records the same slice; its files were committed in `1e0fab5`.
+
+### Changed
+
+- Install docs prefer PyPI now that 1.0.0 is published (`34a4ba5`).
+- The README covers install, pillars, gates, skills, governance, and the CLI surface (`758cc37`).
+
+## [1.0.0] - 2026-09-21
+
+First tagged release. Annotated tag `v1.0.0` points at `78fd66b`. Commits on this tag used 0.x labels in their subjects. Those labels were not separate git tags.
+
+### Added
+
+- `retornatus init`, the console CLI, and a minimal `.retornatus` project tree. Schema-versioned domain models and ID types. File persistence with atomic writes, the change workflow, wake and environment adapters, execution context, assurance, the question loop, a SQLite FTS index, adaptation, and governance policy (`76ea1e5`, `7515eca`, `ec700d6`).
+- On-demand Skills: create with a RESEARCH scaffold, link to an Action, evolve, and export to a native Cursor skill (`7dae623`).
+- Hub skill, exit-code gates, evidence, finding, and question commands, `loop next`, `project-init`, `integrate`, LICENSE, and a PyPI publish workflow (`1ff9796`).
+- Situation elicitation, claim-bound evidence with staleness checks, a human decision before rule activation, governed bypass, and brownfield wake (#1).
+- `commit:<sha>` evidence freshness, independent assurance plan and review, and task `depends` and `resources` (#2).
+- Path-level evidence freshness, isolation boundaries for worktrees, sandbox, and subagents, and host execution records that do not become an agent runtime (#3).
+- `task start`, `task complete`, `task fail`, and `task reopen`, contract reopen that archives the prior version, and `skill need` for trivial work (#4).
+- `change activate`, richer `status`, `doctor`, auto-numbered findings and questions, and `question reopen` (#5).
+- `policy check` and `gate policy` (ALLOW, DENY, REQUIRE_HUMAN), `run --strict-policy`, native Rule projection into Cursor, Claude, and Codex bridges, and adapter-aware `integrate` (#6).
+- Product guide under `docs/guide` (overview, quick start, concepts, gates, governance, CLI, tutorials) and CONTRIBUTING (#7).
+- Credits, lineage, and prior-art notes in `docs/credits-and-lineage.md` (#8).
+- Quick start and the guide document the TestPyPI install for the published 1.0.0 package. Derived `.retornatus` files are gitignored (`78fd66b`).
+
+### Changed
+
+- The README is a product entry point (#7). CI can publish to TestPyPI or PyPI (`384a10f`).
+
+### Fixed
+
+- The console script works under `uv tool install` (`21a9227`).
+- The packaging entrypoint is `entrypoint()`, so it no longer shadows Typer command names. Unused imports and a few types are cleaned up. The duplicate root PRD copy is removed. GitHub Actions runs ruff, mypy, and pytest (#9).

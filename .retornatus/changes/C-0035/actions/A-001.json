@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0035/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Replace the 1.2.1 and 1.3.0 changelog stubs with sourced Keep a Changelog sections for 1.0.0, 1.1.0, 1.1.1, 1.2.0, 1.2.1, and 1.3.0, dated from the tags, grouped under Added, Changed, Fixed, and Security, with pull request numbers where the history records them.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented with dated sections for 1.0.0 through 1.3.0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0035/T-001",
+      "description": "Fill CHANGELOG 1.0.0 through 1.3.0 from git tags, GitHub releases, and commit ranges",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
