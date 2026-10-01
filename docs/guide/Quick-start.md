@@ -19,7 +19,7 @@ uv --version
 
 ```bash
 uv tool install retornatus
-retornatus --version   # 1.7.0
+retornatus --version   # 1.8.0
 ```
 
 One-shot without a global install: `uvx retornatus --help`.

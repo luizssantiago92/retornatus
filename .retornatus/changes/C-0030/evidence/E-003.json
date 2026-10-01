@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0030/E-003",
+  "type": "test_result",
+  "subject": "CHANGELOG.md contains the heading ## [1.8.0] - 2026-09-30 and an empty Unrelease",
+  "source": "uv run python /tmp/c0030-checks/changelog.py",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T02:54:21.286095Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0030-checks/changelog.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T02:52:55.415054Z",
+  "ended_at": "2026-10-01T02:52:55.441259Z",
+  "duration_ms": 26,
+  "output_sha256": "44a0b09485c8ddccf2059b31b1e493ed850a2a1e3f996f42022f89d6fceaf057",
+  "output_tail": "changelog ok\n",
+  "output_artifact": ".retornatus/changes/C-0030/evidence/E-003.output.txt",
+  "git_commit": "3ee81b1ffcdfb581e8a014bdda870061535a0fdd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0030/claim-done-3",
+      "note": null
+    }
+  ]
+}

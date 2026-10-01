@@ -37,7 +37,7 @@ Agents are fast — and optimistic. They ship code, summarize what they think th
 | The agent stops when it feels finished | Optional hooks carry the open goal into the session, the edit, and the end of the turn |
 | Lessons vanish when the tab closes | Notes (and optional rules you accept) stay in the repo |
 
-Package **1.7.0** is on [PyPI](https://pypi.org/project/retornatus/).
+Package **1.8.0** is on [PyPI](https://pypi.org/project/retornatus/).
 
 [What it is](#what-it-is) · [30 seconds](#see-it-in-30-seconds) · [What’s new](#whats-new) · [Quick start](#quick-start) · [Presets](#presets) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Hooks](#agent-hooks) · [Docs](#documentation)
 
@@ -77,11 +77,11 @@ You approve the product intent. The agent implements. Push, merge, and publish s
 
 ## What’s new
 
-One block for the **current release** **1.7.0**, plus work already on `main`. From **1.5** through **1.7**:
+One block for the **current release** **1.8.0**. From **1.5** through **1.8**:
 
 - **Presets (1.5)** — `retornatus init --preset` for `python`, `python-platform`, `fastapi`, `django`, `rag`, and `worker`
 - **Pull requests (1.5)** — the [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) comments the verdict on the PR
-- **Agent hooks** — `hook stop` (1.6; 1.7 lets a real question end the turn), `hook session-start` (1.7), and `hook file-edit` (unreleased scope warning; `[hooks] scope_mode` is `warn`, `block`, or `off`)
+- **Agent hooks** — `hook stop` (1.6; 1.7 lets a real question end the turn), `hook session-start` (1.7), and `hook file-edit` (shipped in 1.8.0 as a scope warning; `[hooks] scope_mode` is `warn`, `block`, or `off`)
 
 Full notes: [CHANGELOG.md](https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md).
 

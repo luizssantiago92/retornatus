@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "C-0030/E-006",
+  "type": "repository_observation",
+  "subject": "/docs/guide/GitHub-Action.md",
+  "source": "uv run python /tmp/c0030-checks/action_version.py",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T02:54:21.294863Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "/tmp/c0030-checks/action_version.py"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T02:52:55.512301Z",
+  "ended_at": "2026-10-01T02:52:55.543364Z",
+  "duration_ms": 31,
+  "output_sha256": "325c53b5bb23ea4c10638a205930e217f9cc7e29eb6476320d547a04b46beb0f",
+  "output_tail": "action ok\n",
+  "output_artifact": ".retornatus/changes/C-0030/evidence/E-006.output.txt",
+  "git_commit": "3ee81b1ffcdfb581e8a014bdda870061535a0fdd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0030/claim-done-6",
+      "note": null
+    }
+  ]
+}

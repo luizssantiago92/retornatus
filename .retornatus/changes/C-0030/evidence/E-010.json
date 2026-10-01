@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0030/E-010",
+  "type": "test_result",
+  "subject": "uvx twine check exits 0",
+  "source": "uvx twine check dist/retornatus-1.8.0-py3-none-any.whl dist/retornatus-1.8.0.tar.gz",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T02:54:21.304668Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uvx",
+    "twine",
+    "check",
+    "dist/retornatus-1.8.0-py3-none-any.whl",
+    "dist/retornatus-1.8.0.tar.gz"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T02:52:56.182414Z",
+  "ended_at": "2026-10-01T02:52:56.374884Z",
+  "duration_ms": 192,
+  "output_sha256": "660233d9a0c7b85425f369a582dae07697d57caaeb8ae4357c7361e7de10fe9f",
+  "output_tail": "Checking dist/retornatus-1.8.0-py3-none-any.whl: PASSED\nChecking dist/retornatus-1.8.0.tar.gz: PASSED\n",
+  "output_artifact": ".retornatus/changes/C-0030/evidence/E-010.output.txt",
+  "git_commit": "3ee81b1ffcdfb581e8a014bdda870061535a0fdd",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0030/claim-done-10",
+      "note": null
+    }
+  ]
+}
