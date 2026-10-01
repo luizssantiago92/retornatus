@@ -257,7 +257,8 @@ def render_page(title: str, body_html: str, out_rel: str) -> str:
     depth = out_rel.count("/")
     prefix = "../" * depth
     css = f"{prefix}site.css"
-    icon = f"{prefix}assets/retornatus-mascot-square.webp"
+    icon = f"{prefix}assets/favicon.ico"
+    apple = f"{prefix}assets/apple-touch-icon.png"
     home = prefix if depth else "./"
     if out_rel.startswith("guide/tutorials/"):
         docs, qs = "../", "../quick-start.html"
@@ -273,7 +274,8 @@ def render_page(title: str, body_html: str, out_rel: str) -> str:
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{safe_title} — Retornatus</title>
-  <link rel="icon" type="image/webp" href="{icon}" />
+  <link rel="icon" href="{icon}" sizes="any" />
+  <link rel="apple-touch-icon" href="{apple}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link

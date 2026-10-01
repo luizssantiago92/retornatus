@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "C-0036/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Derive a square head-and-face crop from docs/assets/retornatus-mascot-square.webp as favicon.ico at 16, 32, and 48 pixels and apple-touch-icon.png at 180 pixels, wire rel=icon and apple-touch-icon through scripts/build_docs_html.py plus docs/index.html and docs/guide/index.html, and record an Unreleased changelog entry. Keep the existing square WebP for Open Graph and Twitter.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented and contains an Unreleased favicon entry",
+    "docs/index.html links a square favicon.ico and an apple-touch-icon"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0036/T-001",
+      "description": "Crop the mascot head into favicon.ico and apple-touch-icon.png and wire the icon links",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "docs/assets/favicon.ico",
+        "docs/assets/apple-touch-icon.png",
+        "scripts/build_docs_html.py",
+        "docs/index.html",
+        "docs/guide/index.html",
+        "CHANGELOG.md",
+        "tests/test_public_preset_docs.py"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0036",
+  "title": "Square mascot favicon for the docs site",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Site visitors must see a square favicon of the mascot head on every docs page. In scope: a tightly cropped multi-size favicon.ico and a 180px apple-touch-icon.png derived only from the existing docs/assets mascot, icon link tags in the HTML builder and the two committed HTML pages, and an Unreleased changelog note. Out of scope: new mascot artwork, Open Graph or Twitter image changes, Python package behavior, merging, and publishing.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-01T17:06:59.075057Z"
+}

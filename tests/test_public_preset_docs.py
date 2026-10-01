@@ -46,8 +46,10 @@ def test_landing_hero_uses_readme_card_and_lists_presets() -> None:
     assert "retornatus init --preset fastapi" in html
     for name in PRESETS:
         assert f"<h3>{name}</h3>" in html
-    square = "assets/retornatus-mascot-square.webp"
-    assert f'href="{square}"' in html
+    assert 'href="assets/favicon.ico"' in html
+    assert 'rel="apple-touch-icon"' in html
+    assert 'href="assets/apple-touch-icon.png"' in html
+    assert "assets/retornatus-mascot-square.webp" in html
     css = (ROOT / "docs/site.css").read_text(encoding="utf-8")
     assert "prefers-reduced-motion: reduce" in css
     assert ".mascot-card" in css
