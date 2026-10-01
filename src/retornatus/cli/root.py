@@ -366,12 +366,12 @@ def integrate_cmd(
     hooks: bool = typer.Option(
         False,
         "--hooks",
-        help="Also install agent Stop, session-start, and file-edit hooks.",
+        help="Also install agent Stop, subagent-stop, session-start, and file-edit hooks.",
     ),
     remove_hooks: bool = typer.Option(
         False,
         "--remove-hooks",
-        help="Remove agent Stop, session-start, and file-edit hooks. Other hooks stay.",
+        help="Remove agent Stop, subagent-stop, session-start, and file-edit hooks. Other hooks stay.",
     ),
     host: list[str] | None = typer.Option(
         None,
@@ -381,9 +381,9 @@ def integrate_cmd(
 ) -> None:
     """Install Retornatus hub skill + Environment bridge for the detected host.
 
-    ``--hooks`` is opt-in and writes the Stop, session-start, and file-edit
-    hooks after the usual install. Plain ``integrate`` does not touch agent
-    hook files.
+    ``--hooks`` is opt-in and writes the Stop, subagent-stop, session-start,
+    and file-edit hooks after the usual install. Plain ``integrate`` does not
+    touch agent hook files.
     """
     from retornatus.application.agent_hooks.config import (
         hook_config_path,

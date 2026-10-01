@@ -81,7 +81,7 @@ One block for the **current release** **1.8.0**. From **1.5** through **1.8**:
 
 - **Presets (1.5)** — `retornatus init --preset` for `python`, `python-platform`, `fastapi`, `django`, `rag`, and `worker`
 - **Pull requests (1.5)** — the [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) comments the verdict on the PR
-- **Agent hooks** — `hook stop` (1.6; 1.7 lets a real question end the turn), `hook session-start` (1.7), and `hook file-edit` (shipped in 1.8.0 as a scope warning; `[hooks] scope_mode` is `warn`, `block`, or `off`)
+- **Agent hooks** — `hook stop` (1.6; 1.7 lets a real question end the turn), `hook session-start` (1.7), and `hook file-edit` (shipped in 1.8.0 as a scope warning; `[hooks] scope_mode` is `warn`, `block`, or `off`). Unreleased: `hook subagent-stop` uses that same reminder when a Cursor, Claude Code, or Codex subagent finishes. `[hooks] subagent_stop` defaults to true.
 
 Full notes: [CHANGELOG.md](https://github.com/luizssantiago92/retornatus/blob/main/CHANGELOG.md).
 
@@ -146,11 +146,11 @@ A fuzzy ask makes `change elicit` exit `1` and list questions. A prompt that mig
 
 ## Agent hooks
 
-`retornatus integrate --hooks` installs three opt-in hooks for Claude Code, Cursor, and Codex. `hook session-start` injects the active Change. `hook file-edit` warns when an edit leaves that Change’s scope (`[hooks] scope_mode` is `warn` by default, or `block`, or `off`). `hook stop` asks the agent to keep going when the Change is not `SATISFIED`, and lets a real question to you end the turn. They fail open. The pull-request check stays the source of truth. Guide: [Agent hooks](https://luizssantiago92.github.io/retornatus/guide/agent-hooks.html).
+`retornatus integrate --hooks` installs four opt-in hooks for Claude Code, Cursor, and Codex. `hook session-start` injects the active Change. `hook file-edit` warns when an edit leaves that Change’s scope (`[hooks] scope_mode` is `warn` by default, or `block`, or `off`). `hook stop` asks the agent to keep going when the Change is not `SATISFIED`, and lets a real question to you end the turn. `hook subagent-stop` sends that same reminder when a subagent finishes (`[hooks] subagent_stop` defaults to true). They fail open. The pull-request check stays the source of truth. Guide: [Agent hooks](https://luizssantiago92.github.io/retornatus/guide/agent-hooks.html).
 
 ## Commands
 
-Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`. Diff gates: `gate suppressions`, `gate scope`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
+Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop`. Diff gates: `gate suppressions`, `gate scope`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
 
 ## Verify receipts
 

@@ -21,11 +21,13 @@ from retornatus.application.agent_hooks.config import HOSTS
 from retornatus.application.agent_hooks.questions import (
     assistant_message_text,
     is_question_to_user,
+    subagent_assistant_text,
 )
 from retornatus.application.assurance.independent import evaluate_change_assurance
 from retornatus.application.assurance.settings import (
     allow_question_stops,
     load_required_checks,
+    subagent_stop_enabled,
 )
 from retornatus.application.report.envelope import verify_document
 from retornatus.bootstrap.hooks import active_change_ids
@@ -49,11 +51,30 @@ def handle_stop(
     start: Path,
     walk: bool,
 ) -> StopResponse:
-    """Read one host payload and return the allow or block response."""
+    """Read one host Stop payload and return the allow or block response."""
     try:
-        return _handle_stop(host, raw_stdin, start=start, walk=walk)
+        return _handle_stop(host, raw_stdin, start=start, walk=walk, kind="stop")
     except Exception as exc:
-        return _fail_open(f"{type(exc).__name__}: {exc}")
+        return _fail_open("stop", f"{type(exc).__name__}: {exc}")
+
+
+def handle_subagent_stop(
+    host: str,
+    raw_stdin: str,
+    *,
+    start: Path,
+    walk: bool,
+) -> StopResponse:
+    """Read one host subagent-stop payload and return the same reminder as Stop.
+
+    Cursor ``subagentStop``, Claude Code ``SubagentStop``, and Codex
+    ``SubagentStop`` share the Stop decision. ``[hooks] subagent_stop = false``
+    allows the subagent to finish. A non-boolean value fails open.
+    """
+    try:
+        return _handle_stop(host, raw_stdin, start=start, walk=walk, kind="subagent")
+    except Exception as exc:
+        return _fail_open("subagent", f"{type(exc).__name__}: {exc}")
 
 
 def _handle_stop(
@@ -62,13 +83,14 @@ def _handle_stop(
     *,
     start: Path,
     walk: bool,
+    kind: str,
 ) -> StopResponse:
     name = host.strip().casefold()
     if name not in HOSTS:
-        return _fail_open(f"unknown host {host!r}")
+        return _fail_open(kind, f"unknown host {host!r}")
     payload, parsed = _parse_payload(raw_stdin)
     if not parsed:
-        return _fail_open("invalid JSON on stdin")
+        return _fail_open(kind, "invalid JSON on stdin")
     if name in {"claude", "codex"} and payload.get("stop_hook_active") is True:
         return StopResponse()
     if name == "cursor" and payload.get("status") in _ALLOW_STATUSES:
@@ -76,10 +98,12 @@ def _handle_stop(
     root = locate_project(start, walk=walk)
     if root is None:
         return StopResponse()
+    if kind == "subagent" and not subagent_stop_enabled(root):
+        return StopResponse()
     change_ids = active_change_ids(root)
     if not change_ids:
         return StopResponse()
-    if allow_question_stops(root) and _message_is_question(name, payload):
+    if allow_question_stops(root) and _message_is_question(name, payload, kind=kind):
         return StopResponse()
     blocking: list[dict[str, Any]] = []
     for change_id in change_ids:
@@ -111,14 +135,14 @@ def locate_project(start: Path, *, walk: bool) -> Path | None:
     return None
 
 
-def _message_is_question(host: str, payload: dict[str, Any]) -> bool:
+def _message_is_question(host: str, payload: dict[str, Any], *, kind: str) -> bool:
     """True when the documented assistant text asks the user something.
 
     A missing transcript or a read error is not a question, so the caller
-    keeps the Assurance decision.
+    keeps the Assurance decision. Subagent stop reads the subagent fields.
     """
     try:
-        text = assistant_message_text(host, payload)
+        text = subagent_assistant_text(host, payload) if kind == "subagent" else assistant_message_text(host, payload)
     except Exception:
         return False
     if not text:
@@ -139,9 +163,10 @@ def _parse_payload(raw: str) -> tuple[dict[str, Any], bool]:
     return {}, True
 
 
-def _fail_open(detail: str) -> StopResponse:
+def _fail_open(kind: str, detail: str) -> StopResponse:
     line = detail.replace("\n", " ").strip()
-    return StopResponse(stderr=f"retornatus hook stop: fail-open ({line})\n")
+    label = "subagent-stop" if kind == "subagent" else "stop"
+    return StopResponse(stderr=f"retornatus hook {label}: fail-open ({line})\n")
 
 
 def _reason_for(root: Path, document: dict[str, Any]) -> str:

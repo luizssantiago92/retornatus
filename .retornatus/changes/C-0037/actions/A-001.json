@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "C-0037/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Add retornatus hook subagent-stop for Claude Code, Cursor, and Codex by reusing the Stop hook decision, install it with integrate --hooks, honor [hooks] subagent_stop, report it from doctor, and document the host payloads.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "The file /guide/Agent-hooks.md is documented and contains subagentStop, followup_message, and subagent_stop",
+    "The file /CLI.md is documented and contains hook subagent-stop",
+    "The file /CHANGELOG.md is documented and contains an Unreleased subagent-stop entry",
+    "The file /README.md is documented and contains hook subagent-stop"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0037/T-001",
+      "description": "Implement the subagent-stop hook and install it beside Stop",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/agent_hooks/**",
+        "src/retornatus/application/assurance/settings.py",
+        "src/retornatus/cli/hook.py",
+        "src/retornatus/cli/root.py",
+        "src/retornatus/bootstrap/doctor.py",
+        "src/retornatus/infrastructure/environment/hub/SKILL.md",
+        "tests/test_subagent_stop_hook.py",
+        "tests/test_agent_hooks.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0037/T-002",
+      "description": "Document the hook for Claude Code, Cursor, and Codex",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0037/T-001"
+      ],
+      "resources": [
+        "docs/guide/**",
+        "README.md",
+        "CHANGELOG.md",
+        ".cursor/skills/retornatus/SKILL.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

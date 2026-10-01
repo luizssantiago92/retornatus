@@ -11,6 +11,7 @@ from retornatus.application.agent_hooks.file_edit import scope_mode_label
 from retornatus.application.assurance.settings import (
     allow_question_stops,
     load_project_config,
+    subagent_stop_label,
 )
 from retornatus.application.governance.gates import gate_contract, gate_skill_research
 from retornatus.bootstrap.wake import WakeReport, wake_up
@@ -43,6 +44,7 @@ class DoctorReport:
     brakes: ReadinessScore | None = None
     agent_hooks: dict[str, str] = field(default_factory=dict)
     allow_questions: bool | None = None
+    subagent_stop: str | None = None
     scope_mode: str | None = None
 
     @property
@@ -75,6 +77,8 @@ class DoctorReport:
         if self.allow_questions is not None:
             shown = "true" if self.allow_questions else "false"
             lines.append(f"hooks allow_questions: {shown}")
+        if self.subagent_stop is not None:
+            lines.append(f"hooks subagent_stop: {self.subagent_stop}")
         if self.scope_mode is not None:
             lines.append(f"hooks scope_mode: {self.scope_mode}")
         if self.warnings:
@@ -216,6 +220,7 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
     warnings: list[str] = []
     hook_status = agent_hook_status(project_root)
     questions_allowed = allow_question_stops(project_root) if wake.initialized else None
+    subagent_toggle = subagent_stop_label(project_root) if wake.initialized else None
     edit_mode = scope_mode_label(project_root) if wake.initialized else None
 
     process = _score_process(project_root, wake)
@@ -230,6 +235,7 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
             brakes=brakes,
             agent_hooks=hook_status,
             allow_questions=questions_allowed,
+            subagent_stop=subagent_toggle,
             scope_mode=edit_mode,
         )
 
@@ -280,5 +286,6 @@ def run_doctor(root: Path | None = None) -> DoctorReport:
         brakes=brakes,
         agent_hooks=hook_status,
         allow_questions=questions_allowed,
+        subagent_stop=subagent_toggle,
         scope_mode=edit_mode,
     )
