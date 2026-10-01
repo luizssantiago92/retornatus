@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `gate suppressions` scans untracked, non-ignored files (`git ls-files --others --exclude-standard`) when neither `--base` nor `--staged` is set. Each line is treated as added, the same as a new file in the diff. Gitignored paths stay out. `--base` and `--staged` are unchanged, so a clean CI checkout still scans only the committed range.
+
 ## [1.8.0] - 2026-09-30
 
 ### Added

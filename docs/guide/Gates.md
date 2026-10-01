@@ -16,7 +16,7 @@ They do not replace judgment; they prevent pretending success when structure or 
 | `retornatus gate assurance <C-id>` | Assurance is not `SATISFIED` |
 | `retornatus gate policy <A-id>` | Policy is `DENY` or `REQUIRE_HUMAN` |
 | `retornatus gate budget <A-id>` | Action `attempt_count` reached `max_attempts` |
-| `retornatus gate suppressions` | Added diff lines introduce a suppression or skip marker |
+| `retornatus gate suppressions` | Added lines introduce a suppression or skip marker. With no flag, untracked non-ignored files count as added |
 | `retornatus gate scope <C-id>` | The diff leaves Task resources, hits a denied path, or touches a sensitive path without a satisfied review/security claim |
 | `retornatus verify <C-id>` | Same family as assurance over Contract DONE Claims |
 
@@ -111,7 +111,7 @@ allow_patterns = ["type:\\s*ignore\\[override\\]"]
 allow_paths = ["vendor/**"]
 ```
 
-`allow_patterns` skip a whole added line. `allow_paths` skip a file. With no flag, the scan is `git diff HEAD` (staged and unstaged). `--staged` is the index. `--base` is `base...HEAD`.
+`allow_patterns` skip a whole added line. `allow_paths` skip a file. With no flag, the scan is `git diff HEAD` (staged and unstaged tracked changes) plus every line of each untracked file from `git ls-files --others --exclude-standard`. A file that has not been `git add`ed is treated like an added file. Gitignored paths are not scanned. `--staged` is the index only. `--base` is `base...HEAD` only, so a clean CI checkout still scans just that committed range.
 
 ## Scope gate
 

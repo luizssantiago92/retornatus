@@ -104,6 +104,73 @@ def test_suppressions_flag_added_markers_and_honor_allowlists(tmp_path: Path) ->
     assert "HACK" in extra.stdout
 
 
+def test_suppressions_scan_untracked_files_and_skip_ignored(tmp_path: Path) -> None:
+    """A not-yet-added file is scanned. A gitignored file is not.
+
+    ``--base`` and ``--staged`` stay on the committed range and the index,
+    so an untracked marker does not fail those modes.
+    """
+    _git(tmp_path)
+    initialize_project(tmp_path)
+    _commit(tmp_path, "init")
+    marker = "no" + "qa"
+    (tmp_path / "stray.py").write_text(
+        f"def hidden() -> None:  # {marker}\n    return None\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "secret_skip.py").write_text(
+        f"def ignored() -> None:  # {marker}\n    return None\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "blob.bin").write_bytes(b"\0not-text")
+    gitignore = tmp_path / ".gitignore"
+    gitignore.write_bytes(gitignore.read_bytes() + b"secret_skip.py\n")
+
+    scanned = runner.invoke(
+        app, ["gate", "suppressions", "--path", str(tmp_path)]
+    )
+    assert scanned.exit_code == 1, scanned.stdout
+    assert "stray.py:1:" in scanned.stdout
+    assert "secret_skip.py" not in scanned.stdout
+    assert "blob.bin" not in scanned.stdout
+
+    staged = runner.invoke(
+        app, ["gate", "suppressions", "--staged", "--path", str(tmp_path)]
+    )
+    assert staged.exit_code == 0, staged.stdout
+    assert "stray.py" not in staged.stdout
+
+    based = runner.invoke(
+        app,
+        ["gate", "suppressions", "--base", "HEAD", "--path", str(tmp_path)],
+    )
+    assert based.exit_code == 0, based.stdout
+    assert "stray.py" not in based.stdout
+
+
+def test_untracked_file_lines_skip_binary_and_missing(tmp_path: Path) -> None:
+    from retornatus.application.governance.diff import _untracked_file_lines
+
+    (tmp_path / "blob.bin").write_bytes(b"\0\1\2")
+    assert _untracked_file_lines(tmp_path, "blob.bin") == []
+    assert _untracked_file_lines(tmp_path, "gone.py") == []
+    nested = tmp_path / "nested"
+    nested.mkdir()
+    assert _untracked_file_lines(tmp_path, "nested") == []
+
+
+def test_untracked_file_lines_skip_unreadable(tmp_path: Path, monkeypatch: object) -> None:
+    from retornatus.application.governance.diff import _untracked_file_lines
+
+    (tmp_path / "locked.py").write_text("x = 1\n", encoding="utf-8")
+
+    def _boom(self: Path) -> bytes:
+        raise OSError("unreadable")
+
+    monkeypatch.setattr(Path, "read_bytes", _boom)
+    assert _untracked_file_lines(tmp_path, "locked.py") == []
+
+
 def test_suppressions_base_ref_sees_only_that_range(tmp_path: Path) -> None:
     _git(tmp_path)
     initialize_project(tmp_path)

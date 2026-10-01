@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "C-0031/E-005",
+  "type": "test_result",
+  "subject": "CHANGELOG.md Unreleased contains a Fixed entry for the suppressions scan of untr",
+  "source": "uv run python -c 'from pathlib import Path\ntext = Path('\"'\"'CHANGELOG.md'\"'\"').read_text(encoding='\"'\"'utf-8'\"'\"')\nunreleased = text.split('\"'\"'## [1.8.0]'\"'\"', 1)[0]\nassert '\"'\"'## [Unreleased]'\"'\"' in unreleased\nassert '\"'\"'### Fixed'\"'\"' in unreleased\nassert '\"'\"'git ls-files --others --exclude-standard'\"'\"' in unreleased\nprint('\"'\"'changelog ok'\"'\"')\n'",
+  "producer": "retornatus",
+  "observed_at": "2026-10-01T13:51:30.462974Z",
+  "subject_state": null,
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "from pathlib import Path\ntext = Path('CHANGELOG.md').read_text(encoding='utf-8')\nunreleased = text.split('## [1.8.0]', 1)[0]\nassert '## [Unreleased]' in unreleased\nassert '### Fixed' in unreleased\nassert 'git ls-files --others --exclude-standard' in unreleased\nprint('changelog ok')\n"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-01T13:51:30.427114Z",
+  "ended_at": "2026-10-01T13:51:30.458923Z",
+  "duration_ms": 31,
+  "output_sha256": "44a0b09485c8ddccf2059b31b1e493ed850a2a1e3f996f42022f89d6fceaf057",
+  "output_tail": "changelog ok\n",
+  "output_artifact": ".retornatus/changes/C-0031/evidence/E-005.output.txt",
+  "git_commit": "9d4c54f057d51c13d7778999bd57da036219fc4f",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": [
+    {
+      "type": "SUPPORTS",
+      "target_id": "C-0031/claim-done-5",
+      "note": null
+    }
+  ]
+}

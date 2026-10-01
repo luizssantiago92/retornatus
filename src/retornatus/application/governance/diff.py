@@ -101,7 +101,14 @@ def added_lines(
     base: str | None = None,
     staged: bool = False,
 ) -> list[AddedLine]:
-    """Added lines (``+``, not ``+++``) from the same diff selection as names."""
+    """Added lines (``+``, not ``+++``) from the same diff selection as names.
+
+    With neither ``base`` nor ``staged``, untracked files that are not ignored
+    are included too. Each of their lines is an added line, the same way a
+    new file appears in a diff. Names come from
+    ``git ls-files --others --exclude-standard``, so gitignored paths stay out.
+    ``--base`` and ``--staged`` stay limited to that range and the index.
+    """
     if base and staged:
         raise UsageError("Pass only one of --base and --staged")
     if not git_available(root):
@@ -122,8 +129,40 @@ def added_lines(
         detail = completed.stderr.strip() or "git diff failed"
         raise UsageError(detail)
     lines = _parse_added(completed.stdout)
+    if not base and not staged:
+        lines.extend(_untracked_added_lines(root))
     allowed = set(_filter_to_root(root, [item.path for item in lines]))
     return [item for item in lines if item.path in allowed]
+
+
+# Git treats a blob as binary when a NUL appears in the first 8 KiB and then
+# emits no added text lines. Match that so an untracked binary is not scanned.
+_BINARY_SNIFF_BYTES = 8000
+
+
+def _untracked_added_lines(root: Path) -> list[AddedLine]:
+    """Every text line of each untracked, non-ignored file, as an added line."""
+    added: list[AddedLine] = []
+    for name in _name_only(root, ["ls-files", "--others", "--exclude-standard"]):
+        added.extend(_untracked_file_lines(root, name))
+    return added
+
+
+def _untracked_file_lines(root: Path, name: str) -> list[AddedLine]:
+    path = root / name
+    try:
+        if not path.is_file():
+            return []
+        raw = path.read_bytes()
+    except OSError:
+        return []
+    if b"\0" in raw[:_BINARY_SNIFF_BYTES]:
+        return []
+    text = raw.decode("utf-8", errors="replace")
+    return [
+        AddedLine(path=name, line_number=number, text=line)
+        for number, line in enumerate(text.splitlines(), start=1)
+    ]
 
 
 def _name_only(root: Path, args: list[str]) -> list[str]:

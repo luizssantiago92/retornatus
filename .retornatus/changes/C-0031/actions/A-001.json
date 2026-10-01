@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "C-0031/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Include untracked non-ignored files in the default suppression scan and prove it with tests, docs, and changelog.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "pytest reports an untracked non-ignored file that contains a suppression marker",
+    "pytest does not report a gitignored file that contains a suppression marker",
+    "pytest shows --base and --staged still ignore untracked files",
+    "docs/guide/Gates.md states that the default scan includes untracked non-ignored files",
+    "CHANGELOG.md Unreleased contains a Fixed entry for the suppressions scan of untracked files",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0031/T-001",
+      "description": "Scan untracked non-ignored files in the default suppression diff and document the selection",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/governance/diff.py",
+        "tests/test_scope_and_suppressions.py",
+        "docs/guide/Gates.md",
+        "docs/guide/CLI.md",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
