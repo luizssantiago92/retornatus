@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "C-0029/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Rewrite the README and keep docs hygiene checks green",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "The file /README.md contains between 150 and 200 lines, a console demo of verify then evidence run then SATISFIED, one What's new block for releases 1.5 through 1.7 plus hook file-edit, an agent hooks comparison row, a Quick start section, and a PyPI cloud install",
+    "uv run pytest -q exits 0",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0",
+    "uv lock --check exits 0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0029/T-001",
+      "description": "Rewrite README.md, move leftover receipt detail into the CLI guide, and update README hygiene tests",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "README.md",
+        "docs/guide/CLI.md",
+        "tests/test_docs_hygiene.py",
+        "tests/test_public_preset_docs.py"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
