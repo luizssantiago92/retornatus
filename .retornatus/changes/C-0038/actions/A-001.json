@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "id": "C-0038/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Bump the declared package version from 1.8.0 to 1.9.0, move Unreleased notes under a dated 1.9.0 section, list hook subagent-stop as shipped in 1.9.0 in the README and site What's new blocks, and pin current-release docs to 1.9.0.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented and contains the heading ## [1.9.0] - 2026-10-01 and an empty Unreleased section",
+    "README.md is documented and contains the current release 1.9.0 and hook subagent-stop",
+    "The file /docs/index.html is documented and contains 1.9.0 and subagent-stop",
+    "The file /pyproject.toml is documented and contains version 1.9.0",
+    "The file /src/retornatus/__init__.py is documented and contains version 1.9.0",
+    "The file /.retornatus/config.toml is documented and contains version 1.9.0"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0038/T-001",
+      "description": "Bump version pins, date the 1.9.0 changelog, and list subagent-stop as shipped in What's new",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "pyproject.toml",
+        "uv.lock",
+        "src/retornatus/__init__.py",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/index.html",
+        "docs/guide/Cloud-agents.md",
+        "docs/guide/Quick-start.md",
+        "docs/guide/README.md",
+        "docs/guide/GitHub-Action.md",
+        "action.yml",
+        "tests/test_docs_hygiene.py"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

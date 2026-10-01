@@ -7,24 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- `ruff format` is applied to `src`, `tests`, and `scripts`. CI runs `uv run ruff format --check src tests scripts` in the existing lint job. Job names and the test matrix are unchanged. `.git-blame-ignore-revs` names the formatting commit. GitHub honors that file for blame. Locally, run `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+## [1.9.0] - 2026-10-01
 
 ### Added
 
-- `retornatus hook subagent-stop` reminds a subagent when an active Change is not `SATISFIED`. Cursor `subagentStop` returns `followup_message` and the generated entry sets `loop_limit` to 1. Claude Code and Codex `SubagentStop` return `decision: "block"` with `reason` and exit 0; `stop_hook_active` allows the finish. Questions, Cursor `aborted` or `error`, no active Change, and a `SATISFIED` Change skip the reminder. `[hooks] subagent_stop` defaults to true; boolean false opts out. `integrate --hooks` installs the command beside Stop, and `doctor` reports it. Codex is included because its hooks reference documents `SubagentStop`. CI stays the source of truth. See `docs/guide/Agent-hooks.md`.
-- The docs site favicon is a square crop of the mascot head: `docs/assets/favicon.ico` (16, 32, and 48) and `docs/assets/apple-touch-icon.png` (180). The HTML builder and the committed landing and docs hub pages link both. Open Graph and Twitter stay on `docs/assets/retornatus-mascot-square.webp`.
+- `retornatus hook subagent-stop` reminds a Cursor, Claude Code, or Codex subagent when the active Change is not `SATISFIED`. Cursor returns `followup_message` with `loop_limit` 1. Claude Code and Codex return `decision: "block"` and exit 0; `stop_hook_active` lets the subagent finish. Questions, Cursor `aborted` or `error`, no active Change, and a `SATISFIED` Change skip the reminder. `[hooks] subagent_stop` defaults to true. `integrate --hooks` installs it beside Stop, and `doctor` reports it. CI stays the source of truth (PR #69).
+- The docs site favicon is a square crop of the mascot head (`docs/assets/favicon.ico` at 16, 32, and 48, and `docs/assets/apple-touch-icon.png` at 180). The landing page and docs hub link both. Open Graph and Twitter stay on the existing square WebP (PR #68).
+- `[assurance] required_checks` names pytest, ruff, mypy, the docs HTML check, and `uv lock --check`. `verify` accepts those commands only when they exit 0 on a clean tree at the recorded commit. A later commit that only stores evidence does not stale that check (PR #65).
 
-- This repository's `.retornatus/config.toml` declares `[assurance] required_checks` for `uv run pytest -q`, `uv run ruff check src tests scripts`, `uv run mypy`, `uv run python scripts/build_docs_html.py --check`, and `uv lock --check`. `verify` accepts execution evidence only from those commands, with exit code 0, on a clean source tree, at the recorded commit. A later commit that only stores evidence under `.retornatus/changes/` (or `.retornatus/index/` and `.retornatus/runtime/`) does not stale that check. A later source commit does. Older Changes are not rewritten.
+### Changed
 
-### Security
-
-- Read-only CI jobs (`test`, `Lowest direct dependencies`, publish `verify`, and publish `package`) set `permissions: contents: read` on the job, so a later workflow-level change cannot widen their token. Third-party actions stay pinned to full commit SHAs with a version comment, checkout does not persist credentials, and Dependabot updates those pins weekly. CONTRIBUTING.md records the rule. The publish job still uses the `pypi` environment.
+- `ruff format` covers `src`, `tests`, and `scripts`. CI runs `uv run ruff format --check src tests scripts` in the existing lint job. `.git-blame-ignore-revs` names the formatting commit so GitHub blame can skip it (PR #66).
+- Changelog sections for 1.0.0 through 1.3.0 now have sourced notes instead of stubs (PR #67).
+- The package version is 1.9.0 in `pyproject.toml`, `__version__`, `uv.lock`, and `.retornatus/config.toml`. Docs that name the current release (Cloud agents, Quick start, the guide index, the GitHub Action version example, the README, and the landing highlights) say 1.9.0. The landing What’s new block names the subagent-stop hook. README What's new lists `hook subagent-stop` as shipped in 1.9.0.
 
 ### Fixed
 
-- `gate suppressions` scans untracked, non-ignored files (`git ls-files --others --exclude-standard`) when neither `--base` nor `--staged` is set. Each line is treated as added, the same as a new file in the diff. Gitignored paths stay out. `--base` and `--staged` are unchanged, so a clean CI checkout still scans only the committed range.
+- `gate suppressions` scans untracked, non-ignored files when neither `--base` nor `--staged` is set. Gitignored paths stay out. `--base` and `--staged` are unchanged (PR #63).
+
+### Security
+
+- Read-only CI jobs (`test`, `Lowest direct dependencies`, publish `verify`, and publish `package`) set `permissions: contents: read` on the job, so a workflow-level change cannot widen their token. Third-party actions stay pinned to full commit SHAs, checkout does not persist credentials, and Dependabot updates those pins weekly. The publish job still uses the `pypi` environment (PR #64).
 
 ## [1.8.0] - 2026-09-30
 

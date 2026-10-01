@@ -182,8 +182,9 @@ retornatus doctor</code></pre>
 
     <section class="band" id="news">
       <h2>What’s new</h2>
-      <p class="note">Highlights from 1.8.0, including the scope warning hook, the SessionStart hook, agent hooks, and init presets.</p>
+      <p class="note">Highlights from 1.9.0, including the subagent-stop hook, the scope warning hook, the SessionStart hook, agent hooks, and init presets.</p>
       <ul class="news">
+        <li><strong>Subagent-stop hook</strong> — <code>retornatus hook subagent-stop</code> reminds a Cursor, Claude Code, or Codex subagent when the active Change is not SATISFIED. <code>[hooks] subagent_stop</code> defaults to true.</li>
         <li><strong>Scope warning hook</strong> — <code>retornatus hook file-edit</code> warns when an edit leaves the active Change scope. <code>[hooks] scope_mode</code> is <code>warn</code>, <code>block</code>, or <code>off</code>.</li>
         <li><strong>SessionStart hook</strong> — <code>retornatus hook session-start</code> injects the active Change when a Claude Code, Cursor, or Codex session starts. <code>integrate --hooks</code> installs it beside the Stop hook.</li>
         <li><strong>Agent hooks</strong> — opt-in Stop hook via <code>retornatus hook stop</code> and <code>integrate --hooks</code> for Claude Code, Cursor, and Codex. The turn stays open until the active Change is SATISFIED. CI stays the source of truth.</li>
