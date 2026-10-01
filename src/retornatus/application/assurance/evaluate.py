@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from enum import StrEnum
 from typing import Any
 
@@ -274,6 +274,7 @@ def required_check_issue(
     *,
     git_head: str | None,
     worktree_clean: bool | None,
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> tuple[str, str] | None:
     """Why executed evidence fails an owner-declared required check.
 
@@ -282,6 +283,11 @@ def required_check_issue(
 
     Self-reported execution evidence stays unverified even when
     ``allow_self_reported`` is set: the owner named the commands that count.
+
+    ``commit_equivalent`` may accept a recorded commit that is not HEAD when
+    the only files changed since that commit are harness bookkeeping (evidence
+    just committed under ``.retornatus/changes/``). A missing callback keeps
+    the strict HEAD match.
     """
     if not checks or evidence.type not in EXECUTION_EVIDENCE_TYPES:
         return None
@@ -313,7 +319,15 @@ def required_check_issue(
     if git_head is None:
         return None
     recorded = (evidence.git_commit or "").strip()
-    if not recorded or recorded.casefold() != git_head.strip().casefold():
+    head = git_head.strip()
+    same_commit = bool(recorded) and recorded.casefold() == head.casefold()
+    equivalent = bool(
+        recorded
+        and not same_commit
+        and commit_equivalent is not None
+        and commit_equivalent(recorded)
+    )
+    if not same_commit and not equivalent:
         shown = recorded or "none"
         return (
             "stale",
@@ -385,6 +399,7 @@ def evaluate_assurance(
     worktree_clean: bool | None = None,
     uncommitted_subjects: set[str] | None = None,
     uncommitted_mode: str = "default",
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> AssuranceResult:
     """
     Evaluate whether Evidence structurally supports each Claim.
@@ -397,7 +412,8 @@ def evaluate_assurance(
       provenance is ``executed`` and the exit code is 0, unless
       ``allow_self_reported`` is set
     - When ``required_checks`` is set, execution evidence must be an exact argv
-      match, exit 0, recorded commit == ``git_head``, and a clean worktree.
+      match, exit 0, recorded commit == ``git_head`` (or equivalent via
+      ``commit_equivalent``), and a clean worktree.
       ``allow_self_reported`` does not bypass that.
     - Uncommitted edits to a claim subject path are stale when the mode fails
       (default: execution types fail, narrative types warn)
@@ -416,6 +432,7 @@ def evaluate_assurance(
                 checks,
                 git_head=git_head,
                 worktree_clean=worktree_clean,
+                commit_equivalent=commit_equivalent,
             )
             if issue is not None:
                 check_issues[item.id] = issue

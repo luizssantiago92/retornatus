@@ -5,3 +5,12 @@ version = "1.8.0"
 
 [project]
 initialized = true
+
+[assurance]
+required_checks = [
+  { name = "pytest", run = ["uv", "run", "pytest", "-q"], types = ["test_result"] },
+  { name = "ruff", run = ["uv", "run", "ruff", "check", "src", "tests", "scripts"], types = ["lint_result"] },
+  { name = "mypy", run = ["uv", "run", "mypy"], types = ["lint_result"] },
+  { name = "docs", run = ["uv", "run", "python", "scripts/build_docs_html.py", "--check"], types = ["build_result"] },
+  { name = "uv-lock", run = ["uv", "lock", "--check"], types = ["build_result"] },
+]

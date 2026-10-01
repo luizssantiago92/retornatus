@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -122,6 +122,7 @@ def render_pull_request(
         uncommitted_changes_mode,
     )
     from retornatus.application.assurance.subject_state import (
+        commit_delta_is_harness_only,
         current_git_head,
         derive_current_subject_states,
         subjects_with_uncommitted_changes,
@@ -146,6 +147,12 @@ def render_pull_request(
     worktree_clean = substantive_worktree_clean(root) if git_available(root) else None
     dirty = subjects_with_uncommitted_changes(root, [item.subject for item in evidence])
     mode = uncommitted_changes_mode(root)
+    equivalent: Callable[[str], bool] | None = None
+    if git_head:
+        recorded_head = git_head
+
+        def equivalent(recorded: str) -> bool:
+            return commit_delta_is_harness_only(root, recorded, recorded_head)
 
     lines = [
         f"## {overview.change_id} — {overview.title}",
@@ -186,6 +193,7 @@ def render_pull_request(
             current_states=states,
             dirty_subjects=dirty,
             uncommitted_mode=mode,
+            commit_equivalent=equivalent,
         )
         kind = (
             "executed"
@@ -254,6 +262,7 @@ def _evidence_trust(
     current_states: dict[str, str],
     dirty_subjects: set[str],
     uncommitted_mode: str,
+    commit_equivalent: Callable[[str], bool] | None = None,
 ) -> str:
     """Label one Evidence row: executed, self-reported, unverified, stale, or failing."""
     from retornatus.application.assurance.evaluate import uncommitted_subject_fails
@@ -264,6 +273,7 @@ def _evidence_trust(
         checks,
         git_head=git_head,
         worktree_clean=worktree_clean,
+        commit_equivalent=commit_equivalent,
     )
     if issue is not None:
         return issue[0]
@@ -300,11 +310,31 @@ def build_change_overview(root: Path, change_id: str) -> ChangeOverview:
         built = build_claims_from_contract(contract)
         evidence_list = EvidenceService(root).list_for_change(change_id)
         current_states = derive_current_subject_states(root, evidence_list)
+        from retornatus.application.assurance.settings import load_required_checks
+        from retornatus.application.assurance.subject_state import (
+            commit_delta_is_harness_only,
+            current_git_head,
+            substantive_worktree_clean,
+        )
+
+        checks = load_required_checks(root)
+        head = current_git_head(root) if checks else None
+        equivalent: Callable[[str], bool] | None = None
+        if head:
+            recorded_head = head
+
+            def equivalent(recorded: str) -> bool:
+                return commit_delta_is_harness_only(root, recorded, recorded_head)
+
         result = evaluate_assurance(
             claims=built,
             evidence=evidence_list,
             current_subject_states=current_states,
             allow_self_reported=allow_self_reported_enabled(root),
+            required_checks=checks or None,
+            git_head=head,
+            worktree_clean=substantive_worktree_clean(root) if checks else None,
+            commit_equivalent=equivalent,
         )
         assurance_verdict = result.verdict.value
         for claim in built:

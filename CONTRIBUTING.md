@@ -17,6 +17,18 @@ uv run pytest -q
 uv run retornatus --help
 ```
 
+## Required checks
+
+`.retornatus/config.toml` sets `[assurance] required_checks` to the commands this repository always runs:
+
+- `uv run pytest -q` (`test_result`)
+- `uv run ruff check src tests scripts` (`lint_result`)
+- `uv run mypy` (`lint_result`)
+- `uv run python scripts/build_docs_html.py --check` (`build_result`)
+- `uv lock --check` (`build_result`)
+
+`verify` accepts execution evidence only when the argv is one of those commands, the exit code is 0, the recorded commit is still the tree under test, and the source worktree is clean. A follow-up commit that only adds `.retornatus/changes/` evidence still counts. Record the commands with `retornatus checks run -c <C-id>` or `verify <C-id> --run-checks` after the implementation commit. Do not rewrite evidence on older Changes.
+
 ## Pull requests
 
 - Keep changes scoped; prefer small milestones.

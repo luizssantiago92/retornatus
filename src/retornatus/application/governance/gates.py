@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
 from pathlib import Path
@@ -210,6 +211,7 @@ def gate_assurance(
         uncommitted_changes_mode,
     )
     from retornatus.application.assurance.subject_state import (
+        commit_delta_is_harness_only,
         current_git_head,
         subjects_with_uncommitted_changes,
         substantive_worktree_clean,
@@ -223,16 +225,25 @@ def gate_assurance(
         dirty = subjects_with_uncommitted_changes(
             root, [item.subject for item in evidence]
         )
+        head = current_git_head(root) if checks else None
+        equivalent: Callable[[str], bool] | None = None
+        if head:
+            recorded_head = head
+
+            def equivalent(recorded: str) -> bool:
+                return commit_delta_is_harness_only(root, recorded, recorded_head)
+
         result = evaluate_assurance(
             claims=claims,
             evidence=evidence,
             current_subject_states=current_subject_states,
             allow_self_reported=allowed,
             required_checks=checks or None,
-            git_head=current_git_head(root) if checks else None,
+            git_head=head,
             worktree_clean=substantive_worktree_clean(root) if checks else None,
             uncommitted_subjects=dirty or None,
             uncommitted_mode=uncommitted_changes_mode(root),
+            commit_equivalent=equivalent,
         )
     else:
         result = evaluate_change_assurance(

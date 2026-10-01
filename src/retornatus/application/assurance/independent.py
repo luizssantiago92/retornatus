@@ -5,6 +5,7 @@ Specialization comes from Assignment + Context + Skills — not ReviewerAgent.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -24,6 +25,7 @@ from retornatus.application.assurance.settings import (
 )
 from retornatus.application.assurance.subject_state import (
     capture_subject_state,
+    commit_delta_is_harness_only,
     current_git_head,
     derive_current_subject_states,
     subjects_with_uncommitted_changes,
@@ -200,6 +202,7 @@ def evaluate_change_assurance(
     mode = "default"
     head: str | None = None
     clean: bool | None = None
+    equivalent: Callable[[str], bool] | None = None
     if use_git_state:
         dirty_subjects = subjects_with_uncommitted_changes(
             root, [item.subject for item in evidence]
@@ -208,6 +211,12 @@ def evaluate_change_assurance(
         if checks:
             head = current_git_head(root)
             clean = substantive_worktree_clean(root)
+            if head:
+                recorded_head = head
+
+                def equivalent(recorded: str) -> bool:
+                    return commit_delta_is_harness_only(root, recorded, recorded_head)
+
     result = evaluate_assurance(
         claims=claims,
         evidence=evidence,
@@ -218,6 +227,7 @@ def evaluate_change_assurance(
         worktree_clean=clean,
         uncommitted_subjects=dirty_subjects or None,
         uncommitted_mode=mode,
+        commit_equivalent=equivalent,
     )
     from retornatus.application.assurance.surfaces import apply_surface_rules
 

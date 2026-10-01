@@ -160,6 +160,66 @@ def test_matching_required_check_satisfies_only_when_clean_and_current(
     assert "recorded commit" in moved.stdout
 
 
+def test_evidence_commit_does_not_stale_required_check(tmp_path: Path) -> None:
+    _git(tmp_path)
+    _init_change(tmp_path, "GET /health returns 200 with pytest test")
+    argv = _passing_argv()
+    _set_checks(tmp_path, [{"name": "tests", "run": argv, "types": ["test_result"]}])
+    _commit(tmp_path, "checks configured")
+    ran = runner.invoke(
+        app,
+        [
+            "evidence",
+            "run",
+            "--path",
+            str(tmp_path),
+            "-c",
+            "C-0001",
+            "-t",
+            "test_result",
+            "-s",
+            "/health",
+            "--claim",
+            "C-0001/claim-done-1",
+            "--",
+            *argv,
+        ],
+    )
+    assert ran.exit_code == 0, ran.stdout
+    _commit(tmp_path, "record evidence")
+    verified = runner.invoke(app, ["verify", "C-0001", "--path", str(tmp_path)])
+    assert verified.exit_code == 0, verified.stdout
+    assert '"verdict": "SATISFIED"' in verified.stdout
+
+    (tmp_path / "README").write_text("source edit after the check\n", encoding="utf-8")
+    _commit(tmp_path, "source edit")
+    moved = runner.invoke(app, ["verify", "C-0001", "--path", str(tmp_path)])
+    assert moved.exit_code != 0
+    assert "recorded commit" in moved.stdout
+
+
+def test_repo_required_checks_match_project_commands() -> None:
+    from retornatus.application.assurance.settings import load_required_checks
+
+    root = Path(__file__).resolve().parents[1]
+    checks = load_required_checks(root)
+    assert [(check.name, list(check.run), set(check.types)) for check in checks] == [
+        ("pytest", ["uv", "run", "pytest", "-q"], {"test_result"}),
+        (
+            "ruff",
+            ["uv", "run", "ruff", "check", "src", "tests", "scripts"],
+            {"lint_result"},
+        ),
+        ("mypy", ["uv", "run", "mypy"], {"lint_result"}),
+        (
+            "docs",
+            ["uv", "run", "python", "scripts/build_docs_html.py", "--check"],
+            {"build_result"},
+        ),
+        ("uv-lock", ["uv", "lock", "--check"], {"build_result"}),
+    ]
+
+
 def test_verify_run_checks_records_the_configured_command(tmp_path: Path) -> None:
     _git(tmp_path)
     _init_change(tmp_path, "GET /health returns 200 with pytest test")
