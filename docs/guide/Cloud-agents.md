@@ -11,10 +11,10 @@ Canonical files under `.retornatus/` (Changes, Contracts, Evidence, the public r
 
 ## Session setup
 
-Install the CLI on the agent machine. Release 1.9.0 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, the Ed25519 `receipt` commands, the opt-in agent Stop hook (`retornatus hook stop`), the SessionStart hook (`retornatus hook session-start`), the file-edit scope warning (`retornatus hook file-edit`), and the subagent-stop hook (`retornatus hook subagent-stop`):
+Install the CLI on the agent machine. Release 1.9.1 includes `gate scope`, `gate suppressions`, blocking `verify`, `hooks install`, `hooks status`, `evidence run`, `checks run`, the Ed25519 `receipt` commands, the opt-in agent Stop hook (`retornatus hook stop`), the SessionStart hook (`retornatus hook session-start`), the file-edit scope warning (`retornatus hook file-edit`), and the subagent-stop hook (`retornatus hook subagent-stop`):
 
 ```bash
-uv tool install "retornatus==1.9.0"
+uv tool install "retornatus==1.9.1"
 ```
 
 The pull-request check is the [GitHub Action](GitHub-Action.md). Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml). It uses `luizssantiago92/retornatus@v1` (the tag the owner publishes) and does not pin the old inline `uv tool install` steps.

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0039",
+  "version": 1,
+  "what": "Shorten the GitHub Action description in action.yml to under 125 characters, add a regression test for that Marketplace limit, and bump the declared package version from 1.9.0 to 1.9.1 with a dated changelog Fixed note and empty Unreleased.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented and contains the heading ## [1.9.1] - 2026-10-01 and an empty Unreleased section",
+    "README.md is documented and contains the current release 1.9.1",
+    "The file /docs/index.html is documented and contains 1.9.1",
+    "The file /pyproject.toml is documented and contains version 1.9.1",
+    "The file /src/retornatus/__init__.py is documented and contains version 1.9.1",
+    "The file /.retornatus/config.toml is documented and contains version 1.9.1",
+    "The file /action.yml is documented and its description is shorter than 125 characters"
+  ],
+  "active": true,
+  "activated_at": "2026-10-02T00:51:00.291356Z"
+}

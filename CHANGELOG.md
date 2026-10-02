@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-10-01
+
+### Fixed
+
+- GitHub Marketplace can publish the Action: the `action.yml` description is one sentence under 125 characters. A regression test checks that length and that name, icon, and color are set.
+
+### Changed
+
+- The package version is 1.9.1 in `pyproject.toml`, `__version__`, `uv.lock`, and `.retornatus/config.toml`. Docs that name the current release (Cloud agents, Quick start, the guide index, the GitHub Action version example, the README, and the landing highlights) say 1.9.1.
+
 ## [1.9.0] - 2026-10-01
 
 ### Added

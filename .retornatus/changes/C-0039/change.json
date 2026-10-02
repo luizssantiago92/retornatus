@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0039",
+  "title": "Patch 1.9.1 Marketplace action description",
+  "demand": {
+    "schema_version": 1,
+    "statement": "GitHub Marketplace rejects the Action because action.yml description must be under 125 characters. Shorten that description, lock it with a regression test, and prepare patch 1.9.1 by bumping every current-release pin that 1.9.0 changed. Out of scope: merge, tag, and publish.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-02T00:51:00.286056Z"
+}

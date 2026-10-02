@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "C-0039/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Shorten the GitHub Action description in action.yml to under 125 characters, add a regression test for that Marketplace limit, and bump the declared package version from 1.9.0 to 1.9.1 with a dated changelog Fixed note and empty Unreleased.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented and contains the heading ## [1.9.1] - 2026-10-01 and an empty Unreleased section",
+    "README.md is documented and contains the current release 1.9.1",
+    "The file /docs/index.html is documented and contains 1.9.1",
+    "The file /pyproject.toml is documented and contains version 1.9.1",
+    "The file /src/retornatus/__init__.py is documented and contains version 1.9.1",
+    "The file /.retornatus/config.toml is documented and contains version 1.9.1",
+    "The file /action.yml is documented and its description is shorter than 125 characters"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0039/T-001",
+      "description": "Shorten action.yml description, add the length regression test, and bump current-release pins to 1.9.1",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "action.yml",
+        "tests/test_workflow_hardening.py",
+        "tests/test_docs_hygiene.py",
+        "pyproject.toml",
+        "uv.lock",
+        "src/retornatus/__init__.py",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/index.html",
+        "docs/guide/Cloud-agents.md",
+        "docs/guide/Quick-start.md",
+        "docs/guide/README.md",
+        "docs/guide/GitHub-Action.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}
