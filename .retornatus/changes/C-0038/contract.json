@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0038",
+  "version": 1,
+  "what": "Bump the declared package version from 1.8.0 to 1.9.0, move Unreleased notes under a dated 1.9.0 section, list hook subagent-stop as shipped in 1.9.0 in the README and site What's new blocks, and pin current-release docs to 1.9.0.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "CHANGELOG.md is documented and contains the heading ## [1.9.0] - 2026-10-01 and an empty Unreleased section",
+    "README.md is documented and contains the current release 1.9.0 and hook subagent-stop",
+    "The file /docs/index.html is documented and contains 1.9.0 and subagent-stop",
+    "The file /pyproject.toml is documented and contains version 1.9.0",
+    "The file /src/retornatus/__init__.py is documented and contains version 1.9.0",
+    "The file /.retornatus/config.toml is documented and contains version 1.9.0"
+  ],
+  "active": true,
+  "activated_at": "2026-10-01T18:18:44.317699Z"
+}
