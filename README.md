@@ -37,7 +37,7 @@ Agents are fast — and optimistic. They ship code, summarize what they think th
 | The agent stops when it feels finished | Optional hooks carry the open goal into the session, the edit, and the end of the turn |
 | Lessons vanish when the tab closes | Notes (and optional rules you accept) stay in the repo |
 
-Package **1.9.0** is on [PyPI](https://pypi.org/project/retornatus/).
+Package **1.9.1** is on [PyPI](https://pypi.org/project/retornatus/).
 
 [What it is](#what-it-is) · [30 seconds](#see-it-in-30-seconds) · [What’s new](#whats-new) · [Quick start](#quick-start) · [Presets](#presets) · [How it works](#how-it-works) · [What you get](#what-you-get--and-why-it-helps) · [Hooks](#agent-hooks) · [Docs](#documentation)
 
@@ -77,7 +77,7 @@ You approve the product intent. The agent implements. Push, merge, and publish s
 
 ## What’s new
 
-One block for the **current release** **1.9.0**. From **1.5** through **1.9**:
+One block for the **current release** **1.9.1**. From **1.5** through **1.9**:
 
 - **Presets (1.5)** — `retornatus init --preset` for `python`, `python-platform`, `fastapi`, `django`, `rag`, and `worker`
 - **Pull requests (1.5)** — the [GitHub Action](https://luizssantiago92.github.io/retornatus/guide/github-action.html) comments the verdict on the PR

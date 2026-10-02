@@ -1,0 +1,122 @@
+........................................................................ [ 21%]
+........................................................................ [ 42%]
+........................................................................ [ 63%]
+........................................................................ [ 84%]
+.....................................................                    [100%]
+=============================== warnings summary ===============================
+tests/test_receipt_and_budget.py::test_legacy_hmac_is_not_portable
+  /workspace/src/retornatus/application/assurance/receipt.py:458: DeprecationWarning: HMAC receipts are deprecated and not portable (legacy_hmac). Use Ed25519: retornatus receipt keygen. Keep the private key out of the agent environment.
+    return _verify_legacy_hmac(root, receipt)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                                           Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------------------------
+src/retornatus/__init__.py                                         1      0   100%
+src/retornatus/__main__.py                                         4      4     0%   3-8
+src/retornatus/application/adaptation/intake.py                  190     43    77%   74, 86, 123, 132, 154, 167-169, 187, 200, 329-333, 337-341, 344-348, 357-379
+src/retornatus/application/adaptation/lessons.py                  61     26    57%   52-55, 58, 61-82
+src/retornatus/application/adaptation/service.py                  76     17    78%   30-33, 40-43, 50-53, 155, 161, 163, 184-185
+src/retornatus/application/adaptation/skill_need.py               41      4    90%   58, 84-85, 104
+src/retornatus/application/adaptation/skills.py                  119     17    86%   114-117, 142, 195, 207, 234, 241, 243, 260, 264-265, 273, 277, 279, 291
+src/retornatus/application/agent_hooks/config.py                 300     19    94%   71-72, 102, 144, 252, 270, 273, 276, 279, 335-336, 375, 383-384, 419, 442, 445, 448, 478
+src/retornatus/application/agent_hooks/file_edit.py              254      4    98%   266, 279, 345, 356
+src/retornatus/application/agent_hooks/questions.py              157      9    94%   78, 94-95, 105, 179, 190, 194, 209, 227
+src/retornatus/application/agent_hooks/session.py                123      0   100%
+src/retornatus/application/agent_hooks/stop.py                   128      8    94%   146-147, 179, 181-182, 197, 214-215
+src/retornatus/application/assurance/checks.py                    55      9    84%   49, 56-57, 65-77, 105, 109
+src/retornatus/application/assurance/evaluate.py                 307     14    95%   86, 134, 206, 217, 235-236, 307, 316, 339, 357, 463, 481-483
+src/retornatus/application/assurance/evidence.py                  75      7    91%   30, 35-36, 62, 66, 160, 200
+src/retornatus/application/assurance/execute.py                   65      7    89%   52, 74, 76, 101-103, 111
+src/retornatus/application/assurance/independent.py               98      7    93%   63, 85-89, 92
+src/retornatus/application/assurance/receipt.py                  338     71    79%   73-78, 157, 164-165, 167, 174, 178-186, 200-201, 207-209, 220, 231, 243, 278-281, 287, 293-294, 310, 316-319, 324-329, 338, 341, 346-347, 349, 359-366, 410, 416-418, 428, 440, 446, 456, 461, 464, 467, 470, 508-509, 511
+src/retornatus/application/assurance/settings.py                  96     13    86%   29-30, 32, 46, 98, 115, 125, 131, 134, 137, 140, 142, 148
+src/retornatus/application/assurance/subject_state.py            248     65    74%   23, 47-48, 62, 70-71, 73, 96-97, 99, 120-121, 123, 155, 161-162, 165, 167, 169, 173-174, 184, 202-203, 205, 237, 239, 257-258, 260, 268, 286-287, 292-294, 301, 306-307, 310-316, 328-329, 338-347, 351-352, 363-364, 382-383, 385, 416
+src/retornatus/application/assurance/surfaces.py                 205     21    90%   71, 81-82, 208, 238, 248, 257, 279, 281, 287, 289, 295, 301, 303, 309, 314, 317, 320, 324, 340, 342
+src/retornatus/application/change/classify.py                     83      3    96%   67, 197-204
+src/retornatus/application/change/loop.py                         57     13    77%   46-49, 67, 81-89
+src/retornatus/application/change/overview.py                    203     32    84%   67, 83, 92, 98, 146-149, 167, 210, 222-223, 261-276, 309-312, 359-361, 367-369
+src/retornatus/application/change/readiness.py                   105      9    91%   41, 96, 98, 110, 136-138, 154, 159-160
+src/retornatus/application/change/situation.py                   264     14    95%   84, 146, 149, 169, 179-180, 224, 261, 268, 301, 328, 417, 523, 586
+src/retornatus/application/change/status.py                       87     10    89%   49-57, 63-65, 76, 93-94, 97
+src/retornatus/application/change/tasks.py                        62      6    90%   37, 63, 66-67, 104, 109
+src/retornatus/application/change/workflow.py                    137     11    92%   62-63, 121, 208, 210, 274, 302, 322-329, 352
+src/retornatus/application/execution/context.py                  102     16    84%   72, 79, 85-90, 121-122, 139-140, 156-162, 164
+src/retornatus/application/execution/host_record.py               55      4    93%   53-56
+src/retornatus/application/execution/isolation.py                 49      3    94%   47-48, 72
+src/retornatus/application/governance/bypass.py                   51      2    96%   95-96
+src/retornatus/application/governance/diff.py                    196     35    82%   42-43, 50-51, 53, 61, 64-65, 67, 84, 91, 113, 115, 126-127, 129-130, 170-171, 186, 191-192, 201-205, 212, 221, 246, 254, 263, 271, 281, 290
+src/retornatus/application/governance/diff_scan.py               149     13    91%   59, 75, 85, 168, 181-182, 189-192, 205, 213, 220
+src/retornatus/application/governance/gates.py                   180     27    85%   113, 115, 144-145, 147-148, 151-152, 169-170, 200-201, 204, 206, 222-234, 270-271
+src/retornatus/application/governance/globs.py                    34      3    91%   16, 25, 45
+src/retornatus/application/governance/policy.py                  138     13    91%   49, 53, 95, 123, 129, 181, 200, 255-256, 264-265, 268-269
+src/retornatus/application/governance/scope.py                   152     19    88%   84, 86, 99, 124, 136-137, 173-174, 198-199, 203-204, 216, 219, 221, 223, 225, 239, 252
+src/retornatus/application/operations/__init__.py                  2      0   100%
+src/retornatus/application/operations/loops.py                    83     42    49%   33-34, 42-43, 55-63, 65-67, 74-96, 140-141, 147-148
+src/retornatus/application/question/loop.py                       86     13    85%   56, 61-62, 68, 73-74, 80, 85-86, 115, 163, 177-178
+src/retornatus/application/report/comment.py                     238      1    99%   222
+src/retornatus/application/report/envelope.py                     90      0   100%
+src/retornatus/bootstrap/__init__.py                               2      0   100%
+src/retornatus/bootstrap/doctor.py                               185     32    83%   60, 62, 88-92, 122-123, 149-150, 160-161, 174-175, 188, 195, 230, 247-249, 257, 260-265, 268-269, 272, 275
+src/retornatus/bootstrap/gitignore.py                             59      0   100%
+src/retornatus/bootstrap/hooks.py                                144     25    83%   52-53, 55-56, 59, 82, 85, 109-110, 114-115, 127-133, 183-185, 206, 213, 234-236
+src/retornatus/bootstrap/init.py                                  51      0   100%
+src/retornatus/bootstrap/presets/__init__.py                     294     32    89%   106, 153, 176, 186, 191, 202-203, 205, 212, 214, 217, 290, 296-297, 299, 307, 312, 315, 317, 321, 324, 341, 347, 349, 355, 363, 403, 408, 411, 414, 418, 439
+src/retornatus/bootstrap/project_init.py                          80      4    95%   34, 51, 83, 176
+src/retornatus/bootstrap/wake.py                                  68     10    85%   52, 54-55, 73, 89-91, 96-97, 107
+src/retornatus/cli/action.py                                      14      3    79%   31, 33-34
+src/retornatus/cli/assurance.py                                   25     16    36%   20-32, 45-58
+src/retornatus/cli/change.py                                     123     20    84%   48, 54-56, 129, 153-154, 172-174, 245, 270-272, 287-299
+src/retornatus/cli/checks.py                                      15      1    93%   29
+src/retornatus/cli/ci.py                                          28      0   100%
+src/retornatus/cli/common.py                                      44     15    66%   45-55, 58, 62-63, 65
+src/retornatus/cli/decision.py                                    17      9    47%   32-46
+src/retornatus/cli/errors.py                                      37     13    65%   32-47
+src/retornatus/cli/evidence.py                                    40      8    80%   50, 101, 103-104, 119-121, 135
+src/retornatus/cli/execution.py                                   23     14    39%   27-40, 49-57
+src/retornatus/cli/finding.py                                      9      0   100%
+src/retornatus/cli/gate.py                                        54      0   100%
+src/retornatus/cli/groups.py                                      52      0   100%
+src/retornatus/cli/hook.py                                        49      0   100%
+src/retornatus/cli/hooks.py                                       47     24    49%   53-69, 82-90
+src/retornatus/cli/intake.py                                      41     10    76%   48, 53-54, 60-62, 85-88
+src/retornatus/cli/json_output.py                                 21      0   100%
+src/retornatus/cli/lesson.py                                      22      3    86%   54-56
+src/retornatus/cli/loop.py                                        21     15    29%   23-38
+src/retornatus/cli/main.py                                        31      2    94%   64, 68
+src/retornatus/cli/ops.py                                         34      6    82%   31-33, 52-54
+src/retornatus/cli/policy.py                                      26      2    92%   56-57
+src/retornatus/cli/preset.py                                      12      0   100%
+src/retornatus/cli/question.py                                    23     10    57%   25-33, 44-58
+src/retornatus/cli/receipt.py                                     44      4    91%   34, 72-77
+src/retornatus/cli/root.py                                       209     55    74%   123-124, 134-135, 139-140, 163-202, 216-217, 278, 305, 311, 357-360, 410
+src/retornatus/cli/rule.py                                        21     11    48%   37-46, 61-69
+src/retornatus/cli/skill.py                                       64     24    62%   38, 40, 56-62, 101-102, 134-146, 158-164, 174-175
+src/retornatus/cli/task.py                                        40     24    40%   18-25, 34-41, 54-56, 66-73
+src/retornatus/constants.py                                        1      0   100%
+src/retornatus/domain/__init__.py                                  6      0   100%
+src/retornatus/domain/base.py                                      6      0   100%
+src/retornatus/domain/enums.py                                    66      0   100%
+src/retornatus/domain/errors.py                                    7      0   100%
+src/retornatus/domain/ids.py                                      80      7    91%   86, 106, 112, 114, 120, 127, 129
+src/retornatus/domain/models.py                                  210      7    97%   94, 157, 201, 203, 205, 364, 373
+src/retornatus/domain/relations.py                                19      0   100%
+src/retornatus/infrastructure/environment/adapters.py            107      2    98%   41, 75
+src/retornatus/infrastructure/environment/hub_skill.py            13      1    92%   13
+src/retornatus/infrastructure/environment/rule_projection.py      39      3    92%   18-19, 43
+src/retornatus/infrastructure/index/sqlite_index.py               77      9    88%   75-76, 121-122, 165-169
+src/retornatus/infrastructure/persistence/__init__.py              4      0   100%
+src/retornatus/infrastructure/persistence/atomic.py               21      4    81%   32-35
+src/retornatus/infrastructure/persistence/concurrency.py          24      1    96%   23
+src/retornatus/infrastructure/persistence/migrations.py           29     10    66%   24-26, 36, 41-46
+src/retornatus/infrastructure/persistence/paths.py                99      1    99%   151
+src/retornatus/infrastructure/persistence/repository.py          176     17    90%   69-70, 84, 95, 123, 132, 155, 200, 222, 238, 250, 254, 275, 280, 303, 308, 313
+src/retornatus/infrastructure/persistence/serializers.py          31      4    87%   20, 38, 53, 56
+--------------------------------------------------------------------------------------------
+TOTAL                                                           8628   1112    87%
+
+13 empty files skipped.
+Required test coverage of 83.0% reached. Total coverage: 87.11%
+341 passed, 1 warning in 100.04s (0:01:40)

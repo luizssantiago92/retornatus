@@ -111,7 +111,7 @@ def test_readme_news_does_not_pin_a_package_version() -> None:
     assert "retornatus==" not in section
     assert "current release" in section
     assert "1.5" in section
-    assert "1.9.0" in section
+    assert "1.9.1" in section
     assert "hook file-edit" in section
     assert "hook subagent-stop" in section
     assert "scope_mode" in section
@@ -138,7 +138,7 @@ def test_landing_og_image_and_news_mention_presets() -> None:
     html = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
     assert f'property="og:image" content="{_OG_IMAGE}"' in html
     news = _section(html, 'id="news"', "</section>")
-    assert "1.9.0" in news
+    assert "1.9.1" in news
     assert "subagent-stop hook" in news
     assert "scope warning hook" in news
     assert "SessionStart" in news

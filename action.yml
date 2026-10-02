@@ -1,8 +1,5 @@
 name: Retornatus
-description: >-
-  Run Retornatus verify and diff gates on a pull request and post one sticky
-  comment with the verdict. Workflow permissions: contents read, pull-requests
-  write. Fork pull requests skip the comment and still write the job summary.
+description: Run Retornatus verify and gates on a pull request and post one sticky comment with the verdict.
 author: Luiz Santiago
 branding:
   icon: check-circle
@@ -11,7 +8,7 @@ branding:
 inputs:
   version:
     description: >-
-      Retornatus release to install from PyPI (for example 1.9.0), latest, or
+      Retornatus release to install from PyPI (for example 1.9.1), latest, or
       local to install the checked-out package. The release must include
       retornatus ci comment.
     required: false

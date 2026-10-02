@@ -157,6 +157,67 @@ def test_dependabot_updates_github_actions_weekly() -> None:
     assert "package-ecosystem: pip" not in text
 
 
+def _folded_scalar(lines: list[str], start: int) -> tuple[str, int]:
+    """Join a YAML folded or literal block that begins on the next indented lines."""
+    chunks: list[str] = []
+    index = start
+    while index < len(lines):
+        row = lines[index]
+        if row.strip() == "":
+            if chunks:
+                break
+            index += 1
+            continue
+        if not row.startswith((" ", "\t")):
+            break
+        chunks.append(row.strip())
+        index += 1
+    return " ".join(chunks), index
+
+
+def _action_marketplace_fields(text: str) -> dict[str, str]:
+    """Read the action name, description, and branding without a YAML dependency."""
+    lines = text.splitlines()
+    fields = {"name": "", "description": "", "icon": "", "color": ""}
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        if not line or line[0].isspace() or line.startswith("#"):
+            index += 1
+            continue
+        key, _, rest = line.partition(":")
+        value = rest.strip()
+        if key == "name":
+            fields["name"] = value.strip("\"'")
+        elif key == "description":
+            if value in {">", ">-", "|", "|-"}:
+                folded, index = _folded_scalar(lines, index + 1)
+                fields["description"] = folded
+                continue
+            fields["description"] = value.strip("\"'")
+        elif key == "branding":
+            index += 1
+            while index < len(lines) and lines[index].startswith((" ", "\t")):
+                stripped = lines[index].strip()
+                brand_key, _, brand_rest = stripped.partition(":")
+                brand_value = brand_rest.strip().strip("\"'")
+                if brand_key in {"icon", "color"}:
+                    fields[brand_key] = brand_value
+                index += 1
+            continue
+        index += 1
+    return fields
+
+
+def test_action_marketplace_description_is_under_125_characters() -> None:
+    fields = _action_marketplace_fields(ACTION.read_text(encoding="utf-8"))
+    assert fields["name"] == "Retornatus"
+    assert fields["icon"] == "check-circle"
+    assert fields["color"] == "green"
+    assert fields["description"]
+    assert len(fields["description"]) < 125
+
+
 def test_contributing_states_the_pin_rule() -> None:
     text = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
     assert "full commit SHA" in text
