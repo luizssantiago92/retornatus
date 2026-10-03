@@ -109,12 +109,21 @@ def _handle_session_start(
 
 
 def render_session_context(root: Path) -> str:
-    """Plain-text finish line for every active Change, capped at 2 KB."""
+    """Plain-text finish line for every active Change, capped at 2 KB.
+
+    A pending skill candidate adds one line. That line does not block the
+    session, and it is omitted when ``[adaptation.skill_candidates]`` is off.
+    """
     change_ids = active_change_ids(root)
-    if not change_ids:
+    text = ""
+    if change_ids:
+        blocks = [_change_block(root, change_id) for change_id in change_ids]
+        text = "Retornatus active Change context:\n" + "\n\n".join(blocks)
+    notice = _skill_candidate_notice(root)
+    if notice:
+        text = f"{text}\n{notice}" if text else notice
+    if not text:
         return ""
-    blocks = [_change_block(root, change_id) for change_id in change_ids]
-    text = "Retornatus active Change context:\n" + "\n\n".join(blocks)
     return cap_utf8(text)
 
 
@@ -187,6 +196,15 @@ def _parse_payload(raw: str) -> tuple[dict[str, Any], bool]:
     if isinstance(parsed, dict):
         return parsed, True
     return {}, True
+
+
+def _skill_candidate_notice(root: Path) -> str:
+    try:
+        from retornatus.application.adaptation.skill_candidates import pending_notice
+
+        return pending_notice(root)
+    except Exception:
+        return ""
 
 
 def _fail_open(detail: str) -> SessionResponse:

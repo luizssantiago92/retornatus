@@ -18,7 +18,7 @@ Repo-native **governance harness** for AI-assisted software work. You write the 
 
 - Next work: `retornatus loop next <C-id>` · `task start|complete|fail|reopen`
 - Context: `retornatus run <A-id>` (optional `--strict-policy`)
-- Skills: `intake analyze` (human `CREATE=yes`) or `skill need --prompt` / `skill create`
+- Skills: `intake analyze` (human `CREATE=yes`) or `skill need --prompt` / `skill create`. A pending skill candidate is a suggestion: ask once with the reason from `skill candidates`, and never run `skill accept` unless the user explicitly says so.
 - Proof: `evidence run … --claim <id> -- <command>` for test/build/lint results (`evidence add` is self-reported and does not satisfy those types) → `retornatus verify <C-id>`  
   - Optional Ed25519 receipt: `verify <C-id> --receipt` (public key in `.retornatus/keys/`; private key outside the repo and outside the agent environment)
 - Attempt budget (optional): `action budget <A-id> --max N` · `gate budget <A-id>`

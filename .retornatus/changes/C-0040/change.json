@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0040",
+  "title": "Suggest skills from repeated evidence, with explicit approval",
+  "demand": {
+    "schema_version": 1,
+    "statement": "The project owner wants the agent to suggest a skill when the same evidence-command sequence repeats across completed Changes, or when evidence fails and then passes. The user must accept before any skill file is written. The CLI and agent hooks must show one pending candidate without blocking the turn for that reason alone.",
+    "kind": "CAPABILITY"
+  },
+  "lane": "STANDARD",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-03T16:22:44.783158Z"
+}

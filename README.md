@@ -144,13 +144,15 @@ A fuzzy ask makes `change elicit` exit `1` and list questions. A prompt that mig
 
 **One map, then one extra guide.** The hub skill is the short map every turn. A specialization Skill is an optional playbook for one kind of work — at most one, and only after you confirm it. [Skills](https://luizssantiago92.github.io/retornatus/guide/skills.html).
 
+When the same evidence commands succeed on several Changes, Retornatus can queue a skill candidate. The agent may ask once. Nothing is written until you run `retornatus skill accept`. List the queue with `retornatus skill candidates`.
+
 ## Agent hooks
 
 `retornatus integrate --hooks` installs four opt-in hooks for Claude Code, Cursor, and Codex. `hook session-start` injects the active Change. `hook file-edit` warns when an edit leaves that Change’s scope (`[hooks] scope_mode` is `warn` by default, or `block`, or `off`). `hook stop` asks the agent to keep going when the Change is not `SATISFIED`, and lets a real question to you end the turn. `hook subagent-stop` sends that same reminder when a subagent finishes (`[hooks] subagent_stop` defaults to true). They fail open. The pull-request check stays the source of truth. Guide: [Agent hooks](https://luizssantiago92.github.io/retornatus/guide/agent-hooks.html).
 
 ## Commands
 
-Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop`. Diff gates: `gate suppressions`, `gate scope`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
+Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Skills from repetition: `skill candidates`, `skill accept`, `skill reject`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop`. Diff gates: `gate suppressions`, `gate scope`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
 
 ## Verify receipts
 

@@ -21,7 +21,7 @@ app = typer.Typer(
 )
 
 change_app = typer.Typer(help="Create and inspect Changes.")
-skill_app = typer.Typer(help="Specialization Skills — create, evolve, export.")
+skill_app = typer.Typer(help="Specialization Skills — create, evolve, export, and approve repetition candidates.")
 gate_app = typer.Typer(help="Mechanical gates (non-zero exit = STOP).")
 evidence_app = typer.Typer(help="Attributable Evidence.")
 finding_app = typer.Typer(help="Findings.")
