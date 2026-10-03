@@ -30,7 +30,13 @@
       "description": "Add the deterministic detector, candidate files, and score threshold",
       "lifecycle": "PENDING",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        "src/retornatus/application/adaptation/skill_candidates.py",
+        "src/retornatus/application/adaptation/skills.py",
+        "src/retornatus/infrastructure/persistence/paths.py",
+        "src/retornatus/bootstrap/init.py",
+        ".retornatus/config.toml"
+      ]
     },
     {
       "schema_version": 1,
@@ -38,7 +44,11 @@
       "description": "Add skill candidates, skill accept, and skill reject",
       "lifecycle": "PENDING",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        "src/retornatus/cli/skill.py",
+        "src/retornatus/cli/groups.py",
+        "src/retornatus/cli/root.py"
+      ]
     },
     {
       "schema_version": 1,
@@ -46,7 +56,13 @@
       "description": "Show one pending line on stop and session-start without blocking",
       "lifecycle": "PENDING",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        "src/retornatus/application/agent_hooks/stop.py",
+        "src/retornatus/application/agent_hooks/session.py",
+        "src/retornatus/infrastructure/environment/hub/SKILL.md",
+        ".cursor/skills/retornatus/SKILL.md",
+        "AGENTS.md"
+      ]
     },
     {
       "schema_version": 1,
@@ -54,7 +70,14 @@
       "description": "Cover signals, threshold, limits, accept, reject, and the report filter with tests and docs",
       "lifecycle": "PENDING",
       "depends_on": [],
-      "resources": []
+      "resources": [
+        "tests/test_skill_candidates.py",
+        "CHANGELOG.md",
+        "README.md",
+        "docs/guide/Skills.md",
+        "docs/guide/CLI.md",
+        "docs/guide/Agent-hooks.md"
+      ]
     }
   ],
   "relations": [],
