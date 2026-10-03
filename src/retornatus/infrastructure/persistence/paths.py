@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from retornatus.constants import RETORNATUS_DIR
@@ -59,6 +60,10 @@ class RetornatusPaths:
     @property
     def skills(self) -> Path:
         return self.retornatus / "adaptation" / "skills"
+
+    @property
+    def skill_candidates(self) -> Path:
+        return self.retornatus / "adaptation" / "skill-candidates"
 
     @property
     def index_db(self) -> Path:
@@ -145,6 +150,11 @@ class RetornatusPaths:
 
     def skill_md(self, skill_id: str) -> Path:
         return self._inside(self.skill_dir(skill_id) / "SKILL.md")
+
+    def skill_candidate_md(self, candidate_id: str) -> Path:
+        if re.fullmatch(r"K-\d{4}", candidate_id) is None:
+            raise PathEscapeError(f"Refusing skill candidate id: {candidate_id!r}")
+        return self._inside(self.skill_candidates / f"{candidate_id}.md")
 
     def public_key_path(self, key_id: str) -> Path:
         if not key_id or any(sep in key_id for sep in ("/", "\\", "..")):

@@ -29,6 +29,7 @@ def build_skill_body(
     change_id: str | None,
     action_id: str | None,
     research_seed: str | None = None,
+    procedure_steps: list[str] | None = None,
 ) -> str:
     """
     Canonical Skill body scaffold.
@@ -46,6 +47,10 @@ def build_skill_body(
     if action_id:
         links.append(f"- Action: `{action_id}`")
     related = "\n".join(links) if links else "- (none yet)"
+    if procedure_steps:
+        procedure = "\n".join(f"{index}. {step}" for index, step in enumerate(procedure_steps, start=1))
+    else:
+        procedure = "1.\n2.\n3."
 
     return f"""# {title}
 
@@ -84,9 +89,7 @@ def build_skill_body(
 
 Step-by-step instructions the agent (and subagents) must follow:
 
-1.
-2.
-3.
+{procedure}
 
 ## Checks before claiming done
 
@@ -126,6 +129,7 @@ class SkillService:
         change_id: str | None = None,
         action_id: str | None = None,
         research_seed: str | None = None,
+        procedure_steps: list[str] | None = None,
         activate: bool = False,
     ) -> tuple[Skill, str]:
         """
@@ -168,6 +172,7 @@ class SkillService:
             change_id=change_id,
             action_id=action_id,
             research_seed=research_seed,
+            procedure_steps=procedure_steps,
         )
         self.repo.save_skill(skill, body)
         return skill, body

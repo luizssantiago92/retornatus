@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0040",
+  "version": 1,
+  "what": "Add a deterministic repetition detector that queues skill candidates, CLI commands to list, accept, and reject them, and a one-line notice on the stop hook and session start. Accept is the only command that writes a draft skill.",
+  "constraints": [],
+  "done_criteria": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "The file /CHANGELOG.md is documented and contains skill candidate",
+    "The file /README.md is documented and contains skill candidates",
+    "The file /docs/guide/Skills.md is documented and contains skill candidates",
+    "The file /docs/guide/CLI.md is documented and contains skill accept",
+    "The file /docs/guide/Agent-hooks.md is documented and contains skill candidate",
+    "The file /src/retornatus/infrastructure/environment/hub/SKILL.md is documented and contains skill accept",
+    "The file /.retornatus/config.toml is documented and contains skill_candidates"
+  ],
+  "active": true,
+  "activated_at": "2026-10-03T16:22:44.792182Z"
+}

@@ -112,6 +112,12 @@ def _handle_stop(
         if document.get("verdict") != "SATISFIED":
             blocking.append(document)
     if not blocking:
+        notice = ""
+        if kind == "stop":
+            notice = _skill_candidate_notice(root, payload, change_ids)
+        if notice:
+            notice_body = {"followup_message": notice} if name == "cursor" else {"additionalContext": notice}
+            return StopResponse(stdout=json.dumps(notice_body, ensure_ascii=False) + "\n")
         return StopResponse()
     reason = " ".join(_reason_for(root, document) for document in blocking)
     body: dict[str, str] = {"followup_message": reason} if name == "cursor" else {"decision": "block", "reason": reason}
@@ -161,6 +167,19 @@ def _parse_payload(raw: str) -> tuple[dict[str, Any], bool]:
     if isinstance(parsed, dict):
         return parsed, True
     return {}, True
+
+
+def _skill_candidate_notice(root: Path, payload: dict[str, Any], change_ids: list[str]) -> str:
+    """Pending-candidate line. Empty when there is nothing to mention.
+
+    A failure here must not change the allow decision, so every error becomes "".
+    """
+    try:
+        from retornatus.application.adaptation.skill_candidates import notice_for_allowed_stop
+
+        return notice_for_allowed_stop(root, payload, change_ids)
+    except Exception:
+        return ""
 
 
 def _fail_open(kind: str, detail: str) -> StopResponse:

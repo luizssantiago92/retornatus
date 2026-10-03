@@ -40,7 +40,7 @@ It then runs the same in-process evaluation as `verify --json`. There is no netw
 | Situation | Result |
 | --- | --- |
 | No `.retornatus/`, or no active Change | Exit 0, no stdout. The turn ends. |
-| Every active Change is `SATISFIED` | Exit 0, no stdout. The turn ends. |
+| Every active Change is `SATISFIED` | Exit 0. The turn ends. Stdout stays empty unless a skill candidate is pending (see below). |
 | Any active Change is not `SATISFIED`, and the turn is not a question or an interrupted Cursor run | Exit 0 and a host JSON object that continues the turn. The text names the unproven claim ids and a `retornatus evidence run …` command. When `[assurance] required_checks` is set, that command uses the first matching argv. |
 | The last assistant message is a question to the user, and `[hooks] allow_questions` is not `false` | Exit 0, no stdout. The turn ends so the person can answer. |
 | Invalid JSON, unknown host, or any internal error | Exit 0, no block payload. One `fail-open` line goes to stderr. |
@@ -57,7 +57,21 @@ Cursor receives:
 {"followup_message": "C-0001 is NOT_SATISFIED. Unproven claims: C-0001/claim-done-1 (INCONCLUSIVE). Next: retornatus evidence run …"}
 ```
 
-`decision` is omitted when the stop is allowed. Cursor's `followup_message` is omitted in that case too. The block text is the same when the hook does continue the turn.
+`decision` is omitted when the stop is allowed. Cursor's `followup_message` is omitted in that case too, unless a skill candidate is pending. The block text is the same when the hook does continue the turn for an unproven claim. A pending candidate is not a reason to block.
+
+## Skill candidates
+
+When Assurance already allows the stop, the hook may append one line:
+
+```text
+1 skill candidate pending: run `retornatus skill candidates`
+```
+
+Cursor returns that line as `followup_message` and nothing else. Claude Code and Codex return `{"additionalContext": "<the line>"}` and do not set `decision`, so the turn is allowed. The line is sent once per session (`session_id`, else `conversation_id`, else `composer_id`). A later stop in that session is empty again. `loop_count` of 1 or more skips the line. No pending candidate leaves stdout empty, as before.
+
+The same stop also runs the repetition detector. It queues at most one new candidate for the session. `[adaptation.skill_candidates] enabled = false` turns the scan and the line off. The detector does not call a model. See [Skills](Skills.md).
+
+Subagent stop does not add this line.
 
 ## Questions to the user
 
@@ -120,11 +134,13 @@ The injected text names, for each active Change:
 - scope summary (the declared Task resources, or `(none declared)`)
 - each unproven claim id, its status, and the `retornatus evidence run …` command that would prove it
 
-A satisfied Change still appears, with `unproven: none`, so the session starts on the finish line. The text is capped at 2048 UTF-8 bytes. A longer note ends with `…(truncated)`.
+A satisfied Change still appears, with `unproven: none`, so the session starts on the finish line. When a skill candidate is pending, the text ends with the line `1 skill candidate pending: run retornatus skill candidates`. That line is also the whole message when no Change is active and a candidate is waiting. It does not block the session. The text is capped at 2048 UTF-8 bytes. A longer note ends with `…(truncated)`.
 
 | Situation | Result |
 | --- | --- |
-| No `.retornatus/`, or no active Change | Exit 0, no stdout |
+| No `.retornatus/` | Exit 0, no stdout |
+| No active Change, and no pending skill candidate | Exit 0, no stdout |
+| A pending skill candidate | Exit 0 and the host JSON. The context includes the line `1 skill candidate pending: run retornatus skill candidates` |
 | `[hooks] session_context = false` | Exit 0, no stdout. The default is true, including when the key is absent |
 | One or more active Changes | Exit 0 and the host JSON below |
 | Invalid JSON, unknown host, a non-boolean `session_context`, or any internal error | Exit 0, no context. One `fail-open` line goes to stderr |

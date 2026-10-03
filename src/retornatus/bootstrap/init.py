@@ -24,6 +24,7 @@ DIRECTORY_TREE: tuple[str, ...] = (
     "governance/bypasses",
     "adaptation/learnings",
     "adaptation/skills",
+    "adaptation/skill-candidates",
     "index",
     "runtime/locks",
     "runtime/executions",
