@@ -35,7 +35,8 @@
         "policy",
         "budget",
         "suppressions",
-        "scope"
+        "scope",
+        "omission"
       ]
     },
     "passed": { "type": "boolean" },

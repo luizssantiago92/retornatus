@@ -73,6 +73,7 @@ When `[surfaces]` is set (the `python-platform` preset), `verify` also adds `sur
 retornatus verify C-0001 --json
 retornatus gate contract C-0001 --json
 retornatus gate scope C-0001 --base origin/main --json
+retornatus gate omission --base origin/main --pr-author "dependabot[bot]" --json
 retornatus change overview C-0001 --format json
 ```
 

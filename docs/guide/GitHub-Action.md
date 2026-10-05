@@ -54,14 +54,16 @@ The token is the `github-token` input, which defaults to `github.token`. The act
 
 | Input | Default | Meaning |
 | --- | --- | --- |
-| `version` | `latest` | PyPI release (`1.9.1`), `latest`, or `local` (install the checkout). The installed CLI must provide `retornatus ci comment` |
+| `version` | `latest` | PyPI release (`1.9.1`), `latest`, or `local` (install the checkout). The installed CLI must provide `retornatus ci comment` and `retornatus gate omission` |
 | `change` | empty | One Change id. Empty detects ids touched under `.retornatus/changes` |
 | `base` | empty | Git revision for the diff. Empty uses the pull request base SHA, or `origin/<default branch>` on other events |
 | `comment` | `true` | Post or update the sticky comment |
 | `fail-on` | `not_satisfied` | Fail the step unless the folded verdict is `SATISFIED`. `never` exits 0 after the comment is written |
 | `github-token` | `github.token` | Token for the comment API |
 
-`RETORNATUS_OMISSION` is an environment variable, not an input. `fail` (default) fails the job when a code diff touches no Change. `warn` prints a warning and continues. Code paths are `src/**`, `tests/**`, `scripts/**`, `templates/**`, `pyproject.toml`, and `uv.lock`, the same set as the previous inline workflow.
+`RETORNATUS_OMISSION` is an environment variable, not an input. `fail` (default) fails the job when a code diff touches no Change. `warn` prints a warning and continues. Code paths are `src/`, `tests/`, `scripts/`, `templates/` (nested files included), plus the root files `pyproject.toml` and `uv.lock`.
+
+A dependency-bot pull request can pass that check without a Change. The Action sets the author from `pull_request.user.login` and passes it to `retornatus gate omission --pr-author`. It does not read `pull_request.title`, `pull_request.body`, or commit messages. When `[governance.omission.bot_exemption]` is enabled (the default) and every changed file matches the allow-list, the gate passes and the log prints `::warning::` plus a note in the sticky comment. One file outside the list, or any other author, keeps the failure. Set `enabled = false` in the project's `.retornatus/config.toml` to turn the exemption off. Defaults and path globs: [Gates](Gates.md).
 
 ## Outputs
 
@@ -70,16 +72,17 @@ The token is the `github-token` input, which defaults to `github.token`. The act
 | `verdict` | `SATISFIED`, `NOT_SATISFIED`, or `INCONCLUSIVE` |
 | `json` | Path to a bundle of the verify and gate documents plus that verdict |
 
-`SATISFIED` means every `verify` document is `SATISFIED` and every gate document passed. A gate `FAIL`, a `NOT_SATISFIED` verify, or a code diff with no Change (`RETORNATUS_OMISSION=fail`) folds to `NOT_SATISFIED`. No JSON at all is `INCONCLUSIVE`. The fold reads the `verdict` and `passed` fields. It does not call Assurance again.
+`SATISFIED` means every `verify` document is `SATISFIED` and every gate document passed. A gate `FAIL`, a `NOT_SATISFIED` verify, or a code diff with no Change (`RETORNATUS_OMISSION=fail`, and no bot exemption) folds to `NOT_SATISFIED`. An exempted bot pull request is a passing omission gate with a warning, so the fold can stay `SATISFIED`. No JSON at all is `INCONCLUSIVE`. The fold reads the `verdict` and `passed` fields. It does not call Assurance again.
 
 ## What runs
 
 1. Install Retornatus with uv (`astral-sh/setup-uv` pinned by commit SHA; the uv cache is off so the job does not need `actions: write`).
-2. `retornatus gate suppressions --base <base> --json`
-3. For each Change: `retornatus verify <C-id> --json` and `retornatus gate scope <C-id> --base <base> --json`
-4. `retornatus ci comment` writes markdown to stdout and the bundle to the `json` output path.
-5. The same markdown is appended to `$GITHUB_STEP_SUMMARY`.
-6. On a pull request, create or update the issue comment whose body contains `<!-- retornatus-verdict -->`.
+2. `retornatus gate omission --base <base> --pr-author <pull_request.user.login> --json`
+3. `retornatus gate suppressions --base <base> --json`
+4. For each Change: `retornatus verify <C-id> --json` and `retornatus gate scope <C-id> --base <base> --json`
+5. `retornatus ci comment` writes markdown to stdout and the bundle to the `json` output path.
+6. The same markdown is appended to `$GITHUB_STEP_SUMMARY`.
+7. On a pull request, create or update the issue comment whose body contains `<!-- retornatus-verdict -->`.
 
 ## Forks
 

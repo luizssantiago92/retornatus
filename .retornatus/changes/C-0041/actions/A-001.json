@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "C-0041/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Exempt configured dependency-bot pull requests from the omission gate when every changed file matches the manifest allow-list, pass with a visible warning, and keep every other omission failure unchanged.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0 and covers bot exemption, a source file, a human author, a disabled config, custom authors, and glob edges",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0041/T-001",
+      "description": "Implement the omission bot exemption, config loading, and gate omission command",
+      "lifecycle": "COMPLETED",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/governance/**",
+        "src/retornatus/cli/gate.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0041/T-002",
+      "description": "Pass the trusted pull request author from the GitHub Action into the omission gate",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0041/T-001"
+      ],
+      "resources": [
+        "action.yml",
+        "scripts/github_action.sh",
+        "templates/ci/**"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0041/T-003",
+      "description": "Cover the exemption cases with tests and document the config, including how to disable it",
+      "lifecycle": "COMPLETED",
+      "depends_on": [
+        "C-0041/T-002"
+      ],
+      "resources": [
+        "tests/test_omission_bot_exemption.py",
+        "schemas/verdict-v1.schema.json",
+        "docs/guide/**",
+        "README.md",
+        "CHANGELOG.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

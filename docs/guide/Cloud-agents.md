@@ -136,13 +136,14 @@ A session can skip `hooks install`, and a commit can pass `--no-verify`. The che
 
 Copy [`templates/ci/retornatus-pr.yml`](../../templates/ci/retornatus-pr.yml) to `.github/workflows/retornatus.yml`. On `pull_request`, and on pushes to `main` or `master`, the job checks out the repository with full history and runs the [GitHub Action](GitHub-Action.md):
 
-1. Installs Retornatus (`version` defaults to the latest PyPI release that includes `retornatus ci comment`).
-2. Runs `retornatus gate suppressions --base <base> --json`.
-3. For each Change touched under `.retornatus/changes/`, runs `retornatus verify <C-id> --json` and `retornatus gate scope <C-id> --base <base> --json`.
-4. Renders one markdown comment with `retornatus ci comment` (overview plus claim and gate tables) and writes it to the job summary.
-5. On a same-repository pull request, creates or updates the comment whose body contains `<!-- retornatus-verdict -->`.
+1. Installs Retornatus (`version` defaults to the latest PyPI release that includes `retornatus ci comment` and `retornatus gate omission`).
+2. Runs `retornatus gate omission --base <base> --pr-author <pull_request.user.login> --json`.
+3. Runs `retornatus gate suppressions --base <base> --json`.
+4. For each Change touched under `.retornatus/changes/`, runs `retornatus verify <C-id> --json` and `retornatus gate scope <C-id> --base <base> --json`.
+5. Renders one markdown comment with `retornatus ci comment` (overview plus claim and gate tables) and writes it to the job summary.
+6. On a same-repository pull request, creates or updates the comment whose body contains `<!-- retornatus-verdict -->`.
 
-`RETORNATUS_OMISSION` defaults to `fail`: a code diff that touches no Change fails the job. Set it to `warn` to print a warning and continue. Fork pull requests skip the comment because the token is read-only. The workflow does not push, merge, deploy, or sign receipts.
+`RETORNATUS_OMISSION` defaults to `fail`: a code diff that touches no Change fails the job. Set it to `warn` to print a warning and continue. A dependency-bot pull request can pass without a Change when `[governance.omission.bot_exemption]` is enabled (the default) and every changed file is an allowed manifest. The Action reads the author from `pull_request.user.login`. The pass prints a warning. Set `enabled = false` in that table to turn the exemption off. Fork pull requests skip the comment because the token is read-only. The workflow does not push, merge, deploy, or sign receipts.
 
 This repository's [CI workflow](../../.github/workflows/ci.yml) keeps the required check named **Retornatus gates**. That job still runs `doctor`, `wake`, and `gate-scan` from the checkout, then calls the action with `version: local` so the pull request exercises the branch, not an older PyPI release. The template above is the Retornatus gate for an application repository.
 

@@ -10,7 +10,7 @@ inputs:
     description: >-
       Retornatus release to install from PyPI (for example 1.9.1), latest, or
       local to install the checked-out package. The release must include
-      retornatus ci comment.
+      retornatus ci comment and retornatus gate omission.
     required: false
     default: latest
   change:
@@ -72,6 +72,7 @@ runs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         PR_FORK: ${{ github.event.pull_request.head.repo.fork }}
+        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         REPO: ${{ github.repository }}
         DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       run: bash "$ACTION_PATH/scripts/github_action.sh"

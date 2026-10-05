@@ -18,6 +18,7 @@ They do not replace judgment; they prevent pretending success when structure or 
 | `retornatus gate budget <A-id>` | Action `attempt_count` reached `max_attempts` |
 | `retornatus gate suppressions` | Added lines introduce a suppression or skip marker. With no flag, untracked non-ignored files count as added |
 | `retornatus gate scope <C-id>` | The diff leaves Task resources, hits a denied path, or touches a sensitive path without a satisfied review/security claim |
+| `retornatus gate omission` | Code changed (`src/`, `tests/`, `scripts/`, `templates/`, root `pyproject.toml`, or root `uv.lock`) and the diff touches no Change. A configured dependency bot can pass this gate; the pass prints a warning |
 | `retornatus verify <C-id>` | Same family as assurance over Contract DONE Claims |
 
 Related:
@@ -132,6 +133,46 @@ Sensitive paths (infra, auth, migrations, CI workflows — override with `sensit
 Subject matching is exact after strip, case-fold, and trailing-slash normalization (`/Health/` matches `/health`). A shorter evidence subject is not treated as contained in the claim (`/` does not match `/health`). A longer evidence path may end with the claim's path token (`docs/health.md` matches claim `/health.md`); the reverse does not.
 
 > Agent conclusion ≠ Evidence. A green test suite is evidence of tests — not automatic proof of every Claim unless bound correctly and actually executed by the harness.
+
+## Omission gate
+
+```bash
+retornatus gate omission --base main
+retornatus gate omission --base main --pr-author "dependabot[bot]"
+```
+
+The GitHub Action runs this gate on every pull request. It fails when the diff changes code and does not touch a Change under `.retornatus/changes/`. Code paths are `src/`, `tests/`, `scripts/`, `templates/` (including nested files), and the root files `pyproject.toml` and `uv.lock`. Docs, README, and other paths do not trigger it by themselves.
+
+Dependency bots cannot commit a Change. When the exemption is enabled, the author is on the author list, and **every** changed file matches the path list, the gate passes and prints a `WARN` line that names the author and the files. That warning is the notice. It is not a silent pass. One file outside the list, or an author that is not listed, leaves the failure unchanged. A bot that edits `src/` still fails.
+
+The author is an argument. The Action sets it from `pull_request.user.login`. `gate omission --pr-author` is the same value for a local run. The gate does not read the pull request title, body, or commit messages, so a human cannot opt in by writing a bot's name there. Comparison is exact after stripping surrounding whitespace (`dependabot` is not `dependabot[bot]`).
+
+The table is `[governance.omission.bot_exemption]`, next to the other governance tables. A missing table is enabled with these defaults. `authors` and `paths` replace the defaults when set. They are not appended.
+
+| Key | Default |
+| --- | --- |
+| `enabled` | `true` |
+| `authors` | `dependabot[bot]`, `renovate[bot]` |
+| `paths` | `**/pyproject.toml`, `**/uv.lock`, `**/poetry.lock`, `**/requirements*.txt`, `**/package.json`, `**/package-lock.json`, `**/pnpm-lock.yaml`, `**/yarn.lock`, `**/Cargo.toml`, `**/Cargo.lock`, `**/go.mod`, `**/go.sum`, `.github/workflows/*.yml`, `.github/workflows/*.yaml` |
+
+Globs are the same matcher as `gate scope`. `**` crosses directories, so `apps/api/pyproject.toml` and `requirements-dev.txt` match. A single `*` does not cross `/`, so `.github/workflows/ci.yml` matches and `.github/workflows/nested/ci.yml` does not. `requirements.txt.bak` and `src/app.py` do not match.
+
+Turn the exemption off:
+
+```toml
+[governance.omission.bot_exemption]
+enabled = false
+```
+
+A replacement list:
+
+```toml
+[governance.omission.bot_exemption]
+authors = ["my-org-bot"]
+paths = ["pyproject.toml", "uv.lock"]
+```
+
+`RETORNATUS_OMISSION=warn` in the Action still turns a real omission failure into a warning. It does not grant the exemption. An exempted pull request passes with `fail` or `warn`.
 
 ## Process vs brakes
 

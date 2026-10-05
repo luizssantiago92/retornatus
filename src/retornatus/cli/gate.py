@@ -118,6 +118,48 @@ def gate_suppressions_cmd(
     finish_gate(result, root=root, as_json=as_json)
 
 
+@gate_app.command("omission")
+def gate_omission_cmd(
+    path: Path | None = typer.Option(None, "--path", "-p"),
+    base: str | None = typer.Option(
+        None,
+        "--base",
+        help="Compare git diff --name-only base...HEAD.",
+    ),
+    staged: bool = typer.Option(
+        False,
+        "--staged",
+        help="Compare the index only. Without --base or --staged, staged and unstaged changes are used.",
+    ),
+    pr_author: str = typer.Option(
+        "",
+        "--pr-author",
+        help=(
+            "Pull request author login. The GitHub Action passes "
+            "pull_request.user.login. A title, body, or commit message is not a login."
+        ),
+    ),
+    change: str | None = typer.Option(
+        None,
+        "--change",
+        help="Change id already selected for this run. Omission is skipped.",
+    ),
+    as_json: bool = typer.Option(False, "--json", help=JSON_OUTPUT_HELP),
+) -> None:
+    """Gate: code with no Change fails, unless a listed bot only touched manifests."""
+    from retornatus.application.governance.gates import gate_omission
+
+    root = resolve_root(path)
+    result = gate_omission(
+        root,
+        base=base,
+        staged=staged,
+        author=pr_author,
+        declared_change=change,
+    )
+    finish_gate(result, root=root, as_json=as_json)
+
+
 @gate_app.command("scope")
 def gate_scope_cmd(
     change_id: str = typer.Argument(...),

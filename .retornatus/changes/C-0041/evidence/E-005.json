@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "C-0041/E-005",
+  "type": "lint_result",
+  "subject": "mypy",
+  "source": "mypy",
+  "producer": "retornatus",
+  "observed_at": "2026-10-05T00:44:57.567397Z",
+  "subject_state": "commit:6b4aa4d6f8b4ae1fd49371fd4a375ce03a866b8a",
+  "provenance": "executed",
+  "command": [
+    "uv",
+    "run",
+    "mypy"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-05T00:44:57.329316Z",
+  "ended_at": "2026-10-05T00:44:57.462573Z",
+  "duration_ms": 133,
+  "output_sha256": "9228e83ff0320df9dd545732802c318b2da0af9e2bf8107358d8c2b6ec9b472b",
+  "output_tail": "Success: no issues found in 116 source files\n",
+  "output_artifact": ".retornatus/changes/C-0041/evidence/E-005.output.txt",
+  "git_commit": "6b4aa4d6f8b4ae1fd49371fd4a375ce03a866b8a",
+  "worktree_dirty": false,
+  "timed_out": false,
+  "relations": []
+}

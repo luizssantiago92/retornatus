@@ -168,6 +168,11 @@ if ! retornatus ci comment --help >/dev/null 2>&1; then
   echo "Install the release that ships with this action, or set version: local." >&2
   exit 1
 fi
+if ! retornatus gate omission --help >/dev/null 2>&1; then
+  echo "error: this Retornatus build has no 'gate omission' command." >&2
+  echo "Install the release that ships with this action, or set version: local." >&2
+  exit 1
+fi
 
 if [ -z "$base" ]; then
   if [ -n "$pr_base_sha" ]; then
@@ -202,25 +207,54 @@ else
   )
 fi
 
-code_changed=0
-if [ -z "$change" ]; then
-  while IFS= read -r path; do
-    [ -n "$path" ] || continue
-    case "$path" in
-      src/*|tests/*|scripts/*|templates/*|pyproject.toml|uv.lock)
-        code_changed=1
-        ;;
-    esac
-  done < <(git diff --name-only "${base}...HEAD")
+# Author is the event login (PR_AUTHOR), never a title, body, or commit message.
+omission_cmd=(retornatus gate omission --base "$base")
+if [ -n "$change" ]; then
+  omission_cmd+=(--change "$change")
 fi
+if [ -n "${PR_AUTHOR:-}" ]; then
+  omission_cmd+=(--pr-author "$PR_AUTHOR")
+fi
+echo "::group::gate omission"
+run_json "$workdir/gate-omission.json" "${omission_cmd[@]}"
+echo "::endgroup::"
+python3 - "$workdir/gate-omission.json" "$workdir/omission.passed" "$workdir/omission.notice" <<'PY'
+import json
+import pathlib
+import sys
 
+document = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+passed = document.get("passed") is True
+pathlib.Path(sys.argv[2]).write_text("1" if passed else "0", encoding="utf-8")
+notice = ""
+warnings = document.get("warnings")
+if passed and isinstance(warnings, list):
+    for item in warnings:
+        if isinstance(item, str) and item.strip():
+            notice = item.strip()
+            if notice.startswith("WARN "):
+                notice = notice[5:].strip()
+            break
+pathlib.Path(sys.argv[3]).write_text(notice, encoding="utf-8")
+PY
+omission_passed="$(tr -d '[:space:]' <"$workdir/omission.passed")"
+omission_notice="$(cat "$workdir/omission.notice")"
 omission=0
-if [ "${#changes[@]}" -eq 0 ] && [ "$code_changed" -eq 1 ]; then
+include_omission_json=0
+if [ "$omission_passed" != "1" ]; then
   echo "Code changed but no .retornatus Change was touched (skip-by-omission)."
   if [ "$omission_mode" = "warn" ]; then
     echo "::warning::Code changed but no Change was touched"
   else
     omission=1
+    include_omission_json=1
+  fi
+else
+  include_omission_json=1
+  if [ -n "$omission_notice" ]; then
+    printf '%s\n' "$omission_notice"
+    notice_one_line="$(printf '%s' "$omission_notice" | tr '\r\n' '  ')"
+    printf '::warning::%s\n' "$notice_one_line"
   fi
 fi
 
@@ -230,6 +264,9 @@ echo "::endgroup::"
 
 verify_args=()
 gate_args=(--gate "$workdir/gate-suppressions.json")
+if [ "$include_omission_json" -eq 1 ]; then
+  gate_args+=(--gate "$workdir/gate-omission.json")
+fi
 if [ "${#changes[@]}" -gt 0 ]; then
   for cid in "${changes[@]}"; do
     echo "::group::verify ${cid}"
@@ -254,6 +291,8 @@ cmd=(
 if [ "$omission" -eq 1 ]; then
   cmd+=(--omission)
   cmd+=(--note "Code changed but no .retornatus Change was touched.")
+elif [ -n "$omission_notice" ]; then
+  cmd+=(--note "$omission_notice")
 fi
 if [ "${#verify_args[@]}" -gt 0 ]; then
   cmd+=("${verify_args[@]}")
