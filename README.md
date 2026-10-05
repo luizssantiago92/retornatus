@@ -138,7 +138,7 @@ A fuzzy ask makes `change elicit` exit `1` and list questions. A prompt that mig
 
 **Memory.** Changes, proof, and lessons live in git. `wake` rebuilds continuity. [Memory](https://luizssantiago92.github.io/retornatus/guide/memory.html).
 
-**Proof.** `verify` returns `SATISFIED`, `NOT_SATISFIED`, or `INCONCLUSIVE`. Test, build, and lint results count only when Retornatus ran the command. Required checks, freshness, and `gate suppressions` / `gate scope`: [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html).
+**Proof.** `verify` returns `SATISFIED`, `NOT_SATISFIED`, or `INCONCLUSIVE`. Test, build, and lint results count only when Retornatus ran the command. Required checks, freshness, and `gate suppressions` / `gate scope`: [Gates](https://luizssantiago92.github.io/retornatus/guide/gates.html). `gate omission` fails a code diff that touches no Change. A configured dependency bot (by default `dependabot[bot]` and `renovate[bot]`) passes when every changed file is an allowed manifest, and the pass prints a warning. Turn that off with `[governance.omission.bot_exemption] enabled = false`.
 
 **Depth.** A typo stays small. Payments, security, or a new design get a deeper pass.
 
@@ -152,7 +152,7 @@ When the same evidence commands succeed on several Changes, Retornatus can queue
 
 ## Commands
 
-Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Skills from repetition: `skill candidates`, `skill accept`, `skill reject`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop`. Diff gates: `gate suppressions`, `gate scope`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
+Continuity: `wake`, `doctor`, `status`, `init --preset`, `integrate`. Finish line: `change elicit`, `change create`, `gate contract`. Proof: `evidence run --claim … -- <command>`, `verify`. Skills from repetition: `skill candidates`, `skill accept`, `skill reject`. Agent hooks: `integrate --hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop`. Diff gates: `gate suppressions`, `gate scope`, `gate omission`, `hooks install`. Full map: [CLI](https://luizssantiago92.github.io/retornatus/guide/cli.html).
 
 ## Verify receipts
 

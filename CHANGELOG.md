@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `retornatus skill candidates`, `skill accept`, and `skill reject` queue a skill when the same evidence-command sequence succeeds on at least three Changes, or when evidence fails and then passes. The agent may ask once. A draft `SKILL.md` is written only by `skill accept`. The score and limits live in `[adaptation.skill_candidates]`. See `docs/guide/Skills.md`.
+- `retornatus gate omission` fails when a code diff touches no Change. A dependency-bot pull request passes that gate when `[governance.omission.bot_exemption]` is enabled and every changed file matches the manifest allow-list. The default authors are `dependabot[bot]` and `renovate[bot]`; the default paths cover common lockfiles and `.github/workflows/*.{yml,yaml}`. The pass prints a warning naming the author and the files. The GitHub Action sets the author from `pull_request.user.login` (`--pr-author` locally). The title, body, and commit messages are not consulted. `enabled = false` turns the exemption off.
 
 ## [1.9.1] - 2026-10-01
 

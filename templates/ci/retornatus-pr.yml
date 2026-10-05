@@ -22,6 +22,12 @@
 #   fail (default) — a code diff with no touched Change fails the job
 #   warn — print a warning and continue
 #
+# Dependency-bot pull requests can pass that gate without a Change when
+# [governance.omission.bot_exemption] is enabled (the default) and every
+# changed file matches the manifest allow-list. The author is
+# pull_request.user.login, not the title or body. The pass prints a warning.
+# Set enabled = false in the project's .retornatus/config.toml to turn it off.
+#
 # Checkout needs fetch-depth: 0 so the diff base is in the clone.
 # Third-party actions stay pinned to commit SHAs.
 # This workflow does not push, merge, deploy, or sign receipts.

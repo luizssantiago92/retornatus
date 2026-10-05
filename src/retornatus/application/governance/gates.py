@@ -25,6 +25,7 @@ class GateName(StrEnum):
     BUDGET = "budget"
     SUPPRESSIONS = "suppressions"
     SCOPE = "scope"
+    OMISSION = "omission"
 
 
 @dataclass
@@ -337,6 +338,27 @@ def gate_suppressions(
     messages = [f"{len(hits)} suppression marker(s) in added lines:"]
     messages.extend(format_hit(hit) for hit in hits)
     return GateResult(GateName.SUPPRESSIONS, False, messages)
+
+
+def gate_omission(
+    root: Path,
+    *,
+    base: str | None = None,
+    staged: bool = False,
+    author: str = "",
+    declared_change: str | None = None,
+) -> GateResult:
+    """STOP when code changes and no Change covers it, unless a listed bot is exempt."""
+    from retornatus.application.governance.omission import assess_omission
+
+    report = assess_omission(
+        root,
+        base=base,
+        staged=staged,
+        author=author,
+        declared_change=declared_change,
+    )
+    return GateResult(GateName.OMISSION, report.passed, list(report.messages))
 
 
 def gate_scope(

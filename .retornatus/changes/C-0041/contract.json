@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "change_id": "C-0041",
+  "version": 1,
+  "what": "Exempt configured dependency-bot pull requests from the omission gate when every changed file matches the manifest allow-list, pass with a visible warning, and keep every other omission failure unchanged.",
+  "constraints": [
+    "The pull request author is read from github.event.pull_request.user.login or the --pr-author flag. Title, body, and commit messages are not a source of the author.",
+    "No package version bump and no release tag."
+  ],
+  "done_criteria": [
+    "uv run pytest -q exits 0 and covers bot exemption, a source file, a human author, a disabled config, custom authors, and glob edges",
+    "uv run ruff check src tests scripts exits 0",
+    "uv run mypy exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build"
+  ],
+  "active": true,
+  "activated_at": "2026-10-05T00:28:28.616848Z"
+}

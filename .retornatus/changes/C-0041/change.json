@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "C-0041",
+  "title": "Exempt dependency-bot pull requests from the omission gate",
+  "demand": {
+    "schema_version": 1,
+    "statement": "Dependabot pull requests that only bump a dependency manifest fail the omission gate because a bot cannot write a Change. The GitHub Action must exempt a listed bot author when every changed file is an allowed manifest, and must still fail when any other file changes. The author must come from the pull request event, not from the title or body. Out of scope: a version bump, a release, and merging pull requests.",
+    "kind": "OTHER"
+  },
+  "lane": "COMPLEX",
+  "active_contract_version": 1,
+  "relations": [],
+  "created_at": "2026-10-05T00:27:36.098621Z"
+}

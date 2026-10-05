@@ -79,6 +79,7 @@ retornatus skill --help
 | `gate contract` / `evidence` / `skill-research` / `assurance` / `policy` / `budget` | STOP gates. `--json` prints the [verdict envelope](JSON-output.md) |
 | `gate suppressions` | STOP when added lines contain suppression or skip markers. The default scan includes untracked non-ignored files; `--staged` and `--base` do not (`--json`) |
 | `gate scope <C-id>` | STOP when the diff leaves Task resources or hits denied/sensitive paths (`--base`, `--staged`, `--json`) |
+| `gate omission` | STOP when code changed and no Change is in the diff. `--pr-author` is the pull request login. A listed bot whose files all match `[governance.omission.bot_exemption]` passes with a warning. See [Gates](Gates.md) |
 | `policy check --effect` / `--action` | ALLOW / DENY / REQUIRE_HUMAN. Optional `--effect-type`, `--resource`, `--command` |
 | `hooks install` / `remove` / `status` | pre-commit (suppressions + scope) and commit-msg (reads `$1`) |
 | `hook stop --host HOST` | Agent turn-end hook (`HOST` is claude, cursor, or codex). Reads host JSON on stdin. See [Agent hooks](Agent-hooks.md) |
