@@ -173,3 +173,58 @@ def skill_export(
     """Export Skill to a native environment skill surface (e.g. .cursor/skills/)."""
     dest = SkillService(path or Path.cwd()).export_native(skill_id, target=target)
     typer.echo(f"Exported to {dest}")
+
+
+@skill_app.command("candidates")
+def skill_candidates(path: Path | None = typer.Option(None, "--path", "-p")) -> None:
+    """List skill candidates. An empty list is a normal result.
+
+    Candidates are suggestions. This command does not create a Skill.
+    """
+    from retornatus.application.adaptation.skill_candidates import format_candidates, list_candidates
+
+    root = resolve_root(path)
+    typer.echo(format_candidates(list_candidates(root)))
+
+
+@skill_app.command("accept")
+def skill_accept(
+    candidate_id: str = typer.Argument(..., help="Candidate id, for example K-0001."),
+    path: Path | None = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Approve a pending candidate and write a draft Skill, or evolve an existing one.
+
+    This is the only command that creates a Skill from a candidate.
+    """
+    from retornatus.application.adaptation.skill_candidates import accept_candidate
+
+    root = resolve_root(path)
+    try:
+        result = accept_candidate(root, candidate_id)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Accepted {result.candidate_id}")
+    if result.action == "evolved":
+        typer.echo(f"Evolved {result.skill_id} to v{result.skill_version} ({result.skill_status})")
+        return
+    typer.echo(
+        f"Created {result.skill_id} ({result.skill_status}) at .retornatus/adaptation/skills/{result.skill_id}/SKILL.md"
+    )
+
+
+@skill_app.command("reject")
+def skill_reject(
+    candidate_id: str = typer.Argument(..., help="Candidate id, for example K-0001."),
+    path: Path | None = typer.Option(None, "--path", "-p"),
+) -> None:
+    """Reject a pending candidate. The same theme waits for new occurrences."""
+    from retornatus.application.adaptation.skill_candidates import reject_candidate
+
+    root = resolve_root(path)
+    try:
+        result = reject_candidate(root, candidate_id)
+    except ValueError as exc:
+        typer.echo(str(exc))
+        raise typer.Exit(1) from exc
+    typer.echo(f"Rejected {result.id}")

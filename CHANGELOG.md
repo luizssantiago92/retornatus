@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `retornatus skill candidates`, `skill accept`, and `skill reject` queue a skill when the same evidence-command sequence succeeds on at least three Changes, or when evidence fails and then passes. The agent may ask once. A draft `SKILL.md` is written only by `skill accept`. The score and limits live in `[adaptation.skill_candidates]`. See `docs/guide/Skills.md`.
+
 ## [1.9.1] - 2026-10-01
 
 ### Fixed

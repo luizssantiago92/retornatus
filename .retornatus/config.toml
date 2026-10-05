@@ -6,6 +6,17 @@ version = "1.9.1"
 [project]
 initialized = true
 
+[adaptation.skill_candidates]
+enabled = true
+threshold = 3
+sequence_min_count = 3
+sequence_points = 3
+retry_points = 2
+correction_min_count = 2
+correction_points = 2
+max_per_session = 1
+reject_rearm_count = 2
+
 [assurance]
 required_checks = [
   { name = "pytest", run = ["uv", "run", "pytest", "-q"], types = ["test_result"] },

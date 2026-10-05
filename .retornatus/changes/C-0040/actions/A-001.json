@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "C-0040/A-001",
+  "origin_kind": "CONTRACT",
+  "origin_ref": "contract@v1",
+  "objective": "Add a deterministic repetition detector that queues skill candidates, CLI commands to list, accept, and reject them, and a one-line notice on the stop hook and session start. Accept is the only command that writes a draft skill.",
+  "scope": null,
+  "constraints": [],
+  "success_conditions": [
+    "uv run pytest -q exits 0",
+    "uv run python scripts/build_docs_html.py --check exits 0 as a build",
+    "uv lock --check exits 0 as a build",
+    "The file /CHANGELOG.md is documented and contains skill candidate",
+    "The file /README.md is documented and contains skill candidates",
+    "The file /docs/guide/Skills.md is documented and contains skill candidates",
+    "The file /docs/guide/CLI.md is documented and contains skill accept",
+    "The file /docs/guide/Agent-hooks.md is documented and contains skill candidate",
+    "The file /src/retornatus/infrastructure/environment/hub/SKILL.md is documented and contains skill accept",
+    "The file /.retornatus/config.toml is documented and contains skill_candidates"
+  ],
+  "authority": {
+    "schema_version": 1,
+    "category": "DELEGATED",
+    "rationale": "routine"
+  },
+  "tasks": [
+    {
+      "schema_version": 1,
+      "id": "C-0040/T-001",
+      "description": "Add the deterministic detector, candidate files, and score threshold",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/adaptation/skill_candidates.py",
+        "src/retornatus/application/adaptation/skills.py",
+        "src/retornatus/infrastructure/persistence/paths.py",
+        "src/retornatus/bootstrap/init.py",
+        ".retornatus/config.toml"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0040/T-002",
+      "description": "Add skill candidates, skill accept, and skill reject",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/cli/skill.py",
+        "src/retornatus/cli/groups.py",
+        "src/retornatus/cli/root.py"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0040/T-003",
+      "description": "Show one pending line on stop and session-start without blocking",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "src/retornatus/application/agent_hooks/stop.py",
+        "src/retornatus/application/agent_hooks/session.py",
+        "src/retornatus/infrastructure/environment/hub/SKILL.md",
+        ".cursor/skills/retornatus/SKILL.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "C-0040/T-004",
+      "description": "Cover signals, threshold, limits, accept, reject, and the report filter with tests and docs",
+      "lifecycle": "PENDING",
+      "depends_on": [],
+      "resources": [
+        "tests/test_skill_candidates.py",
+        "CHANGELOG.md",
+        "README.md",
+        "docs/guide/Skills.md",
+        "docs/guide/CLI.md",
+        "docs/guide/Agent-hooks.md"
+      ]
+    }
+  ],
+  "relations": [],
+  "max_attempts": null,
+  "attempt_count": 0
+}

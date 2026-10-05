@@ -99,6 +99,7 @@ Two worlds, one control point: **analyzed proposal with human answers**, or **ex
 - Respect Policy DENY / REQUIRE_HUMAN — do not proceed past a failed `gate policy`
 - Load at most one specialization Skill per execution turn
 - Skill creation from chat intake requires human confirmation (`intake analyze` → CREATE=yes)
+- A pending skill candidate is a suggestion. When the stop hook or session context reports one, ask the user once and include the reason from `retornatus skill candidates`. Never run `skill accept` or `skill reject` unless the user explicitly tells you to.
 - **Git tiers:** Tier 0 = local commits OK; Tier 1 = push/PR only when the human asks; Tier 2 = merge / deploy / **PyPI publish** / release tags that publish are **owner-only** — never do them as the agent
 - Follow `.cursor/rules/git-governance.mdc` when present
 
@@ -121,7 +122,7 @@ When a release is ready: summarize, confirm CI, stop — owner merges / tags / p
 | Situation / lane | `change classify`, `change elicit` (`--answer`, `--write`), `change create`, `change activate`, `change reopen` |
 | Dashboard | `change overview` |
 | Intake | `intake analyze --prompt` (+ `--answer`, `--create-skill`) |
-| Skill | `skill need --prompt\|--action`, `skill create/list/activate/evolve/export` |
+| Skill | `skill need --prompt\|--action`, `skill candidates`, `skill accept <id>`, `skill reject <id>`, `skill create/list/activate/evolve/export` |
 | Proof | `evidence run --claim -- <command>`, `checks run`, `evidence add --claim` (narrative), `verify` / `verify --run-checks`, `gate *` (suppressions, scope), `hooks install` |
 | Agent hooks | `integrate --hooks`, `integrate --remove-hooks`, `hook file-edit`, `hook session-start`, `hook stop`, `hook subagent-stop` (opt-in; CI stays the source of truth) |
 | Policy | `policy check`, `gate policy`, `run --strict-policy` |

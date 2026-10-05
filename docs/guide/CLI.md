@@ -64,6 +64,9 @@ retornatus skill --help
 | Command | Purpose |
 | --- | --- |
 | `skill need --prompt` / `--action` | Assess specialization need (Action optional) |
+| `skill candidates` | List repetition candidates. An empty list is normal. Does not create a Skill |
+| `skill accept <id>` | Approve a pending candidate. Writes a draft `SKILL.md`, or evolves the skill the candidate named |
+| `skill reject <id>` | Reject a pending candidate. The same theme waits for new occurrences |
 | `skill create` / `list` / `activate` / `evolve` / `export` | Specialization lifecycle (manual create still allowed) |
 
 ## Proof and policy

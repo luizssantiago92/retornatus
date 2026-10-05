@@ -314,7 +314,23 @@ def verify(
         typer.echo(result.model_dump_json(indent=2))
         if receipt_path:
             typer.echo(f"receipt: {receipt_path}")
+    if result.verdict.value == "SATISFIED":
+        _queue_skill_candidate(root, change_id)
     raise typer.Exit(code=0 if result.verdict.value == "SATISFIED" else 1)
+
+
+def _queue_skill_candidate(root: Path, change_id: str) -> None:
+    """Queue a repetition candidate when this Change is concluded.
+
+    The detector is quiet when nothing repeats. A failure must not change the
+    verify exit code.
+    """
+    try:
+        from retornatus.application.adaptation.skill_candidates import scan_skill_candidates
+
+        scan_skill_candidates(root, focal_change_id=change_id, session_id=f"verify:{change_id}")
+    except Exception:
+        return
 
 
 @app.command()
